@@ -20,10 +20,10 @@ public class GameManagement : MonoBehaviour
     {
         List<DebugOutput.Section> sections = new List<DebugOutput.Section>
         {
-            new DebugOutput.Section("Stats", 200)
+            new DebugOutput.Section("Stats:", 115)
         };
 
-        debugOutput = new DebugOutput(sections);
+        debugOutput = new DebugOutput(sections, Vector2.zero, true);
 
         fpsHandle = debugOutput.AddPart(0, new DebugOutput.Part(DebugOutput.Part.PartType.Text, "0 FPS"));
         otherFpsInfoHandle = debugOutput.AddPart(0, new DebugOutput.Part(DebugOutput.Part.PartType.Text, "0 FPS"));

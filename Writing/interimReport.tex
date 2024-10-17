@@ -3,6 +3,7 @@
 \usepackage{blindtext}
 \usepackage[most]{tcolorbox}
 \usepackage{graphicx}
+\usepackage[toc,page]{appendix}
 \graphicspath{ {./Images/} }
 
 \makeatletter
@@ -38,13 +39,116 @@
 
 \maketitle
 
-\section{Introduction}
+\chapter{Introduction}
 While the written word can gain a form of dynamism through ambiguity, applying that to an interactive and visual medium becomes challenging to do concretely. Instead, gameplay elements, such as simulation and customisation, can be used to engender a narrative in the player, giving them the space to fill in the gaps in their own minds. When done well even non impactful decisions can be imbued with a sense of weight, this feeling that everything contributes. On the other end when done poorly, all decisions can become meaningless whether they are impactful or not. What matters is the player believing they're having an impact. 
 
 This form of narrative interaction is seen commonly in the large-scale real-time strategy genre (e.g. Stellaris, Crusader Kings, etc.) where interlocking systems tell the stories of large factions. The objective of this project is to first create a beta version of a game in this genre, then perform a round of user testing. Insights gained from that process will then be used to complete a vertical slice. Given the constraints inherently imposed by solo development across such a limited time scale, it is unlikely a fully finalized version of the game will be completed.
 
-To allow the player to make immediate, impactful decisions at the beginning of any given run, unlike most games in the genre, the player's power (i.e. their ability to affect the simulated environment) will be organized differently to the other factions. Instead of playing as a larger force the player will be a single powerful entity (i.e. a single ship, a single character, etc.) with a large amount of upfront ability to effect change. Additionally, they will be an outsider to the game world, allowing us to include a wider possibility space of "point of origins" for the player's character, incentivising players to immediately begin thinking about where they came from. Where a character comes from informs where they are going. These early decisions should give players an idea of who the character they are going to be playing is, and impact their future roleplay decisions.
+To allow the player to make immediate, impactful decisions at the beginning of any given run, unlike most games in the genre, the player's power (i.e. their ability to affect the simulated environment) will be organized differently to the other factions. Instead of playing as a larger force the player will be a single powerful entity (i.e. a single ship, a single character, etc.) with a large amount of upfront ability to effect change. Alongside this, the player will be immediately presented with customization options for their faction typical to the genre (e.g. faction symbol, faction origin, etc.), leading them into a roleplaying headspace. 
+
+To ensure that the player's actions result in dynamic outcomes, the faction simulation will also need to be suitably complex. As such, this project takes a code-agnostic, data driven approach. This involves keeping faction data separate from any given simulation element, as opposed to a typical object-oriented approach, which would intertwine them. This allows simulation modules to be designed and implemented in a flexible manner, as well as allowing extra simulation elements to be added easily as an extension goal.
 \newline
 \newline
-This report consists of several sections, the first of which is Professional Considerations, where user testing and acquiring consent for personal data collection is discussed in detail. Next is Requirements Analysis, which outlines the objectives of the project in distinct steps alongside some additional extension goals (e.g. additonal user testing, adding additional simulation elements). The section after that is the full Project Plan, consisting of a breakdown of the work required to complete the project into distinct phases. Finally, there is an Interim Log detailing the steps of the Project Plan completed as of the submission of this Interim Report.
+This report consists of several sections, the first of which is "Professional Considerations", where user testing and acquiring consent for personal data collection is discussed in detail. Next is "Requirements Analysis", which outlines the objectives of the project in distinct steps alongside expanding on the explanation of the problem space. This is then followed by "Background Research" on games in the genre and proposed solutions to common game design issues. Next is the "Project Plan", consisting of a breakdown of the work required to complete the project into distinct phases, illustrated using a Gantt chart. Then there is an "Interim Log" detailing the steps of the Project Plan completed as of the submission of this Interim Report. Finally, there are the bibliography and appendices.
+
+\chapter{Professional Considerations}
+\chapter{Requirements Analysis}
+\chapter{Background Research}
+\chapter{Project Plan}
+\chapter{Interim Log}
+\chapter{Bibliography}
+
+\begin{appendices}
+\chapter{Project Proposal}
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+\begin{center}
+\textbf{Space Based Simulation and Tactics Game}
+\end{center}
+
+\textit{Candidate Number: 267533}
+
+\textit{Supervisor Name: Dr Paul Newbury}
+
+\textbf{Aims}
+\newline
+Many games try to create a branching narrative. When done well this can imbue even non impactful decisions with a sense of weight, this feeling that everything contributes. On the other end, when done poorly, all decisions can become meaningless, whether they are impactful or not. What matters is the player thinking they’re having an impact.
+
+In this project I intend to (with the constraints inherently imposed by solo indie development in mind) create a video game that creates an emergent narrative through gameplay rather than text, maximising the feeling of impact for the player. This form of narrative is seen commonly in the large-scale real-time strategy genre (e.g. Stellaris, Crusader Kings, etc.) where interlocking systems tell the stories of large factions. There will be some simplification to allow users that would normally be turned off by the upfront complexity of these games to also engage with the final product.
+
+\textbf{Objectives}
+
+\underline{\textit{Primary Objectives}}
+
+\begin{enumerate}
+	\item Research existing games in the genre, identifying their gameplay focus points \& style.
+	\item Examine what games in the genre do well and what they do poorly.
+	\item Conduct interviews with 5+ potential players, utilizing insights gained in Primary Objectives 1 and 2 to shape the questions asked
+	\item Examine what games in the genre do well and what they do poorly.
+	\item Use information from all Previous completed Objectives to design a game that tells player driven stories.
+	\item Create a beta version of the completed game that can be tested and critically evaluated, both by me and potential players.
+	\item Use insights gained from Primary Objective 5 to iterate and improve on the beta version.
+	\item Ultimately finish a vertical slice that would lack some features but showcase accurately what the final product could look like.
+\end{enumerate}
+
+\underline{\textit{Extension Objectives}}
+
+\begin{enumerate}
+	\item Perform Primary Objectives 5 and 6 continuously to further improve the final product.
+	\item Conduct critical evaluation using the vertical slice, in the same manner as Primary Objective 5.
+	\item Utilize the insights gained in Extension Objective 2 to further improve upon the vertical slice, expanding it into a fully completed game.
+	\item Implement additional simulated features into the game, refining the model.
+	\item Implement online leaderboard functionality for various statistics.
+	\item Release the fully completed game on platforms such as Steam and Itch.io.
+\end{enumerate}
+
+\textbf{Relevance}
+
+This project reflects my intended career path, as someone that has already been working with Unity and C\# for the last five years. During my gap year (2021 - 2022) I went through the full development process, releasing a 2D game on Steam in early July. Since then, I’ve been working on both my development and 3D skills and hope to release another game I’ve been working on a couple months post university.
+
+By doing this project I hope to further both my coding and artistic skills, combing them to create a hopefully great video game. This project tests both of those disciplines alongside my ability to gather effective feedback and implement proper HCI principles.
+
+\textbf{Resources Required}
+
+I will require use of study rooms/seminars to conduct in person user testing. Testing will also be conducted online but that should require minimal resources. No funding will be required as I expect to purchase games used for market research myself. I also expect to pay for the Steam direct fee if Extension Objective 6 is completed.
+
+Some use of lab computers is required (primarily on Mondays) though I intend to use my home PC on a day-to-day basis. This is due to several factors; my extensive backlog of previous projects I can pull reusable systems/assets from, the comfortability of the workspace and the ease of access, alongside various others.
+
+\textbf{Time Management}
+
+\begin{table}[htbp]
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+ & Monday & Tuesday & Wednesday & Thrusday & Friday & Saturday & Sunday \\
+\hline
+9:00 &&&&&&& \\
+\hline
+10:00 & Lecture & & Lecture &&&& \\
+\hline
+11:00 & \textbf{Project} &&&&&  \textbf{Project} &  \textbf{Project} \\
+\hline
+12:00 & \textbf{Project} & & \textbf{Project} & \textit{Seminar} & \textbf{Project} & \textbf{Project} & \textbf{Project} \\
+\hline
+13:00 & Lab & Lecture &  \textbf{Project} & &  \textbf{Project} &  \textbf{Project} &  \textbf{Project} \\
+\hline
+14:00 &&&&&&& \\
+\hline
+15:00 & Lecture & & & Lab & Lecture && \\
+\hline
+16:00 & Lecture & & & Lab & Lecture && \\
+\hline
+\end{tabular}
+\label{tab:schedule}
+\end{table}
+
+Project time per week is equal to 12 hours. This acts as a minimum goal and (due to my general passion for the subject matter) I will likely do more depending on the week. Any blank slots will be used for other modules, whether coursework or study. The minimum time spent each week will increase depending on unseen factors such as unintended scope creep or hidden complexity.
+
+I intend to have the initial early beta version of the finished shortly after the interim report (Week 8 to 9 of Term 1), utilizing feedback gained over the Christmas break. I then expect to finish the final vertical slice a couple weeks before the final report is due. Any additional time gained, by being ahead of schedule, will be used to complete extension objectives, primarily Extension Objectives 1 and 2.
+
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+
+\begin{center}
+\textbf{This proposal has been adapted from Word to \LaTeX{}, so exact formatting differs from the original proposal document. Structure and content remains the same.}
+\end{center}
+\end{appendices}
+
 \end{document}

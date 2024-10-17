@@ -78,7 +78,7 @@ public class MapManagement : MonoBehaviour
                     mapRing.localScale = new Vector3(scaleMag, 1, scaleMag) * 2;
                     mapRingMeshRenderes[mapRing].material.SetFloat("_Radius", scaleMag);
                     mapRingMeshRenderes[mapRing].material.SetVector("_RingItemPos", entry.Item1.position);
-                    mapRingMeshRenderes[mapRing].material.SetFloat("_RingItemRadius", entry.Item1.localScale.magnitude);
+                    mapRingMeshRenderes[mapRing].material.SetFloat("_RingItemRadius", entry.Item1.localScale.magnitude * 0.75f);
 
                     Debug.DrawLine(entry.Item2.position, entry.Item2.position + scale, Color.red);
                 }

@@ -26,7 +26,7 @@ public class CelestialBody : SurroundingObject
 
     public override void SetObjectVisualScale(float scale)
     {
-        transform.localScale = Vector3.one * (scale * 2);
+        transform.localScale = Vector3.one * (scale * 3);
         targetMat.SetFloat("_Radius", scale);
     }
 }
