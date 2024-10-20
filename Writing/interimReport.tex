@@ -49,11 +49,52 @@ To allow the player to make immediate, impactful decisions at the beginning of a
 To ensure that the player's actions result in dynamic outcomes, the faction simulation will also need to be suitably complex. As such, this project takes a code-agnostic, data driven approach. This involves keeping faction data separate from any given simulation element, as opposed to a typical object-oriented approach, which would intertwine them. This allows simulation modules to be designed and implemented in a flexible manner, as well as allowing extra simulation elements to be added easily as an extension goal.
 \newline
 \newline
-This report consists of several sections, the first of which is "Professional Considerations", where user testing and acquiring consent for personal data collection is discussed in detail. Next is "Requirements Analysis", which outlines the objectives of the project in distinct steps alongside expanding on the explanation of the problem space and my solutions. This is then followed by "Background Research" on games in the genre and proposed solutions to common game design issues. Next is the "Project Plan", consisting of a breakdown of the work required to complete the project into distinct phases, illustrated using a Gantt chart. Then there is an "Interim Log" detailing the steps of the Project Plan completed as of the submission of this Interim Report. Finally, there are the bibliography and appendices.
+This report consists of several sections, the first of which is "Professional Considerations", where user testing and acquiring consent for personal data collection is discussed in detail. Next is "Requirements Analysis", which outlines the objectives of the project in distinct steps alongside expanding on the explanation of the problem space and my solutions. This includes background research on games in the genre and proposed solutions to common game design issues. After that is "Art Design", which details some techniques used to render the large scale solar system, follwed by "Simulation Design". That section of the report discusses in detail all the parts that make up the simulation's structure, with some expansion on specific finer details.
+Next is the "Project Plan", consisting of a breakdown of the work required to complete the project into distinct phases, illustrated using a Gantt chart. Then there is an "Interim Log" detailing the steps of the Project Plan completed as of the submission of this Interim Report. Finally, there are the bibliography and appendices.
 
 \section{Professional Considerations}
 \section{Requirements Analysis}
-\section{Background Research}
+
+This poject aims to produce a player-story driven RTS (Real Time Stratergy). in the form of a vertical slice (a version of a game that lacks some features but still showcases what the final product will look like). Unlike a typical RTS, there will be a larger focus on the world reacting directly to the player as a singular powerful entity and less on long term historical stratergy. As such that world will need to be deeply simulated, comprising a large amount of the technical challenge of the project.
+While the game will be in part targeted at long time RTS players, this change in power balance (alongside a shift into more roleplay focused elements of the genre) is designed to allow a wider audience to engage with a typically complex genre. 
+
+To assist with the development process, multiple rounds of in-person user testing should occur. The sample of players should be made up of both people familar with the RTS genre and those that are not, ideally spread evenly across that range. Two primary testing rounds should occur, one before an inital version of the game is produced and one afterwards, utilizing a beta version. This beta version can differ from the vertical slice dramatically in terms of completeness but should still be functional.
+Any additional user testing (including online testing) is helpful but should be considered an extension objective given the time constraints.
+
+\subsection{Background Research, Common Design Problems and Solutions}
+
+\mynote{talk about how combat is handled as we refrence it in a later part of the document}
+
+\subsection{Performance and Stability}
+
+Crashes and bugs should be kept to an ideal minimum. While the time constraints imposed don't allow the throughness typical of a standard project, ample time can still be allocated to unit testing and the like. The previously mentioned rounds of user testing can also assist with this issue.
+
+Alongside functioning as intended, the final version of the project should also run at a consistent and reasonable frame rate (60 frames per second) on low to medium range hardware. Given the relatively low intended visual complexity of the game, this objective is still important but easier to reach than others. Various different pieces of hardware are avaliable for testing, with varying hardware capabilities in each.
+
+\subsection{Additional Gameplay Features}
+
+If time allows, there are some additional gameplay features that would ideally be added;
+\begin{itemize}
+	\item Additonal simulation elements. For example, if the current version of the simulation models a planet's resources as a static value, a new simulation routine could decrease that value over time based on population and industrial activity.
+	\item Online functionality. This would likely take the form of online leaderboards, showcasing statistics such as "Time Survived", "Enemies Killed", "Highest Bounty", etc.
+	\item More advanced combat functionality, taking the form of additional actions ontop of the exisiting auto battle system. 
+	\item Music. While many royalty free options exist, unique music would help set the mood properly for players.
+	\item Releasing the game on Steam. Generally speaking this is a capstone objective and would signal the end of the code side of the project. 
+\end{itemize}
+
+\section{Art Design}
+
+Visuals are an important part of game development but they are not the focus of this report. This section of the report will focus on the system used for large scale rendering (used for celestial bodies) as an example of some of the work done on that side of the game. 
+
+The effect is made of two key parts, an "imposter sphere" shader and a system that converts real-space (As in the simulation position of the object being drawn) coordinates to a visual scale. 
+
+\mynote{could talk about our system for displaying far away large things (shelled size based rendering)}
+
+\section{Simulation Design}
+
+\mynote{Use that draw.io diagram you made}
+\mynote{Simulation is made up of Simulation Manager, Faction routines, Faction data, the Simulation Manager Execution Clamp and the faction drawer}
+
 \section{Project Plan}
 \section{Interim Log}
 \section{Bibliography}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.5.17)  17 OCT 2024 17:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.5.17)  20 OCT 2024 01:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -727,47 +727,68 @@ Package: inputenc 2021/02/14 v1.3d Input encoding file
 ) [1
 
 {C:/Users/alexn/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 49--53
+Underfull \hbox (badness 10000) in paragraph at lines 49--54
 
  []
 
-[1] [2] [3
+[1]
+Underfull \hbox (badness 10000) in paragraph at lines 66--67
+
+ []
+
+[2]
+Overfull \hbox (15.0pt too wide) in paragraph at lines 91--92
+[][]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 91--92
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 95--97
+
+ []
+
+[3] [4] [5
 
 
 ]
 Appendix A.
-[4
+[6
 
 ]
-Overfull \hbox (51.89584pt too wide) in paragraph at lines 119--141
+Overfull \hbox (51.89584pt too wide) in paragraph at lines 160--182
 [][]
  []
 
-[5] [6] (interimReport.aux)
+[7] [8] (interimReport.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-04>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 20401 strings out of 474486
- 450592 string characters out of 5743755
+ 20499 strings out of 474486
+ 452821 string characters out of 5743755
  1939542 words of memory out of 5000000
- 42342 multiletter control sequences out of 15000+600000
- 565013 words of font info for 60 fonts, out of 8000000 for 9000
+ 42439 multiletter control sequences out of 15000+600000
+ 565655 words of font info for 62 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 101i,8n,107p,838b,277s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
-cmbx10.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
-fonts/cm/cmbx12.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/p
-ublic/amsfonts/cm/cmbx7.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts
-/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/alexn/AppData/Local/Programs/MiKT
-eX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/alexn/AppData/Local/Progr
-ams/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/alexn/AppData/Loc
-al/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on interimReport.pdf (7 pages, 128867 bytes).
+ 101i,8n,107p,777b,916s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\alexn\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm
+1000.pk><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
+ts/cm/cmbx10.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/amsfonts/cm/cmbx12.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/t
+ype1/public/amsfonts/cm/cmbx7.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX
+/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/alexn/AppData/Local/Program
+s/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/alexn/AppData/Local
+/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/alexn/AppDa
+ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb>
+Output written on interimReport.pdf (9 pages, 136969 bytes).
 PDF statistics:
- 100 PDF objects out of 1000 (max. 8388607)
+ 111 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  157 words of extra memory for PDF output out of 10000 (max. 10000000)
 
