@@ -3,6 +3,8 @@
 \usepackage{blindtext}
 \usepackage[most]{tcolorbox}
 \usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
 \usepackage[toc,page]{appendix}
 \graphicspath{ {./Images/} }
 
@@ -34,7 +36,8 @@
 
 \begin{document}
 
-\title{Interim Report}
+\title{Interim Report \\
+\textit{3D Video Game: Hope and Control}}
 \author{267533}
 
 \maketitle
@@ -58,6 +61,9 @@ Next is the "Project Plan", consisting of a breakdown of the work required to co
 This poject aims to produce a player-story driven RTS (Real Time Stratergy). in the form of a vertical slice (a version of a game that lacks some features but still showcases what the final product will look like). Unlike a typical RTS, there will be a larger focus on the world reacting directly to the player as a singular powerful entity and less on long term historical stratergy. As such that world will need to be deeply simulated, comprising a large amount of the technical challenge of the project.
 While the game will be in part targeted at long time RTS players, this change in power balance (alongside a shift into more roleplay focused elements of the genre) is designed to allow a wider audience to engage with a typically complex genre. 
 
+This project uses Unity instead of a custom engine, the primary reason for this choice is my familiarity with it's workflow. I've previously created a full game using Unity (including shipping it to Steam) and I greatly enjoy its flexibility. Unity makes it easy to extend the editor through creating additional context menu items and entirely new editor tools. 
+The C\# (which is Unity's primary coding language) ecosystem is also very broad, with a collosal number of resources to pull from. 
+
 To assist with the development process, multiple rounds of in-person user testing should occur. The sample of players should be made up of both people familar with the RTS genre and those that are not, ideally spread evenly across that range. Two primary testing rounds should occur, one before an inital version of the game is produced and one afterwards, utilizing a beta version. This beta version can differ from the vertical slice dramatically in terms of completeness but should still be functional.
 Any additional user testing (including online testing) is helpful but should be considered an extension objective given the time constraints.
 
@@ -65,9 +71,46 @@ Any additional user testing (including online testing) is helpful but should be 
 
 \mynote{talk about how combat is handled as we refrence it in a later part of the document}
 
+\subsubsection{Game 1: Stellaris}
+
+Stellaris (2016) is a large scale space-based strategy game, taking place across a substantially sized galaxy. It involves managing an interstaller faction, taking them from their first ships to combating a galaxy wide threat. 
+
+The game puts a heavy emphasis on roleplay right from the beginning of a run. Immediately upon selecting "New Game" you are presented with the screen pictured in Figure 1.
+
+\begin{figure}[h]
+    \includegraphics[width=\textwidth]{stellaris_faction_creation.png}
+    \caption{Stellaris Faction Creation Screen}
+\end{figure}
+
+The left side of the screen showcases a list of premade factions (highlighted in yellow) that the player can pick from then customize, these can act as a  jumping off point for player ideas. There is additionally an option to create an entirely unique faction at the very top. 
+Positioned diretly in the center of the screen is the information on the currently selected faction, including; their governmental practices (highlighted in red), their species traits (highlighted in green), their species origin (highlighted in blue) and their faction's flag (highlighted in orange). All these elements (alongside others) create a distinct feeling for this particular faction and, more importantly, they have gameplay ramifications. Within a minute of starting the game proper the faction shown in Figure 1. (an Imperial Divine Empire) was notified it had received a new heir, a special type of unit that acted (in this case) as a scientific advisor.
+
+This focus on roleplay is reflected in the reviews for the game, many are simply retellings of their own faction's story. An example of this is pictured in Figure 2.
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{stellaris_positive_review.png}
+    \caption{A retelling of a Stellaris game, (full review is 650+ words long)}
+\end{figure}
+
+Other systems also assist this storytelling, in particular the Galactic Crises. These are large, late game events that typically have ramifications for the whole galaxy and act as a definitive final boss for a playthrough. Interestingly, there are also specific cases where a player or AI can become the crisis, another avenue for potential roleplay. The player's relationship to other factions can be vitally important during these scenarios, meaning earlier (possible roleplay based) decisions can have a major impact.
+
+Space combat is another important part of Stellaris but is more used as a tool to express roleplay decisions than a system that encourages roleplay itself. The functional act of combat instead enhances the grand stratergy side of the game, engagements are often won by decisions made before the battle starts. For example, the ships used by an endgame crisis, "Extradimensional Invaders", largely rely on shields as a defensive measure for their ships. This means that kinetic weapons are particular effective \cite{stellarisBattleDecision}, outfitting ships with these weapons is a decision made when they are created. When actually fighting, fleets of ships will "auto-battle" each other, with no input required by the player. While this project does focus more on a singular powerful entity, it will take a similar pre-planning approach to combat. This is in part due to the time constraints, as time spent making combat rewarding to execute takes time away from the simulation side (and main goal) of the project.
+\newline
+\newline
+While Stellaris succeeds in many areas and is arguably (with it's balance of stratergy and roleplay) the closest real example of this project's goal, it has a few outstanding flaws. The game has a large amount of upfront complexity, the main Stellaris wiki's Beginner Guide \cite{stellarisBeginner} is roughly 17000 words long, split into 20+ sections and subsections. Figure 3. showcases the first screen players will see outside of the faction creation menu. It hosts a suite of information, shown to the player all at once. This includes (but is not limited too); eight types of basic resources, several more advanced resources (including fleet and starbase capacity), a list of all controlled entites (planets, fleets, construction and science ships and shipyards), the current date, many links to other UI windows (including Goverment Control, a larger galaxy map, Species Control, Technology and Research Management) and buttons for switching map mode (it should be made clear those buttons do nothing on this screen but are still present).
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{stellaris_main_screen.png}
+    \caption{Stellaris Solar System View Screen}
+\end{figure}
+
+However, this complexity is an important, and arguably defining, part of the genre \cite{rtsUncertainty}. The principal issue here is how it is introduced to the player. Given this project's intention to, in part, target a wider audience, this issue is quite important. The intended solution is to introduce player elements gradually, in the context of the larger narrative brace of the game, this can be expressed as the player's controlled entity turning back on after many years inactive. To enhance replayability players could be allowed to start already in a fully active state rather than repeating the tutorial each time.
+
+Stellaris also suffers from performance issues, particularly in the late game \cite{stellarisPerformanceReview1} \cite{stellarisPerformanceReview2}. Given the relative scales of this project and Stellaris this is a less relevant issue, performance goals are discussed further in the sub section "Performance and Stability".
+
 \subsection{Performance and Stability}
 
-Crashes and bugs should be kept to an ideal minimum. While the time constraints imposed don't allow the throughness typical of a standard project, ample time can still be allocated to unit testing and the like. The previously mentioned rounds of user testing can also assist with this issue.
+Crashes and bugs should be kept to an ideal minimum. While the time constraints imposed don't allow the throughness typical of a standard project, ample time can still be allocated to unit testing and the like. The afformentioned rounds of user testing can also assist with this issue.
 
 Alongside functioning as intended, the final version of the project should also run at a consistent and reasonable frame rate (60 frames per second) on low to medium range hardware. Given the relatively low intended visual complexity of the game, this objective is still important but easier to reach than others. Various different pieces of hardware are avaliable for testing, with varying hardware capabilities in each.
 
@@ -97,7 +140,19 @@ The effect is made of two key parts, an "imposter sphere" shader and a system th
 
 \section{Project Plan}
 \section{Interim Log}
-\section{Bibliography}
+
+\begin{thebibliography}{9}
+\bibitem{stellarisBeginner}
+Stellaris Community, "Beginner's guide", "Stellaris WIki", 21 October 2024, \href{https://stellaris.paradoxwikis.com/Beginner\%27s_guide, Beginner's guide Link}{Beginner's Guide}
+\bibitem{stellarisBattleDecision}
+Stellaris Community, "Crisis/Endgame crisis factions/Extradimensional Invaders/Successfully repelling the Extradimensional Invaders", "Stellaris Wiki", 18 October 2024, \href{https://stellaris.paradoxwikis.com/Crisis#Successfully_repelling_the_Extradimensional_Invaders, Crisis Solution Link}{Extradimensional Invaders Stratergy}
+\bibitem{rtsUncertainty}
+Jónsson, B. Pages 6 to 7, "REPRESENTING UNCERTAINTY IN RTS GAMES"
+\bibitem{stellarisPerformanceReview1}
+Skullcrusher, "Stellaris Steam Review", "Steam", 11 September 2022, \href{https://steamcommunity.com/profiles/76561198026459371/recommended/281990, "Review Link"}{Link}
+\bibitem{stellarisPerformanceReview2}
+A Random Fish, "Stellaris Steam Review", "Steam", 18 October 2019, \href{https://steamcommunity.com/id/ARandomFish/recommended/281990. "Review Link"}{Link}
+\end{thebibliography}
 
 \begin{appendices}
 \chapter{Project Proposal}
