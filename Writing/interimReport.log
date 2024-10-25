@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.5.17)  21 OCT 2024 16:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.5.17)  25 OCT 2024 16:52
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -787,24 +787,24 @@ File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
 ) (interimReport.aux)
 \openout1 = `interimReport.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
 
 (C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
 ii
@@ -845,7 +845,7 @@ Package: inputenc 2021/02/14 v1.3d Input encoding file
 \inpenc@prehook=\toks43
 \inpenc@posthook=\toks44
 )
-Package hyperref Info: Link coloring OFF on input line 37.
+Package hyperref Info: Link coloring OFF on input line 39.
 (interimReport.out) (interimReport.out)
 \@outlinefile=\write4
 \openout4 = `interimReport.out'.
@@ -853,7 +853,7 @@ Package hyperref Info: Link coloring OFF on input line 37.
  [1
 
 {C:/Users/alexn/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 52--57
+Underfull \hbox (badness 10000) in paragraph at lines 54--59
 
  []
 
@@ -862,20 +862,16 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.57 
+l.59 
       [1]
-Underfull \hbox (badness 10000) in paragraph at lines 72--73
-
- []
-
-[2]
-<./Images/stellaris_faction_creation.png, id=108, 1927.2pt x 1084.05pt>
+<./Images/stellaris_faction_creation.png, id=107, 1927.2pt x 1084.05pt>
 File: ./Images/stellaris_faction_creation.png Graphic file (type png)
 <use ./Images/stellaris_faction_creation.png>
 Package pdftex.def Info: ./Images/stellaris_faction_creation.png  used on input
  line 81.
 (pdftex.def)             Requested size: 345.0pt x 194.06194pt.
-<./Images/stellaris_positive_review.png, id=109, 601.24625pt x 398.48875pt>
+ [2]
+<./Images/stellaris_positive_review.png, id=114, 601.24625pt x 398.48875pt>
 File: ./Images/stellaris_positive_review.png Graphic file (type png)
 <use ./Images/stellaris_positive_review.png>
 Package pdftex.def Info: ./Images/stellaris_positive_review.png  used on input 
@@ -887,70 +883,183 @@ Underfull \hbox (badness 10000) in paragraph at lines 97--101
  []
 
 [4 <./Images/stellaris_positive_review.png>]
-<./Images/stellaris_main_screen.png, id=126, 1927.2pt x 1084.05pt>
+<./Images/stellaris_main_screen.png, id=130, 1927.2pt x 1084.05pt>
 File: ./Images/stellaris_main_screen.png Graphic file (type png)
 <use ./Images/stellaris_main_screen.png>
 Package pdftex.def Info: ./Images/stellaris_main_screen.png  used on input line
  103.
 (pdftex.def)             Requested size: 345.0pt x 194.06194pt.
  [5 <./Images/stellaris_main_screen.png (PNG copy)>]
-Overfull \hbox (15.0pt too wide) in paragraph at lines 134--135
+<./Images/disco_elysium_thoughts_screen.png, id=143, 1443.89438pt x 812.28468pt
+>
+File: ./Images/disco_elysium_thoughts_screen.png Graphic file (type png)
+<use ./Images/disco_elysium_thoughts_screen.png>
+Package pdftex.def Info: ./Images/disco_elysium_thoughts_screen.png  used on in
+put line 116.
+(pdftex.def)             Requested size: 345.0pt x 194.08469pt.
+ [6 <./Images/disco_elysium_thoughts_screen.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 131--145
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--145
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--145
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--145
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--145
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--145
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--145
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--145
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--145
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--145
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--145
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--145
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--145
+
+ []
+
+[7]
+Underfull \hbox (badness 10000) in paragraph at lines 148--156
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 148--156
+
+ []
+
+
+Overfull \hbox (0.19449pt too wide) in paragraph at lines 148--156
+\OT1/cmr/m/it/10 boards, show-cas-ing statis-tics such as "Time Sur-vived", "En
+-e-mies Killed", "High-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 148--156
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 148--156
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 148--156
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 148--156
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 148--156
+
+ []
+
+
+Overfull \hbox (15.0pt too wide) in paragraph at lines 163--164
 [][]
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 134--135
+Underfull \hbox (badness 10000) in paragraph at lines 163--164
 
  []
 
-[6]
-Underfull \hbox (badness 10000) in paragraph at lines 138--140
+
+Underfull \hbox (badness 10000) in paragraph at lines 167--169
 
  []
 
-[7] [8
+[8] [9] [10
 
-] [9
+] [11
 
 
 ]
 Appendix A.
-[10
+[12
 
 ]
-Overfull \hbox (51.89584pt too wide) in paragraph at lines 215--237
+Overfull \hbox (51.89584pt too wide) in paragraph at lines 245--267
 [][]
  []
 
-[11] [12] (interimReport.aux)
+[13] [14] (interimReport.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-04>
  ***********
 Package rerunfilecheck Info: File `interimReport.out' has not changed.
-(rerunfilecheck)             Checksum: 545CE588068DB627A3EA6FDCE25A87A1;1872.
+(rerunfilecheck)             Checksum: 5E32419A9BC08A5628833B49290639ED;2039.
  ) 
 Here is how much of TeX's memory you used:
- 26732 strings out of 474486
- 549796 string characters out of 5743755
+ 26742 strings out of 474486
+ 550178 string characters out of 5743755
  1940542 words of memory out of 5000000
- 48548 multiletter control sequences out of 15000+600000
- 566002 words of font info for 63 fonts, out of 8000000 for 9000
+ 48554 multiletter control sequences out of 15000+600000
+ 565667 words of font info for 62 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 101i,8n,107p,1088b,918s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <C:\Users\alexn\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm
-1000.pk><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
-ts/cm/cmbx10.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/publ
-ic/amsfonts/cm/cmbx12.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/t
-ype1/public/amsfonts/cm/cmbx7.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX
-/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/alexn/AppData/Local/Program
-s/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/alexn/AppData/Local
-/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/alexn/AppDa
-ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/al
-exn/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on interimReport.pdf (13 pages, 4904496 bytes).
+ 101i,8n,107p,1092b,914s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
+cmbx10.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
+fonts/cm/cmbx12.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/p
+ublic/amsfonts/cm/cmbx7.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts
+/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/alexn/AppData/Local/Programs/MiKT
+eX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/alexn/AppData/Local/Progr
+ams/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/alexn/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/alexn/Ap
+pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb>
+Output written on interimReport.pdf (15 pages, 8026645 bytes).
 PDF statistics:
- 243 PDF objects out of 1000 (max. 8388607)
- 49 named destinations out of 1000 (max. 500000)
- 268 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 254 PDF objects out of 1000 (max. 8388607)
+ 54 named destinations out of 1000 (max. 500000)
+ 281 words of extra memory for PDF output out of 10000 (max. 10000000)
 

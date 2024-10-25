@@ -34,6 +34,8 @@
   }
 \makeatother
 
+\newcommand{\req}[2]{\textbf{		#1:  }	\textit{#2}\newline\newline}
+
 \begin{document}
 
 \title{Interim Report \\
@@ -53,7 +55,7 @@ To ensure that the player's actions result in dynamic outcomes, the faction simu
 \newline
 \newline
 This report consists of several sections, the first of which is "Professional Considerations", where user testing and acquiring consent for personal data collection is discussed in detail. Next is "Requirements Analysis", which outlines the objectives of the project in distinct steps alongside expanding on the explanation of the problem space and my solutions. This includes background research on games in the genre and proposed solutions to common game design issues. After that is "Art Design", which details some techniques used to render the large scale solar system, follwed by "Simulation Design". That section of the report discusses in detail all the parts that make up the simulation's structure, with some expansion on specific finer details.
-Next is the "Project Plan", consisting of a breakdown of the work required to complete the project into distinct phases, illustrated using a Gantt chart. Then there is an "Interim Log" detailing the steps of the Project Plan completed as of the submission of this Interim Report. Finally, there are the bibliography and appendices.
+Next is the "Project Plan", consisting of a breakdown of the work required to complete the project into distinct phases, illustrated using a Gantt chart. Then there is an "Interim Log" detailing the steps of the Project Plan completed as of the submission of this Interim Report. Finally, there are the refrences and appendices.
 
 \section{Professional Considerations}
 \section{Requirements Analysis}
@@ -67,9 +69,7 @@ The C\# (which is Unity's primary coding language) ecosystem is also very broad,
 To assist with the development process, multiple rounds of in-person user testing should occur. The sample of players should be made up of both people familar with the RTS genre and those that are not, ideally spread evenly across that range. Two primary testing rounds should occur, one before an inital version of the game is produced and one afterwards, utilizing a beta version. This beta version can differ from the vertical slice dramatically in terms of completeness but should still be functional.
 Any additional user testing (including online testing) is helpful but should be considered an extension objective given the time constraints.
 
-\subsection{Background Research, Common Design Problems and Solutions}
-
-\mynote{talk about how combat is handled as we refrence it in a later part of the document}
+\subsection{Background Research, Design Problems and Solutions}
 
 \subsubsection{Game 1: Stellaris}
 
@@ -104,9 +104,22 @@ While Stellaris succeeds in many areas and is arguably (with it's balance of str
     \caption{Stellaris Solar System View Screen}
 \end{figure}
 
-However, this complexity is an important, and arguably defining, part of the genre \cite{rtsUncertainty}. The principal issue here is how it is introduced to the player. Given this project's intention to, in part, target a wider audience, this issue is quite important. The intended solution is to introduce player elements gradually, in the context of the larger narrative brace of the game, this can be expressed as the player's controlled entity turning back on after many years inactive. To enhance replayability players could be allowed to start already in a fully active state rather than repeating the tutorial each time.
+However, this complexity is an important, and arguably defining, part of the genre \cite{rtsUncertainty}. The principal issue here is how it is introduced to the player. Given this project's intention to, in part, target a wider audience, this issue is quite important. The intended solution is to introduce player elements gradually, in the context of the larger narrative brace of the game this can be expressed as the player's controlled entity turning back on after many years inactive. To enhance replayability players could be allowed to start already in a fully active state rather than repeating the tutorial each time.
 
-Stellaris also suffers from performance issues, particularly in the late game \cite{stellarisPerformanceReview1} \cite{stellarisPerformanceReview2}. Given the relative scales of this project and Stellaris this is a less relevant issue, performance goals are discussed further in the sub section "Performance and Stability".
+Stellaris also suffers from performance issues, particularly in the late game \cite{stellarisPerformanceReview1} \cite{stellarisPerformanceReview2}. Given the relative scales of this project and Stellaris this is a less relevant issue, performance goals are discussed further in a later subsection "Performance and Stability".
+
+\subsubsection{Game 2: Disco Elysium}
+
+This project's roleplay centric aims require it to take additional inspiration from outside the RTS genre. Disco Elysium (2019) is a detective RPG, famous for it's engaging writing. It has many systems that incentivise roleplay such as its "Thought Cabinet" system, pictured below.
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{disco_elysium_thoughts_screen.png}
+    \caption{Disco Elysium Thoughts Screen}
+\end{figure}
+
+"Thoughts" are discovered naturally on your adventure throughout Elysium's world, after being found they can then be slotted into an open position in the cabinet before taking some time to be "internalized". This system mirrors Stellaris's governmental polices, providing an avenue for roleplay but grounding it in a more understandle mechanical benefit/cost. In the case of Disco Elysium, you use a skill point (that could be used on the game's more traditional statistics based leveling system) to unlock more slots in your cabinet. This allows players to make the active choice to engage more with roleplay, potentially trading off a traditional power increase.
+
+Disco Elysium's approach to roleplay has some pain points, in particular the various bottle-neck checks. The primary example is an "Authority" check during a pivotal conversation with Titus Hardie. This check (involving summing the result of two dice and your authority value to try and meet a threshold) is neccesary to move the story forward, with a low enough investment in Authority (a seemingly optional stat up until this point), the chance to pass it can be as low as 3\%. In the context of a game trying to tell a specific story, with a character that values authority as much as Titus, this (despite the potential player frustration) works quite well, however, in a game more centered on player driven narrative it would not. Given the more dynamic form of storytelling this project will seek to employ, it will be important to ensure these bottle necks only appear in a forseeable manner. For example, it makes sense that a faction's military will be tested if it goes to war, hence, potential war declerations should be clearly telegraphed.
 
 \subsection{Performance and Stability}
 
@@ -114,16 +127,32 @@ Crashes and bugs should be kept to an ideal minimum. While the time constraints 
 
 Alongside functioning as intended, the final version of the project should also run at a consistent and reasonable frame rate (60 frames per second) on low to medium range hardware. Given the relatively low intended visual complexity of the game, this objective is still important but easier to reach than others. Various different pieces of hardware are avaliable for testing, with varying hardware capabilities in each.
 
-\subsection{Additional Gameplay Features}
+\subsection{Formalized Requirements}
+Below are the requirements discussed in the above sections formalized into a list;
+\newline
+\newline
+\req{R1}{Existing games in the genre should be researched, their gameplay focus points, style and design problems should be identified.}
+\req{R2}{Interviews should be conducted with 5+ potential players, questions should be shaped based on insights gained from completion of R1.}
+\req{R3}{At least two versions of the game should be created. An inital prototype for additional user testing and a final vertical slice.}
+\req{R4}{The game should run at atleast 60 FPS on low to medium range hardware.}
+\req{R5}{The game world should be suitably simulated, recognizable as realistic relationships between factions.}
+\req{R6}{The player should be able to have an effect on the game world, represented through simulation statistics changes.}
+\req{R7}{The game should have sound effects that fit the themeing.}
+\req{R8}{The player should be able to move about the game's world.}
+\req{R9}{The game should be functionally stable, crashes should occur very infrequently.}
+\req{R10}{The game should have UI that accurately describes statistics about the player's faction.}
+\req{R11}{The game should have UI that accurately describes known statistics about NPC factions.}
 
-If time allows, there are some additional gameplay features that would ideally be added;
-\begin{itemize}
-	\item Additonal simulation elements. For example, if the current version of the simulation models a planet's resources as a static value, a new simulation routine could decrease that value over time based on population and industrial activity.
-	\item Online functionality. This would likely take the form of online leaderboards, showcasing statistics such as "Time Survived", "Enemies Killed", "Highest Bounty", etc.
-	\item More advanced combat functionality, taking the form of additional actions ontop of the exisiting auto battle system. 
-	\item Music. While many royalty free options exist, unique music would help set the mood properly for players.
-	\item Releasing the game on Steam. Generally speaking this is a capstone objective and would signal the end of the code side of the project. 
-\end{itemize}
+\subsection{Formalized Extension Requirements}
+
+If time allows, there are some additional requirements that would ideally be met;
+\newline
+\newline
+\req{E1}{Additonal simulation elements. For example, if the current version of the simulation models a planet's resources as a static value, a new simulation routine could decrease that value over time based on population and industrial activity.}
+\req{E2}{Online functionality. This would likely take the form of online leaderboards, showcasing statistics such as "Time Survived", "Enemies Killed", "Highest Bounty", etc.}
+\req{E3}{More advanced combat functionality, taking the form of additional actions ontop of the exisiting auto battle system. }
+\req{E4}{Music. While many royalty free options exist, unique music would help set the mood properly for players.}
+\req{E5}{Releasing the game on Steam. Generally speaking this is a capstone objective and would signal the end of the code side of the project. }
 
 \section{Art Design}
 
@@ -141,6 +170,7 @@ The effect is made of two key parts, an "imposter sphere" shader and a system th
 \section{Project Plan}
 \section{Interim Log}
 
+\renewcommand\bibname{References}
 \begin{thebibliography}{9}
 \bibitem{stellarisBeginner}
 Stellaris Community, "Beginner's guide", "Stellaris WIki", 21 October 2024, \href{https://stellaris.paradoxwikis.com/Beginner\%27s_guide, Beginner's guide Link}{Beginner's Guide}
@@ -149,9 +179,9 @@ Stellaris Community, "Crisis/Endgame crisis factions/Extradimensional Invaders/S
 \bibitem{rtsUncertainty}
 Jónsson, B. Pages 6 to 7, "REPRESENTING UNCERTAINTY IN RTS GAMES"
 \bibitem{stellarisPerformanceReview1}
-Skullcrusher, "Stellaris Steam Review", "Steam", 11 September 2022, \href{https://steamcommunity.com/profiles/76561198026459371/recommended/281990, "Review Link"}{Link}
+"Skullcrusher", "Stellaris Steam Review", "Steam", 11 September 2022, \href{https://steamcommunity.com/profiles/76561198026459371/recommended/281990, "Review Link"}{Link}
 \bibitem{stellarisPerformanceReview2}
-A Random Fish, "Stellaris Steam Review", "Steam", 18 October 2019, \href{https://steamcommunity.com/id/ARandomFish/recommended/281990. "Review Link"}{Link}
+"A Random Fish", "Stellaris Steam Review", "Steam", 18 October 2019, \href{https://steamcommunity.com/id/ARandomFish/recommended/281990. "Review Link"}{Link}
 \end{thebibliography}
 
 \begin{appendices}
