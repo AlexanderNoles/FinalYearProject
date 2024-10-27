@@ -1,5 +1,6 @@
 \documentclass{report}
 
+\usepackage{titlesec}
 \usepackage{blindtext}
 \usepackage[most]{tcolorbox}
 \usepackage{graphicx}
@@ -36,6 +37,10 @@
 
 \newcommand{\req}[2]{\textbf{		#1:  }	\textit{#2}\newline\newline}
 
+\titleformat{\chapter}[block]
+  {\normalfont\huge\bfseries}{\thechapter.}{1em}{}
+\titlespacing*{\chapter}{0pt}{-19pt}{0pt}
+
 \begin{document}
 
 \title{Interim Report \\
@@ -44,7 +49,7 @@
 
 \maketitle
 
-\section{Introduction}
+\chapter{Introduction}
 While the written word can gain a form of dynamism through ambiguity, applying that to an interactive and visual medium becomes challenging to do concretely. Instead, gameplay elements, such as simulation and customisation, can be used to engender a narrative in the player, giving them the space to fill in the gaps in their own minds. When done well even non impactful decisions can be imbued with a sense of weight, this feeling that everything contributes. On the other end when done poorly, all decisions can become meaningless whether they are impactful or not. What matters is the player believing they're having an impact. 
 
 This form of narrative interaction is seen commonly in the large-scale real-time strategy genre (e.g. Stellaris, Crusader Kings, etc.) where interlocking systems tell the stories of large factions. The objective of this project is to first create a beta version of a game in this genre, then perform a round of user testing. Insights gained from that process will then be used to complete a vertical slice. Given the constraints inherently imposed by solo development across such a limited time scale, it is unlikely a fully finalized version of the game will be completed.
@@ -54,11 +59,78 @@ To allow the player to make immediate, impactful decisions at the beginning of a
 To ensure that the player's actions result in dynamic outcomes, the faction simulation will also need to be suitably complex. As such, this project takes a code-agnostic, data driven approach. This involves keeping faction data separate from any given simulation element, as opposed to a typical object-oriented approach, which would intertwine them. This allows simulation modules to be designed and implemented in a flexible manner, as well as allowing extra simulation elements to be added easily as an extension goal.
 \newline
 \newline
+\mynote{Gonna rewrite this final section once report is finished}
 This report consists of several sections, the first of which is "Professional Considerations", where user testing and acquiring consent for personal data collection is discussed in detail. Next is "Requirements Analysis", which outlines the objectives of the project in distinct steps alongside expanding on the explanation of the problem space and my solutions. This includes background research on games in the genre and proposed solutions to common game design issues. After that is "Art Design", which details some techniques used to render the large scale solar system, follwed by "Simulation Design". That section of the report discusses in detail all the parts that make up the simulation's structure, with some expansion on specific finer details.
 Next is the "Project Plan", consisting of a breakdown of the work required to complete the project into distinct phases, illustrated using a Gantt chart. Then there is an "Interim Log" detailing the steps of the Project Plan completed as of the submission of this Interim Report. Finally, there are the refrences and appendices.
 
-\section{Professional Considerations}
-\section{Requirements Analysis}
+\chapter{Professional Considerations}
+
+\section{BCS Code of Conduct}
+
+The BCS Code of Conduct is comprised of four key principles, the relevant sections from each have been discussed below.
+\newline
+\newline
+\begin{raggedright}
+{\Large \underline{Principle 1: You make IT for everyone}}
+\newline
+\newline
+\textbf{1.1 Have due regard for public health, privacy, security and wellbeing of others and the environment}
+\newline
+\newline
+\textit{Given the scifi nature of the project, visuals are likely to be flashy and potentially dangerous for people with epilepsy. An appriopriate warning should be displayed when the game is booted. If leaderboards are added, in line with Extension Requirement E2, some player data will be stored, this will simply include game statistics and no non-public personal information.}
+\newline
+\newline
+\textbf{1.2 Have due regard for the legitimate rights of third parties}
+\newline
+\newline
+\textit{This project uses some third party code, namely MonitorBreak's Additions library for Unity. This is licensed under a modified MIT license\cite{additionsLicense} and all obligations outlined have been met. It should also be noted that I wrote this code but it simply belongs to a seperate entity.
+Any other third party usage license obligations have also been met.}
+\newline
+\newline
+\textbf{1.3 Conduct your professional activities without discrimination on the grounds of sex, sexual orientation, marital status, nationality, colour, race, ethnic origin, religion, age or disability, or of any other condition or requirement}
+\newline
+\newline
+\textit{Populations in the game are abstracted, represented as a series of numbers, user testing however, is relevant to this section. The project will not discriminate when deceding which users to use as a sample instead trying to get an accurate representation of the intended users.}
+\newline
+\newline
+\textbf{1.4 Promote equal access to the benefits of IT and seek to promote the inclusion of all sectors in society wherever opportunities arise}
+\newline
+\newline
+\textit{This game is intended to be released for free and the simulation design will be made fully open source some time after submission. These are both done to hopefully promote more games like this being created.}
+\newline
+\newline
+{\Large \underline{Principle 2: Show what you know, learn what you don't}}
+\newline
+\newline
+\textbf{2.4 Ensure that you have the knowledge and understanding of legislation and that you comply with such legislation, in carrying out your professional responsibilities}
+\newline
+\newline
+\textit{The most relevant pieces of legislation center around the game's suitablity for given age brackets. This project does not intend for a physical release (even upon completion of all Extension Requirements) so upon the game's completion only the IARC (International Age Rating Coalition) questionnaire will need to be completed. The questionnaire will give an age rating inline with all participating rating boards.}
+\newline
+\newline
+\textbf{2.5 Respect and value alternative viewpoints and seek, accept and offer honest criticisms of work}
+\newline
+\newline
+\textit{All feedback gained from user testing will be treated with equal respect and this project will seek to make no ommision when presenting it in the final report. To gain more feedback, additional rounds of user testing are considered a high priority extension objective.}
+\newline
+\newline
+\textbf{2.6 Avoid injuring others, their property, reputation, or employment by false or malicious or negligent action or inaction}
+\newline
+\newline
+\textit{As mentioned in the response to 1.1, steps will be taken to prevent causing issues for people with epilepsy. Additionally care will also be taken during the creation of systems that save to disk (game save system, screenshot system, etc.). This is to prevent potential loss of personal data due to an erroneous disk write operation.}
+\newline
+\newline
+\textbf{2.7 Reject and will not make any offer of bribery or unethical inducement}
+\newline
+\newline
+\textit{During user testing feedback will be gathered anonymously, with no incentive for a better or worse response.}
+\newline
+\newline
+\underline{For this project, Principle 3 and Principle 4 contain no relevant sections.}
+\end{raggedright}
+
+
+\chapter{Requirements Analysis}
 
 This poject aims to produce a player-story driven RTS (Real Time Stratergy). in the form of a vertical slice (a version of a game that lacks some features but still showcases what the final product will look like). Unlike a typical RTS, there will be a larger focus on the world reacting directly to the player as a singular powerful entity and less on long term historical stratergy. As such that world will need to be deeply simulated, comprising a large amount of the technical challenge of the project.
 While the game will be in part targeted at long time RTS players, this change in power balance (alongside a shift into more roleplay focused elements of the genre) is designed to allow a wider audience to engage with a typically complex genre. 
@@ -69,13 +141,14 @@ The C\# (which is Unity's primary coding language) ecosystem is also very broad,
 To assist with the development process, multiple rounds of in-person user testing should occur. The sample of players should be made up of both people familar with the RTS genre and those that are not, ideally spread evenly across that range. Two primary testing rounds should occur, one before an inital version of the game is produced and one afterwards, utilizing a beta version. This beta version can differ from the vertical slice dramatically in terms of completeness but should still be functional.
 Any additional user testing (including online testing) is helpful but should be considered an extension objective given the time constraints.
 
-\subsection{Background Research, Design Problems and Solutions}
+\pagebreak
+\section{Background Research, Design Problems and Solutions}
 
-\subsubsection{Game 1: Stellaris}
+\subsection{Game 1: Stellaris}
 
 Stellaris (2016) is a large scale space-based strategy game, taking place across a substantially sized galaxy. It involves managing an interstaller faction, taking them from their first ships to combating a galaxy wide threat. 
 
-The game puts a heavy emphasis on roleplay right from the beginning of a run. Immediately upon selecting "New Game" you are presented with the screen pictured in Figure 1.
+The game puts a heavy emphasis on roleplay right from the beginning of a run. Immediately upon selecting "New Game" you are presented with the screen pictured in Figure 3.1.
 
 \begin{figure}[h]
     \includegraphics[width=\textwidth]{stellaris_faction_creation.png}
@@ -83,9 +156,9 @@ The game puts a heavy emphasis on roleplay right from the beginning of a run. Im
 \end{figure}
 
 The left side of the screen showcases a list of premade factions (highlighted in yellow) that the player can pick from then customize, these can act as a  jumping off point for player ideas. There is additionally an option to create an entirely unique faction at the very top. 
-Positioned diretly in the center of the screen is the information on the currently selected faction, including; their governmental practices (highlighted in red), their species traits (highlighted in green), their species origin (highlighted in blue) and their faction's flag (highlighted in orange). All these elements (alongside others) create a distinct feeling for this particular faction and, more importantly, they have gameplay ramifications. Within a minute of starting the game proper the faction shown in Figure 1. (an Imperial Divine Empire) was notified it had received a new heir, a special type of unit that acted (in this case) as a scientific advisor.
+Positioned diretly in the center of the screen is the information on the currently selected faction, including; their governmental practices (highlighted in red), their species traits (highlighted in green), their species origin (highlighted in blue) and their faction's flag (highlighted in orange). All these elements (alongside others) create a distinct feeling for this particular faction and, more importantly, they have gameplay ramifications. Within a minute of starting the game proper the faction shown in Figure 3.1. (an Imperial Divine Empire) was notified it had received a new heir, a special type of unit that acted (in this case) as a scientific advisor.
 
-This focus on roleplay is reflected in the reviews for the game, many are simply retellings of their own faction's story. An example of this is pictured in Figure 2.
+This focus on roleplay is reflected in the reviews for the game, many are simply retellings of their own faction's story. An example of this is pictured in Figure 3.2.
 
 \begin{figure}[H]
     \includegraphics[width=\textwidth]{stellaris_positive_review.png}
@@ -107,8 +180,8 @@ While Stellaris succeeds in many areas and is arguably (with it's balance of str
 However, this complexity is an important, and arguably defining, part of the genre \cite{rtsUncertainty}. The principal issue here is how it is introduced to the player. Given this project's intention to, in part, target a wider audience, this issue is quite important. The intended solution is to introduce player elements gradually, in the context of the larger narrative brace of the game this can be expressed as the player's controlled entity turning back on after many years inactive. To enhance replayability players could be allowed to start already in a fully active state rather than repeating the tutorial each time.
 
 Stellaris also suffers from performance issues, particularly in the late game \cite{stellarisPerformanceReview1} \cite{stellarisPerformanceReview2}. Given the relative scales of this project and Stellaris this is a less relevant issue, performance goals are discussed further in a later subsection "Performance and Stability".
-
-\subsubsection{Game 2: Disco Elysium}
+\pagebreak
+\subsection{Game 2: Disco Elysium}
 
 This project's roleplay centric aims require it to take additional inspiration from outside the RTS genre. Disco Elysium (2019) is a detective RPG, famous for it's engaging writing. It has many systems that incentivise roleplay such as its "Thought Cabinet" system, pictured below.
 
@@ -119,15 +192,39 @@ This project's roleplay centric aims require it to take additional inspiration f
 
 "Thoughts" are discovered naturally on your adventure throughout Elysium's world, after being found they can then be slotted into an open position in the cabinet before taking some time to be "internalized". This system mirrors Stellaris's governmental polices, providing an avenue for roleplay but grounding it in a more understandle mechanical benefit/cost. In the case of Disco Elysium, you use a skill point (that could be used on the game's more traditional statistics based leveling system) to unlock more slots in your cabinet. This allows players to make the active choice to engage more with roleplay, potentially trading off a traditional power increase.
 
-Disco Elysium's approach to roleplay has some pain points, in particular the various bottle-neck checks. The primary example is an "Authority" check during a pivotal conversation with Titus Hardie. This check (involving summing the result of two dice and your authority value to try and meet a threshold) is neccesary to move the story forward, with a low enough investment in Authority (a seemingly optional stat up until this point), the chance to pass it can be as low as 3\%. In the context of a game trying to tell a specific story, with a character that values authority as much as Titus, this (despite the potential player frustration) works quite well, however, in a game more centered on player driven narrative it would not. Given the more dynamic form of storytelling this project will seek to employ, it will be important to ensure these bottle necks only appear in a forseeable manner. For example, it makes sense that a faction's military will be tested if it goes to war, hence, potential war declerations should be clearly telegraphed.
+Disco Elysium's approach to roleplay has some pain points, in particular the various bottle-neck checks. The primary example is an "Authority" check during a pivotal conversation with Titus Hardie. This check (involving summing the result of two dice and your Authority value to try and meet a threshold) is neccesary to move the story forward, with a low enough investment in Authority (a seemingly optional statistic up until this point), the chance to pass it can be as low as 3\%. In the context of a game trying to tell a specific story, with a character that values authority as much as Titus, this (despite the potential player frustration) works quite well, however, in this project, centered on player driven narrative, it would not. This project should seek to ensure these bottle necks only appear in a forseeable manner. For example, it makes sense that a faction's military will be tested if it goes to war, hence, a decleration of war should follow logically from previous choices so a player can prepare appropriately.
 
-\subsection{Performance and Stability}
+\subsection{Game 3: Starcraft?}
+
+On the opposite side of the spectrum to Disco Elysium, 
+\pagebreak
+\section{Art Design}
+
+Visuals are an important part of game development but they are not the focus of this report. This section will focus on the system used for large scale rendering (used for celestial bodies) as an example of some of the work done on that side of the game. 
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{celestialbodiesSystemDiagram.jpg}
+    \caption{1D Diagram showcasing how the celestial bodies rendering system functions.}
+\end{figure}
+
+The principal issue is Unity's use of Floats to represent positions, an effort to increase performance for the vast majority of games at the cost of precision. Given the large scale of this project's world, extra precision is key for accurate representation. 
+
+This system takes advantage of the fact that something moving further away and something shrinking (with no point of refrence) are indistinguishable. We calculate how large something should look from the player's perspective, utilizing the higher precision Double type to accurately represent the object's "real" position, before applying the reciprocal result to the object's in egine scale. This means that only the object's scale changes when the player moves and its in engine position stays close to the camera. This is showcased in the diagram above in one dimension. 
+
+ To complete the illusion all celestial objects are rendered using a seperate camera and applied between the skybox and the rest of the rendered objects. This means celestial objects always appear behind (and consequently larger) than everything else.
+
+\section{Simulation Design}
+
+\mynote{Use that draw.io diagram you made}
+\mynote{Simulation is made up of Simulation Manager, Faction routines, Faction data, the Simulation Manager Execution Clamp and the faction drawer}
+
+\section{Performance and Stability}
 
 Crashes and bugs should be kept to an ideal minimum. While the time constraints imposed don't allow the throughness typical of a standard project, ample time can still be allocated to unit testing and the like. The afformentioned rounds of user testing can also assist with this issue.
 
 Alongside functioning as intended, the final version of the project should also run at a consistent and reasonable frame rate (60 frames per second) on low to medium range hardware. Given the relatively low intended visual complexity of the game, this objective is still important but easier to reach than others. Various different pieces of hardware are avaliable for testing, with varying hardware capabilities in each.
 
-\subsection{Formalized Requirements}
+\section{Formalized Requirements}
 Below are the requirements discussed in the above sections formalized into a list;
 \newline
 \newline
@@ -143,7 +240,7 @@ Below are the requirements discussed in the above sections formalized into a lis
 \req{R10}{The game should have UI that accurately describes statistics about the player's faction.}
 \req{R11}{The game should have UI that accurately describes known statistics about NPC factions.}
 
-\subsection{Formalized Extension Requirements}
+\section{Formalized Extension Requirements}
 
 If time allows, there are some additional requirements that would ideally be met;
 \newline
@@ -154,21 +251,8 @@ If time allows, there are some additional requirements that would ideally be met
 \req{E4}{Music. While many royalty free options exist, unique music would help set the mood properly for players.}
 \req{E5}{Releasing the game on Steam. Generally speaking this is a capstone objective and would signal the end of the code side of the project. }
 
-\section{Art Design}
-
-Visuals are an important part of game development but they are not the focus of this report. This section of the report will focus on the system used for large scale rendering (used for celestial bodies) as an example of some of the work done on that side of the game. 
-
-The effect is made of two key parts, an "imposter sphere" shader and a system that converts real-space (As in the simulation position of the object being drawn) coordinates to a visual scale. 
-
-\mynote{could talk about our system for displaying far away large things (shelled size based rendering)}
-
-\section{Simulation Design}
-
-\mynote{Use that draw.io diagram you made}
-\mynote{Simulation is made up of Simulation Manager, Faction routines, Faction data, the Simulation Manager Execution Clamp and the faction drawer}
-
-\section{Project Plan}
-\section{Interim Log}
+\chapter{Project Plan}
+\chapter{Interim Log}
 
 \renewcommand\bibname{References}
 \begin{thebibliography}{9}
@@ -181,7 +265,9 @@ Jónsson, B. Pages 6 to 7, "REPRESENTING UNCERTAINTY IN RTS GAMES"
 \bibitem{stellarisPerformanceReview1}
 "Skullcrusher", "Stellaris Steam Review", "Steam", 11 September 2022, \href{https://steamcommunity.com/profiles/76561198026459371/recommended/281990, "Review Link"}{Link}
 \bibitem{stellarisPerformanceReview2}
-"A Random Fish", "Stellaris Steam Review", "Steam", 18 October 2019, \href{https://steamcommunity.com/id/ARandomFish/recommended/281990. "Review Link"}{Link}
+"A Random Fish", "Stellaris Steam Review", "Steam", 18 October 2019, \href{https://steamcommunity.com/id/ARandomFish/recommended/281990, "Review Link"}{Link}
+\bibitem{additionsLicense}
+"MonitorBreak", "License", "Github", 14 November 2022, \href{https://github.com/Monitor-Break/Additions/blob/main/LICENSE}{Link}
 \end{thebibliography}
 
 \begin{appendices}
