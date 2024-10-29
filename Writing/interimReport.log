@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.5.17)  27 OCT 2024 15:58
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.5.17)  29 OCT 2024 18:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -791,73 +791,141 @@ Package: appendix 2020/02/08 v1.2c extra appendix facilities
 \c@@ppsavesec=\count344
 \c@@ppsaveapp=\count345
 )
+(C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/latex/pgfgantt\pgfgantt.sty
+Package: pgfgantt 2024/06/19 v5.0a Draw Gantt diagrams with TikZ
+
+(C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibraryarrows.code.tex
+File: tikzlibraryarrows.code.tex 2023-01-15 v3.1.10 (3.1.10)
+
+(C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+aryarrows.code.tex
+File: pgflibraryarrows.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\arrowsize=\dimen275
+))
+(C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarybackgrounds.code.tex
+File: tikzlibrarybackgrounds.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@layerbox@background=\box82
+\pgf@layerboxsaved@background=\box83
+)
+(C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarycalc.code.tex
+File: tikzlibrarycalc.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)
+(C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarypatterns.code.tex
+File: tikzlibrarypatterns.code.tex 2023-01-15 v3.1.10 (3.1.10)
+
+(C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
+arypatterns.code.tex
+File: pgflibrarypatterns.code.tex 2023-01-15 v3.1.10 (3.1.10)
+))
+(C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibrarypositioning.code.tex
+File: tikzlibrarypositioning.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)
+(C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
+z/libraries\tikzlibraryshapes.geometric.code.tex
+File: tikzlibraryshapes.geometric.code.tex 2023-01-15 v3.1.10 (3.1.10)
+
+(C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries/shapes\
+pgflibraryshapes.geometric.code.tex
+File: pgflibraryshapes.geometric.code.tex 2023-01-15 v3.1.10 (3.1.10)
+))
+(C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfcalend
+ar.sty
+(C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfcale
+ndar.code.tex
+File: pgfcalendar.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfcalendarcurrentjulian=\count346
+\pgf@cal@easter@Y=\count347
+\pgf@cal@easter@G=\count348
+\pgf@cal@easter@C=\count349
+\pgf@cal@easter@X=\count350
+\pgf@cal@easter@Z=\count351
+\pgf@cal@easter@D=\count352
+\pgf@cal@easter@E=\count353
+\pgf@cal@easter@N=\count354
+\pgf@cal@easter@M=\count355
+\pgf@cal@easter@julianday=\count356
+))
+\gtt@currentline=\count357
+\gtt@lasttitleline=\count358
+\gtt@currgrid=\count359
+\gtt@chartwidth=\count360
+\gtt@lasttitleslot=\count361
+\gtt@elementid=\count362
+\gtt@today@slot=\count363
+\gtt@startjulian=\count364
+\gtt@endjulian=\count365
+\gtt@chartid=\count366
+\gtt@vrule@slot=\count367
+\gtt@calendar@slots=\count368
+\gtt@calendar@weeknumber=\count369
+\gtt@calendar@startofweek=\count370
+\gtt@left@slot=\count371
+\gtt@right@slot=\count372
+)
 (C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
 tex.def
 File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count346
-\l__pdf_internal_box=\box82
+\l__color_backend_stack_int=\count373
+\l__pdf_internal_box=\box84
 ) (interimReport.aux)
 \openout1 = `interimReport.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 44.
-LaTeX Font Info:    ... okay on input line 44.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
 
 (C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
 ii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count347
-\scratchdimen=\dimen275
-\scratchbox=\box83
-\nofMPsegments=\count348
-\nofMParguments=\count349
+\scratchcounter=\count374
+\scratchdimen=\dimen276
+\scratchbox=\box85
+\nofMPsegments=\count375
+\nofMParguments=\count376
 \everyMPshowfont=\toks42
-\MPscratchCnt=\count350
-\MPscratchDim=\dimen276
-\MPnumerator=\count351
-\makeMPintoPDFobject=\count352
+\MPscratchCnt=\count377
+\MPscratchDim=\dimen277
+\MPnumerator=\count378
+\makeMPintoPDFobject=\count379
 \everyMPtoPDFconversion=\toks43
 )
 (C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
 ase.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
-
-(C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/latex/grfext\grfext.sty
-Package: grfext 2019/12/03 v1.3 Manage graphics extensions (HO)
-)
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 85.
-Package grfext Info: Graphics extension search list:
-(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
-G,.JBIG2,.JB2,.eps]
-(grfext)             \AppendGraphicsExtensions on input line 504.
 
 (C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
 fg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-\c@lstlisting=\count353
+\c@lstlisting=\count380
  (C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
 Package: inputenc 2021/02/14 v1.3d Input encoding file
 \inpenc@prehook=\toks44
 \inpenc@posthook=\toks45
 )
-Package hyperref Info: Link coloring OFF on input line 44.
+Package hyperref Info: Link coloring OFF on input line 45.
 (interimReport.out) (interimReport.out)
 \@outlinefile=\write4
 \openout4 = `interimReport.out'.
@@ -867,7 +935,7 @@ Package hyperref Info: Link coloring OFF on input line 44.
 {C:/Users/alexn/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
 Chapter 1.
 
-Underfull \hbox (badness 10000) in paragraph at lines 59--65
+Underfull \hbox (badness 10000) in paragraph at lines 60--66
 
  []
 
@@ -876,319 +944,461 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.65 
+l.66 
       [1
 
 ] [2]
 Chapter 2.
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Overfull \hbox (1.0306pt too wide) in paragraph at lines 70--131
+Overfull \hbox (1.0306pt too wide) in paragraph at lines 71--132
 []$ 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--131
+Underfull \hbox (badness 10000) in paragraph at lines 71--132
 
  []
 
 [3
 
-] [4]
-Chapter 3.
-[5
-
 ]
-<./Images/stellaris_faction_creation.png, id=143, 1927.2pt x 1084.05pt>
-File: ./Images/stellaris_faction_creation.png Graphic file (type png)
-<use ./Images/stellaris_faction_creation.png>
-Package pdftex.def Info: ./Images/stellaris_faction_creation.png  used on input
- line 154.
-(pdftex.def)             Requested size: 345.0pt x 194.06194pt.
-<./Images/stellaris_positive_review.png, id=144, 601.24625pt x 398.48875pt>
-File: ./Images/stellaris_positive_review.png Graphic file (type png)
-<use ./Images/stellaris_positive_review.png>
-Package pdftex.def Info: ./Images/stellaris_positive_review.png  used on input 
-line 164.
-(pdftex.def)             Requested size: 345.0pt x 228.66106pt.
- [6 <./Images/stellaris_faction_creation.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 170--174
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
 
  []
 
-[7 <./Images/stellaris_positive_review.png>]
-<./Images/stellaris_main_screen.png, id=161, 1927.2pt x 1084.05pt>
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 137--221
+
+ []
+
+[4] [5] [6]
+Chapter 3.
+[7
+
+]
+<./Images/stellaris_faction_creation.png, id=184, 1927.2pt x 1084.05pt>
+File: ./Images/stellaris_faction_creation.png Graphic file (type png)
+<use ./Images/stellaris_faction_creation.png>
+Package pdftex.def Info: ./Images/stellaris_faction_creation.png  used on input
+ line 245.
+(pdftex.def)             Requested size: 345.0pt x 194.06194pt.
+<./Images/stellaris_positive_review.png, id=185, 601.24625pt x 398.48875pt>
+File: ./Images/stellaris_positive_review.png Graphic file (type png)
+<use ./Images/stellaris_positive_review.png>
+Package pdftex.def Info: ./Images/stellaris_positive_review.png  used on input 
+line 255.
+(pdftex.def)             Requested size: 345.0pt x 228.66106pt.
+ [8 <./Images/stellaris_faction_creation.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 261--265
+
+ []
+
+[9 <./Images/stellaris_positive_review.png>]
+<./Images/stellaris_main_screen.png, id=201, 1927.2pt x 1084.05pt>
 File: ./Images/stellaris_main_screen.png Graphic file (type png)
 <use ./Images/stellaris_main_screen.png>
 Package pdftex.def Info: ./Images/stellaris_main_screen.png  used on input line
- 176.
+ 267.
 (pdftex.def)             Requested size: 345.0pt x 194.06194pt.
- [8 <./Images/stellaris_main_screen.png (PNG copy)>]
-<./Images/disco_elysium_thoughts_screen.png, id=174, 1443.89438pt x 812.28468pt
+ [10 <./Images/stellaris_main_screen.png (PNG copy)>]
+<./Images/disco_elysium_thoughts_screen.png, id=214, 1443.89438pt x 812.28468pt
 >
 File: ./Images/disco_elysium_thoughts_screen.png Graphic file (type png)
 <use ./Images/disco_elysium_thoughts_screen.png>
 Package pdftex.def Info: ./Images/disco_elysium_thoughts_screen.png  used on in
-put line 189.
+put line 280.
 (pdftex.def)             Requested size: 345.0pt x 194.08469pt.
- [9 <./Images/disco_elysium_thoughts_screen.png>] [10]
-<./Images/celestialbodiesSystemDiagram.jpg, id=185, 682.55pt x 622.325pt>
+ [11 <./Images/disco_elysium_thoughts_screen.png>]
+<./Images/celestialbodiesSystemDiagram.jpg, id=221, 682.55pt x 622.325pt>
 File: ./Images/celestialbodiesSystemDiagram.jpg Graphic file (type jpg)
 <use ./Images/celestialbodiesSystemDiagram.jpg>
 Package pdftex.def Info: ./Images/celestialbodiesSystemDiagram.jpg  used on inp
-ut line 206.
+ut line 293.
 (pdftex.def)             Requested size: 345.0pt x 314.56126pt.
+ [12 <./Images/celestialbodiesSystemDiagram.jpg>]
+Overfull \hbox (15.0pt too wide) in paragraph at lines 307--309
+[][]
+ []
 
-[11 <./Images/celestialbodiesSystemDiagram.jpg>]
-Underfull \hbox (badness 10000) in paragraph at lines 218--220
+
+Underfull \hbox (badness 10000) in paragraph at lines 307--309
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 228--242
+Underfull \hbox (badness 10000) in paragraph at lines 317--331
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 228--242
+Underfull \hbox (badness 10000) in paragraph at lines 317--331
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 228--242
+Underfull \hbox (badness 10000) in paragraph at lines 317--331
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 228--242
+Underfull \hbox (badness 10000) in paragraph at lines 317--331
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 228--242
+Underfull \hbox (badness 10000) in paragraph at lines 317--331
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 228--242
+Underfull \hbox (badness 10000) in paragraph at lines 317--331
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 228--242
+Underfull \hbox (badness 10000) in paragraph at lines 317--331
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 228--242
+Underfull \hbox (badness 10000) in paragraph at lines 317--331
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 228--242
+Underfull \hbox (badness 10000) in paragraph at lines 317--331
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 228--242
+Underfull \hbox (badness 10000) in paragraph at lines 317--331
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 228--242
+Underfull \hbox (badness 10000) in paragraph at lines 317--331
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 228--242
+Underfull \hbox (badness 10000) in paragraph at lines 317--331
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 228--242
+Underfull \hbox (badness 10000) in paragraph at lines 317--331
 
  []
 
-[12]
-Underfull \hbox (badness 10000) in paragraph at lines 245--253
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 245--253
+[13]
+Underfull \hbox (badness 10000) in paragraph at lines 334--342
 
  []
 
 
-Overfull \hbox (0.19449pt too wide) in paragraph at lines 245--253
+Underfull \hbox (badness 10000) in paragraph at lines 334--342
+
+ []
+
+
+Overfull \hbox (0.19449pt too wide) in paragraph at lines 334--342
 \OT1/cmr/m/it/10 boards, show-cas-ing statis-tics such as "Time Sur-vived", "En
 -e-mies Killed", "High-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 245--253
+Underfull \hbox (badness 10000) in paragraph at lines 334--342
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 245--253
+Underfull \hbox (badness 10000) in paragraph at lines 334--342
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 245--253
+Underfull \hbox (badness 10000) in paragraph at lines 334--342
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 245--253
+Underfull \hbox (badness 10000) in paragraph at lines 334--342
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 245--253
+Underfull \hbox (badness 10000) in paragraph at lines 334--342
 
  []
 
-[13] [14]
+[14] [15]
 Chapter 4.
-[15
 
-]
-Chapter 5.
+Overfull \hbox (17.77339pt too wide) in paragraph at lines 351--352
+ []$[]$ 
+ []
+
+
+Overfull \hbox (119.55478pt too wide) in paragraph at lines 411--412
+[][]  
+ []
+
+
+Overfull \hbox (10.00002pt too wide) in paragraph at lines 350--413
+ []$[]$$[]$ 
+ []
+
 [16
 
-] [17
+] [17]
+Chapter 5.
+[18
 
-] [18
+] [19] [20
+
+] [21
 
 
 ]
 Appendix A.
-[19
+[22
 
 ]
-Overfull \hbox (51.89584pt too wide) in paragraph at lines 331--353
+Overfull \hbox (51.89584pt too wide) in paragraph at lines 548--570
 [][]
  []
 
-[20] [21] (interimReport.aux)
+[23] [24] (interimReport.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-04>
  ***********
 Package rerunfilecheck Info: File `interimReport.out' has not changed.
-(rerunfilecheck)             Checksum: 64C326D0D59EA9490A7DD5C548263C43;2665.
+(rerunfilecheck)             Checksum: B73DD5A0C9C9EE0173D5518E734875AA;3918.
  ) 
 Here is how much of TeX's memory you used:
- 27067 strings out of 474486
- 554832 string characters out of 5743755
- 1942542 words of memory out of 5000000
- 48864 multiletter control sequences out of 15000+600000
- 566506 words of font info for 65 fonts, out of 8000000 for 9000
+ 29429 strings out of 474486
+ 616647 string characters out of 5743755
+ 1959542 words of memory out of 5000000
+ 51180 multiletter control sequences out of 15000+600000
+ 566841 words of font info for 66 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 101i,8n,107p,1088b,914s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
-cmbx10.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
-fonts/cm/cmbx12.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/p
-ublic/amsfonts/cm/cmbx7.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts
-/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/alexn/AppData/Local/Programs/MiKT
-eX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/alexn/AppData/Local/Progr
-ams/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/alexn/AppData/Loc
-al/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/alexn/Ap
-pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on interimReport.pdf (22 pages, 8080443 bytes).
+ 101i,12n,107p,1088b,959s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\alexn\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm
+1000.pk><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
+ts/cm/cmbx10.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/amsfonts/cm/cmbx12.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/t
+ype1/public/amsfonts/cm/cmbx7.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX
+/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/alexn/AppData/Local/Program
+s/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/alexn/AppData/Local
+/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/alexn/AppDa
+ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Users/alex
+n/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/U
+sers/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.
+pfb>
+Output written on interimReport.pdf (25 pages, 8111859 bytes).
 PDF statistics:
- 304 PDF objects out of 1000 (max. 8388607)
- 65 named destinations out of 1000 (max. 500000)
- 318 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 362 PDF objects out of 1000 (max. 8388607)
+ 76 named destinations out of 1000 (max. 500000)
+ 382 words of extra memory for PDF output out of 10000 (max. 10000000)
 

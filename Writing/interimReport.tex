@@ -7,6 +7,7 @@
 \usepackage{float}
 \usepackage{hyperref}
 \usepackage[toc,page]{appendix}
+\usepackage{pgfgantt}
 \graphicspath{ {./Images/} }
 
 \makeatletter
@@ -129,6 +130,94 @@ Any other third party usage license obligations have also been met.}
 \underline{For this project, Principle 3 and Principle 4 contain no relevant sections.}
 \end{raggedright}
 
+\section{Ethical Review}
+
+A signed copy of this form is included as an appendix.
+
+This project requires multiple rounds of user testing, this requires an ethical review using Sussex's standard Ethical Compliance Form.
+\begin{raggedright}
+\newline
+\newline
+\textbf{1. Participants were not exposed to any risks greater than those
+encountered in their normal working life.}
+\newline
+\newline
+The game includes no visuals, audio or content that pose a significant risk to participants. Their involvment will include only playing the game and answering questions.
+\newline
+\newline
+\textbf{2. The study materials were paper-based, or comprised software
+running on standard hardware.}
+\newline
+\newline
+The game will run on a standard Windows machine, Google Forms will be used to receive anonymous answers and will be accessed using the same machine.
+\newline
+\newline
+\textbf{3. All participants explicitly stated that they agreed to take part,
+and that their data could be used in the project.}
+\newline
+\newline
+It will be made clear to all participants the nature of the project, all participants will be required to sign a standard consent form for data usage. It will be made clear that they can leave at any time should they no longer feel they want to take part.
+\newline
+\newline
+\textbf{4. No incentives were offered to the participants.}
+\newline
+\newline
+No participants will be offered any incentive for participating, they will all be volunteers attending the university. No incentive will be given to give a particular type (positive or negative) of feedback.
+\newline
+\newline
+\textbf{5. No information about the evaluation or materials was intentionally withheld
+from the participants}
+\newline
+\newline
+Participants will be told upfront the full scope and nature of the project.
+\newline
+\newline
+\textbf{6. No participant was under the age of 18}
+\newline
+\newline
+All participants will have their ages verified prior to their participation.
+\newline
+\newline
+\textbf{7. No participant had a disability or impairment that may limit their understanding
+or communication.}
+\newline
+\newline
+All participants will be able-bodied university students, that they are in an appriopriate state of health will be verified prior to user testing.
+\newline
+\newline
+\textbf{8. Neither I nor my supervisor is in a position of authority or influence over any of
+the participants.}
+\newline
+\newline
+All participants will be my university peers and none will share my supervisor if they are also doing their final year project. Their feedback will also be kept seperate from their identity to ensure they cannot be linked to particular criticism.
+\newline
+\newline
+\textbf{9. All participants were informed that they could withdraw at any time.}
+\newline
+\newline
+It will be made clear to all participants, both at the beginning and at various stages throughout the process, they are allowed to withdraw (for any reason) at any time.
+\newline
+\newline
+\textbf{10. All participants have been informed of my contact details, and the contact details
+of my supervisor.}
+\newline
+\newline
+This information will be provided on a seperate piece of paper, alongside a basic written breakdown of the project.
+\newline
+\newline
+\textbf{11. The evaluation was discussed with all of the participants at the end of the
+session, and all participants had the opportunity to ask questions.}
+\newline
+\newline
+Participants will be allowed to ask questions at any point during the process. Appropriate time will be allocated at the end of the user testing session to allow for additional questions and a discussion on the evaluation.
+\newline
+\newline
+\textbf{12. All the data collected from the participants is stored securely, and in an
+anonymous form.}
+\newline
+\newline
+All responses will be secured behind access to my password and 2FA protected google account before being moved to my password protected PC. Any identifiable information will be redacted.
+\end{raggedright}
 
 \chapter{Requirements Analysis}
 
@@ -137,6 +226,8 @@ While the game will be in part targeted at long time RTS players, this change in
 
 This project uses Unity instead of a custom engine, the primary reason for this choice is my familiarity with it's workflow. I've previously created a full game using Unity (including shipping it to Steam) and I greatly enjoy its flexibility. Unity makes it easy to extend the editor through creating additional context menu items and entirely new editor tools. 
 The C\# (which is Unity's primary coding language) ecosystem is also very broad, with a collosal number of resources to pull from. 
+
+I additionally chose not to use this project as an opportunity to learn a new engine as no other contemporary engines seemed fit to purpose. Unreal includes many systems that are superfluous for this project (e.g. Blueprints, Nanite, etc.) and I'm also unfamiliar with C++ to an extent where large practical issues could arise (such as poor design planning, language specific pitfalls, etc.). Godot was initially a contender for my engine of choice (I also have some minor previous experience with it), however, I quickly found tension between myself and it's scripting language of choice GDScript. The primary issue that arose during testing is that I wanted engines to work in a similar manner to Unity when they had clear differing approaches to design (e.g., Godot's node based workflow).
 
 To assist with the development process, multiple rounds of in-person user testing should occur. The sample of players should be made up of both people familar with the RTS genre and those that are not, ideally spread evenly across that range. Two primary testing rounds should occur, one before an inital version of the game is produced and one afterwards, utilizing a beta version. This beta version can differ from the vertical slice dramatically in terms of completeness but should still be functional.
 Any additional user testing (including online testing) is helpful but should be considered an extension objective given the time constraints.
@@ -194,10 +285,6 @@ This project's roleplay centric aims require it to take additional inspiration f
 
 Disco Elysium's approach to roleplay has some pain points, in particular the various bottle-neck checks. The primary example is an "Authority" check during a pivotal conversation with Titus Hardie. This check (involving summing the result of two dice and your Authority value to try and meet a threshold) is neccesary to move the story forward, with a low enough investment in Authority (a seemingly optional statistic up until this point), the chance to pass it can be as low as 3\%. In the context of a game trying to tell a specific story, with a character that values authority as much as Titus, this (despite the potential player frustration) works quite well, however, in this project, centered on player driven narrative, it would not. This project should seek to ensure these bottle necks only appear in a forseeable manner. For example, it makes sense that a faction's military will be tested if it goes to war, hence, a decleration of war should follow logically from previous choices so a player can prepare appropriately.
 
-\subsection{Game 3: Starcraft?}
-
-On the opposite side of the spectrum to Disco Elysium, 
-\pagebreak
 \section{Art Design}
 
 Visuals are an important part of game development but they are not the focus of this report. This section will focus on the system used for large scale rendering (used for celestial bodies) as an example of some of the work done on that side of the game. 
@@ -209,11 +296,13 @@ Visuals are an important part of game development but they are not the focus of 
 
 The principal issue is Unity's use of Floats to represent positions, an effort to increase performance for the vast majority of games at the cost of precision. Given the large scale of this project's world, extra precision is key for accurate representation. 
 
-This system takes advantage of the fact that something moving further away and something shrinking (with no point of refrence) are indistinguishable. We calculate how large something should look from the player's perspective, utilizing the higher precision Double type to accurately represent the object's "real" position, before applying the reciprocal result to the object's in egine scale. This means that only the object's scale changes when the player moves and its in engine position stays close to the camera. This is showcased in the diagram above in one dimension. 
+This system takes advantage of the fact that something moving further away and something shrinking (with no point of reference) are indistinguishable. We calculate how large something should look from the player's perspective, utilizing the higher precision Double type to accurately represent the object's "real" position, before applying the reciprocal result to the object's in engine scale. This means that only the object's scale changes when the player moves and its in engine position stays close to the camera. This is showcased in the diagram above in one dimension. Our principal problem is solved here because we can apply a general modifier to the final output scale, shrinking it into a range that floats can accurately represent.
 
  To complete the illusion all celestial objects are rendered using a seperate camera and applied between the skybox and the rest of the rendered objects. This means celestial objects always appear behind (and consequently larger) than everything else.
 
 \section{Simulation Design}
+
+This project's simulation prioritizes flexibility.
 
 \mynote{Use that draw.io diagram you made}
 \mynote{Simulation is made up of Simulation Manager, Faction routines, Faction data, the Simulation Manager Execution Clamp and the faction drawer}
@@ -252,7 +341,135 @@ If time allows, there are some additional requirements that would ideally be met
 \req{E5}{Releasing the game on Steam. Generally speaking this is a capstone objective and would signal the end of the code side of the project. }
 
 \chapter{Project Plan}
+
+\section{Gantt Chart}
+
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+\begin{figure}[H]
+\centering
+\begin{minipage}{1em} \raggedleft
+	\textbf{\underline{Tasks}}\newline\newline\newline\newline\newline\newline\newline\newline\newline\newline\newline\newline\newline\newline\newline\newline
+\end{minipage}%
+\begin{minipage}{\textwidth}
+ \raggedright
+		\begin{ganttchart}[y unit title=0.4cm,
+    y unit chart=0.5cm,
+    vgrid,hgrid, 
+    title label anchor/.style={below=-1.6ex},
+    title height=1,
+    progress label text={},
+    title label font=\tiny,
+    bar height=0.7,
+    group right shift=0,
+    group top shift=.6,
+    group height=.3]{1}{26}
+%labels
+    \gantttitle{W1}{1} 
+    \gantttitle{W2}{1} 
+    \gantttitle{W3}{1} 
+    \gantttitle{W4}{1} 
+    \gantttitle{W5}{1} 
+    \gantttitle{W6}{1} 
+    \gantttitle{W7}{1} 
+    \gantttitle{W8}{1} 
+    \gantttitle{W9}{1} 
+    \gantttitle{W10}{1} 
+    \gantttitle{W11}{1} 
+    \gantttitle{W12}{1}  
+    \gantttitle{CR-BR}{2} 
+    \gantttitle{W1}{1} 
+    \gantttitle{W2}{1} 
+    \gantttitle{W3}{1} 
+    \gantttitle{W4}{1} 
+    \gantttitle{W5}{1} 
+    \gantttitle{W6}{1} 
+    \gantttitle{W7}{1} 
+    \gantttitle{W8}{1} 
+    \gantttitle{W9}{1} 
+    \gantttitle{W10}{1} 
+    \gantttitle{W11}{1} 
+    \gantttitle{W12}{1}  
+\\
+%tasks
+    	\ganttbar{Beta Version}{1}{12} \\ 
+    	\ganttbar{Vertical Slice}{13}{22} \\ 
+	\ganttbar{Art Design}{3}{15} \\
+	\ganttbar{Sound Design}{14}{16} \\ \\
+    	\ganttbar{Proposal}{1}{2} \\
+    	\ganttbar{Research}{3}{6} \\
+    	\ganttbar{Interim Report}{3}{7} \\
+    	\ganttbar{Initial User Testing}{9}{12} \\
+    	\ganttbar{Beta User Testing}{15}{18} \\
+    	\ganttbar{Draft Report}{17}{20} \\
+    	\ganttbar{Poster}{19}{19} \\
+    	\ganttbar{Final Report}{21}{26} 
+    %relations 
+    \ganttlink{elem0}{elem1} 
+    \ganttlink{elem7}{elem8} 
+    \ganttlink{elem0}{elem8} 
+    \ganttlink{elem9}{elem11} 
+		\end{ganttchart}
+\end{minipage}
+
+\end{figure}
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+
+\section{Description of Tasks}
+
+\begin{itemize}
+  \item \textbf{Beta Version}: An initial, fairly rough version of the game that lacks polish but functions. This version will be used for additional user testing.
+  \item \textbf{Vertical Slice}: A version of the game that will act as the final version for this project (unless time allows for further additions). It will lack some features but will be fully playable.
+  \item \textbf{Art Design}: This task runs concurrently to the coding of the game. It does not take up as much project time as it's length on the Gantt Chart implies and is more of an assisting task to Task 1 and Task 2. It involves creation of 3D models, shaders and technical effects.
+  \item \textbf{Sound Design}: Similar to the task above, acts an assisting task to make other parts of the game work. Sound Design will be done in a shorter burst towards the end of the coding process, unlike Art Design. This task involves the creation of sound effects.
+  \item \textbf{Proposal}: Initial project proposal outlining the scope and goals of the project. Included as an appendix.
+  \item \textbf{Research}: This task runs concurrently to the writing of the interim report. It mainly involves looking at specific games with some relation to the project and pulling design lessons from them.
+  \item \textbf{Interim Report}: This document.
+  \item \textbf{Initial User Testing}: First round of user testing, utilizing questions formed from background research. This task later informs the Beta User Testing Task.
+  \item \textbf{Beta User Testing}: Secondary round of user testing, performed with a playable version of the game outlined in Task 1 and insights gained from initial user testing.
+  \item \textbf{Draft Report}: First Draft of my Final Report, sent to my supervisor well before the final due date.
+  \item \textbf{Poster}: This task involves the creation of a Poster for the poster event. 
+  \item \textbf{Final Report}: The final task of the project, involves detailing the full development process. Given the scope of the project I find it unlikely the Vertical Slice will be finished before the Final Report is started.
+\end{itemize}
+
 \chapter{Interim Log}
+
+\section{Project Plan Completion Log}
+
+As of the submission of this report several steps have already been completed, namely the Proposal, Research and Interim Report tasks. Work has also begun on the Beta Version and Art design tasks. For the former this includes camera movement, simulation management, a world map and various other loadbearing systems. For the latter this mainly includes the large scale rendering system detailed in the Art Design section above, alongside various shaders and an outline post processing effect.
+
+\section{Meetings Log}
+
+\subsection{Meeting 1: 03/10/2024}
+
+This was an initial group meeting with all students being supervised by Dr Newbury present. During the meeting we:
+\begin{itemize}
+  \item Discussed the general expectations from our supervisor. 
+  \item Discussed what was expected of us in our project proposals. 
+  \item Organized individual follow up meetings. 
+\end{itemize}
+
+\subsection{Meeting 2: 08/10/2024}
+
+This was my first individual meeting, it took place after I had submitted a finalized project proposal (included as an appendix). This version only differed slightly from my initial version. During the meeting we:
+\begin{itemize}
+  \item Discussed the structure of the upcoming interim report. This took up the majority of the meeting.
+  \item Discussed how typically I would be advised to begin messing around with Unity at this stage. Due to my previous experience I should instead focus on writing the interim report. 
+  \item Agreed that I should send at least my introduction by our next meeting so it could be properly discussed.
+  \item Discussed how much the art design side of game development should be featured in the report.
+\end{itemize}
+
+\subsection{Meeting 3: 22/10/2024}
+
+This was my secondary individual meeting, during this meeting I was in the middle of writing my interim report. During the meeting we:
+\begin{itemize}
+  \item Discussed my introduction and the general structure of my report up to this point (e.g. folding the current Background Research section into Requirements Analysis).
+  \item Rediscussed the larger structure of the report still to be written. This including deeper discussion on the Professional Considerations and Requirements Analysis sections.
+  \item Discussed the difference between a Bibliography and Refrences page. My Bibliography was then replaced with only references.
+\end{itemize}
+
+\subsection{Meeting 4: 04/11/2024}
+
+\textit{Not yet occurred.}
 
 \renewcommand\bibname{References}
 \begin{thebibliography}{9}
