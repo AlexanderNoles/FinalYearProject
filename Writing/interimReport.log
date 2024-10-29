@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.5.17)  29 OCT 2024 18:03
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.5.17)  29 OCT 2024 18:14
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -791,6 +791,18 @@ Package: appendix 2020/02/08 v1.2c extra appendix facilities
 \c@@ppsavesec=\count344
 \c@@ppsaveapp=\count345
 )
+(C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/latex/ulem\ulem.sty
+\UL@box=\box82
+\UL@hyphenbox=\box83
+\UL@skip=\skip56
+\UL@hook=\toks42
+\UL@height=\dimen275
+\UL@pe=\count346
+\UL@pixel=\dimen276
+\ULC@box=\box84
+Package: ulem 2019/11/18
+\ULdepth=\dimen277
+)
 (C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/latex/pgfgantt\pgfgantt.sty
 Package: pgfgantt 2024/06/19 v5.0a Draw Gantt diagrams with TikZ
 
@@ -801,13 +813,13 @@ File: tikzlibraryarrows.code.tex 2023-01-15 v3.1.10 (3.1.10)
 (C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibr
 aryarrows.code.tex
 File: pgflibraryarrows.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\arrowsize=\dimen275
+\arrowsize=\dimen278
 ))
 (C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
 z/libraries\tikzlibrarybackgrounds.code.tex
 File: tikzlibrarybackgrounds.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgf@layerbox@background=\box82
-\pgf@layerboxsaved@background=\box83
+\pgf@layerbox@background=\box85
+\pgf@layerboxsaved@background=\box86
 )
 (C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tik
 z/libraries\tikzlibrarycalc.code.tex
@@ -838,76 +850,76 @@ ar.sty
 (C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfcale
 ndar.code.tex
 File: pgfcalendar.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfcalendarcurrentjulian=\count346
-\pgf@cal@easter@Y=\count347
-\pgf@cal@easter@G=\count348
-\pgf@cal@easter@C=\count349
-\pgf@cal@easter@X=\count350
-\pgf@cal@easter@Z=\count351
-\pgf@cal@easter@D=\count352
-\pgf@cal@easter@E=\count353
-\pgf@cal@easter@N=\count354
-\pgf@cal@easter@M=\count355
-\pgf@cal@easter@julianday=\count356
+\pgfcalendarcurrentjulian=\count347
+\pgf@cal@easter@Y=\count348
+\pgf@cal@easter@G=\count349
+\pgf@cal@easter@C=\count350
+\pgf@cal@easter@X=\count351
+\pgf@cal@easter@Z=\count352
+\pgf@cal@easter@D=\count353
+\pgf@cal@easter@E=\count354
+\pgf@cal@easter@N=\count355
+\pgf@cal@easter@M=\count356
+\pgf@cal@easter@julianday=\count357
 ))
-\gtt@currentline=\count357
-\gtt@lasttitleline=\count358
-\gtt@currgrid=\count359
-\gtt@chartwidth=\count360
-\gtt@lasttitleslot=\count361
-\gtt@elementid=\count362
-\gtt@today@slot=\count363
-\gtt@startjulian=\count364
-\gtt@endjulian=\count365
-\gtt@chartid=\count366
-\gtt@vrule@slot=\count367
-\gtt@calendar@slots=\count368
-\gtt@calendar@weeknumber=\count369
-\gtt@calendar@startofweek=\count370
-\gtt@left@slot=\count371
-\gtt@right@slot=\count372
+\gtt@currentline=\count358
+\gtt@lasttitleline=\count359
+\gtt@currgrid=\count360
+\gtt@chartwidth=\count361
+\gtt@lasttitleslot=\count362
+\gtt@elementid=\count363
+\gtt@today@slot=\count364
+\gtt@startjulian=\count365
+\gtt@endjulian=\count366
+\gtt@chartid=\count367
+\gtt@vrule@slot=\count368
+\gtt@calendar@slots=\count369
+\gtt@calendar@weeknumber=\count370
+\gtt@calendar@startofweek=\count371
+\gtt@left@slot=\count372
+\gtt@right@slot=\count373
 )
 (C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
 tex.def
 File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count373
-\l__pdf_internal_box=\box84
+\l__color_backend_stack_int=\count374
+\l__pdf_internal_box=\box87
 ) (interimReport.aux)
 \openout1 = `interimReport.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 45.
-LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
 
 (C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
 ii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count374
-\scratchdimen=\dimen276
-\scratchbox=\box85
-\nofMPsegments=\count375
-\nofMParguments=\count376
-\everyMPshowfont=\toks42
-\MPscratchCnt=\count377
-\MPscratchDim=\dimen277
-\MPnumerator=\count378
-\makeMPintoPDFobject=\count379
-\everyMPtoPDFconversion=\toks43
+\scratchcounter=\count375
+\scratchdimen=\dimen279
+\scratchbox=\box88
+\nofMPsegments=\count376
+\nofMParguments=\count377
+\everyMPshowfont=\toks43
+\MPscratchCnt=\count378
+\MPscratchDim=\dimen280
+\MPnumerator=\count379
+\makeMPintoPDFobject=\count380
+\everyMPtoPDFconversion=\toks44
 )
 (C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
 ase.sty
@@ -919,13 +931,13 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 fg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-\c@lstlisting=\count380
+\c@lstlisting=\count381
  (C:\Users\alexn\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
 Package: inputenc 2021/02/14 v1.3d Input encoding file
-\inpenc@prehook=\toks44
-\inpenc@posthook=\toks45
+\inpenc@prehook=\toks45
+\inpenc@posthook=\toks46
 )
-Package hyperref Info: Link coloring OFF on input line 45.
+Package hyperref Info: Link coloring OFF on input line 46.
 (interimReport.out) (interimReport.out)
 \@outlinefile=\write4
 \openout4 = `interimReport.out'.
@@ -935,7 +947,7 @@ Package hyperref Info: Link coloring OFF on input line 45.
 {C:/Users/alexn/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
 Chapter 1.
 
-Underfull \hbox (badness 10000) in paragraph at lines 60--66
+Underfull \hbox (badness 10000) in paragraph at lines 61--66
 
  []
 
@@ -1377,11 +1389,11 @@ Package rerunfilecheck Info: File `interimReport.out' has not changed.
 (rerunfilecheck)             Checksum: B73DD5A0C9C9EE0173D5518E734875AA;3918.
  ) 
 Here is how much of TeX's memory you used:
- 29429 strings out of 474486
- 616647 string characters out of 5743755
+ 29518 strings out of 474486
+ 617766 string characters out of 5743755
  1959542 words of memory out of 5000000
- 51180 multiletter control sequences out of 15000+600000
- 566841 words of font info for 66 fonts, out of 8000000 for 9000
+ 51264 multiletter control sequences out of 15000+600000
+ 566947 words of font info for 67 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  101i,12n,107p,1088b,959s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\alexn\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm
@@ -1396,7 +1408,7 @@ ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Users/alex
 n/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/U
 sers/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.
 pfb>
-Output written on interimReport.pdf (25 pages, 8111859 bytes).
+Output written on interimReport.pdf (25 pages, 8112427 bytes).
 PDF statistics:
  362 PDF objects out of 1000 (max. 8388607)
  76 named destinations out of 1000 (max. 500000)
