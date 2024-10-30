@@ -46,7 +46,11 @@
 \begin{document}
 
 \title{Interim Report \\
-\textit{3D Video Game: Hope and Control}}
+\textit{3D Video Game: Hope and Control}
+\newline
+\newline
+\newline
+\normalsize Word Count: 4600}
 \author{267533}
 
 \maketitle
@@ -61,7 +65,7 @@ To allow the player to make immediate, impactful decisions at the beginning of a
 To ensure that the player's actions result in dynamic outcomes, the faction simulation will also need to be suitably complex. As such, this project takes a code-agnostic, data driven approach. This involves keeping faction data separate from any given simulation element, as opposed to a typical object-oriented approach, which would intertwine them. This allows simulation modules to be designed and implemented in a flexible manner, as well as allowing extra simulation elements to be added easily as an extension goal.
 \newline
 \newline
-This report consists of several sections, the first of which is "Professional Considerations", where the BCS Code of Conduct is broken down by section. An ethical review is also included, discussing this project's plan for user testing and acquiring consent for personal data collection in detail. Next is "Requirements Analysis", which outlines the objectives of the project in distinct steps alongside expanding on the explanation of the problem space and my solutions. This includes background research on games in the genre and proposed solutions to game design issues found within. After that is "Art Design", which details some techniques used to render the large scale solar system, \sout {follwed by "Simulation Design". That section of the report discusses in detail all the parts that make up the simulation's structure, with some expansion on specific finer details.}
+This report consists of several sections, the first of which is "Professional Considerations", where the BCS Code of Conduct is broken down by section. An ethical review is also included, discussing this project's plan for user testing and acquiring consent for personal data collection in detail. Next is "Requirements Analysis", which outlines the objectives of the project in distinct steps alongside expanding on the explanation of the problem space and my solutions. This includes background research on games in the genre and proposed solutions to game design issues found within, alongside a brief section on "Art Design". That subsection details some techniques used to render the large ssolar system as an example of some of the work done on the visual side of the game.
 Next is the "Project Plan", consisting of a breakdown of the work required to complete the project into distinct phases, illustrated using a Gantt chart alongside written explanations. Then there is an "Interim Log" detailing the steps of the Project Plan completed as of the submission of this Interim Report and meetings with this project's supervisor. Finally, there are the refrences and appendices.
 
 \chapter{Professional Considerations}
@@ -300,13 +304,6 @@ This system takes advantage of the fact that something moving further away and s
 
  To complete the illusion all celestial objects are rendered using a seperate camera and applied between the skybox and the rest of the rendered objects. This means celestial objects always appear behind (and consequently larger) than everything else.
 
-\section{Simulation Design}
-
-This project's simulation prioritizes flexibility.
-
-\mynote{Use that draw.io diagram you made}
-\mynote{Simulation is made up of Simulation Manager, Faction routines, Faction data, the Simulation Manager Execution Clamp and the faction drawer}
-
 \section{Performance and Stability}
 
 Crashes and bugs should be kept to an ideal minimum. While the time constraints imposed don't allow the throughness typical of a standard project, ample time can still be allocated to unit testing and the like. The afformentioned rounds of user testing can also assist with this issue.
@@ -376,7 +373,7 @@ If time allows, there are some additional requirements that would ideally be met
     \gantttitle{W10}{1} 
     \gantttitle{W11}{1} 
     \gantttitle{W12}{1}  
-    \gantttitle{CR-BR}{2} 
+    \gantttitle{Break}{2} 
     \gantttitle{W1}{1} 
     \gantttitle{W2}{1} 
     \gantttitle{W3}{1} 
@@ -474,17 +471,17 @@ This was my secondary individual meeting, during this meeting I was in the middl
 \renewcommand\bibname{References}
 \begin{thebibliography}{9}
 \bibitem{stellarisBeginner}
-Stellaris Community, "Beginner's guide", "Stellaris WIki", 21 October 2024, \href{https://stellaris.paradoxwikis.com/Beginner\%27s_guide, Beginner's guide Link}{Beginner's Guide}
+Stellaris Community, "Beginner's guide", "Stellaris WIki", 21 October 2024, \href{https://stellaris.paradoxwikis.com/Beginner\%27s_guide}{https://stellaris.paradoxwikis.com/Beginner\%27s\_guide}
 \bibitem{stellarisBattleDecision}
-Stellaris Community, "Crisis/Endgame crisis factions/Extradimensional Invaders/Successfully repelling the Extradimensional Invaders", "Stellaris Wiki", 18 October 2024, \href{https://stellaris.paradoxwikis.com/Crisis#Successfully_repelling_the_Extradimensional_Invaders, Crisis Solution Link}{Extradimensional Invaders Stratergy}
+Stellaris Community, "Crisis/Endgame crisis factions/Extradimensional Invaders/Successfully repelling the Extradimensional Invaders", "Stellaris Wiki", 18 October 2024, \href{https://stellaris.paradoxwikis.com/Crisis#Successfully_repelling_the_Extradimensional_Invaders, Crisis Solution Link}{https://stellaris.paradoxwikis.com/Crisis}
 \bibitem{rtsUncertainty}
 Jónsson, B. Pages 6 to 7, "REPRESENTING UNCERTAINTY IN RTS GAMES"
 \bibitem{stellarisPerformanceReview1}
-"Skullcrusher", "Stellaris Steam Review", "Steam", 11 September 2022, \href{https://steamcommunity.com/profiles/76561198026459371/recommended/281990, "Review Link"}{Link}
+"Skullcrusher", "Stellaris Steam Review", "Steam", 11 September 2022, \href{https://steamcommunity.com/profiles/76561198026459371/recommended/281990, "Review Link"}{https://steamcommunity.com/profiles/76561198026459371/recommended/281990}
 \bibitem{stellarisPerformanceReview2}
-"A Random Fish", "Stellaris Steam Review", "Steam", 18 October 2019, \href{https://steamcommunity.com/id/ARandomFish/recommended/281990, "Review Link"}{Link}
+"A Random Fish", "Stellaris Steam Review", "Steam", 18 October 2019, \href{https://steamcommunity.com/id/ARandomFish/recommended/281990, "Review Link"}{https://steamcommunity.com/id/ARandomFish/recommended/281990}
 \bibitem{additionsLicense}
-"MonitorBreak", "License", "Github", 14 November 2022, \href{https://github.com/Monitor-Break/Additions/blob/main/LICENSE}{Link}
+"MonitorBreak", "License", "Github", 14 November 2022, \href{https://github.com/Monitor-Break/Additions/blob/main/LICENSE}{https://github.com/Monitor-Break/Additions/blob/main/LICENSE}
 \end{thebibliography}
 
 \begin{appendices}

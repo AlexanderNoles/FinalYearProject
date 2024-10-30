@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SimulationManager : MonoBehaviour
 {
@@ -17,36 +18,66 @@ public class SimulationManager : MonoBehaviour
     private static SimulationManager instance;
     private Task tickTask;
     private List<Faction> factions = new List<Faction>();
-    private List<RoutineBase> routines = new List<RoutineBase>();
+    private List<RoutineBase> constantRoutines = new List<RoutineBase>();
+    private List<RoutineBase> initRoutines = new List<RoutineBase>();
 
     //As per the inital design constriction this script always executes after every other (non unity) script.
     //This does not mean it is the final code executed in the frame, we have no control over the execution order outside of scripts
     private void Awake()
     {
         instance = this;
-        //Add test faction
-        factions.Add(new Faction());
+
+        //Add game world faction
+        AddFaction(new GameWorld());
+
+        const int testCount = 2;
+        for (int i = 0; i < testCount; i++)
+        {
+            //Add test factions
+            Nation nation = new Nation();
+            AddFaction(nation);
+        }
+
         //Add all routine instances
-        routines = SimulationRoutineExecution.Main(gameObject);
+        (constantRoutines, initRoutines) = SimulationRoutineExecution.Main(gameObject);
+    }
+
+    private void Start()
+    {
+        //Run a instant simulation tick to do init ticks for inital factions
+        InitSimulationTick(true);
+    }
+
+    public static void AddFaction(Faction newFaction)
+    {
+        instance.factions.Add(newFaction);
     }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class ActiveSimulationRoutine : Attribute 
     {
         public int priority;
+        public bool initRoutine;
 
-        public ActiveSimulationRoutine(int priority)
+        /// <summary>
+        /// Construct Active Simulation Routine
+        /// </summary>
+        /// <param name="priority">Routines Priority, higher priority means it is run first each tick. In range -10000 to 10000</param>
+        /// <param name="initRoutine">Should this routine only be run once (on the first tick the faction is created)?</param>
+        public ActiveSimulationRoutine(int priority, bool initRoutine = false)
         {
-            this.priority = priority;
+            this.priority = Mathf.Clamp(priority, -10000, 10000);
+            this.initRoutine = initRoutine;
         }
     }
 
     public class SimulationRoutineExecution : MonoBehaviour
     {
-        public static List<RoutineBase> Main(GameObject parent)
+        public static (List<RoutineBase>, List<RoutineBase>) Main(GameObject parent)
         {
-            List<RoutineBase> toReturn = new List<RoutineBase>();
-            List<(int, Type)> rountineClasses = new List<(int, Type)>();
+            List<RoutineBase> activeRoutines = new List<RoutineBase>();
+            List<RoutineBase> initRoutines = new List<RoutineBase>();
+            List<(ActiveSimulationRoutine, Type)> rountineClasses = new List<(ActiveSimulationRoutine, Type)>();
 
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -56,32 +87,44 @@ public class SimulationManager : MonoBehaviour
                     if (routine != null)
                     {
                         //Add to routine classes based on priority
-                        if (rountineClasses.Count == 0)
+                        int routinePriority = routine.priority;
+
+                        bool added = false;
+                        for (int i = 0; i < rountineClasses.Count; i++)
                         {
-                            rountineClasses.Add((routine.priority, type));
-                        }
-                        else
-                        {
-                            for (int i = 0; i < rountineClasses.Count; i++)
+                            if (routinePriority > rountineClasses[i].Item1.priority)
                             {
-                                if (routine.priority > rountineClasses[i].Item1)
-                                {
-                                    rountineClasses.Insert(i, (routine.priority, type));
-                                    break;
-                                }
+                                rountineClasses.Insert(i, (routine, type));
+                                added = true;
+                                break;
                             }
+                        }
+
+                        if (!added)
+                        {
+                            //Add to end of list
+                            //Will occur if lowest pri or list is empty (which still means it is lowest pri)
+                            rountineClasses.Add((routine, type));
                         }
                     }
                 }
             }
 
-            foreach ((int, Type) type in rountineClasses)
+            foreach ((ActiveSimulationRoutine, Type) type in rountineClasses)
             {
                 //Because the types where sorted based on priority they are displayed in priority order on the target gameobject
-                toReturn.Add(parent.AddComponent(type.Item2) as RoutineBase);
+                RoutineBase newRoutine = parent.AddComponent(type.Item2) as RoutineBase;
+                if (type.Item1.initRoutine)
+                {
+                    initRoutines.Add(newRoutine);
+                }
+                else
+                {
+                    activeRoutines.Add(newRoutine);
+                }
             }
 
-            return toReturn;
+            return (activeRoutines, initRoutines);
         }
     }
 
@@ -107,7 +150,6 @@ public class SimulationManager : MonoBehaviour
             if (instance.tickTask != null)
             {
                 instance.tickTask.Wait();
-
                 instance.tickTask = null;
             }
         }
@@ -116,18 +158,45 @@ public class SimulationManager : MonoBehaviour
     //Simulation Tick
     private void SimulationTick()
     {
+        bool runInitRoutines = false;
+
         //We run each rountine on each faction rather than each faction on every routine so later routines can react to other factions previous routines
-        foreach (RoutineBase routine in routines)
+        foreach (RoutineBase routine in constantRoutines)
         {
             foreach (Faction faction in factions)
             {
-                if (routine.Check(null))
+                if (faction.hasRunInit)
                 {
-                    routine.Run(null);
+                    if (routine.Check(faction))
+                    {
+                        routine.Run(faction);
+                    }
+                }
+                else
+                {
+                    runInitRoutines = true;
                 }
             }
         }
 
+        if (!runInitRoutines)
+        {
+            return;
+        }
+
+        foreach (RoutineBase routine in initRoutines)
+        {
+            foreach (Faction faction in factions)
+            {
+                if (!faction.hasRunInit)
+                {
+                    if (routine.Check(faction))
+                    {
+                        routine.Run(faction);
+                    }
+                }
+            }
+        }
     }
 
     //End of scripts

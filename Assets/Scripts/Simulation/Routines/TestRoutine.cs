@@ -6,8 +6,5 @@ using MonitorBreak.Bebug;
 [SimulationManager.ActiveSimulationRoutine(-1)]
 public class TestRoutine : RoutineBase
 {
-    public override void Run(Faction faction)
-    {
-        Console.Log("Test Routine Run");
-    }
+
 }
