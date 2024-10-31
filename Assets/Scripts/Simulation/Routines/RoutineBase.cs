@@ -4,13 +4,8 @@ using UnityEngine;
 
 public class RoutineBase : MonoBehaviour
 {
-    public virtual void Run(Faction faction)
+    public virtual void Run()
     {
 
-    }
-
-    public virtual bool Check(Faction faction)
-    {
-        return true;
     }
 }

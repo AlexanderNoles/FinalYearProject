@@ -4,10 +4,35 @@ using UnityEngine;
 
 public class Faction
 {
-    public bool hasRunInit = false;
-
-    public virtual FactionData GetFactionData()
+    //Tags
+    public enum Tags
     {
-        return null;
+        //This is a global tag that allows routines to grab every faction
+        Faction,
+        //
+        Nation,
+        GameWorld
+    }
+
+    public void AddTag(Tags tag)
+    {
+        //Add to simulation manager tag find system
+        SimulationManager.AddFactionOfTag(tag, this);
+    }
+
+    public void RemoveTag(Tags tag)
+    {
+        //Remove from simulation manager tag find system
+        SimulationManager.RemoveFactionOfTag(tag, this);
+    }
+
+    public void Simulate()
+    {
+        InitTags();
+    }
+
+    public virtual void InitTags()
+    {
+        AddTag(Tags.Faction);
     }
 }

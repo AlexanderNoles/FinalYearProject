@@ -5,16 +5,15 @@ using MonitorBreak.Bebug;
 
 //High priority so world runs before all other init ticks
 [SimulationManager.ActiveSimulationRoutine(100, true)]
-public class GameWorldInit : RoutineBase
+public class GameWorldInit : InitRoutineBase
 {
-    public override bool Check(Faction faction)
+    public override bool TagsUpdatedCheck(HashSet<Faction.Tags> tags)
     {
-        return faction.GetFactionData().HasTag(FactionData.Tags.GameWorld);
+        return tags.Contains(Faction.Tags.GameWorld);
     }
 
-    public override void Run(Faction faction)
+    public override void Run()
     {
-        GameWorld gameWorld = faction as GameWorld;
-        GameWorldData data = gameWorld.GetFactionData() as GameWorldData;
+        Console.Log("GameWorldInit Run");
     }
 }

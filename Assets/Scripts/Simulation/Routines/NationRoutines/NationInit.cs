@@ -4,15 +4,15 @@ using UnityEngine;
 using MonitorBreak.Bebug;
 
 [SimulationManager.ActiveSimulationRoutine(0, true)]
-public class NationInit : RoutineBase
+public class NationInit : InitRoutineBase
 {
-    public override bool Check(Faction faction)
+    public override bool TagsUpdatedCheck(HashSet<Faction.Tags> tags)
     {
-        return faction.GetFactionData().HasTag(FactionData.Tags.Nation);
+        return tags.Contains(Faction.Tags.Nation);
     }
 
-    public override void Run(Faction faction)
+    public override void Run()
     {
-
+        List<Faction> nations = SimulationManager.GetAllFactionsWithTag(Faction.Tags.Nation);
     }
 }

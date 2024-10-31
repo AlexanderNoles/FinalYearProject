@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,11 +16,63 @@ public class SimulationManager : MonoBehaviour
     private float tickInitFrame;
     private float minimumFrameLength = 0;
 
+    private bool newFactionsAdded = false;
+
     private static SimulationManager instance;
     private Task tickTask;
-    private List<Faction> factions = new List<Faction>();
-    private List<RoutineBase> constantRoutines = new List<RoutineBase>();
-    private List<RoutineBase> initRoutines = new List<RoutineBase>();
+    [HideInInspector]
+    public List<RoutineBase> constantRoutines = new List<RoutineBase>();
+    [HideInInspector]
+    public List<InitRoutineBase> initRoutines = new List<InitRoutineBase>();
+
+    private Dictionary<Faction.Tags, List<Faction>> factions = new Dictionary<Faction.Tags, List<Faction>>();
+    private Dictionary<Faction.Tags, List<Faction>> updatedTags = new Dictionary<Faction.Tags, List<Faction>>();
+
+    public static void AddFactionOfTag(Faction.Tags tag, Faction faction)
+    {
+        if (!instance.factions.ContainsKey(tag))
+        {
+            //Init sub list if it doesn't exist
+            instance.factions.Add(tag, new List<Faction>());
+        }
+
+        if (!instance.factions[tag].Contains(faction))
+        {
+            //Add faction to tag if it has not already been added
+            instance.factions[tag].Add(faction);
+
+            //Add to updated tags so init functions can run
+            if (!instance.updatedTags.ContainsKey(tag))
+            {
+                instance.updatedTags.Add(tag, new List<Faction>());
+            }
+
+            if (!instance.updatedTags[tag].Contains(faction))
+            {
+                instance.updatedTags[tag].Add(faction);
+            }
+        }
+    }
+
+    public static void RemoveFactionOfTag(Faction.Tags tag, Faction faction)
+    {
+        if (instance.factions.ContainsKey(tag))
+        {
+            //Remove faction if faction tag exists and faction belongs to that tag
+            instance.factions[tag].Remove(faction);
+        }
+    }
+
+    public static List<Faction> GetAllFactionsWithTag(Faction.Tags tag)
+    {
+        if (instance.factions.ContainsKey(tag))
+        {
+            return instance.factions[tag];
+        }
+
+        //Return empty list by default
+        return new List<Faction>();
+    }
 
     //As per the inital design constriction this script always executes after every other (non unity) script.
     //This does not mean it is the final code executed in the frame, we have no control over the execution order outside of scripts
@@ -28,14 +81,13 @@ public class SimulationManager : MonoBehaviour
         instance = this;
 
         //Add game world faction
-        AddFaction(new GameWorld());
+        new GameWorld().Simulate();
 
         const int testCount = 2;
         for (int i = 0; i < testCount; i++)
         {
             //Add test factions
-            Nation nation = new Nation();
-            AddFaction(nation);
+            new Nation().Simulate();
         }
 
         //Add all routine instances
@@ -46,11 +98,6 @@ public class SimulationManager : MonoBehaviour
     {
         //Run a instant simulation tick to do init ticks for inital factions
         InitSimulationTick(true);
-    }
-
-    public static void AddFaction(Faction newFaction)
-    {
-        instance.factions.Add(newFaction);
     }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
@@ -73,10 +120,10 @@ public class SimulationManager : MonoBehaviour
 
     public class SimulationRoutineExecution : MonoBehaviour
     {
-        public static (List<RoutineBase>, List<RoutineBase>) Main(GameObject parent)
+        public static (List<RoutineBase>, List<InitRoutineBase>) Main(GameObject parent)
         {
             List<RoutineBase> activeRoutines = new List<RoutineBase>();
-            List<RoutineBase> initRoutines = new List<RoutineBase>();
+            List<InitRoutineBase> initRoutines = new List<InitRoutineBase>();
             List<(ActiveSimulationRoutine, Type)> rountineClasses = new List<(ActiveSimulationRoutine, Type)>();
 
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -113,14 +160,14 @@ public class SimulationManager : MonoBehaviour
             foreach ((ActiveSimulationRoutine, Type) type in rountineClasses)
             {
                 //Because the types where sorted based on priority they are displayed in priority order on the target gameobject
-                RoutineBase newRoutine = parent.AddComponent(type.Item2) as RoutineBase;
+                Component newRoutine = parent.AddComponent(type.Item2);
                 if (type.Item1.initRoutine)
                 {
-                    initRoutines.Add(newRoutine);
+                    initRoutines.Add(newRoutine as InitRoutineBase);
                 }
                 else
                 {
-                    activeRoutines.Add(newRoutine);
+                    activeRoutines.Add(newRoutine as RoutineBase);
                 }
             }
 
@@ -140,6 +187,11 @@ public class SimulationManager : MonoBehaviour
             {
                 instance.SimulationTick();
             });
+
+            if (isInstant)
+            {
+                instance.tickTask.Wait();
+            }
         }
     }
 
@@ -158,44 +210,29 @@ public class SimulationManager : MonoBehaviour
     //Simulation Tick
     private void SimulationTick()
     {
-        bool runInitRoutines = false;
+        //Run this before other routines so we can update a faction on the same tick it is initialized
+        //This does mean new factions created this tick will have to wait till next tick to be initilized
+        //No good generic check exists that can tell if a faction has been initlized for a given tag or not (though non-generic ones do exist (e.g., a non-initlized Nation will always occupy no spaces))
+        //This means routines that create new Factions should be always run after routines that would alter those factions data, or we will run into unexpected behaviour
+        if (updatedTags.Count > 0)
+        {
+            HashSet<Faction.Tags> tags = updatedTags.Keys.ToHashSet();
+
+            foreach (InitRoutineBase routine in initRoutines)
+            {
+                if (routine.TagsUpdatedCheck(tags))
+                {
+                    routine.Run();
+                }
+            }
+
+            updatedTags.Clear();
+        }
 
         //We run each rountine on each faction rather than each faction on every routine so later routines can react to other factions previous routines
         foreach (RoutineBase routine in constantRoutines)
         {
-            foreach (Faction faction in factions)
-            {
-                if (faction.hasRunInit)
-                {
-                    if (routine.Check(faction))
-                    {
-                        routine.Run(faction);
-                    }
-                }
-                else
-                {
-                    runInitRoutines = true;
-                }
-            }
-        }
-
-        if (!runInitRoutines)
-        {
-            return;
-        }
-
-        foreach (RoutineBase routine in initRoutines)
-        {
-            foreach (Faction faction in factions)
-            {
-                if (!faction.hasRunInit)
-                {
-                    if (routine.Check(faction))
-                    {
-                        routine.Run(faction);
-                    }
-                }
-            }
+            routine.Run();
         }
     }
 
@@ -215,3 +252,52 @@ public class SimulationManager : MonoBehaviour
         }
     }
 }
+
+
+#if UNITY_EDITOR
+[CustomEditor(typeof(SimulationManager))]
+[CanEditMultipleObjects]
+public class SimulationManagerEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        SimulationManager manager = (SimulationManager)target;
+
+        if (manager != null)
+        {
+            GUI.skin.label.fontStyle = FontStyle.Bold;
+            GUI.skin.label.fontSize = 13;
+            GUILayout.Label("Init Routines");
+            GUI.skin.label.fontSize = 11;
+            foreach (InitRoutineBase routine in manager.initRoutines)
+            {
+                RoutineLabel(routine);
+            }
+
+            GUI.skin.label.fontStyle = FontStyle.Bold;
+            GUI.skin.label.fontSize = 13;
+            GUILayout.Label("\nConstant Routines");
+            GUI.skin.label.fontSize = 11;
+            foreach (RoutineBase routine in manager.constantRoutines)
+            {
+                RoutineLabel(routine);
+            }
+        }
+    }
+
+    private void RoutineLabel(RoutineBase routine)
+    {
+        GUILayout.BeginHorizontal();
+        GUI.skin.label.fontStyle = FontStyle.Normal;
+        GUILayout.Label("•  " + routine.ToString().Split("(")[1].Replace(")", ""));
+
+        GUILayout.FlexibleSpace();
+
+        GUI.skin.label.fontStyle = FontStyle.Italic;
+        GUILayout.Label(
+            (routine.GetType().GetCustomAttribute(typeof(SimulationManager.ActiveSimulationRoutine)) as SimulationManager.ActiveSimulationRoutine).priority.ToString()
+            );
+        GUILayout.EndHorizontal();
+    }
+}
+#endif
