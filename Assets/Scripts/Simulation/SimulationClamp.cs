@@ -8,6 +8,6 @@ public class SimulationClamp : MonoBehaviour
 
     void Update()
     {
-        SimulationManager.EndSimulationTick();
+        SimulationManagement.EndSimulationTick();
     }
 }

@@ -16,9 +16,13 @@ public class MapManagement : MonoBehaviour
 
     private Dictionary<Transform, MeshRenderer> mapRingMeshRenderes;
 
+    private Dictionary<Transform, MeshRenderer> borderIndicatorRenderers;
+
     private void Start()
     {
         mapRingMeshRenderes = mapElementsPools.GetComponentsOnAllActiveObjects<MeshRenderer>(0);
+
+        borderIndicatorRenderers = mapElementsPools.GetComponentsOnAllActiveObjects<MeshRenderer>(3);
     }
 
     private void OnEnable()
@@ -38,11 +42,48 @@ public class MapManagement : MonoBehaviour
                     //Want to run for an extra frame otherwise surroundings rendering could move out of sync after we've finished
                     //This actually happens a lot because of the speed of the map intro animation
                     extraFrame = false;
+
+                    //We also want to steup the current territory borders here cause the intro animation is now done
+                    //We need to get all the factions with the territory tag and then spawn territory squares based on that
+                    List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Territory);
+
+                    Vector3 scale = Vector3.one * (float)(WorldManagement.GetGridDensity() / UIManagement.mapRelativeScaleModifier);
+
+                    Vector3 displayOffset = (new Vector3(0, -1, 1).normalized * CameraManagement.cameraOffsetInMap) + WorldManagement.worldCenterPosition.TruncatedVector3(UIManagement.mapRelativeScaleModifier);
+
+                    foreach (Faction faction in factions)
+                    {
+                        if (faction.GetData(Faction.Tags.Territory, out DataBase data))
+                        {
+                            //Get territory data
+                            TerritoryData territoryData = data as TerritoryData;
+
+                            Color factionColour = faction.GetColour();
+
+                            foreach (RealSpacePostion pos in territoryData.territoryCenters)
+                            {
+                                Vector3 truncPos = pos.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset;
+                                Transform newPiece = mapElementsPools.UpdateNextObjectPosition(3, truncPos);
+
+                                if (newPiece != null)
+                                {
+                                    borderIndicatorRenderers[newPiece].material.SetColor("_Colour", factionColour);
+                                    newPiece.localScale = scale;
+                                }
+
+                                MonitorBreak.Bebug.Helper.DrawWirePlane(truncPos, new Vector3(scale.x, 0, scale.z), Vector3.up, factionColour, 1000, true);
+                            }
+                        }
+                    }
+
+                    Shader.SetGlobalFloat("_FlashTime", Time.time);
+                    mapElementsPools.PruneObjectsNotUpdatedThisFrame(3);
                 }
 
                 //Can't use UIManagment's first frame of intro anim because we get set active a frame after the intro anim starts :(
                 if (!mapObjectsListSetupDone)
                 {
+                    mapElementsPools.PruneObjectsNotUpdatedThisFrame(3);
                     mapObjectsAndParents = new List<(Transform, Transform)>();
 
                     List<SurroundingObject> surroundingObjects = SurroundingsRenderingManagement.GetControlledObjects();

@@ -5,20 +5,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SimulationManager : MonoBehaviour
+public class SimulationManagement : MonoBehaviour
 {
+    private static int simulationSeed;
+    public static System.Random random;
+
     private float nextTickTime;
     private const float TICK_MAX_LENGTH = 1;
     private float tickInitFrame;
     private float minimumFrameLength = 0;
 
-    private bool newFactionsAdded = false;
-
-    private static SimulationManager instance;
+    private static SimulationManagement instance;
     private Task tickTask;
     [HideInInspector]
     public List<RoutineBase> constantRoutines = new List<RoutineBase>();
@@ -63,6 +65,14 @@ public class SimulationManager : MonoBehaviour
         }
     }
 
+    public static void RemoveFactionFully(Faction faction)
+    {
+        foreach (Faction.Tags tag in Enum.GetValues(typeof(Faction.Tags)))
+        {
+            RemoveFactionOfTag(tag, faction);
+        }
+    }
+
     public static List<Faction> GetAllFactionsWithTag(Faction.Tags tag)
     {
         if (instance.factions.ContainsKey(tag))
@@ -78,12 +88,19 @@ public class SimulationManager : MonoBehaviour
     //This does not mean it is the final code executed in the frame, we have no control over the execution order outside of scripts
     private void Awake()
     {
+        //Reset some stuff
+        Planet.availablePlanetPositions.Clear();
+        //
+
+        simulationSeed = UnityEngine.Random.Range(-100000, 100000);
+        random = new System.Random(simulationSeed);
+
         instance = this;
 
         //Add game world faction
         new GameWorld().Simulate();
 
-        const int testCount = 2;
+        const int testCount = 25;
         for (int i = 0; i < testCount; i++)
         {
             //Add test factions
@@ -96,8 +113,16 @@ public class SimulationManager : MonoBehaviour
 
     private void Start()
     {
-        //Run a instant simulation tick to do init ticks for inital factions
-        InitSimulationTick(true);
+        //Run history ticks
+        //Simulation is run for a period of years before player arrives to get more dynamic results
+
+        //It is important this is run in Start so OnEnable can run on objects before this goes off
+        int tickCount = 365 * 100; //100 years
+
+        for (int i = 0; i < tickCount; i++)
+        {
+            InitSimulationTick(true);
+        }
     }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
@@ -255,13 +280,13 @@ public class SimulationManager : MonoBehaviour
 
 
 #if UNITY_EDITOR
-[CustomEditor(typeof(SimulationManager))]
+[CustomEditor(typeof(SimulationManagement))]
 [CanEditMultipleObjects]
 public class SimulationManagerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-        SimulationManager manager = (SimulationManager)target;
+        SimulationManagement manager = (SimulationManagement)target;
 
         if (manager != null)
         {
@@ -295,7 +320,7 @@ public class SimulationManagerEditor : Editor
 
         GUI.skin.label.fontStyle = FontStyle.Italic;
         GUILayout.Label(
-            (routine.GetType().GetCustomAttribute(typeof(SimulationManager.ActiveSimulationRoutine)) as SimulationManager.ActiveSimulationRoutine).priority.ToString()
+            (routine.GetType().GetCustomAttribute(typeof(SimulationManagement.ActiveSimulationRoutine)) as SimulationManagement.ActiveSimulationRoutine).priority.ToString()
             );
         GUILayout.EndHorizontal();
     }

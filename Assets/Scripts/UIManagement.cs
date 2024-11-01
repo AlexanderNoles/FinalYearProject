@@ -25,6 +25,11 @@ public class UIManagement : MonoBehaviour
         return mapIntroT == 1.0f;
     }
 
+    public static bool LastFrameMapIntroRunning()
+    {
+        return oneFrameBuffer;
+    }
+
 
     public static float EvaluatedMapIntroT()
     {

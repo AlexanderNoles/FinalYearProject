@@ -4,7 +4,7 @@ using UnityEngine;
 using MonitorBreak.Bebug;
 
 //High priority so world runs before all other init ticks
-[SimulationManager.ActiveSimulationRoutine(100, true)]
+[SimulationManagement.ActiveSimulationRoutine(100, true)]
 public class GameWorldInit : InitRoutineBase
 {
     public override bool TagsUpdatedCheck(HashSet<Faction.Tags> tags)
@@ -14,6 +14,6 @@ public class GameWorldInit : InitRoutineBase
 
     public override void Run()
     {
-        Console.Log("GameWorldInit Run");
+
     }
 }

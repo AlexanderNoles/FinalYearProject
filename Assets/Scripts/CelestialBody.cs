@@ -24,6 +24,18 @@ public class CelestialBody : SurroundingObject
         targetMat.SetVector("_RealSpacePosition", transform.position);
     }
 
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        WorldManagement.AddMajorWorldPart(this);
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        WorldManagement.RemoveMajorWorldPart(this);
+    }
+
     public override void SetObjectVisualScale(float scale)
     {
         transform.localScale = Vector3.one * (scale * 3);

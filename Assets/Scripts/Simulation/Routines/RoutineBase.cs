@@ -8,4 +8,17 @@ public class RoutineBase : MonoBehaviour
     {
 
     }
+
+    protected bool AnyContains(List<TerritoryData> data, RealSpacePostion pos)
+    {
+        foreach (TerritoryData entry in data)
+        {
+            if (entry.Contains(pos))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

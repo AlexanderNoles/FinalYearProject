@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MonitorBreak.Bebug;
 
-[SimulationManager.ActiveSimulationRoutine(-1)]
+//[SimulationManager.ActiveSimulationRoutine(-1)]
 public class TestRoutine : RoutineBase
 {
     int testCounter = 0;
@@ -12,13 +12,14 @@ public class TestRoutine : RoutineBase
     {
         testCounter++;
 
-        List<Faction> factions = SimulationManager.GetAllFactionsWithTag(Faction.Tags.Faction);
+        List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Faction);
         Console.Log(factions.Count);
-        List<Faction> nations = SimulationManager.GetAllFactionsWithTag(Faction.Tags.Nation);
+        List<Faction> nations = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Territory);
         Console.Log(nations.Count);
 
         if (testCounter % 5 == 0)
         {
+            //Every 5 tickls create a new nation
             Console.Log("Created New Nation");
             new Nation().Simulate();
         }

@@ -1069,7 +1069,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1239735559}
-  - component: {fileID: 1239735558}
+  - component: {fileID: 1239735561}
   - component: {fileID: 1239735560}
   m_Layer: 0
   m_Name: Simulation
@@ -1078,18 +1078,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1239735558
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1239735557}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5728119b2d571524c929708b0553ff06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1239735559
 Transform:
   m_ObjectHideFlags: 0
@@ -1117,6 +1105,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a34e73aac031eb409caa3f020127938, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1239735561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239735557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3795b1ae9b2aa1947924aca3ad897123, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  constantRoutines: []
+  initRoutines: []
 --- !u!1 &1414547018
 GameObject:
   m_ObjectHideFlags: 0
@@ -1327,6 +1329,14 @@ MonoBehaviour:
     baseObject: {fileID: 3776903015197750035, guid: 08f3bc48bd63829498447a78a3cfc132,
       type: 3}
     baseNumberOfObjects: 1
+    generateAsNeeded: 0
+    currentUpdatedObjectPointer: 0
+    automaticallySetParent: 0
+  - name: NationBorderIndicator
+    mode: 1
+    baseObject: {fileID: 1358600516521096238, guid: cd3fe8022e78faa49a60e6ca37329b15,
+      type: 3}
+    baseNumberOfObjects: 500
     generateAsNeeded: 0
     currentUpdatedObjectPointer: 0
     automaticallySetParent: 0
