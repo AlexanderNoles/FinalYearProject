@@ -16,9 +16,6 @@ public class NationInit : InitRoutineBase
         //Get all nations and set their territory information accurately.
         List<Faction> nations = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Nation);
 
-        MonitorBreak.Bebug.Console.Log(nations.Count);
-        MonitorBreak.Bebug.Console.Log(Planet.availablePlanetPositions.Count);
-
         //Get all territory factions
         List<Faction> territories = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Territory);
         List<TerritoryData> territoryDatas = new List<TerritoryData>();
@@ -53,12 +50,16 @@ public class NationInit : InitRoutineBase
                         Planet.availablePlanetPositions.RemoveAt(0);
 
                         //Do a random falloff spread across the game map
-                        territory.territoryCenters = GenerationUtility.GenerateFalloffPositionSpread(
-                            territory.origin, //Start pos
-                            new Vector2(0.02f, 0.5f), //Min max falloff per step
-                            100, //Max scale
-                            falloffPositionGenerationValidPositionCheck,
-                            SimulationManagement.random);
+                        //Disabled because we want to instead start the nation in a place and then run the simulation for 100 years (1 tick is one day)
+                        //to get more dynamic and interesting results
+                        //territory.territoryCenters = GenerationUtility.GenerateFalloffPositionSpread(
+                        //    territory.origin, //Start pos
+                        //    new Vector2(0.02f, 0.5f), //Min max falloff per step
+                        //    100, //Max scale
+                        //    falloffPositionGenerationValidPositionCheck,
+                        //    SimulationManagement.random);
+
+                        territory.territoryCenters.Add(territory.origin);
                     }
                     else if (faction.GetData(Faction.Tags.Faction, out DataBase factionData))
                     {

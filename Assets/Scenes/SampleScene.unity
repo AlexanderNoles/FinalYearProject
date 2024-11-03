@@ -1336,7 +1336,7 @@ MonoBehaviour:
     mode: 1
     baseObject: {fileID: 1358600516521096238, guid: cd3fe8022e78faa49a60e6ca37329b15,
       type: 3}
-    baseNumberOfObjects: 500
+    baseNumberOfObjects: 1100
     generateAsNeeded: 0
     currentUpdatedObjectPointer: 0
     automaticallySetParent: 0

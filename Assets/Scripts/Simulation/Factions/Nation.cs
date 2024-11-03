@@ -8,6 +8,7 @@ public class Nation : Faction
     {
         base.InitTags();
         AddTag(Tags.Territory);
+        AddTag(Tags.Settlements);
         AddTag(Tags.Nation);
         AddTag(Tags.Emblem);
     }

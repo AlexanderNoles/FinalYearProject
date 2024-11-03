@@ -17,6 +17,7 @@ public class Faction
         Faction,
         //
         Territory, //Does this faction contain some territory?
+        Settlements, //Does this faction have settlements?
         Nation, //Is this faction a nation?
         Emblem, //Does this faction have an emblem?
         GameWorld
