@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using MonitorBreak;
 using MonitorBreak.Bebug;
 
@@ -62,5 +63,11 @@ public class GameManagement : MonoBehaviour
         {
             currentFrameSinceUpdate++;
         }
+    }
+
+    [MonitorBreak.Bebug.ConsoleCMD("RELOAD")]
+    public static void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

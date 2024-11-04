@@ -213,6 +213,8 @@ public class CameraManagement : MonoBehaviour
                 cameraRot.x = Mathf.Clamp(cameraRot.x + cameraInput.x, -85, 85);
 
                 cameraAxis.rotation = Quaternion.Euler(cameraRot.x, cameraRot.y, 0.0f);
+
+                mainCamera.transform.LookAt(cameraAxis);
             }
 
             //Move camera out
