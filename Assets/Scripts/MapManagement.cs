@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class MapManagement : MonoBehaviour
 {
+    public TextMeshProUGUI dateLabel;
     public MultiObjectPool mapElementsPools;
     private const int mapRingPool = 0;
     private const int shipIndicatorPool = 1;
@@ -15,6 +17,7 @@ public class MapManagement : MonoBehaviour
     private Vector3 mapBasePos;
 
     private float mapRefreshTime;
+    private float dateRefreshTime;
 
     private Dictionary<Transform, MeshRenderer> mapRingMeshRenderes;
 
@@ -46,11 +49,15 @@ public class MapManagement : MonoBehaviour
                     extraFrame = false;
                     Shader.SetGlobalFloat("_FlashTime", Time.time);
                     mapRefreshTime = 0.0f;
+                    dateRefreshTime = 0.0f;
                 }
 
                 //Can't use UIManagment's first frame of intro anim because we get set active a frame after the intro anim starts :(
                 if (!mapObjectsListSetupDone)
                 {
+                    //Do inital date set
+                    dateLabel.text = SimulationManagement.GetDateString();
+
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(3);
                     mapObjectsAndParents = new List<(Transform, Transform)>();
 
@@ -98,38 +105,47 @@ public class MapManagement : MonoBehaviour
                 mapElementsPools.PruneObjectsNotUpdatedThisFrame(mapRingPool);
                 mapElementsPools.PruneObjectsNotUpdatedThisFrame(mapBasePool);
             }
-            else if (Time.time > mapRefreshTime)
+            else
             {
-                mapRefreshTime = Time.time + (5.0f / SimulationManagement.GetSimulationSpeed());
-                //We also want to steup the current territory borders here cause the intro animation is now done
-                //We need to get all the factions with the territory tag and then spawn territory squares based on that
-                List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Territory);
-
-                Vector3 scale = Vector3.one * (float)(WorldManagement.GetGridDensity() / UIManagement.mapRelativeScaleModifier);
-
-                Vector3 displayOffset = (new Vector3(0, -1, 1).normalized * CameraManagement.cameraOffsetInMap) + WorldManagement.worldCenterPosition.TruncatedVector3(UIManagement.mapRelativeScaleModifier);
-
-                foreach (Faction faction in factions)
+                if (Time.time > mapRefreshTime)
                 {
-                    if (faction.GetData(Faction.Tags.Territory, out TerritoryData territoryData))
+                    mapRefreshTime = Time.time + (5.0f / SimulationManagement.GetSimulationSpeed());
+                    //We also want to steup the current territory borders here cause the intro animation is now done
+                    //We need to get all the factions with the territory tag and then spawn territory squares based on that
+                    List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Territory);
+
+                    Vector3 scale = Vector3.one * (float)(WorldManagement.GetGridDensity() / UIManagement.mapRelativeScaleModifier);
+
+                    Vector3 displayOffset = (new Vector3(0, -1, 1).normalized * CameraManagement.cameraOffsetInMap) + WorldManagement.worldCenterPosition.TruncatedVector3(UIManagement.mapRelativeScaleModifier);
+
+                    foreach (Faction faction in factions)
                     {
-                        Color factionColour = faction.GetColour();
-
-                        foreach (RealSpacePostion pos in territoryData.territoryCenters)
+                        if (faction.GetData(Faction.Tags.Territory, out TerritoryData territoryData))
                         {
-                            Vector3 truncPos = -pos.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset;
-                            Transform newPiece = mapElementsPools.UpdateNextObjectPosition(3, truncPos);
+                            Color factionColour = faction.GetColour();
 
-                            if (newPiece != null)
+                            foreach (RealSpacePostion pos in territoryData.territoryCenters)
                             {
-                                borderIndicatorRenderers[newPiece].material.SetColor("_Colour", factionColour);
-                                newPiece.localScale = scale;
+                                Vector3 truncPos = -pos.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset;
+                                Transform newPiece = mapElementsPools.UpdateNextObjectPosition(3, truncPos);
+
+                                if (newPiece != null)
+                                {
+                                    borderIndicatorRenderers[newPiece].material.SetColor("_Colour", factionColour);
+                                    newPiece.localScale = scale;
+                                }
                             }
                         }
                     }
+
+                    mapElementsPools.PruneObjectsNotUpdatedThisFrame(3);
                 }
 
-                mapElementsPools.PruneObjectsNotUpdatedThisFrame(3);
+                if (Time.time > dateRefreshTime)
+                {
+                    dateLabel.text = SimulationManagement.GetDateString();
+                    dateRefreshTime = Time.time + (1.0f / SimulationManagement.GetSimulationSpeed());
+                }
             }
         }
     }

@@ -7,7 +7,7 @@ public class UIManagement : MonoBehaviour
     private static UIManagement instance;
 
     //! NEED A PRIORITY SYSTEM A UI AT SOME POINT
-    public MapManagement map;
+    public GameObject map;
     public const float mapRelativeScaleModifier = 1000.0f;
     public AnimationCurve mapIntroCurve;
     private static GameObject mapObject;

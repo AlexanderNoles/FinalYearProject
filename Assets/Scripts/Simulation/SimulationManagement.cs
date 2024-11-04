@@ -23,9 +23,37 @@ public class SimulationManagement : MonoBehaviour
     public static System.Random random;
 
     private float nextTickTime;
-    private const float TICK_MAX_LENGTH = 1;
+    private const float TICK_MAX_LENGTH = 3;
     private float tickInitFrame;
     private float minimumFrameLength = 0;
+
+    private static float currentDay;
+    private const float DAY_TO_MONTH = 30;
+    private static float currentMonth;
+    private const float MONTH_TO_YEAR = 13;
+    private static float currentYear;
+
+    private static void IncrementDay()
+    {
+        currentDay++;
+
+        if (currentDay > DAY_TO_MONTH)
+        {
+            currentDay = 1;
+            currentMonth++;
+        }
+
+        if (currentMonth > MONTH_TO_YEAR)
+        {
+            currentMonth = 1;
+            currentYear++;
+        }
+    }
+
+    public static string GetDateString()
+    {
+        return $"{currentDay}/{currentMonth}/{currentYear}";
+    }
 
     private static SimulationManagement instance;
     private Task tickTask;
@@ -97,6 +125,10 @@ public class SimulationManagement : MonoBehaviour
     {
         //Reset some stuff
         Planet.availablePlanetPositions.Clear();
+
+        currentDay = 15;
+        currentMonth = 3;
+        currentYear = 3004;
         //
 
         simulationSeed = UnityEngine.Random.Range(-100000, 100000);
@@ -120,13 +152,16 @@ public class SimulationManagement : MonoBehaviour
 
     private void Start()
     {
-        //Run history ticks
-        //Simulation is run for a period of years before player arrives to get more dynamic results        //It is important this is run in Start so OnEnable can run on objects before this goes off
-        int tickCount = 365 * 100; //100 years
-
-        for (int i = 0; i < tickCount; i++)
+        if (PreRunManagement.ShouldRunHistory())
         {
-            InitSimulationTick(true);
+            //Run history ticks
+            //Simulation is run for a period of years before player arrives to get more dynamic results        //It is important this is run in Start so OnEnable can run on objects before this goes off
+            int tickCount = (int)(DAY_TO_MONTH * MONTH_TO_YEAR) * 100; //100 years
+
+            for (int i = 0; i < tickCount; i++)
+            {
+                InitSimulationTick(true);
+            }
         }
     }
 
@@ -213,6 +248,8 @@ public class SimulationManagement : MonoBehaviour
             instance.tickInitFrame = Time.frameCount;
             instance.minimumFrameLength = Time.captureFramerate / (2.0f / simulatioSpeedModifier);
 
+            IncrementDay();
+
             instance.tickTask = Task.Run(() =>
             {
                 instance.SimulationTick();
@@ -284,7 +321,7 @@ public class SimulationManagement : MonoBehaviour
         }
     }
 
-    [MonitorBreak.Bebug.ConsoleCMD("SIM_TURBO")]
+    [MonitorBreak.Bebug.ConsoleCMD("SIMTURBO")]
     public static void TurboSimulation()
     {
         simulatioSpeedModifier = 10.0f;
