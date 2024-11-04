@@ -19,6 +19,7 @@ public class Faction
         Territory, //Does this faction contain some territory?
         Settlements, //Does this faction have settlements?
         Nation, //Is this faction a nation?
+        Population, //Does this faction have a population?
         Emblem, //Does this faction have an emblem?
         GameWorld
     }
@@ -52,14 +53,17 @@ public class Faction
         AddData(Tags.Faction, new FactionData());
     }
 
-    public bool GetData(string dataIdentifier, out DataBase data)
+    public bool GetData<T>(string dataIdentifier, out T data) where T : DataBase
     {
-        return dataModules.TryGetValue(dataIdentifier, out data);
+        bool toReturn = dataModules.TryGetValue(dataIdentifier, out DataBase tempData);
+        data = tempData as T;
+
+        return toReturn;
     }
 
-    public bool GetData(Tags tag, out DataBase data)
+    public bool GetData<T>(Tags tag, out T data) where T : DataBase 
     {
-        return GetData(tag.ToString(), out data);
+        return GetData<T>(tag.ToString(), out data);
     }
 
     public void AddData(string dataIdentifier, DataBase data)
@@ -93,9 +97,9 @@ public class Faction
     //General helper functions
     public Color GetColour()
     {
-        if (GetData(Tags.Emblem, out DataBase data2))
+        if (GetData(Tags.Emblem, out EmblemData emblemData))
         {
-            return (data2 as EmblemData).mainColour;
+            return emblemData.mainColour;
         }
 
         return Color.white;

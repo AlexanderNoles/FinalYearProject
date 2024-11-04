@@ -141,7 +141,7 @@ public class CameraManagement : MonoBehaviour
         actualBackingCameraData = backingCamera.GetComponent<UniversalAdditionalCameraData>();
 
         positionLastFrame = transform.position;
-        WorldManagement.SetWorldCenterPosition(new RealSpacePostion(0, 0, 10000));
+        WorldManagement.SetWorldCenterPosition(new RealSpacePostion(0, 0, 50000));
     }
 
     private void Update()

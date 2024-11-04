@@ -11,6 +11,7 @@ public class Nation : Faction
         AddTag(Tags.Settlements);
         AddTag(Tags.Nation);
         AddTag(Tags.Emblem);
+        AddTag(Tags.Population);
     }
 
     public override void InitData()
@@ -18,5 +19,7 @@ public class Nation : Faction
         base.InitData();
         AddData(Tags.Territory, new TerritoryData());
         AddData(Tags.Emblem, new EmblemData());
+        AddData(Tags.Settlements, new SettlementData());
+        AddData(Tags.Population, new PopulationData());
     }
 }

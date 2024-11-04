@@ -13,24 +13,22 @@ public class SettlementRoutine : RoutineBase
 
         foreach (Faction faction in factions)
         {
-            if (faction.GetData(Faction.Tags.Settlements, out DataBase data))
+            if (faction.GetData(Faction.Tags.Settlements, out SettlementData settlementData))
             {
-                SettlementData settlementData = data as SettlementData;
+                int calculatedSettlementCapacity = Mathf.Max((int)(5 * Mathf.Log10(settlementData.rawSettlementCapacity)), 1);
 
                 //Based on our current settlement cap create or destroy settlements
-                if (settlementData.settlements.Count < settlementData.settlementCapacity)
+                if (settlementData.settlements.Count < calculatedSettlementCapacity)
                 {
-                    int difference = settlementData.settlementCapacity - settlementData.settlements.Count;
+                    int difference = calculatedSettlementCapacity - settlementData.settlements.Count;
 
                     for (int i = 0; i < difference; i++)
                     {
                         //Try to find appriopriate position
                         RealSpacePostion pos = null;
 
-                        if (faction.GetData(Faction.Tags.Territory, out DataBase terrData))
+                        if (faction.GetData(Faction.Tags.Territory, out TerritoryData territoryData))
                         {
-                            TerritoryData territoryData = terrData as TerritoryData;
-
                             int count = territoryData.territoryCenters.Count;
                             for (int t = 0; t < count; t++)
                             {
@@ -53,7 +51,7 @@ public class SettlementRoutine : RoutineBase
 
                     }
                 }
-                if (settlementData.settlements.Count > settlementData.settlementCapacity)
+                if (settlementData.settlements.Count > calculatedSettlementCapacity)
                 {
                     //Destroy
                     //Right now we just destroy one at random 

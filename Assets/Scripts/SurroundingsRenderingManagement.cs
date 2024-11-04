@@ -63,7 +63,7 @@ public class SurroundingsRenderingManagement : MonoBehaviour
 
                 foreach (SurroundingObject obj in controlledObjects)
                 {
-                    obj.transform.localPosition = obj.postion.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + ((Vector3.down + Vector3.forward).normalized * Mathf.Lerp(0.0f, CameraManagement.cameraOffsetInMap, evaluatedIntroT));
+                    obj.transform.localPosition = -obj.postion.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + ((Vector3.down + Vector3.forward).normalized * Mathf.Lerp(0.0f, CameraManagement.cameraOffsetInMap, evaluatedIntroT));
                     obj.SetObjectVisualScale((obj.scale / UIManagement.mapRelativeScaleModifier));
                 }
             }

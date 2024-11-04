@@ -17,9 +17,8 @@ public class EmblemInit : InitRoutineBase
 
         foreach (Faction faction in factions)
         {
-            if (faction.GetData(Faction.Tags.Emblem, out DataBase data))
+            if (faction.GetData(Faction.Tags.Emblem, out EmblemData emblemData))
             {
-                EmblemData emblemData = data as EmblemData;
                 emblemData.mainColour = 
                     new Color(
                         SimulationManagement.random.Next(0, 100) / 100.0f,

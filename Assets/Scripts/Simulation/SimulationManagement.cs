@@ -12,6 +12,13 @@ using UnityEngine.UI;
 
 public class SimulationManagement : MonoBehaviour
 {
+    private static float simulatioSpeedModifier = 1.0f;
+
+    public static float GetSimulationSpeed()
+    {
+        return simulatioSpeedModifier;
+    }
+
     private static int simulationSeed;
     public static System.Random random;
 
@@ -204,7 +211,7 @@ public class SimulationManagement : MonoBehaviour
         if (instance != null) 
         {
             instance.tickInitFrame = Time.frameCount;
-            instance.minimumFrameLength = Time.captureFramerate / 2.0f;
+            instance.minimumFrameLength = Time.captureFramerate / (2.0f / simulatioSpeedModifier);
 
             instance.tickTask = Task.Run(() =>
             {
@@ -259,6 +266,8 @@ public class SimulationManagement : MonoBehaviour
         }
     }
 
+
+
     //End of scripts
     private void LateUpdate()
     {
@@ -270,9 +279,15 @@ public class SimulationManagement : MonoBehaviour
             && (Time.frameCount > tickInitFrame + minimumFrameLength)
             && (tickTask == null || tickTask.IsCompleted))
         {
-            nextTickTime = Time.time + TICK_MAX_LENGTH;
+            nextTickTime = (Time.time + TICK_MAX_LENGTH) / simulatioSpeedModifier;
             InitSimulationTick(false);
         }
+    }
+
+    [MonitorBreak.Bebug.ConsoleCMD("SIM_TURBO")]
+    public static void TurboSimulation()
+    {
+        simulatioSpeedModifier = 10.0f;
     }
 }
 

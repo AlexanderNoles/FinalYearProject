@@ -14,10 +14,8 @@ public class MetaRoutine : RoutineBase
         {
             Faction faction = factions[i];
 
-            if (faction.GetData(Faction.Tags.Faction, out DataBase data))
+            if (faction.GetData(Faction.Tags.Faction, out FactionData factionData))
             {
-                FactionData factionData = data as FactionData;
-
                 if (factionData.deathFlag)
                 {
                     //Remove this faction from the simulation

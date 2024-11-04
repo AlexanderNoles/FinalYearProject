@@ -11,34 +11,42 @@ public class NationExpansionRoutine : RoutineBase
         //Get all nations
         List<Faction> nations = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Nation);
         List<TerritoryData> territories = new List<TerritoryData>();
-        List<int> nationIndex = new List<int>();
+        List<int> nationIndexes = new List<int>();
 
         for (int i = 0; i < nations.Count; i++)
         {
-            if (nations[i].GetData(Faction.Tags.Territory, out DataBase data))
+            if (nations[i].GetData(Faction.Tags.Territory, out TerritoryData data))
             {
                 //Get current controlled territory data
-                territories.Add(data as TerritoryData);
-                nationIndex.Add(i);
+                territories.Add(data);
+                nationIndexes.Add(i);
             }
         }
 
         for (int i = 0; i < territories.Count; i++)
         {
             TerritoryData current = territories[i];
-            int sizeLimit = 100; //Currently static
+            
+            //For nations this should be based on population data
+            //So we need to grab the population data
+            //If it doesn't exists we can't perform the rest of the routine
 
-            if (current.territoryCenters.Count > 0 && current.territoryCenters.Count < sizeLimit)
+            if (nations[nationIndexes[i]].GetData(Faction.Tags.Population, out PopulationData popData))
             {
-                RealSpacePostion start = current.territoryCenters.ElementAt(SimulationManagement.random.Next(0, current.territoryCenters.Count));
+                float sizeLimit = popData.currentPopulationCount / 10; 
 
-                List<RealSpacePostion> neighbours = WorldManagement.GetNeighboursInGrid(start);
-
-                foreach (RealSpacePostion pos in neighbours)
+                if (current.territoryCenters.Count > 0 && current.territoryCenters.Count < sizeLimit)
                 {
-                    if (!AnyContains(territories, pos) && !current.territoryCenters.Contains(pos) && WorldManagement.WithinSolarSystem(pos))
+                    RealSpacePostion start = current.territoryCenters.ElementAt(SimulationManagement.random.Next(0, current.territoryCenters.Count));
+
+                    List<RealSpacePostion> neighbours = WorldManagement.GetNeighboursInGrid(start);
+
+                    foreach (RealSpacePostion pos in neighbours)
                     {
-                        current.territoryCenters.Add(pos);
+                        if (!AnyContains(territories, pos) && !current.territoryCenters.Contains(pos) && WorldManagement.WithinSolarSystem(pos))
+                        {
+                            current.territoryCenters.Add(pos);
+                        }
                     }
                 }
             }

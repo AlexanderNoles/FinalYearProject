@@ -22,9 +22,9 @@ public class NationInit : InitRoutineBase
 
         foreach (Faction territory in territories)
         {
-            if (territory.GetData(Faction.Tags.Territory, out DataBase data))
+            if (territory.GetData(Faction.Tags.Territory, out TerritoryData data))
             {
-                territoryDatas.Add(data as TerritoryData);
+                territoryDatas.Add(data);
             }
         }
 
@@ -35,11 +35,8 @@ public class NationInit : InitRoutineBase
 
         foreach (Faction faction in nations)
         {
-            if (faction.GetData(Faction.Tags.Territory, out DataBase data))
+            if (faction.GetData(Faction.Tags.Territory, out TerritoryData territory))
             {
-                //Get territory data
-                TerritoryData territory = data as TerritoryData;
-
                 //If this faction doesn't have an origin, give it one.
                 if (territory.origin == null)
                 {
@@ -61,10 +58,10 @@ public class NationInit : InitRoutineBase
 
                         territory.territoryCenters.Add(territory.origin);
                     }
-                    else if (faction.GetData(Faction.Tags.Faction, out DataBase factionData))
+                    else if (faction.GetData(Faction.Tags.Faction, out FactionData factionData))
                     {
                         //If no planets avaliable for now just kill this faction
-                        (factionData as FactionData).ForceDeath();
+                        factionData.ForceDeath();
                     }
                 }
             }
