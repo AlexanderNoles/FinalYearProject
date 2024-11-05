@@ -21,5 +21,10 @@ public class Nation : Faction
         AddData(Tags.Emblem, new EmblemData());
         AddData(Tags.Settlements, new SettlementData());
         AddData(Tags.Population, new PopulationData());
+
+        //Has war data cause it can go to war
+        //but doesn't by defauly have the AtWar tag
+        //Cause it isn't at war!
+        AddData(Tags.AtWar, new MilitaryData());
     }
 }

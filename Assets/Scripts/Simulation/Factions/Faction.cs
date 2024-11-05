@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Faction
 {
+    public int id = -1;
+
     public void Simulate()
     {
         InitTags();
@@ -21,7 +23,8 @@ public class Faction
         Nation, //Is this faction a nation?
         Population, //Does this faction have a population?
         Emblem, //Does this faction have an emblem?
-        GameWorld
+        // Temporary tags, these are applied mid simulation rather than at faction creation time //
+        AtWar
     }
 
     public void AddTag(Tags tag)

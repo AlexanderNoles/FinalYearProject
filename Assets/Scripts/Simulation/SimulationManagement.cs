@@ -62,11 +62,28 @@ public class SimulationManagement : MonoBehaviour
     [HideInInspector]
     public List<InitRoutineBase> initRoutines = new List<InitRoutineBase>();
 
+    private Dictionary<int, Faction> idToFaction = new Dictionary<int, Faction>();
     private Dictionary<Faction.Tags, List<Faction>> factions = new Dictionary<Faction.Tags, List<Faction>>();
     private Dictionary<Faction.Tags, List<Faction>> updatedTags = new Dictionary<Faction.Tags, List<Faction>>();
 
+    public static Faction GetFactionByID(int id)
+    {
+        if (instance.idToFaction.ContainsKey(id))
+        {
+            return instance.idToFaction[id];
+        }
+
+        return null;
+    }
+
     public static void AddFactionOfTag(Faction.Tags tag, Faction faction)
     {
+        if (!instance.idToFaction.ContainsKey(faction.id))
+        {
+            //Add faction to idToFaction if it is not already there
+            instance.idToFaction[faction.id] = faction;
+        }
+
         if (!instance.factions.ContainsKey(tag))
         {
             //Init sub list if it doesn't exist
@@ -106,6 +123,8 @@ public class SimulationManagement : MonoBehaviour
         {
             RemoveFactionOfTag(tag, faction);
         }
+
+        instance.idToFaction.Remove(faction.id);
     }
 
     public static List<Faction> GetAllFactionsWithTag(Faction.Tags tag)
@@ -135,9 +154,6 @@ public class SimulationManagement : MonoBehaviour
         random = new System.Random(simulationSeed);
 
         instance = this;
-
-        //Add game world faction
-        new GameWorld().Simulate();
 
         const int testCount = 25;
         for (int i = 0; i < testCount; i++)
@@ -316,7 +332,11 @@ public class SimulationManagement : MonoBehaviour
             && (Time.frameCount > tickInitFrame + minimumFrameLength)
             && (tickTask == null || tickTask.IsCompleted))
         {
-            nextTickTime = (Time.time + TICK_MAX_LENGTH) / simulatioSpeedModifier;
+            if (simulatioSpeedModifier > 0)
+            {
+                nextTickTime = (Time.time + (TICK_MAX_LENGTH / simulatioSpeedModifier));
+            }
+
             InitSimulationTick(false);
         }
     }
@@ -324,7 +344,19 @@ public class SimulationManagement : MonoBehaviour
     [MonitorBreak.Bebug.ConsoleCMD("SIMTURBO")]
     public static void TurboSimulation()
     {
-        simulatioSpeedModifier = 10.0f;
+        simulatioSpeedModifier = 100.0f;
+    }
+
+    [MonitorBreak.Bebug.ConsoleCMD("SIMLIGHTSPEED")]
+    public static void LightspeedSimulation()
+    {
+        simulatioSpeedModifier = -1;
+    }
+
+    [MonitorBreak.Bebug.ConsoleCMD("SIMSPEED")]
+    public static void SimulationSpeed(string newValue)
+    {
+        simulatioSpeedModifier = Int32.Parse(newValue);
     }
 }
 
