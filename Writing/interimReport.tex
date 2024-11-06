@@ -229,8 +229,7 @@ All responses will be secured behind access to my password and 2FA protected goo
 
 \chapter{Requirements Analysis}
 
-This project aims to produce a player-story driven RTS (Real Time Strategy). in the form of a vertical slice (a version of a game that lacks some features but still showcases what the final product will look like). Unlike a typical RTS, there will be a larger focus on the world reacting directly to the player as a singular powerful entity and less on long term historical stratergy. As such that world will need to be deeply simulated, comprising a large amount of the technical challenge of the project.
-While the game will be in part targeted at long time RTS players, this change in power balance (alongside a shift into more role-play focused elements of the genre) is designed to allow a wider audience to engage with a typically complex genre. 
+This project aims to produce a player-story driven RTS (Real Time Strategy). in the form of a vertical slice (a version of a game that lacks some features but still showcases what the final product will look like). The game's world will need to be deeply simulated, comprising a large amount of the technical challenge of the project.
 
 \section{Framework Choice}
 This project uses Unity \cite{unity} instead of a custom engine, the primary reason for this choice is my familiarity with it's workflow. I've previously created a full game using Unity (including shipping it to Steam \cite{steam}) and I greatly enjoy its flexibility. Unity makes it easy to extend the editor through creating additional context menu items and entirely new editor tools. 
@@ -283,7 +282,9 @@ While Stellaris succeeds in many areas and is arguably (with its balance of stra
 However, this complexity is an important, and arguably defining, part of the genre \cite{rtsUncertainty}. The principal issue here is how it is introduced to the player. Given this project's intention to, in part, target a wider audience, this issue is quite important. The intended solution is to introduce player elements gradually, in the context of the larger narrative brace of the game this can be expressed as the player's controlled entity turning back on after many years inactive. To enhance replayability players could be allowed to start already in a fully active state rather than repeating the tutorial each time.
 
 Stellaris also suffers from performance issues, particularly in the late game \cite{stellarisPerformanceReview1} \cite{stellarisPerformanceReview2}. Given the relative scales of this project and Stellaris this is a less relevant issue, performance goals are discussed further in a later subsection "Performance and Stability".
-\pagebreak
+
+One major difference between this project's game and Stellaris is that unlike a typical RTS, there will be a larger focus on the world reacting directly to the player as a singular powerful entity and less on long term historical stratergy. While the game will be in part targeted at long time RTS players, this change in power balance (alongside a shift into more role-play focused elements) is designed to allow a wider audience to engage with a typically complex genre. 
+
 \subsection{Game 2: Disco Elysium}
 
 This project's role-play centric aims require it to take additional inspiration from outside the RTS genre. Disco Elysium (2019) \cite{discoelysium} is a detective RPG, famous for its engaging writing. It has many systems that incentivize  role-play such as its "Thought Cabinet" system, pictured below.
@@ -301,10 +302,12 @@ Disco Elysium's approach to role-play has some pain points, in particular the va
 
 Visuals are an important part of game development but they are not the focus of this report. This section will focus on the system used for large scale rendering (used for celestial bodies) as an example of some of the work done on that side of the game. 
 
+\begin{center}
 \begin{figure}[H]
-    \includegraphics[width=\textwidth]{celestialbodiesSystemDiagram.jpg}
+    \includegraphics[width=.92\textwidth]{celestialbodiesSystemDiagram.jpg}
     \caption{1D Diagram showcasing how the celestial bodies rendering system functions.}
 \end{figure}
+\end{center}
 
 The principal issue is Unity's use of Floats to represent positions, an effort to increase performance for the vast majority of games at the cost of precision. Given the large scale of this project's world, extra precision is key for accurate representation. 
 
