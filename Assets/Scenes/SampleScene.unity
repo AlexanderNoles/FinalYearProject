@@ -154,6 +154,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e698c3d3f1984134bac526434aee3050, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &127252925
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 127252926}
+  - component: {fileID: 127252927}
+  m_Layer: 0
+  m_Name: VisualDatabase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &127252926
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 127252925}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &127252927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 127252925}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e016cc45b036b054ea139d552f74e6ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  factionColours:
+  - {r: 0.3773585, g: 0.03737985, b: 0.03737985, a: 1}
+  - {r: 0.2841674, g: 0.5660378, b: 0.21092917, a: 1}
+  - {r: 0.45750836, g: 0.26966894, b: 0.5660378, a: 1}
+  - {r: 0.23807405, g: 0.427455, b: 0.4716981, a: 1}
+  - {r: 0.6313726, g: 0.2518932, b: 0.121568605, a: 1}
+  factionIcons:
+  - {fileID: 1347069037, guid: 85f2105acfc11954a9268ba6189825fb, type: 3}
+  - {fileID: 1240445694, guid: 85f2105acfc11954a9268ba6189825fb, type: 3}
+  - {fileID: -183204230, guid: 85f2105acfc11954a9268ba6189825fb, type: 3}
+  - {fileID: -435458326, guid: 85f2105acfc11954a9268ba6189825fb, type: 3}
+  - {fileID: 13913197, guid: 85f2105acfc11954a9268ba6189825fb, type: 3}
 --- !u!1 &313446913
 GameObject:
   m_ObjectHideFlags: 0
@@ -1153,6 +1209,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   constantRoutines: []
   initRoutines: []
+  debugRoutines: []
 --- !u!114 &1239735562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1529,6 +1586,22 @@ MonoBehaviour:
     baseObject: {fileID: 1358600516521096238, guid: cd3fe8022e78faa49a60e6ca37329b15,
       type: 3}
     baseNumberOfObjects: 1100
+    generateAsNeeded: 0
+    currentUpdatedObjectPointer: 0
+    automaticallySetParent: 0
+  - name: SettlementIndicator
+    mode: 1
+    baseObject: {fileID: 8770783994454538988, guid: 88797e23ec7d90e4fafbd412885f7214,
+      type: 3}
+    baseNumberOfObjects: 100
+    generateAsNeeded: 1
+    currentUpdatedObjectPointer: 0
+    automaticallySetParent: 0
+  - name: NationIcon
+    mode: 1
+    baseObject: {fileID: 2506672463774400718, guid: 965f648cfad1fe947963bdaf58761915,
+      type: 3}
+    baseNumberOfObjects: 10
     generateAsNeeded: 0
     currentUpdatedObjectPointer: 0
     automaticallySetParent: 0
@@ -2399,3 +2472,4 @@ SceneRoots:
   - {fileID: 1880295347}
   - {fileID: 313446915}
   - {fileID: 1239735559}
+  - {fileID: 127252926}

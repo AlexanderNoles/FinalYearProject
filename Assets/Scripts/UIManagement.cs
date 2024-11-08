@@ -54,7 +54,7 @@ public class UIManagement : MonoBehaviour
     {
         if (map != null)
         {
-            if (InputManagement.GetKeyDown(KeyCode.M, true))
+            if (InputManagement.GetKeyDown(KeyCode.M, true) && MonitorBreak.Bebug.Console.GetConsoleState() != MonitorBreak.Bebug.Console.ConsoleState.FullScreen)
             {
                 bool active = !mapObject.activeSelf;
 

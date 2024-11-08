@@ -7,6 +7,7 @@ public class SettlementData : DataBase
     public class Settlement
     {
         public int maxPop = 100;
+        public RealSpacePostion actualSettlementPos = new RealSpacePostion(0, 0, 0);
     }
 
     public Dictionary<RealSpacePostion, Settlement> settlements = new Dictionary<RealSpacePostion, Settlement>();

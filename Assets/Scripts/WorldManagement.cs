@@ -53,6 +53,7 @@ public class WorldManagement : MonoBehaviour
     }
 
     private const double gridDensity = 3000;
+    private static readonly int gridDensityIntHalf = (int)gridDensity/2;
 
     public static double GetGridDensity()
     {
@@ -73,6 +74,14 @@ public class WorldManagement : MonoBehaviour
         }
 
         return toReturn;
+    }
+
+    public static RealSpacePostion RandomPositionInChunk(RealSpacePostion chunkCenter, System.Random random)
+    {
+        return new RealSpacePostion(
+            chunkCenter.x + random.Next(-gridDensityIntHalf, gridDensityIntHalf),
+            chunkCenter.y,
+            chunkCenter.z + random.Next(-gridDensityIntHalf, gridDensityIntHalf));
     }
 
     private const double debugMultiplier = 1000.0f;

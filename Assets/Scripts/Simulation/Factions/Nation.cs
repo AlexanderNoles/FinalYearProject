@@ -12,6 +12,8 @@ public class Nation : Faction
         AddTag(Tags.Nation);
         AddTag(Tags.Emblem);
         AddTag(Tags.Population);
+        //This faction is visible to all other factions
+        AddTag(Tags.OpenRelationship);
     }
 
     public override void InitData()

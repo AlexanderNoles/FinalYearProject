@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[SimulationManagement.ActiveSimulationRoutine(0, true)]
+[SimulationManagement.ActiveSimulationRoutine(0, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Init)]
 public class EmblemInit : InitRoutineBase
 {
     public override bool TagsUpdatedCheck(HashSet<Faction.Tags> tags)
@@ -19,12 +19,18 @@ public class EmblemInit : InitRoutineBase
         {
             if (faction.GetData(Faction.Tags.Emblem, out EmblemData emblemData))
             {
-                emblemData.mainColour = 
-                    new Color(
-                        SimulationManagement.random.Next(0, 100) / 100.0f,
-                        SimulationManagement.random.Next(0, 100) / 100.0f,
-                        SimulationManagement.random.Next(0, 100) / 100.0f
-                        );
+                if (emblemData.hasCreatedEmblem)
+                {
+                    continue;
+                }
+
+                emblemData.hasCreatedEmblem = true;
+
+                //Get the next colour from the colour rotation
+                emblemData.mainColour = VisualDatabase.GetNextFactionColour();
+
+                //Get the next icon from the icon rotation
+                emblemData.icon = VisualDatabase.GetNextFactionSprite();
             }
         }
     }

@@ -30,9 +30,17 @@ public class SettlementRoutine : RoutineBase
                         if (faction.GetData(Faction.Tags.Territory, out TerritoryData territoryData))
                         {
                             int count = territoryData.territoryCenters.Count;
+
+                            //Start at a random place in the list to give settelments more of a variance
+                            int indexOffset = SimulationManagement.random.Next(count);
+
                             for (int t = 0; t < count; t++)
                             {
-                                pos = territoryData.territoryCenters.ElementAt(t);
+                                //This really badly prioritizes early sectors
+                                //We should instead be picking one at random
+                                pos = territoryData.territoryCenters.ElementAt((t + indexOffset) % count);
+
+
                                 if (settlementData.settlements.ContainsKey(pos))
                                 {
                                     pos = null;
@@ -46,7 +54,10 @@ public class SettlementRoutine : RoutineBase
 
                         if (pos != null && !settlementData.settlements.ContainsKey(pos))
                         {
-                            settlementData.settlements.Add(pos, new SettlementData.Settlement());
+                            SettlementData.Settlement newSettlement = new SettlementData.Settlement();
+                            newSettlement.actualSettlementPos = WorldManagement.RandomPositionInChunk(pos, SimulationManagement.random);
+
+                            settlementData.settlements.Add(pos, newSettlement);
                         }
 
                     }

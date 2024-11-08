@@ -11,6 +11,9 @@ public class MapManagement : MonoBehaviour
     private const int shipIndicatorPool = 1;
     private const int mapBasePool = 2;
 
+    private const bool MAP_REFRESH_ENABLED = true;
+    private const bool SHOW_SETTLEMENTS = false;
+
     private List<(Transform, Transform)> mapObjectsAndParents;
     private bool mapObjectsListSetupDone = false;
     private bool extraFrame;
@@ -23,11 +26,15 @@ public class MapManagement : MonoBehaviour
 
     private Dictionary<Transform, MeshRenderer> borderIndicatorRenderers;
 
+    private Dictionary<Transform, SpriteRenderer> nationIconRenderers;
+
     private void Start()
     {
         mapRingMeshRenderes = mapElementsPools.GetComponentsOnAllActiveObjects<MeshRenderer>(0);
 
         borderIndicatorRenderers = mapElementsPools.GetComponentsOnAllActiveObjects<MeshRenderer>(3);
+
+        nationIconRenderers = mapElementsPools.GetComponentsOnAllActiveObjects<SpriteRenderer>(5);
     }
 
     private void OnEnable()
@@ -58,7 +65,13 @@ public class MapManagement : MonoBehaviour
                     //Do inital date set
                     dateLabel.text = SimulationManagement.GetDateString();
 
+                    //Disable any map elements that might still be showing
+                    //The parent object will have been set inactive so they won't actually render
+                    //But they would now cause we have turned the object active again
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(3);
+                    mapElementsPools.PruneObjectsNotUpdatedThisFrame(4);
+                    mapElementsPools.PruneObjectsNotUpdatedThisFrame(5);
+
                     mapObjectsAndParents = new List<(Transform, Transform)>();
 
                     List<SurroundingObject> surroundingObjects = SurroundingsRenderingManagement.GetControlledObjects();
@@ -107,7 +120,7 @@ public class MapManagement : MonoBehaviour
             }
             else
             {
-                if (Time.time > mapRefreshTime)
+                if (Time.time > mapRefreshTime && (MAP_REFRESH_ENABLED || mapRefreshTime == 0))
                 {
                     mapRefreshTime = Time.time + (5.0f / SimulationManagement.GetSimulationSpeed());
                     //We also want to steup the current territory borders here cause the intro animation is now done
@@ -115,7 +128,6 @@ public class MapManagement : MonoBehaviour
                     List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Territory);
 
                     Vector3 scale = Vector3.one * (float)(WorldManagement.GetGridDensity() / UIManagement.mapRelativeScaleModifier);
-
                     Vector3 displayOffset = (new Vector3(0, -1, 1).normalized * CameraManagement.cameraOffsetInMap) + WorldManagement.worldCenterPosition.TruncatedVector3(UIManagement.mapRelativeScaleModifier);
 
                     foreach (Faction faction in factions)
@@ -124,21 +136,77 @@ public class MapManagement : MonoBehaviour
                         {
                             Color factionColour = faction.GetColour();
 
-                            foreach (RealSpacePostion pos in territoryData.territoryCenters)
-                            {
-                                Vector3 truncPos = -pos.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset;
-                                Transform newPiece = mapElementsPools.UpdateNextObjectPosition(3, truncPos);
+                            Vector3 averagePos = Vector3.zero;
+                            List<Vector3> positions = new List<Vector3>();
+                            int count = territoryData.territoryCenters.Count;
 
-                                if (newPiece != null)
+                            if (count > 0)
+                            {
+                                foreach (RealSpacePostion pos in territoryData.territoryCenters)
                                 {
-                                    borderIndicatorRenderers[newPiece].material.SetColor("_Colour", factionColour);
-                                    newPiece.localScale = scale;
+                                    Vector3 truncPos = -pos.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset;
+                                    Transform newPiece = mapElementsPools.UpdateNextObjectPosition(3, truncPos);
+
+                                    if (newPiece != null)
+                                    {
+                                        borderIndicatorRenderers[newPiece].material.SetColor("_Colour", factionColour);
+                                        newPiece.localScale = scale;
+                                    }
+
+                                    averagePos += truncPos;
+                                    positions.Add(truncPos);
+                                }
+                            }
+
+                            if (faction.GetData(Faction.Tags.Emblem, out EmblemData emblemData))
+                            {
+                                averagePos /= count;
+                                //This is expensive but the effect looks worse without it
+                                //If we want to optomize we should store all the borders for the territories
+                                Vector3 averageOffset = Vector3.zero;
+                                float max = 0;
+
+                                foreach (Vector3 pos in positions)
+                                {
+                                    Vector3 offset = pos - averagePos;
+                                    averageOffset += offset;
+
+                                    max = Mathf.Max(max, Mathf.Abs(offset.x), Mathf.Abs(offset.z));
+                                }
+
+                                Transform centralIcon = mapElementsPools.UpdateNextObjectPosition(5, averagePos - averageOffset - (Vector3.up * 0.25f));
+                                float iconScale = 14 * Mathf.Log(max, 30);
+
+                                centralIcon.localScale = Vector3.one * Mathf.Clamp(iconScale, 1, 100);
+
+                                if (centralIcon != null)
+                                {
+                                    nationIconRenderers[centralIcon].sprite = emblemData.icon;
+                                    nationIconRenderers[centralIcon].color = emblemData.mainColour;
+                                }
+                            }
+                        }
+                    }
+
+                    if (SHOW_SETTLEMENTS)
+                    {
+                        List<Faction> settlements = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Settlements);
+
+                        foreach (Faction settlement in settlements)
+                        {
+                            if (settlement.GetData(Faction.Tags.Settlements, out SettlementData data))
+                            {
+                                foreach (KeyValuePair<RealSpacePostion, SettlementData.Settlement> s in data.settlements)
+                                {
+                                    mapElementsPools.UpdateNextObjectPosition(4, -s.Value.actualSettlementPos.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset);
                                 }
                             }
                         }
                     }
 
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(3);
+                    mapElementsPools.PruneObjectsNotUpdatedThisFrame(4);
+                    mapElementsPools.PruneObjectsNotUpdatedThisFrame(5);
                 }
 
                 if (Time.time > dateRefreshTime)

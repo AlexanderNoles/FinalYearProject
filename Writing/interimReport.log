@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.5.17)  6 NOV 2024 12:12
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.5.17)  6 NOV 2024 12:18
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1325,22 +1325,28 @@ File: ./Images/stellaris_main_screen.png Graphic file (type png)
 Package pdftex.def Info: ./Images/stellaris_main_screen.png  used on input line
  278.
 (pdftex.def)             Requested size: 443.57848pt x 249.50821pt.
- [10 <./Images/stellaris_main_screen.png (PNG copy)>]
+
+Underfull \hbox (badness 10000) in paragraph at lines 284--288
+
+ []
+
+[10 <./Images/stellaris_main_screen.png (PNG copy)>]
 <./Images/disco_elysium_thoughts_screen.png, id=266, 1443.89438pt x 812.28468pt
 >
 File: ./Images/disco_elysium_thoughts_screen.png Graphic file (type png)
 <use ./Images/disco_elysium_thoughts_screen.png>
 Package pdftex.def Info: ./Images/disco_elysium_thoughts_screen.png  used on in
-put line 293.
+put line 294.
 (pdftex.def)             Requested size: 443.57848pt x 249.53746pt.
  [11 <./Images/disco_elysium_thoughts_screen.png>]
 <./Images/celestialbodiesSystemDiagram.jpg, id=274, 682.55pt x 622.325pt>
 File: ./Images/celestialbodiesSystemDiagram.jpg Graphic file (type jpg)
 <use ./Images/celestialbodiesSystemDiagram.jpg>
 Package pdftex.def Info: ./Images/celestialbodiesSystemDiagram.jpg  used on inp
-ut line 307.
-(pdftex.def)             Requested size: 408.09138pt x 372.08743pt.
- [12 <./Images/celestialbodiesSystemDiagram.jpg>] [13]
+ut line 308.
+(pdftex.def)             Requested size: 399.21791pt x 363.99693pt.
+ [12 <./Images/celestialbodiesSystemDiagram.jpg>]
+[13]
 Chapter 4.
 
 Underfull \hbox (badness 10000) in paragraph at lines 325--345
@@ -1729,7 +1735,7 @@ ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Users/alex
 n/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/U
 sers/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.
 pfb>
-Output written on interimReport.pdf (30 pages, 8548159 bytes).
+Output written on interimReport.pdf (30 pages, 8548185 bytes).
 PDF statistics:
  566 PDF objects out of 1000 (max. 8388607)
  92 named destinations out of 1000 (max. 500000)

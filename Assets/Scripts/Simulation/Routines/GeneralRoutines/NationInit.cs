@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[SimulationManagement.ActiveSimulationRoutine(95, true)]
+[SimulationManagement.ActiveSimulationRoutine(95, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Init)]
 public class NationInit : InitRoutineBase
 {
     public override bool TagsUpdatedCheck(HashSet<Faction.Tags> tags)
