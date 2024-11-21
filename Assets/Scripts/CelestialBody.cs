@@ -9,16 +9,10 @@ public class CelestialBody : SurroundingObject
     protected override void Awake()
     {
         base.Awake();
-        Vector3 pos = transform.position;
-
-        float mag = pos.magnitude;
-        mag -= 5.0f;
-
-        //Fucked method to make sure orbits are cicular
-        pos = Vector3.ClampMagnitude(pos, mag);
-        
-        pos *= 2000.0f;
+        Vector3 pos = transform.position * 2000.0f;
         postion = new RealSpacePostion(pos.x, pos.y, pos.z);
+		//Clamp position to grid
+		postion = WorldManagement.ClampPositionToGrid(postion);
 
         targetMat = GetComponent<MeshRenderer>().material;
         targetMat.SetVector("_RealSpacePosition", transform.position);

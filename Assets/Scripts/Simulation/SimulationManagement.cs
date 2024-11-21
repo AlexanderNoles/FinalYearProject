@@ -194,7 +194,7 @@ public class SimulationManagement : MonoBehaviour
         {
             //Run history ticks
             //Simulation is run for a period of years before player arrives to get more dynamic results        //It is important this is run in Start so OnEnable can run on objects before this goes off
-            int tickCount = (int)(DAY_TO_MONTH * MONTH_TO_YEAR) * 35; //100 years
+            int tickCount = (int)(DAY_TO_MONTH * MONTH_TO_YEAR) * SimulationSettings.HistoryLength();
 
             for (int i = 0; i < tickCount; i++)
             {

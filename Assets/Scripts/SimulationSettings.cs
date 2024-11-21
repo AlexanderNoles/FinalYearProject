@@ -8,6 +8,7 @@ public class SimulationSettings : MonoBehaviour
 {
     private static SimulationSettings instance;
     public bool runHistory;
+	public int historyLength = 30;
     public bool drawSettlements;
     public bool updateMap;
 
@@ -23,6 +24,11 @@ public class SimulationSettings : MonoBehaviour
 #endif
         return true;
     }
+
+	public static int HistoryLength()
+	{
+		return instance.historyLength;
+	}
 
     public static bool DrawSettlements()
     {
@@ -41,30 +47,30 @@ public class SimulationSettings : MonoBehaviour
         return true;
     }
 
-    [MenuItem("PlaySettings/Flip Run History")]
-    public static void FlipRunHistory()
-    {
-        SimulationSettings preRunManagement = FindAnyObjectByType<SimulationSettings>();
+    //[MenuItem("PlaySettings/Flip Run History")]
+    //public static void FlipRunHistory()
+    //{
+    //    SimulationSettings preRunManagement = FindAnyObjectByType<SimulationSettings>();
 
-        preRunManagement.runHistory = !preRunManagement.runHistory;
-        Debug.Log($"Run History: {preRunManagement.runHistory}");
-    }
+    //    preRunManagement.runHistory = !preRunManagement.runHistory;
+    //    Debug.Log($"Run History: {preRunManagement.runHistory}");
+    //}
 
-    [MenuItem("PlaySettings/Draw Settlements")]
-    public static void FlipDrawSettlements()
-    {
-        SimulationSettings preRunManagement = FindAnyObjectByType<SimulationSettings>();
+    //[MenuItem("PlaySettings/Draw Settlements")]
+    //public static void FlipDrawSettlements()
+    //{
+    //    SimulationSettings preRunManagement = FindAnyObjectByType<SimulationSettings>();
 
-        preRunManagement.drawSettlements = !preRunManagement.drawSettlements;
-        Debug.Log($"Draw Settlements: {preRunManagement.drawSettlements}");
-    }
+    //    preRunManagement.drawSettlements = !preRunManagement.drawSettlements;
+    //    Debug.Log($"Draw Settlements: {preRunManagement.drawSettlements}");
+    //}
 
-    [MenuItem("PlaySettings/Update Map")]
-    public static void FlipRedrawMap()
-    {
-        SimulationSettings preRunManagement = FindAnyObjectByType<SimulationSettings>();
+    //[MenuItem("PlaySettings/Update Map")]
+    //public static void FlipRedrawMap()
+    //{
+    //    SimulationSettings preRunManagement = FindAnyObjectByType<SimulationSettings>();
 
-        preRunManagement.updateMap = !preRunManagement.updateMap;
-        Debug.Log($"Update Map: {preRunManagement.updateMap}");
-    }
+    //    preRunManagement.updateMap = !preRunManagement.updateMap;
+    //    Debug.Log($"Update Map: {preRunManagement.updateMap}");
+    //}
 }

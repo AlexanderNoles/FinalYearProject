@@ -12,7 +12,7 @@ public class MapManagement : MonoBehaviour
     private const int mapBasePool = 2;
 
     private List<(Transform, Transform)> mapObjectsAndParents;
-    private bool mapObjectsListSetupDone = false;
+    private bool pastFirstFrameOfMapAnim = false;
     private bool extraFrame;
     private Vector3 mapBasePos;
 
@@ -44,7 +44,7 @@ public class MapManagement : MonoBehaviour
 
     private void OnEnable()
     {
-        mapObjectsListSetupDone = false;
+        pastFirstFrameOfMapAnim = false;
         extraFrame = true;
     }
 
@@ -64,8 +64,8 @@ public class MapManagement : MonoBehaviour
                     dateRefreshTime = 0.0f;
                 }
 
-                //Can't use UIManagment's first frame of intro anim because we get set active a frame after the intro anim starts :(
-                if (!mapObjectsListSetupDone)
+				//Can't use UIManagment's first frame of intro anim because we get set active a frame after the intro anim starts :(
+                if (!pastFirstFrameOfMapAnim)
                 {
                     //Do inital date set
                     dateLabel.text = SimulationManagement.GetDateString();
@@ -91,7 +91,6 @@ public class MapManagement : MonoBehaviour
                     mapElementsPools.UpdateNextObjectPosition(shipIndicatorPool, shipIndicatorPos);
 
                     mapBasePos = shipIndicatorPos + WorldManagement.worldCenterPosition.TruncatedVector3(UIManagement.mapRelativeScaleModifier);
-                    mapObjectsListSetupDone = true;
                 }
 
                 foreach ((Transform, Transform) entry in mapObjectsAndParents)
@@ -115,7 +114,10 @@ public class MapManagement : MonoBehaviour
                     mapRingMeshRenderes[mapRing].material.SetVector("_RingItemPos", entry.Item1.position);
                     mapRingMeshRenderes[mapRing].material.SetFloat("_RingItemRadius", entry.Item1.localScale.magnitude * 0.75f);
 
-                    Debug.DrawLine(entry.Item2.position, entry.Item2.position + scale, Color.red);
+					if (!pastFirstFrameOfMapAnim)
+					{
+						mapRingMeshRenderes[mapRing].material.SetFloat("_Thickness", Mathf.Max(0.1f, 0.3f * entry.Item1.localScale.x));
+					}
                 }
 
                 Vector3 mapBasePosThisFrame = mapBasePos + (Vector3.up * Mathf.Lerp(-25, -2, UIManagement.EvaluatedMapIntroT()));
@@ -123,10 +125,11 @@ public class MapManagement : MonoBehaviour
 
                 mapElementsPools.PruneObjectsNotUpdatedThisFrame(mapRingPool);
                 mapElementsPools.PruneObjectsNotUpdatedThisFrame(mapBasePool);
-            }
+				pastFirstFrameOfMapAnim = true;
+			}
             else
             {
-                if (Time.time > mapRefreshTime && (SimulationSettings.UpdateMap() || mapRefreshTime == 0))
+                if (false && Time.time > mapRefreshTime && (SimulationSettings.UpdateMap() || mapRefreshTime == 0))
                 {
                     mapRefreshTime = Time.time + (5.0f / SimulationManagement.GetSimulationSpeed());
                     //We also want to steup the current territory borders here cause the intro animation is now done

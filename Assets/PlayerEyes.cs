@@ -39,7 +39,7 @@ public class PlayerEyes : MonoBehaviour
 		{
 			Vector3 pos = Random.onUnitSphere;
 			pos.y = 0;
-			double range = WorldManagement.GetSolarSystemRadius();
+			double range = WorldManagement.GetSolarSystemRadius() * 0.2f;
 
 			UpdateLocation(new ArbitraryLocation().SetLocation(
 				new RealSpacePostion(pos.x * range, 0, pos.z * range)
@@ -57,7 +57,7 @@ public class PlayerEyes : MonoBehaviour
 
 			if (location != null)
 			{
-				location.Init();
+				location.InitDraw();
 				UpdateWorldPosition();
 			}
 

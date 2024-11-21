@@ -7,6 +7,7 @@ public class SurroundingsRenderingManagement : MonoBehaviour
     public GameObject skybox;
 
     private static List<SurroundingObject> controlledObjects = new List<SurroundingObject>();
+	public static Transform mainTransform;
 
     public static List<SurroundingObject> GetControlledObjects()
     {
@@ -16,6 +17,7 @@ public class SurroundingsRenderingManagement : MonoBehaviour
     private void Awake()
     {
         SetActivePlanetLighting(true);
+		mainTransform = transform;
     }
 
     public static void SetActivePlanetLighting(bool active)

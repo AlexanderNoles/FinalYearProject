@@ -11,9 +11,6 @@ public class ArbitraryLocation : VisitableLocation
 		return this;
 	}
 
-
-
-
 	public RealSpacePostion postion;
 
 	public override RealSpacePostion GetPosition()
