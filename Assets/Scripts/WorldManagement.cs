@@ -47,9 +47,12 @@ public class WorldManagement : MonoBehaviour
         return solarSystemRadius;
     }
 
-    public static bool WithinSolarSystem(RealSpacePostion pos)
+    public static bool WithinValidSolarSystem(RealSpacePostion pos)
     {
-        return GetSolarSystemRadius() > pos.Magnitude();
+        double mag = pos.Magnitude();
+
+        //Limit positions to be within the solar system and not too close to the sun
+        return mag < GetSolarSystemRadius() && mag > 5000;
     }
 
     private const double gridDensity = 3000;
@@ -178,6 +181,15 @@ public class RealSpacePostion
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    public RealSpacePostion Add(RealSpacePostion postion)
+    {
+        x += postion.x;
+        y += postion.y;
+        z += postion.z;
+
+        return this;
     }
 
     //OPERATIONS

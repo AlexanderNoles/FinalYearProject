@@ -29,7 +29,7 @@ public class Faction
         //This doesn't mean it immediately has a dual relationship with every other faction (cause it may not know about them, for example not all nations immediately know about the player)
         OpenRelationship,
         // Temporary tags, these are applied mid simulation rather than at faction creation time //
-        AtWar
+        AtWar, //Is this faction at war? Might remove this tag cause we can tell if something is at war through relationship data instead
     }
 
     //Useful keys for data that doesn't cleanly belong to a tag

@@ -141,11 +141,11 @@ public class CameraManagement : MonoBehaviour
         actualBackingCameraData = backingCamera.GetComponent<UniversalAdditionalCameraData>();
 
         positionLastFrame = transform.position;
-        WorldManagement.SetWorldCenterPosition(new RealSpacePostion(0, 0, 50000));
     }
 
     private void Update()
     {
+        //If most things aren't being rendered
         if (!mainCamera.enabled)
         {
             //Do backing camera solo stuff
@@ -184,7 +184,14 @@ public class CameraManagement : MonoBehaviour
 
                     backingCamera.position += relativeWasdInput * (Time.deltaTime * (InputManagement.GetKey(KeyCode.LeftShift) ? 75 : 50));
 
-                    backingCamera.position = Vector3.ClampMagnitude(backingCamera.position, 150);
+                    Vector3 anchorPos = MapManagement.GetDisplayOffset();
+
+                    Vector3 offsetFromAnchor = backingCamera.position - anchorPos;
+
+                    float mag = Mathf.Clamp(offsetFromAnchor.magnitude, 5, 150);
+
+                    offsetFromAnchor = offsetFromAnchor.normalized * mag;
+                    backingCamera.position = anchorPos + offsetFromAnchor;
                 }
 
                 backingCamera.rotation = Quaternion.Euler(inMapRot.x, inMapRot.y, 0);

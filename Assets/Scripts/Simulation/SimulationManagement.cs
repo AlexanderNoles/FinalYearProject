@@ -5,10 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class SimulationManagement : MonoBehaviour
 {
@@ -22,10 +20,22 @@ public class SimulationManagement : MonoBehaviour
     private static int simulationSeed;
     public static System.Random random;
 
+    private static float tickStartTime;
+
+    public static float GetCurrentSimulationTime()
+    {
+        return tickStartTime;
+    }
+
     private float nextTickTime;
     private const float TICK_MAX_LENGTH = 3;
     private float tickInitFrame;
     private float minimumFrameLength = 0;
+
+    public static float GetSimulationDaysAsTime(int dayNumber)
+    {
+        return dayNumber * TICK_MAX_LENGTH;
+    }
 
     private static float currentDay;
     private const float DAY_TO_MONTH = 30;
@@ -63,6 +73,16 @@ public class SimulationManagement : MonoBehaviour
     public List<InitRoutineBase> initRoutines = new List<InitRoutineBase>();
     [HideInInspector]
     public List<RoutineBase> debugRoutines = new List<RoutineBase>();
+    [HideInInspector]
+    public Dictionary<string, RoutineBase> absentRoutines = new Dictionary<string, RoutineBase>();
+
+    public static void RunAbsentRoutine(string routineIdentifier)
+    {
+        if (instance.absentRoutines.ContainsKey(routineIdentifier))
+        {
+            instance.absentRoutines[routineIdentifier].Run();
+        }
+    }
 
     private Dictionary<int, Faction> idToFaction = new Dictionary<int, Faction>();
     private Dictionary<Faction.Tags, List<Faction>> factions = new Dictionary<Faction.Tags, List<Faction>>();
@@ -165,16 +185,16 @@ public class SimulationManagement : MonoBehaviour
         }
 
         //Add all routine instances
-        (constantRoutines, initRoutines, debugRoutines) = SimulationRoutineExecution.Main(gameObject);
+        (constantRoutines, initRoutines, debugRoutines, absentRoutines) = SimulationRoutineExecution.Main(gameObject);
     }
 
     private void Start()
     {
-        if (PreRunManagement.ShouldRunHistory())
+        if (SimulationSettings.ShouldRunHistory())
         {
             //Run history ticks
             //Simulation is run for a period of years before player arrives to get more dynamic results        //It is important this is run in Start so OnEnable can run on objects before this goes off
-            int tickCount = (int)(DAY_TO_MONTH * MONTH_TO_YEAR) * 100; //100 years
+            int tickCount = (int)(DAY_TO_MONTH * MONTH_TO_YEAR) * 35; //100 years
 
             for (int i = 0; i < tickCount; i++)
             {
@@ -192,29 +212,33 @@ public class SimulationManagement : MonoBehaviour
         {
             Normal,
             Init,
+            Absent,
             Debug
         }
 
         public RoutineTypes routineType;
+        public string identifier;
 
         /// <summary>
         /// Construct Active Simulation Routine
         /// </summary>
         /// <param name="priority">Routines Priority, higher priority means it is run first each tick. In range -10000 to 10000</param>
         /// <param name="initRoutine">Should this routine only be run once (on the first tick the faction is created)?</param>
-        public ActiveSimulationRoutine(int priority, RoutineTypes routineType = RoutineTypes.Normal)
+        public ActiveSimulationRoutine(int priority, RoutineTypes routineType = RoutineTypes.Normal, string identifier = "")
         {
             this.priority = Mathf.Clamp(priority, -10000, 10000);
             this.routineType = routineType;
+            this.identifier = identifier;
         }
     }
 
     public class SimulationRoutineExecution : MonoBehaviour
     {
-        public static (List<RoutineBase>, List<InitRoutineBase>, List<RoutineBase>) Main(GameObject parent)
+        public static (List<RoutineBase>, List<InitRoutineBase>, List<RoutineBase>, Dictionary<string, RoutineBase>) Main(GameObject parent)
         {
             List<RoutineBase> activeRoutines = new List<RoutineBase>();
             List<RoutineBase> debugRoutines = new List<RoutineBase>();
+            Dictionary<string, RoutineBase> absentRoutines = new Dictionary<string, RoutineBase>();
             List<InitRoutineBase> initRoutines = new List<InitRoutineBase>();
             List<(ActiveSimulationRoutine, Type)> rountineClasses = new List<(ActiveSimulationRoutine, Type)>();
 
@@ -261,13 +285,24 @@ public class SimulationManagement : MonoBehaviour
                 {
                     debugRoutines.Add(newRoutine as RoutineBase);
                 }
+                else if (type.Item1.routineType == ActiveSimulationRoutine.RoutineTypes.Absent)
+                {
+                    if (absentRoutines.ContainsKey(type.Item1.identifier))
+                    {
+                        Debug.LogError("More than one absent routine shares name: " + type.Item1.identifier);
+                        continue;
+                    }
+
+
+                    absentRoutines.Add(type.Item1.identifier, newRoutine as RoutineBase);
+                }
                 else
                 {
                     activeRoutines.Add(newRoutine as RoutineBase);
                 }
             }
 
-            return (activeRoutines, initRoutines, debugRoutines);
+            return (activeRoutines, initRoutines, debugRoutines, absentRoutines);
         }
     }
 
@@ -276,6 +311,7 @@ public class SimulationManagement : MonoBehaviour
     {
         if (instance != null) 
         {
+            tickStartTime = Time.time;
             instance.tickInitFrame = Time.frameCount;
 
             if (simulatioSpeedModifier < 0)

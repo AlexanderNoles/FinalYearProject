@@ -11,9 +11,6 @@ public class MapManagement : MonoBehaviour
     private const int shipIndicatorPool = 1;
     private const int mapBasePool = 2;
 
-    private const bool MAP_REFRESH_ENABLED = true;
-    private const bool SHOW_SETTLEMENTS = false;
-
     private List<(Transform, Transform)> mapObjectsAndParents;
     private bool mapObjectsListSetupDone = false;
     private bool extraFrame;
@@ -23,18 +20,26 @@ public class MapManagement : MonoBehaviour
     private float dateRefreshTime;
 
     private Dictionary<Transform, MeshRenderer> mapRingMeshRenderes;
-
-    private Dictionary<Transform, MeshRenderer> borderIndicatorRenderers;
-
+    private Dictionary<Transform, LineRenderer> borderRenderers;
     private Dictionary<Transform, SpriteRenderer> nationIconRenderers;
+    private Dictionary<Transform, LineRenderer> tradeRouteRenderers;
+
+
+    public static Vector3 GetDisplayOffset()
+    {
+        return (new Vector3(0, -1, 1).normalized * CameraManagement.cameraOffsetInMap) +
+                        WorldManagement.worldCenterPosition.TruncatedVector3(UIManagement.mapRelativeScaleModifier);
+    }
 
     private void Start()
     {
         mapRingMeshRenderes = mapElementsPools.GetComponentsOnAllActiveObjects<MeshRenderer>(0);
 
-        borderIndicatorRenderers = mapElementsPools.GetComponentsOnAllActiveObjects<MeshRenderer>(3);
+        borderRenderers = mapElementsPools.GetComponentsOnAllActiveObjects<LineRenderer>(3);
 
         nationIconRenderers = mapElementsPools.GetComponentsOnAllActiveObjects<SpriteRenderer>(5);
+
+        tradeRouteRenderers = mapElementsPools.GetComponentsOnAllActiveObjects<LineRenderer>(6);
     }
 
     private void OnEnable()
@@ -71,6 +76,7 @@ public class MapManagement : MonoBehaviour
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(3);
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(4);
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(5);
+                    mapElementsPools.PruneObjectsNotUpdatedThisFrame(6);
 
                     mapObjectsAndParents = new List<(Transform, Transform)>();
 
@@ -120,7 +126,7 @@ public class MapManagement : MonoBehaviour
             }
             else
             {
-                if (Time.time > mapRefreshTime && (MAP_REFRESH_ENABLED || mapRefreshTime == 0))
+                if (Time.time > mapRefreshTime && (SimulationSettings.UpdateMap() || mapRefreshTime == 0))
                 {
                     mapRefreshTime = Time.time + (5.0f / SimulationManagement.GetSimulationSpeed());
                     //We also want to steup the current territory borders here cause the intro animation is now done
@@ -128,7 +134,13 @@ public class MapManagement : MonoBehaviour
                     List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Territory);
 
                     Vector3 scale = Vector3.one * (float)(WorldManagement.GetGridDensity() / UIManagement.mapRelativeScaleModifier);
-                    Vector3 displayOffset = (new Vector3(0, -1, 1).normalized * CameraManagement.cameraOffsetInMap) + WorldManagement.worldCenterPosition.TruncatedVector3(UIManagement.mapRelativeScaleModifier);
+                    Vector3 displayOffset = GetDisplayOffset();
+
+                    //RUN BORDER IN ORDER ROUTINE
+                    //This is a very expensive operation that is currently (08/11/2024) the sole reason behind MAP_REFRESH_ENABLED being set to false
+                    //it could almost certainly be optomized in a variety of ways but it runs well enough that for this vertical slice/beta version
+                    //it is fine. The focus should be one other things
+                    SimulationManagement.RunAbsentRoutine("BorderInOrder");
 
                     foreach (Faction faction in factions)
                     {
@@ -136,59 +148,78 @@ public class MapManagement : MonoBehaviour
                         {
                             Color factionColour = faction.GetColour();
 
-                            Vector3 averagePos = Vector3.zero;
-                            List<Vector3> positions = new List<Vector3>();
-                            int count = territoryData.territoryCenters.Count;
+                            int count = territoryData.borders.Count;
 
                             if (count > 0)
                             {
-                                foreach (RealSpacePostion pos in territoryData.territoryCenters)
-                                {
-                                    Vector3 truncPos = -pos.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset;
-                                    Transform newPiece = mapElementsPools.UpdateNextObjectPosition(3, truncPos);
+                                Vector3 averagePos = Vector3.zero;
+                                Transform borderRenderer = mapElementsPools.UpdateNextObjectPosition(3, Vector3.zero);
+                                LineRenderer lineRenderer = borderRenderers[borderRenderer];
 
-                                    if (newPiece != null)
+                                //Idea is we start at a given border point and we traverse round the border creating a line
+                                //When faced with multiple options on where to go we split and do both, we want the path that maximises closeness to the original shape
+                                //In our case "closeness to the original shape" can be defined by how close the number of generated points is too the full number of borders
+                                //So in esscense we want to maximize the amount of border points we traverse (ideally all of them)
+
+                                if (lineRenderer != null)
+                                {
+#pragma warning disable CS0618 // Type or member is obsolete
+                                    lineRenderer.SetColors(factionColour, factionColour);
+#pragma warning restore CS0618 // Type or member is obsolete
+
+                                    if (territoryData.borderInOrder != null)
                                     {
-                                        borderIndicatorRenderers[newPiece].material.SetColor("_Colour", factionColour);
-                                        newPiece.localScale = scale;
+                                        //Apply the found path to the line renderer
+                                        count = territoryData.borderInOrder.Count;
+                                        lineRenderer.positionCount = count + 1;
+
+                                        for (int i = 0; i < count; i++)
+                                        {
+                                            Vector3 pos = territoryData.borderInOrder[i] + displayOffset;
+
+                                            lineRenderer.SetPosition(i, pos);
+                                            averagePos += pos;
+                                        }
+
+                                        //Make it loop
+                                        lineRenderer.SetPosition(count, lineRenderer.GetPosition(0));
+
+                                        if (faction.GetData(Faction.Tags.Emblem, out EmblemData emblemData))
+                                        {
+                                            averagePos /= count;
+
+                                            Vector3 averageOffset = Vector3.zero;
+                                            float max = 0;
+
+                                            Vector3[] allPositions = new Vector3[lineRenderer.positionCount];
+                                            lineRenderer.GetPositions(allPositions);
+
+                                            for (int i = 0; i < count; i++)
+                                            {
+                                                Vector3 offset = allPositions[i] - averagePos;
+                                                averageOffset += offset;
+
+                                                max = Mathf.Max(max, Mathf.Abs(offset.x), Mathf.Abs(offset.z));
+                                            }
+
+                                            Transform centralIcon = mapElementsPools.UpdateNextObjectPosition(5, averagePos - averageOffset - (Vector3.up * 0.25f));
+                                            float iconScale = 14 * Mathf.Log(max, 30);
+
+                                            centralIcon.localScale = Vector3.one * Mathf.Clamp(iconScale, 1, 100);
+
+                                            if (centralIcon != null)
+                                            {
+                                                nationIconRenderers[centralIcon].sprite = emblemData.icon;
+                                                nationIconRenderers[centralIcon].color = emblemData.mainColour;
+                                            }
+                                        }
                                     }
-
-                                    averagePos += truncPos;
-                                    positions.Add(truncPos);
-                                }
-                            }
-
-                            if (faction.GetData(Faction.Tags.Emblem, out EmblemData emblemData))
-                            {
-                                averagePos /= count;
-                                //This is expensive but the effect looks worse without it
-                                //If we want to optomize we should store all the borders for the territories
-                                Vector3 averageOffset = Vector3.zero;
-                                float max = 0;
-
-                                foreach (Vector3 pos in positions)
-                                {
-                                    Vector3 offset = pos - averagePos;
-                                    averageOffset += offset;
-
-                                    max = Mathf.Max(max, Mathf.Abs(offset.x), Mathf.Abs(offset.z));
-                                }
-
-                                Transform centralIcon = mapElementsPools.UpdateNextObjectPosition(5, averagePos - averageOffset - (Vector3.up * 0.25f));
-                                float iconScale = 14 * Mathf.Log(max, 30);
-
-                                centralIcon.localScale = Vector3.one * Mathf.Clamp(iconScale, 1, 100);
-
-                                if (centralIcon != null)
-                                {
-                                    nationIconRenderers[centralIcon].sprite = emblemData.icon;
-                                    nationIconRenderers[centralIcon].color = emblemData.mainColour;
                                 }
                             }
                         }
                     }
 
-                    if (SHOW_SETTLEMENTS)
+                    if (SimulationSettings.DrawSettlements())
                     {
                         List<Faction> settlements = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Settlements);
 
@@ -199,6 +230,23 @@ public class MapManagement : MonoBehaviour
                                 foreach (KeyValuePair<RealSpacePostion, SettlementData.Settlement> s in data.settlements)
                                 {
                                     mapElementsPools.UpdateNextObjectPosition(4, -s.Value.actualSettlementPos.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset);
+
+                                    //Trade trade paths
+                                    foreach (SettlementData.Settlement.TradeFleet tradeFleet in s.Value.tradeFleets)
+                                    {
+                                        foreach (TradeShip ship in tradeFleet.ships)
+                                        {
+                                            if (ship.tradeTarget != null)
+                                            {
+                                                LineRenderer renderer = tradeRouteRenderers[mapElementsPools.UpdateNextObjectPosition(6, Vector3.zero)];
+                                                renderer.positionCount = 2;
+                                                renderer.SetPosition(0,
+                                                    -ship.homeLocation.GetPosition().TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset);
+                                                renderer.SetPosition(1,
+                                                    -ship.tradeTarget.GetPosition().TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset);
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -207,6 +255,7 @@ public class MapManagement : MonoBehaviour
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(3);
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(4);
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(5);
+                    mapElementsPools.PruneObjectsNotUpdatedThisFrame(6);
                 }
 
                 if (Time.time > dateRefreshTime)
@@ -218,3 +267,5 @@ public class MapManagement : MonoBehaviour
         }
     }
 }
+
+

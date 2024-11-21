@@ -30,7 +30,7 @@ public class NationInit : InitRoutineBase
 
         Func<RealSpacePostion, bool> falloffPositionGenerationValidPositionCheck = delegate (RealSpacePostion pos)
         {
-            return !AnyContains(territoryDatas, pos) && WorldManagement.WithinSolarSystem(pos);
+            return !AnyContains(territoryDatas, pos) && WorldManagement.WithinValidSolarSystem(pos);
         };
 
         foreach (Faction faction in nations)
@@ -57,6 +57,7 @@ public class NationInit : InitRoutineBase
                         //    SimulationManagement.random);
 
                         territory.territoryCenters.Add(territory.origin);
+                        territory.borders.Add(territory.origin);
                     }
                     else if (faction.GetData(Faction.Tags.Faction, out FactionData factionData))
                     {
