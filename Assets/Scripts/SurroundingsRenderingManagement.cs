@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class SurroundingsRenderingManagement : MonoBehaviour
 {
@@ -66,8 +67,9 @@ public class SurroundingsRenderingManagement : MonoBehaviour
                 foreach (SurroundingObject obj in controlledObjects)
                 {
                     obj.transform.localPosition = -obj.postion.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + ((Vector3.down + Vector3.forward).normalized * Mathf.Lerp(0.0f, CameraManagement.cameraOffsetInMap, evaluatedIntroT));
-                    obj.SetObjectVisualScale((obj.scale / UIManagement.mapRelativeScaleModifier));
-                }
+					obj.SetShellOffset(-1);
+					obj.SetObjectVisualScale((obj.scale / UIManagement.mapRelativeScaleModifier));
+				}
             }
         }
         else
@@ -121,7 +123,8 @@ public class SurroundingsRenderingManagement : MonoBehaviour
                 target.transform.localPosition = distanceOffsetAndIndex[minimumIndex].Item2.Normalized().AsVector3() * shellOffset;
 
                 float newScale = (float)(target.scale / distanceOffsetAndIndex[minimumIndex].Item1) * shellOffset;
-                target.SetObjectVisualScale(newScale);
+				target.SetShellOffset(shellOffset);
+				target.SetObjectVisualScale(newScale);
 
                 //Remove it from the list
                 distanceOffsetAndIndex.RemoveAt(minimumIndex);

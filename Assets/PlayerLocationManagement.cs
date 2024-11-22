@@ -39,7 +39,7 @@ public class PlayerLocationManagement : MonoBehaviour
 		{
 			Vector3 pos = Random.onUnitSphere;
 			pos.y = 0;
-			double range = WorldManagement.GetSolarSystemRadius();
+			double range = WorldManagement.GetSolarSystemRadius() * 0.15f;
 
 			UpdateLocation(new ArbitraryLocation().SetLocation(
 				new RealSpacePostion(pos.x * range, 0, pos.z * range)

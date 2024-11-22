@@ -5,6 +5,7 @@ using UnityEngine;
 public class SurroundingObject : MonoBehaviour
 {
     public float scale = 1f;
+	protected float shellOffset;
     private new Transform transform;
     public RealSpacePostion postion;
 
@@ -28,6 +29,11 @@ public class SurroundingObject : MonoBehaviour
     {
         transform.localScale = Vector3.one * scale;
     }
+
+	public void SetShellOffset(float newOffset)
+	{
+		shellOffset = newOffset;
+	}
 
     public virtual Transform GetInWorldParent() 
     {
