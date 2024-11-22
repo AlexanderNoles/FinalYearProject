@@ -129,7 +129,7 @@ public class MapManagement : MonoBehaviour
 			}
             else
             {
-                if (false && Time.time > mapRefreshTime && (SimulationSettings.UpdateMap() || mapRefreshTime == 0))
+                if (Time.time > mapRefreshTime && (SimulationSettings.UpdateMap() || mapRefreshTime == 0))
                 {
                     mapRefreshTime = Time.time + (5.0f / SimulationManagement.GetSimulationSpeed());
                     //We also want to steup the current territory borders here cause the intro animation is now done

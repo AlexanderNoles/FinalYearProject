@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerEyes : MonoBehaviour
+public class PlayerLocationManagement : MonoBehaviour
 {
 	private static bool locationChanged = false;
 	private static VisitableLocation previousLocation;
@@ -39,7 +39,7 @@ public class PlayerEyes : MonoBehaviour
 		{
 			Vector3 pos = Random.onUnitSphere;
 			pos.y = 0;
-			double range = WorldManagement.GetSolarSystemRadius() * 0.2f;
+			double range = WorldManagement.GetSolarSystemRadius();
 
 			UpdateLocation(new ArbitraryLocation().SetLocation(
 				new RealSpacePostion(pos.x * range, 0, pos.z * range)
@@ -82,5 +82,8 @@ public class PlayerEyes : MonoBehaviour
 			pos.y + displacement.y,
 			pos.z + displacement.z
 			));
+
+		//Update the player capital ship position (in simulation)
+		PlayerCapitalShip.UpdatePCSPosition(new RealSpacePostion(pos.x, pos.y, pos.z));
 	}
 }
