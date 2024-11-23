@@ -15,6 +15,12 @@ public class Sun : CelestialBody
 	{
 		base.SetObjectVisualScale(scale);
 
+		if (shellOffset == -1)
+		{
+			//Shell based system is not currently being used
+			return;
+		}
+
 		float baseIntensity = 2000.0f;
 
 
