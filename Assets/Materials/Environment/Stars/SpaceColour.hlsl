@@ -1,4 +1,4 @@
-void GetSpaceColour_float(float3 Position, float Scale, float3 Offset, out float3 SpaceColour)
+void OtaviogoodNoise_float(float3 Position, float Scale, float3 Offset, float Iterations, out float3 SpaceColour)
 {
 	float nudge = 0.9;
 	float normalizer = 1.0 / sqrt(1.0 + (nudge * nudge));
@@ -9,7 +9,7 @@ void GetSpaceColour_float(float3 Position, float Scale, float3 Offset, out float
 	Position *= Scale;
 	Position += Offset;
 	
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < Iterations; i++)
 	{
 		// add sin and cos scaled inverse with the frequency
 		n += -abs(sin(Position.y * iter) + cos(Position.x * iter)) / iter; // abs for a ridged look

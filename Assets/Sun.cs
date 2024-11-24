@@ -23,7 +23,6 @@ public class Sun : CelestialBody
 
 		float baseIntensity = 2000.0f;
 
-
 		//Get the scale agnostic of shell offset
 		float agnosticScale = scale / shellOffset;
 
