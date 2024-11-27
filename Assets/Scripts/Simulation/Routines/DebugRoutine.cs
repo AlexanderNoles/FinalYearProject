@@ -8,16 +8,6 @@ public class DebugRoutine : RoutineBase
 {
     public override void Run()
 	{
-		List<Faction> populatedFactions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Population);
 
-		Console.Log(">>>>>>>>>");
-
-		foreach (Faction faction in populatedFactions)
-		{
-			if (faction.GetData(Faction.Tags.Population, out PopulationData data))
-			{
-				Console.Log(data.currentPopulationCount);
-			}
-		}
 	}
 }

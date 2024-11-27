@@ -4,7 +4,7 @@ using UnityEngine;
 using MonitorBreak.Bebug;
 
 [SimulationManagement.ActiveSimulationRoutine(0, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Normal)]
-public class NationRelationshipProcessRoutine : DebugRoutine
+public class NationRelationshipProcessRoutine : RoutineBase
 {
 	public override void Run()
 	{
@@ -20,13 +20,13 @@ public class NationRelationshipProcessRoutine : DebugRoutine
 			{
 				foreach(KeyValuePair<int, RelationshipData.Relationship> entry in data.idToRelationship)
 				{
-					float change = SimulationManagement.random.Next(-101, 101) / 100.0f;
-					float newValue = entry.Value.favourability + Mathf.Pow(change, 9);
-					newValue = SimulationHelper.ValueTanhFalloff(newValue);
+					//Need to replace this system
+					float change = SimulationManagement.random.Next(-105, 101) / 100.0f;
+					float newValue = entry.Value.favourability + Mathf.Pow(change, 3);
+					newValue = SimulationHelper.ValueTanhFalloff(newValue, 1, -1);
 					entry.Value.favourability = newValue;
 
 					//Model response to relationship change
-
 
 					//War threshold, currently constant
 					if (newValue < -0.5f)

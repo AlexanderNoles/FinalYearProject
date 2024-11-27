@@ -38,6 +38,9 @@ public class FactionInit : InitRoutineBase
             if (faction.id == -1)
             {
                 faction.id = nextID;
+
+				SimulationManagement.AddFactionToIDDict(faction);
+
                 nextID++;
             }
         }

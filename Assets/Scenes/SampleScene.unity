@@ -1816,7 +1816,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   runHistory: 1
   historyLength: 35
-  drawSettlements: 1
+  drawSettlements: 0
+  drawMilitaryPresence: 0
   updateMap: 0
 --- !u!1 &1273093546
 GameObject:

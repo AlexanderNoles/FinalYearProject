@@ -100,14 +100,13 @@ public class SimulationManagement : MonoBehaviour
         return null;
     }
 
+	public static void AddFactionToIDDict(Faction faction)
+	{
+		instance.idToFaction.Add(faction.id, faction);
+	}
+
     public static void AddFactionOfTag(Faction.Tags tag, Faction faction)
     {
-        if (!instance.idToFaction.ContainsKey(faction.id))
-        {
-            //Add faction to idToFaction if it is not already there
-            instance.idToFaction[faction.id] = faction;
-        }
-
         if (!instance.factions.ContainsKey(tag))
         {
             //Init sub list if it doesn't exist

@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using MonitorBreak.Bebug;
 
-[SimulationManagement.ActiveSimulationRoutine(SimulationManagement.attackRoutineStandardPrio)]
-public class NationAttackRoutine : RoutineBase
+[SimulationManagement.ActiveSimulationRoutine(SimulationManagement.attackRoutineStandardPrio, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Debug)]
+public class NationAttackRoutine : DebugRoutine
 {
 	public override void Run()
 	{
@@ -52,7 +53,7 @@ public class NationAttackRoutine : RoutineBase
 
 			for (int i = 0; i < warOpponentFactionIDs.Count && attackBudget > 0; i++)
 			{
-				int attacksForThisEnemy = Mathf.CeilToInt(attackBudget / warOpponentFactionIDs.Count);
+				int attacksForThisEnemy = Mathf.CeilToInt(attackBudget / (float)warOpponentFactionIDs.Count);
 				Faction enemy = SimulationManagement.GetFactionByID(warOpponentFactionIDs[i]);
 
 				if (enemy.GetData(Faction.Tags.Settlements, out SettlementData settleData))
@@ -69,35 +70,24 @@ public class NationAttackRoutine : RoutineBase
 						for (int a = 0; a < attacksForThisEnemy; a++)
 						{
 							//Create new attack
-							RealSpacePostion newAttackPos = new RealSpacePostion(0, 0, 0);
+							//Currently just pick a position from the enemy at random
+							RealSpacePostion newAttackPos = settleData.settlements.ElementAt(SimulationManagement.random.Next(0, settleData.settlements.Count)).Key;
 
-							int loopClamp = 100;
-							do
+							//Add new attack refrence
+							bool newBattleStarted = globalBattleData.StartBattle(newAttackPos, nation.id, enemy.id);
+
+							//MonitorBreak.Bebug.Console.Log(newBattleStarted);
+
+							int remainingFleetBudget = fleetBudgerPerAttack;
+							if (!newBattleStarted)
 							{
-								//Currently just pick a position from the enemy at random
-								newAttackPos = settleData.settlements.ElementAt(SimulationManagement.random.Next(0, settleData.settlements.Count)).Key;
-								loopClamp--;
+								//If we already engaged in battle on this cell
+								remainingFleetBudget = Mathf.RoundToInt(remainingFleetBudget * 0.5f);
 							}
-							while (loopClamp > 0);
 
-							if (loopClamp > 0)
-							{
-								//Didn't crash out of loop!
-
-								//Add new attack refrence
-								bool newBattleStarted = globalBattleData.StartBattle(newAttackPos, nation.id, enemy.id);
-
-								int remainingFleetBudget = fleetBudgerPerAttack;
-								if (!newBattleStarted)
-								{
-									//If we already engaged in battle on this cell
-									remainingFleetBudget = Mathf.RoundToInt(remainingFleetBudget * 0.5f);
-								}
-
-								//Transfer fleets to new attack if they are free
-								//Function should automatically check if we already have ships there and adjust the budget accordingly
-								milData.TransferFreeFleets(remainingFleetBudget, newAttackPos, batData);
-							}
+							//Transfer fleets to new attack if they are free
+							//Function should automatically check if we already have ships there and adjust the budget accordingly
+							milData.TransferFreeFleets(remainingFleetBudget, newAttackPos, batData);
 
 							//Lower remaining attack budget
 							attackBudget--;

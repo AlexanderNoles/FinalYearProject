@@ -10,6 +10,7 @@ public class SimulationSettings : MonoBehaviour
     public bool runHistory;
 	public int historyLength = 30;
     public bool drawSettlements;
+	public bool drawMilitaryPresence;
     public bool updateMap;
 
     private void Awake()
@@ -38,8 +39,16 @@ public class SimulationSettings : MonoBehaviour
         return true;
     }
 
+	public static bool DrawMilitaryPresence()
+	{
+#if UNITY_EDITOR
+		return instance.drawMilitaryPresence;
+#endif
+		return true;
+	}
 
-    public static bool UpdateMap()
+
+	public static bool UpdateMap()
     {
 #if UNITY_EDITOR
         return instance.updateMap;

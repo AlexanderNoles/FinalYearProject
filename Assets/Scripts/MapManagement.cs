@@ -222,11 +222,11 @@ public class MapManagement : MonoBehaviour
                         }
                     }
 
-                    if (SimulationSettings.DrawSettlements())
-                    {
-                        List<Faction> settlements = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Settlements);
 
-                        foreach (Faction settlement in settlements)
+					if (SimulationSettings.DrawSettlements())
+                    {
+						List<Faction> settlements = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Settlements);
+						foreach (Faction settlement in settlements)
                         {
                             if (settlement.GetData(Faction.Tags.Settlements, out SettlementData data))
                             {
@@ -254,6 +254,43 @@ public class MapManagement : MonoBehaviour
                             }
                         }
                     }
+
+					if (SimulationSettings.DrawMilitaryPresence())
+					{
+						//This is a very dirty way of doing this but
+						//All of this will be replaced with non debug UI at some point I pray
+
+						List<Faction> mil = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.HasMilitary);
+
+						foreach (Faction military in mil)
+						{
+							if (military.GetData(Faction.Tags.HasMilitary, out MilitaryData milData))
+							{
+								if (military.GetData(Faction.battleDataKey, out BattleData battleData))
+								{
+									Debug.Log(battleData.ongoingBattles.Count);
+
+									foreach (KeyValuePair<RealSpacePostion, List<Fleet>> entry in milData.cellCenterToFleets)
+									{
+										Vector3 pos = -entry.Key.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset;
+
+										Color color = Color.green;
+										if (battleData.ongoingBattles.ContainsKey(entry.Key))
+										{
+											color = Color.red;
+										}
+
+										Vector3 minorOffset = Random.onUnitSphere;
+										minorOffset.y = 0;
+										minorOffset.Normalize();
+										minorOffset *= 0.1f;
+
+										Debug.DrawRay(pos + minorOffset, Vector3.up * entry.Value.Count, color, 1000.0f);
+									}
+								}
+							}
+						}
+					}
 
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(3);
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(4);

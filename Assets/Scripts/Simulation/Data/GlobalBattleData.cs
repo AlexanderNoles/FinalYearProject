@@ -1,3 +1,4 @@
+using MonitorBreak.Bebug;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,8 @@ public class GlobalBattleData : DataBase
 
 	public bool StartBattle(RealSpacePostion pos, int originID, int targetID)
 	{
+		Console.Log(battles.Count);
+
 		if (!battles.ContainsKey(pos))
 		{
 			battles[pos] = new Battle();
