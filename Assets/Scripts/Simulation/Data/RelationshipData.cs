@@ -6,9 +6,13 @@ public class RelationshipData : DataBase
 {
     public class Relationship
     {
-        //This is what this faction thinks about the other faction
-
-        public float favourability;
+		//This is what this faction thinks about the other faction
+		//How much they are in conflict with them
+		//If this falls below a certain threshold for example then a war could end
+		//This is seperated from favourability for a variety of reasons but you can think of it as just keeping the possibility space open
+		public float conflict;
+		//Generally how much they like them
+		public float favourability;
 
         public Relationship(float baseFavour)
         {

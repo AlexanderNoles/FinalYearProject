@@ -18,12 +18,14 @@ public class Faction
     {
         //This is a global tag that allows routines to grab every faction
         Faction,
+		GameWorld, //This is the game world faction
         //
         Territory, //Does this faction contain some territory?
         Settlements, //Does this faction have settlements?
         Nation, //Is this faction a nation?
         Population, //Does this faction have a population?
         Emblem, //Does this faction have an emblem?
+		HasMilitary, //Does this faction have a military?
         //Is this faction visible in a way that makes it so every other faction has a relationship with it?
         //(This means that every faction will will know if it's existence)
         //This doesn't mean it immediately has a dual relationship with every other faction (cause it may not know about them, for example not all nations immediately know about the player)
@@ -34,9 +36,10 @@ public class Faction
 
     //Useful keys for data that doesn't cleanly belong to a tag
     public const string relationshipDataKey = "RelationshipData";
+    public const string battleDataKey = "BattleData";
 
 
-    private HashSet<Tags> tags;
+	private HashSet<Tags> tags;
 
     public bool HasTag(Tags tag)
     {
@@ -68,7 +71,7 @@ public class Faction
 
 
     //Data
-    private Dictionary<string, DataBase> dataModules;
+    protected Dictionary<string, DataBase> dataModules;
 
     public virtual void InitData()
     {
@@ -81,6 +84,9 @@ public class Faction
         //Factions should always be able to have relationships (it's what makes them interesting!)
         //It also makes it very easy to remove relationships when a faction is fully removed (as that's a MetaRoutine Responsibility)!
         AddData(relationshipDataKey, new RelationshipData());
+		//Allows a faction to fight, something they should always be able to do
+		//just because they can does not mean they will
+		AddData(battleDataKey, new BattleData());
     }
 
     public bool GetData<T>(string dataIdentifier, out T data) where T : DataBase

@@ -53,6 +53,9 @@
         },
         {
             "m_Id": "d7b792a7b8c64030b844e70d6096e43e"
+        },
+        {
+            "m_Id": "b025459e2d544efbafdc1f85b3d24b42"
         }
     ],
     "m_GroupDatas": [],
@@ -84,6 +87,20 @@
                     "m_Id": "fb16b26b7b7c4cc6b624243265c23af3"
                 },
                 "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "b025459e2d544efbafdc1f85b3d24b42"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "047115ed4f984f78a7f0afe4f2b704a5"
+                },
+                "m_SlotId": 2004913350
             }
         },
         {
@@ -479,6 +496,18 @@
     "m_Value": 2.0,
     "m_DefaultValue": 0.0,
     "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.GradientMaterialSlot",
+    "m_ObjectId": "659f198e49a64803b544b548e4fb3eb6",
+    "m_Id": 0,
+    "m_DisplayName": "Out",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3
 }
 
 {
@@ -903,6 +932,67 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.GradientNode",
+    "m_ObjectId": "b025459e2d544efbafdc1f85b3d24b42",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Gradient",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -1115.0,
+            "y": 318.9999694824219,
+            "width": 208.0,
+            "height": 104.0
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "659f198e49a64803b544b548e4fb3eb6"
+        }
+    ],
+    "synonyms": [
+        "ramp"
+    ],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Value": 0.0,
+    "m_SerializableColorKeys": [
+        {
+            "x": 3.169811248779297,
+            "y": 0.6132217645645142,
+            "z": 0.0,
+            "w": 0.2647135257720947
+        },
+        {
+            "x": 2.905660390853882,
+            "y": 0.46537700295448305,
+            "z": 0.0,
+            "w": 0.5882353186607361
+        }
+    ],
+    "m_SerializableAlphaKeys": [
+        {
+            "x": 1.0,
+            "y": 0.0
+        },
+        {
+            "x": 1.0,
+            "y": 0.2676432430744171
+        }
+    ],
+    "m_SerializableMode": 1
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.PositionMaterialSlot",
     "m_ObjectId": "b3fe4c4089794b61af5a8cdeaccc628d",
     "m_Id": 0,
@@ -1130,9 +1220,9 @@
     },
     "m_Color": {
         "color": {
-            "r": 0.6792452931404114,
-            "g": 0.6052650809288025,
-            "b": 0.5094339847564697,
+            "r": 0.6117647290229797,
+            "g": 0.3614891469478607,
+            "b": 0.01960783451795578,
             "a": 1.0
         },
         "mode": 0

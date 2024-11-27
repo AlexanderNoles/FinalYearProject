@@ -51,22 +51,21 @@ public class SurroundingsRenderingManagement : MonoBehaviour
         if (UIManagement.MapActive())
         {
             if (UIManagement.MapIntroRunning())
-            {
-                if (UIManagement.FirstFrameMapIntroRunning())
-                {
-                    //Set skybox inactive
-                    skybox.SetActive(false);
-                }
-
-                Vector3 worldCenterPos = WorldManagement.worldCenterPosition.TruncatedVector3(UIManagement.mapRelativeScaleModifier);
-
-                transform.position = worldCenterPos;
+			{
+				if (UIManagement.FirstFrameMapIntroRunning())
+				{
+					Vector3 worldCenterPos = WorldManagement.worldCenterPosition.TruncatedVector3(UIManagement.mapRelativeScaleModifier);
+					transform.position = worldCenterPos;
+					skybox.SetActive(false);
+				}
 
                 float evaluatedIntroT = UIManagement.EvaluatedMapIntroT();
 
-                foreach (SurroundingObject obj in controlledObjects)
+				Vector3 currentOffset = ((Vector3.down + Vector3.forward).normalized * Mathf.Lerp(0.0f, CameraManagement.cameraOffsetInMap, evaluatedIntroT));
+
+				foreach (SurroundingObject obj in controlledObjects)
                 {
-                    obj.transform.localPosition = -obj.postion.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + ((Vector3.down + Vector3.forward).normalized * Mathf.Lerp(0.0f, CameraManagement.cameraOffsetInMap, evaluatedIntroT));
+                    obj.transform.localPosition = -obj.postion.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + currentOffset;
 					obj.SetShellOffset(-1);
 					obj.SetObjectVisualScale((obj.scale / UIManagement.mapRelativeScaleModifier));
 				}
@@ -74,10 +73,10 @@ public class SurroundingsRenderingManagement : MonoBehaviour
         }
         else
         {
-            if (!skybox.activeSelf)
-            {
-                skybox.SetActive(true);
-            }
+			if (skybox.activeSelf == false)
+			{
+				skybox.SetActive(true);
+			}
 
             transform.position = CameraManagement.GetBackingCameraPosition();
 

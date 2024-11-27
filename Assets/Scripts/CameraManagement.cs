@@ -93,6 +93,27 @@ public class CameraManagement : MonoBehaviour
         return target.position;
     }
 
+	public static Vector3 GetCameraDisplacementFromTarget()
+	{
+		return instance.transform.position - instance.GetTargetPosition();
+	}
+
+	public static void SetCameraPositionExternal(Vector3 pos, bool disableLerp)
+	{
+		if (disableLerp)
+		{
+			instance.transform.localPosition = Vector3.back * currentCameraZoomTarget;
+			instance.cameraAxis.position = instance.GetTargetPosition() + offsetFromTarget;
+		}
+		else
+		{
+			instance.transform.position = pos;
+		}
+
+		//Make sure there is no errouneous move of the world center
+		instance.positionLastFrame = instance.transform.position;
+	}
+
     //////
     
     public static void SetMainCameraActive(bool active)
@@ -269,7 +290,7 @@ public class CameraManagement : MonoBehaviour
                 lerpT = 1.0f;
             }
 
-            cameraAxis.position = Vector3.Lerp(cameraAxis.position, newTargetPosition, lerpT);
+			cameraAxis.position = Vector3.Lerp(cameraAxis.position, newTargetPosition, lerpT);
         }
         else if (currentMode == Mode.Debug)
         {

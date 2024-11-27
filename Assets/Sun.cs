@@ -21,7 +21,7 @@ public class Sun : CelestialBody
 			return;
 		}
 
-		float baseIntensity = 2000.0f;
+		float baseIntensity = WorldManagement.solarSystemScaleModifier;
 
 		//Get the scale agnostic of shell offset
 		float agnosticScale = scale / shellOffset;

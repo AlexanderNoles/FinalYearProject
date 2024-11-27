@@ -11,6 +11,9 @@ public class WorldManagement : MonoBehaviour
     private static bool calculatedNewBounds = false;
     private static double solarSystemRadius = 0;
 
+	public static readonly float referncePointSolarSystemScaleModifier = 2000.0f;
+	public static readonly float solarSystemScaleModifier = 2000.0f;
+
     public static void AddMajorWorldPart(CelestialBody newPart)
     {
         majorWorldParts.Add(newPart);

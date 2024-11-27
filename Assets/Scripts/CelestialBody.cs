@@ -8,8 +8,10 @@ public class CelestialBody : SurroundingObject
 
     protected override void Awake()
     {
+		scale *= (WorldManagement.solarSystemScaleModifier / WorldManagement.referncePointSolarSystemScaleModifier);
+
         base.Awake();
-        Vector3 pos = transform.position * 2000.0f;
+        Vector3 pos = transform.position * WorldManagement.solarSystemScaleModifier;
         postion = new RealSpacePostion(pos.x, pos.y, pos.z);
 		//Clamp position to grid
 		postion = WorldManagement.ClampPositionToGrid(postion);

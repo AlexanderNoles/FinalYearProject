@@ -75,8 +75,10 @@ public class SimulationManagement : MonoBehaviour
     public List<RoutineBase> debugRoutines = new List<RoutineBase>();
     [HideInInspector]
     public Dictionary<string, RoutineBase> absentRoutines = new Dictionary<string, RoutineBase>();
+	public const int attackRoutineStandardPrio = -25; 
+	public const int defendRoutineStandardPrio = -30;
 
-    public static void RunAbsentRoutine(string routineIdentifier)
+	public static void RunAbsentRoutine(string routineIdentifier)
     {
         if (instance.absentRoutines.ContainsKey(routineIdentifier))
         {
@@ -183,6 +185,9 @@ public class SimulationManagement : MonoBehaviour
             //Add test factions
             new Nation().Simulate();
         }
+
+		//Add game world faction
+		new GameWorld().Simulate();
 
         //Add all routine instances
         (constantRoutines, initRoutines, debugRoutines, absentRoutines) = SimulationRoutineExecution.Main(gameObject);

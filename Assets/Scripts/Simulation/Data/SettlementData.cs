@@ -10,15 +10,48 @@ public class SettlementData : DataBase
     {
         public int setID;
 
-        public class SettlementLocation : Location
+        public class SettlementLocation : VisitableLocation
         {
-            public RealSpacePostion pos;
+            public Settlement actualSettlement;
+			private GeneratorManagement.Generation generation;
 
-            public override RealSpacePostion GetPosition()
+			public override void InitDraw()
+			{
+				//Core generator
+				generation = new GeneratorManagement.GenerationInit().
+					AtSpot(Vector3.zero);
+
+				//Create building generator
+				GeneratorManagement.Generation buildingGeneration =
+					new GeneratorManagement.GenerationInit().
+					SetTargetPrimitive(GeneratorManagement.PRIMITIVE_INDEXES.CUBE).ForceBackToInit().
+					AtSpot(Vector3.zero).
+					SetSize(new Vector3(30, 30, 30));
+
+				generation.Concat(buildingGeneration);
+				generation.FinalizeGeneration();
+			}
+
+			public override void Cleanup()
+			{
+				generation.AutoCleanup();
+			}
+
+			public override RealSpacePostion GetPosition()
             {
-                return pos;
+                return actualSettlement.actualSettlementPos;
             }
-        }
+
+			public override Vector3 GetEntryOffset()
+			{
+				Vector3 offset = Random.onUnitSphere;
+				offset.y = 0;
+				offset.Normalize();
+				offset *= 100.0f;
+
+				return offset;
+			}
+		}
 
 
         public int maxPop = 100;
@@ -41,7 +74,7 @@ public class SettlementData : DataBase
 
 
             location = new SettlementLocation();
-            location.pos = actualSettlementPos;
+            location.actualSettlement = this;
         }
     }
 

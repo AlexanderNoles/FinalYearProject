@@ -19,8 +19,8 @@ public class VisitableLocation : Location
 
 	}
 
-	public virtual RealSpacePostion GetEntryPosition()
+	public virtual Vector3 GetEntryOffset()
 	{
-		return GetPosition();
+		return Vector3.zero;
 	}
 }

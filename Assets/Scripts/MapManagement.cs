@@ -235,21 +235,21 @@ public class MapManagement : MonoBehaviour
                                     mapElementsPools.UpdateNextObjectPosition(4, -s.Value.actualSettlementPos.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset);
 
                                     //Trade trade paths
-                                    foreach (SettlementData.Settlement.TradeFleet tradeFleet in s.Value.tradeFleets)
-                                    {
-                                        foreach (TradeShip ship in tradeFleet.ships)
-                                        {
-                                            if (ship.tradeTarget != null)
-                                            {
-                                                LineRenderer renderer = tradeRouteRenderers[mapElementsPools.UpdateNextObjectPosition(6, Vector3.zero)];
-                                                renderer.positionCount = 2;
-                                                renderer.SetPosition(0,
-                                                    -ship.homeLocation.GetPosition().TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset);
-                                                renderer.SetPosition(1,
-                                                    -ship.tradeTarget.GetPosition().TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset);
-                                            }
-                                        }
-                                    }
+                                    //foreach (SettlementData.Settlement.TradeFleet tradeFleet in s.Value.tradeFleets)
+                                    //{
+                                    //    foreach (TradeShip ship in tradeFleet.ships)
+                                    //    {
+                                    //        if (ship.tradeTarget != null)
+                                    //        {
+                                    //            LineRenderer renderer = tradeRouteRenderers[mapElementsPools.UpdateNextObjectPosition(6, Vector3.zero)];
+                                    //            renderer.positionCount = 2;
+                                    //            renderer.SetPosition(0,
+                                    //                -ship.homeLocation.GetPosition().TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset);
+                                    //            renderer.SetPosition(1,
+                                    //                -ship.tradeTarget.GetPosition().TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset);
+                                    //        }
+                                    //    }
+                                    //}
                                 }
                             }
                         }

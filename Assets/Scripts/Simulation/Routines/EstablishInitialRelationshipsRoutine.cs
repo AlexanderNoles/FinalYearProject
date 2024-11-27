@@ -27,13 +27,6 @@ public class EstablishInitialRelationshipsRoutine : InitRoutineBase
         {
             int thisFactionID = relationshipData.Item1.id;
 
-            //First create a relationship with itself
-            if (!relationshipData.Item2.idToRelationship.ContainsKey(thisFactionID))
-            {
-                relationshipData.Item2.idToRelationship.Add(thisFactionID, new RelationshipData.Relationship(1.0f));
-            }
-
-
             if (relationshipData.Item1.HasTag(Faction.Tags.OpenRelationship))
             {
                 //Tell every other faction that this one exists
