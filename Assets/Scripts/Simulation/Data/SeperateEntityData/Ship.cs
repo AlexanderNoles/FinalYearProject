@@ -33,4 +33,9 @@ public class Ship
 			destroyed = true;
 		}
 	}
+
+	public virtual float GetMaxHealth()
+	{
+		return 10;
+	}
 }

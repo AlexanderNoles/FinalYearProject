@@ -118,14 +118,37 @@ public class NationSettlementManagementRoutine : RoutineBase
 
 					//Max units for this settlement using inverted settlement id, this means older sets will have a higher capacity
 					float maxUnitStorageCapacity = SimulationHelper.ValueTanhFalloff(invertedSettlementIndex, 5);
-					int countInCell = 0;
+					int fleetShipLimitForSettlement = Mathf.RoundToInt(SimulationHelper.ValueTanhFalloff(invertedSettlementIndex, 3));
+					fleetShipLimitForSettlement = Mathf.Max(1, fleetShipLimitForSettlement);
+					int fleetCountInCell = 0;
 					RealSpacePostion cellCenter = settlePair.Key;
 					if (militaryData.cellCenterToFleets.ContainsKey(cellCenter))
 					{
-						countInCell = militaryData.cellCenterToFleets[cellCenter].Count;
+						fleetCountInCell = militaryData.cellCenterToFleets[cellCenter].Count;
+
+						//Add ships to fleet or repair ships if they have damage taken
+						foreach (ShipCollection collection in militaryData.cellCenterToFleets[cellCenter])
+						{
+							Fleet current = collection as Fleet;
+
+							if (current.ships.Count < fleetShipLimitForSettlement)
+							{
+								//Add new ship
+								current.ships.Add(new FleetShip());
+							}
+
+							List<Ship> ships = current.GetShips();
+							foreach (Ship ship in ships)
+							{
+								//Just restore 20% of health each tick
+								//Currently (28/11/2024, 15:45) no routine to make ships retreat back to base after winning
+								//Should be easy to add but I want to make a general retreat routine instead (so that includes fleeing from battle)
+								ship.health += ship.GetMaxHealth() * 0.2f;
+							}
+						}
 					}
 
-					float maxAmountToAdd = Mathf.Min(currentRemaingFleetCapacityNationWide, maxUnitStorageCapacity - countInCell);
+					float maxAmountToAdd = Mathf.Min(currentRemaingFleetCapacityNationWide, maxUnitStorageCapacity - fleetCountInCell);
 
 					if (maxAmountToAdd >= 1)
 					{

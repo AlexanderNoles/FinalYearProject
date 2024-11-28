@@ -49,23 +49,27 @@ public class NationAttackRoutine : RoutineBase
 			}
 
 			int attackBudget = maxAllowedAttacks - batData.ongoingBattles.Count;
-			int fleetBudgerPerAttack = Mathf.CeilToInt(milData.currentFleetCount / 20.0f);
+			int fleetBudgerPerAttack = Mathf.RoundToInt(milData.currentFleetCount / 20.0f);
 
-			while(0 < warOpponentFactionIDs.Count && attackBudget > 0)
+			while(0 < warOpponentFactionIDs.Count && attackBudget > 0 && fleetBudgerPerAttack > 0)
 			{
 				int attacksForThisEnemy = Mathf.CeilToInt(attackBudget / (float)warOpponentFactionIDs.Count);
-
 				int index = SimulationManagement.random.Next(0, warOpponentFactionIDs.Count);
 
 				//Pick random enemy to attack
 				int enemyID = warOpponentFactionIDs[index];
 				warOpponentFactionIDs.RemoveAt(index);
 
+				if (enemyID == nation.id)
+				{
+					throw new System.Exception("We are trying to attack ourself");
+				}
+
 				Faction enemy = SimulationManagement.GetFactionByID(enemyID);
 
-				if (enemy.GetData(Faction.Tags.Settlements, out SettlementData settleData))
+				if (enemy.GetData(Faction.Tags.Territory, out TerritoryData terData))
 				{
-					if (settleData.settlements.Count == 0)
+					if (terData.borders.Count == 0)
 					{
 						//Enemy has no territory!
 						//Currently just continue cause we wanna test this
@@ -78,26 +82,18 @@ public class NationAttackRoutine : RoutineBase
 						{
 							//Create new attack
 							//Currently just pick a position from the enemy at random
-							RealSpacePostion newAttackPos = settleData.settlements.ElementAt(SimulationManagement.random.Next(0, settleData.settlements.Count)).Key;
-
-							//Add new attack refrence
-							bool newBattleStarted = globalBattleData.StartBattle(newAttackPos, nation.id, enemy.id);
-
-							//MonitorBreak.Bebug.Console.Log(newBattleStarted);
-
-							int remainingFleetBudget = fleetBudgerPerAttack;
-							if (!newBattleStarted)
-							{
-								//If we already engaged in battle on this cell
-								remainingFleetBudget = Mathf.RoundToInt(remainingFleetBudget * 0.5f);
-							}
+							RealSpacePostion newAttackPos = terData.borders.ElementAt(SimulationManagement.random.Next(0, terData.territoryCenters.Count));
 
 							//Transfer fleets to new attack if they are free
 							//Function should automatically check if we already have ships there and adjust the budget accordingly
-							milData.TransferFreeFleets(remainingFleetBudget, newAttackPos, batData);
+							int amountTransferred = milData.TransferFreeFleets(fleetBudgerPerAttack, newAttackPos, batData); ;
 
-							//Lower remaining attack budget
-							attackBudget--;
+							if (amountTransferred > 0)
+							{
+								globalBattleData.StartBattle(newAttackPos, nation.id, enemy.id);
+								//Lower remaining attack budget
+								attackBudget--;
+							}
 						}
 					}
 				}

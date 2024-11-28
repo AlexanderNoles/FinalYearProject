@@ -40,7 +40,6 @@ public class SettlementRoutine : RoutineBase
                                 //We should instead be picking one at random
                                 pos = territoryData.territoryCenters.ElementAt((t + indexOffset) % count);
 
-
                                 if (settlementData.settlements.ContainsKey(pos))
                                 {
                                     pos = null;

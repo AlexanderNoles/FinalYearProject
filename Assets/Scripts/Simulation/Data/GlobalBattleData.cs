@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GlobalBattleData : DataBase
 {
-	public class Battle
+	public class Battle : VisitableLocation
 	{
 		public int firstAttacker = -1;
 		public int defender = -1;
@@ -39,6 +39,24 @@ public class GlobalBattleData : DataBase
 			return true;
 		}
 
+		public void End(RealSpacePostion pos)
+		{
+			foreach (int id in involvedFactions)
+			{
+				Faction current = SimulationManagement.GetFactionByID(id);
+
+				if (current.GetData(Faction.battleDataKey, out BattleData data))
+				{
+					if (!data.ongoingBattles.Remove(pos))
+					{
+						Debug.LogWarning("Faction was unaware of battle it was in!");
+					}
+				}
+			}
+
+			involvedFactions.Clear();
+		}
+
 		public void ResolveTerritoryTransfer(RealSpacePostion pos, bool isLazy = true)
 		{
 			// Decide new owner //
@@ -56,9 +74,9 @@ public class GlobalBattleData : DataBase
 			{
 				receiver = firstAttacker;
 			}
-			else
+			else if(involvedFactions.Count > 0)
 			{
-				//Otherwise pick randomly from remaing factions
+				//Otherwise pick randomly from remaing factions (if any exist)
 				if (isLazy)
 				{
 					receiver = involvedFactions[SimulationManagement.random.Next(0, involvedFactions.Count)];
@@ -84,7 +102,7 @@ public class GlobalBattleData : DataBase
 				{
 					if (!gainData.territoryCenters.Contains(pos))
 					{
-						gainData.territoryCenters.Add(pos);
+						gainData.AddTerritory(pos);
 					}
 				}
 
@@ -92,19 +110,27 @@ public class GlobalBattleData : DataBase
 
 				if (lossFaction.GetData(Faction.Tags.Territory, out TerritoryData lossData))
 				{
-					lossData.territoryCenters.Remove(pos);
+					lossData.RemoveTerritory(pos);
+				}
+
+				//Destroy any settlement in this area
+				if (lossFaction.GetData(Faction.Tags.Settlements, out SettlementData setData))
+				{
+					setData.settlements.Remove(pos);
 				}
 			}
 		}
 	}
 
 	public Dictionary<RealSpacePostion, Battle> battles = new Dictionary<RealSpacePostion, Battle>();
+	public static int totalBattlesCount = 0;
 
 	public bool StartBattle(RealSpacePostion pos, int originID, int targetID)
 	{
 		if (!battles.ContainsKey(pos))
 		{
 			battles[pos] = new Battle();
+			totalBattlesCount++;
 		}
 
 		Battle battle = battles[pos];

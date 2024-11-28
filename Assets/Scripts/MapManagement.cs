@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Linq;
 
 public class MapManagement : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class MapManagement : MonoBehaviour
     private const int mapRingPool = 0;
     private const int shipIndicatorPool = 1;
     private const int mapBasePool = 2;
+	private const bool debugMode = true;
 
     private List<(Transform, Transform)> mapObjectsAndParents;
     private bool pastFirstFrameOfMapAnim = false;
@@ -131,7 +133,9 @@ public class MapManagement : MonoBehaviour
             {
                 if (Time.time > mapRefreshTime && (SimulationSettings.UpdateMap() || mapRefreshTime == 0))
                 {
-                    mapRefreshTime = Time.time + (5.0f / SimulationManagement.GetSimulationSpeed());
+					float timeTillNextMapUpdate = (5.0f / SimulationManagement.GetSimulationSpeed());
+
+					mapRefreshTime = Time.time + timeTillNextMapUpdate;
                     //We also want to steup the current territory borders here cause the intro animation is now done
                     //We need to get all the factions with the territory tag and then spawn territory squares based on that
                     List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Territory);
@@ -143,81 +147,122 @@ public class MapManagement : MonoBehaviour
                     //This is a very expensive operation that is currently (08/11/2024) the sole reason behind MAP_REFRESH_ENABLED being set to false
                     //it could almost certainly be optomized in a variety of ways but it runs well enough that for this vertical slice/beta version
                     //it is fine. The focus should be one other things
-                    SimulationManagement.RunAbsentRoutine("BorderInOrder");
+
+					//It also does not handle degenerate cases well, in the sense it doesn't handle them at all hahahahaha
+                    //SimulationManagement.RunAbsentRoutine("BorderInOrder");
 
                     foreach (Faction faction in factions)
-                    {
-                        if (faction.GetData(Faction.Tags.Territory, out TerritoryData territoryData))
-                        {
-                            Color factionColour = faction.GetColour();
+					{
+						Color factionColour = faction.GetColour();
 
+						if (faction.GetData(Faction.Tags.Territory, out TerritoryData territoryData))
+                        {
                             int count = territoryData.borders.Count;
 
                             if (count > 0)
                             {
-                                Vector3 averagePos = Vector3.zero;
-                                Transform borderRenderer = mapElementsPools.UpdateNextObjectPosition(3, Vector3.zero);
-                                LineRenderer lineRenderer = borderRenderers[borderRenderer];
+								if (debugMode)
+								{
+									Vector3 debugScale = new Vector3(1, 0, 1) * (float)(WorldManagement.GetGridDensity() / UIManagement.mapRelativeScaleModifier) * 0.8f;
 
-                                //Idea is we start at a given border point and we traverse round the border creating a line
-                                //When faced with multiple options on where to go we split and do both, we want the path that maximises closeness to the original shape
-                                //In our case "closeness to the original shape" can be defined by how close the number of generated points is too the full number of borders
-                                //So in esscense we want to maximize the amount of border points we traverse (ideally all of them)
+									for (int i = 0; i < territoryData.territoryCenters.Count; i++)
+									{
+										MonitorBreak.Bebug.Helper.DrawWirePlane(
+											-territoryData.territoryCenters.ElementAt(i).TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset,
+											debugScale,
+											Vector3.up,
+											factionColour,
+											timeTillNextMapUpdate,
+											true);
+									}
 
-                                if (lineRenderer != null)
-                                {
+
+									GameWorld gameworld = (GameWorld)SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld)[0];
+									gameworld.GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
+
+									foreach (KeyValuePair<RealSpacePostion, GlobalBattleData.Battle> battle in globalBattleData.battles)
+									{
+										int wdhjbnhjawbndhjabhjgdb = battle.Value.involvedFactions.Count;
+
+										for (int k = 0; k < wdhjbnhjawbndhjabhjgdb; k++)
+										{
+											MonitorBreak.Bebug.Helper.DrawWirePlane(
+												-battle.Key.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset,
+												debugScale * (1.0f + (k * 0.1f)),
+												Vector3.up,
+												Color.yellow,
+												timeTillNextMapUpdate,
+												true);
+										}
+									}
+								}
+								else
+								{
+
+									Vector3 averagePos = Vector3.zero;
+									Transform borderRenderer = mapElementsPools.UpdateNextObjectPosition(3, Vector3.zero);
+									LineRenderer lineRenderer = borderRenderers[borderRenderer];
+
+									//Idea is we start at a given border point and we traverse round the border creating a line
+									//When faced with multiple options on where to go we split and do both, we want the path that maximises closeness to the original shape
+									//In our case "closeness to the original shape" can be defined by how close the number of generated points is too the full number of borders
+									//So in esscense we want to maximize the amount of border points we traverse (ideally all of them)
+
+									if (lineRenderer != null)
+									{
 #pragma warning disable CS0618 // Type or member is obsolete
-                                    lineRenderer.SetColors(factionColour, factionColour);
+										lineRenderer.SetColors(factionColour, factionColour);
 #pragma warning restore CS0618 // Type or member is obsolete
 
-                                    if (territoryData.borderInOrder != null)
-                                    {
-                                        //Apply the found path to the line renderer
-                                        count = territoryData.borderInOrder.Count;
-                                        lineRenderer.positionCount = count + 1;
+										if (territoryData.borderInOrder != null)
+										{
+											//Apply the found path to the line renderer
+											count = territoryData.borderInOrder.Count;
+											lineRenderer.positionCount = count + 1;
 
-                                        for (int i = 0; i < count; i++)
-                                        {
-                                            Vector3 pos = territoryData.borderInOrder[i] + displayOffset;
+											for (int i = 0; i < count; i++)
+											{
+												Vector3 pos = territoryData.borderInOrder[i] + displayOffset;
 
-                                            lineRenderer.SetPosition(i, pos);
-                                            averagePos += pos;
-                                        }
+												lineRenderer.SetPosition(i, pos);
+												averagePos += pos;
+											}
 
-                                        //Make it loop
-                                        lineRenderer.SetPosition(count, lineRenderer.GetPosition(0));
+											//Make it loop
+											lineRenderer.SetPosition(count, lineRenderer.GetPosition(0));
 
-                                        if (faction.GetData(Faction.Tags.Emblem, out EmblemData emblemData))
-                                        {
-                                            averagePos /= count;
+											if (faction.GetData(Faction.Tags.Emblem, out EmblemData emblemData))
+											{
+												averagePos /= count;
 
-                                            Vector3 averageOffset = Vector3.zero;
-                                            float max = 0;
+												Vector3 averageOffset = Vector3.zero;
+												float max = 0;
 
-                                            Vector3[] allPositions = new Vector3[lineRenderer.positionCount];
-                                            lineRenderer.GetPositions(allPositions);
+												Vector3[] allPositions = new Vector3[lineRenderer.positionCount];
+												lineRenderer.GetPositions(allPositions);
 
-                                            for (int i = 0; i < count; i++)
-                                            {
-                                                Vector3 offset = allPositions[i] - averagePos;
-                                                averageOffset += offset;
+												for (int i = 0; i < count; i++)
+												{
+													Vector3 offset = allPositions[i] - averagePos;
+													averageOffset += offset;
 
-                                                max = Mathf.Max(max, Mathf.Abs(offset.x), Mathf.Abs(offset.z));
-                                            }
+													max = Mathf.Max(max, Mathf.Abs(offset.x), Mathf.Abs(offset.z));
+												}
 
-                                            Transform centralIcon = mapElementsPools.UpdateNextObjectPosition(5, averagePos - averageOffset - (Vector3.up * 0.25f));
-                                            float iconScale = 14 * Mathf.Log(max, 30);
+												Transform centralIcon = mapElementsPools.UpdateNextObjectPosition(5, averagePos - averageOffset - (Vector3.up * 0.25f));
+												float iconScale = 14 * Mathf.Log(max, 30);
 
-                                            centralIcon.localScale = Vector3.one * Mathf.Clamp(iconScale, 1, 100);
+												centralIcon.localScale = Vector3.one * Mathf.Clamp(iconScale, 1, 100);
 
-                                            if (centralIcon != null)
-                                            {
-                                                nationIconRenderers[centralIcon].sprite = emblemData.icon;
-                                                nationIconRenderers[centralIcon].color = emblemData.mainColour;
-                                            }
-                                        }
-                                    }
-                                }
+												if (centralIcon != null)
+												{
+													nationIconRenderers[centralIcon].sprite = emblemData.icon;
+													nationIconRenderers[centralIcon].color = emblemData.mainColour;
+												}
+											}
+										}
+									}
+								}
                             }
                         }
                     }
@@ -264,6 +309,8 @@ public class MapManagement : MonoBehaviour
 
 						foreach (Faction military in mil)
 						{
+							Color factionColour = military.GetColour();
+
 							if (military.GetData(Faction.Tags.HasMilitary, out MilitaryData milData))
 							{
 								if (military.GetData(Faction.battleDataKey, out BattleData battleData))
@@ -283,7 +330,8 @@ public class MapManagement : MonoBehaviour
 										minorOffset.Normalize();
 										minorOffset *= 0.1f;
 
-										Debug.DrawRay(pos + minorOffset, Vector3.up * entry.Value.Count, color, 1000.0f);
+										Debug.DrawRay(pos + minorOffset, Vector3.up * entry.Value.Count * 2, factionColour, timeTillNextMapUpdate);
+										Debug.DrawRay(pos + minorOffset, Vector3.up * entry.Value.Count, color, timeTillNextMapUpdate);
 									}
 								}
 							}

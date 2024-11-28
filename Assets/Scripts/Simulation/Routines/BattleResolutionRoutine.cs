@@ -41,7 +41,9 @@ public class BattleResolutionRoutine : RoutineBase
 		for (int b = 0; b < globalBattleData.battles.Count; b++)
 		{
 			KeyValuePair<RealSpacePostion, GlobalBattleData.Battle> battleKVP = globalBattleData.battles.ElementAt(b);
-			if (!SimulationManagement.CellIsLazy(battleKVP.Key))
+
+			//Battles are visitable locations so we can just pass the battle
+			if (!SimulationManagement.LocationIsLazy(battleKVP.Value))
 			{
 				//This battle is being proccessed by the typical game loop
 				//not by the simulation
@@ -104,34 +106,37 @@ public class BattleResolutionRoutine : RoutineBase
 
 			foreach (int id in battle.involvedFactions)
 			{
-				float damageToTake = idToDamageToTake[id];
-
-				MilitaryData militaryData = idToMilitaryData[id];
-
-				if (militaryData.cellCenterToFleets.ContainsKey(battleKVP.Key))
+				if (idToDamageToTake.ContainsKey(id))
 				{
-					List<ShipCollection> collections = militaryData.cellCenterToFleets[battleKVP.Key];
+					float damageToTake = idToDamageToTake[id];
 
-					float damagePerFleet = damageToTake / collections.Count;
+					MilitaryData militaryData = idToMilitaryData[id];
 
-					for (int i = 0; i < collections.Count;)
+					if (militaryData.cellCenterToFleets.ContainsKey(battleKVP.Key))
 					{
-						if (collections[i].TakeDamage(damagePerFleet))
-						{
-							//All ships destroyed
-							//Remove fleet from cell
-							collections.RemoveAt(i);
-						}
-						else
-						{
-							i++;
-						}
-					}
+						List<ShipCollection> collections = militaryData.cellCenterToFleets[battleKVP.Key];
 
-					if (collections.Count == 0)
-					{
-						//Remove them from the involved factions
-						factionsLostBattleThisTick.Add(id);
+						float damagePerFleet = damageToTake / collections.Count;
+
+						for (int i = 0; i < collections.Count;)
+						{
+							if (collections[i].TakeDamage(damagePerFleet))
+							{
+								//All ships destroyed
+								//Remove fleet from cell
+								collections.RemoveAt(i);
+							}
+							else
+							{
+								i++;
+							}
+						}
+
+						if (collections.Count == 0)
+						{
+							//Remove them from the involved factions
+							factionsLostBattleThisTick.Add(id);
+						}
 					}
 				}
 			}
@@ -148,17 +153,21 @@ public class BattleResolutionRoutine : RoutineBase
 					battle.involvedFactions.Remove(id);
 					idToBattleData[id].ongoingBattles.Remove(battleKVP.Key);
 				}
+			}
 
-				//Check if battle is won
-				if (battle.BattleWon())
-				{
-					battle.ResolveTerritoryTransfer(battleKVP.Key);
+			//Check if battle is won
+			//not in the above if statement so if an outside force removes a faction battles don't freeze in place
+			if (battle.BattleWon())
+			{
+				battle.ResolveTerritoryTransfer(battleKVP.Key);
 
-					//We remove battle from list
-					//Need to decrement index so we don't skip a battle
-					b--;
-					globalBattleData.battles.Remove(battleKVP.Key);
-				}
+				//For all remaing factions we need to remove their ongoing battle
+				battle.End(battleKVP.Key);
+
+				//We remove battle from list
+				//Need to decrement index so we don't skip a battle
+				b--;
+				globalBattleData.battles.Remove(battleKVP.Key);
 			}
 		}
 	}

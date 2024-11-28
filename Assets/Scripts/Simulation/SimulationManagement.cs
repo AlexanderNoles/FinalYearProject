@@ -190,6 +190,13 @@ public class SimulationManagement : MonoBehaviour
 		return !PlayerLocationManagement.IsPlayerLocation(cellCenter);
 	}
 
+	public static bool LocationIsLazy(VisitableLocation location)
+	{
+		//See above function "CellIsLazy"
+
+		return !PlayerLocationManagement.IsPlayerLocation(location);
+	}
+
 
     //As per the inital design constriction this script always executes after every other (non unity) script.
     //This does not mean it is the final code executed in the frame, we have no control over the execution order outside of scripts
@@ -436,6 +443,7 @@ public class SimulationManagement : MonoBehaviour
                 nextTickTime = (Time.time + (TICK_MAX_LENGTH / simulatioSpeedModifier));
             }
 
+			//DEBUG: NON INSTANT TICKS
             InitSimulationTick(false);
         }
     }

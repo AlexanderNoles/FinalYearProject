@@ -21,6 +21,6 @@ public class TradeShip : Ship
         this.cargoAmount = cargoAmount;
 
 		//Repair ship
-		health = 10;
+		health = GetMaxHealth();
     }
 }

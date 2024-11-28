@@ -8,6 +8,12 @@ public class FleetShip : Ship
 	public override float GetDamgeRaw()
 	{
 		//Static value for now
-		return 10;
+		return 30;
+	}
+
+	public override float GetMaxHealth()
+	{
+		//Static value for now
+		return 50;
 	}
 }

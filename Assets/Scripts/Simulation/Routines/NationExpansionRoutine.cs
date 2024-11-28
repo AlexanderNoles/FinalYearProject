@@ -52,56 +52,8 @@ public class NationExpansionRoutine : RoutineBase
                             //! I actually don't think this check is neccesary because of AnyContains above
                             if (!current.territoryCenters.Contains(pos))
                             {
-                                //Need to perform "should be border" check on both this new territory and it's neighbours
-                                current.territoryCenters.Add(pos);
-
-                                List<RealSpacePostion> toCheck = WorldManagement.GetNeighboursInGrid(pos);
-                                toCheck.Add(pos);
-
-                                foreach (RealSpacePostion potentialBorder in toCheck)
-                                {
-                                    //Couple of cases to account for:
-
-                                    //First do we even own this territory...
-                                    //...If we don't then we don't care
-                                    if (current.territoryCenters.Contains(potentialBorder))
-                                    {
-                                        //Then we need to check if all neighbours for this are owned
-                                        //If they are then we need to remove this from the border list
-                                        //If they aren't then we need to add this
-                                        //Assuming it isn't already removed or added in the first place
-
-                                        bool allClaimed = true;
-                                        List<RealSpacePostion> neighboursOfPotentialBorder = WorldManagement.GetNeighboursInGrid(potentialBorder);
-
-                                        foreach (RealSpacePostion neighbourOfPB in neighboursOfPotentialBorder)
-                                        {
-                                            if (!current.territoryCenters.Contains(neighbourOfPB))
-                                            {
-                                                allClaimed = false;
-                                                break; //Break check early
-                                            }
-                                        }
-
-                                        if (!allClaimed)
-                                        {
-                                            //Should be a border
-                                            if (!current.borders.Contains(potentialBorder))
-                                            {
-                                                current.borders.Add(potentialBorder);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            //Should not be a border
-                                            //All already claimed
-                                            if (current.borders.Contains(potentialBorder))
-                                            {
-                                                current.borders.Remove(potentialBorder);
-                                            }
-                                        }
-                                    }
-                                }
+								//Need to perform "should be border" check on both this new territory and it's neighbours
+								current.AddTerritory(pos);
                             }
                         }
                     }

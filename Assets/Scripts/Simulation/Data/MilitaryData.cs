@@ -49,8 +49,10 @@ public class MilitaryData : DataBase
 		return null;
 	}
 
-	public void TransferFreeFleets(int budget, RealSpacePostion target, BattleData battleData, int budgetMinimum = 0)
+	public int TransferFreeFleets(int budget, RealSpacePostion target, BattleData battleData, int budgetMinimum = 0)
 	{
+		int fleetTransferredCount = 0;
+
 		//Reduce budget if we already have ships there
 		if (cellCenterToFleets.ContainsKey(target))
 		{
@@ -86,9 +88,14 @@ public class MilitaryData : DataBase
 
 					//Add fleet to new cell
 					AddFleet(target, transferredFleet);
+
+					fleetTransferredCount++;
+
 					budget--;
 				}
 			}
 		}
+
+		return fleetTransferredCount;
 	}
 }

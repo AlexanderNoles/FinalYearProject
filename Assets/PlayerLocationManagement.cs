@@ -19,6 +19,16 @@ public class PlayerLocationManagement : MonoBehaviour
 		return location.GetPosition().Equals(pos);
 	}
 
+	public static bool IsPlayerLocation(VisitableLocation location)
+	{
+		if (PlayerLocationManagement.location == null)
+		{
+			return false;
+		}
+
+		return PlayerLocationManagement.location.Equals(location);
+	}
+
 	private void Awake()
 	{
 		locationChanged = true;
