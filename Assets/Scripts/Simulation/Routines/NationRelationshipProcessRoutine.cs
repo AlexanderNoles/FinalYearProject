@@ -51,7 +51,8 @@ public class NationRelationshipProcessRoutine : RoutineBase
 					}
 					else
 					{
-						entry.Value.conflict = Mathf.Max(entry.Value.conflict - 1, 0);
+						//Reduce conflict over time, currently disbaled
+						//entry.Value.conflict = Mathf.Max(entry.Value.conflict - 1, 0);
 					}
 				}
 			}

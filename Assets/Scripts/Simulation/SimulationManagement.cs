@@ -161,6 +161,36 @@ public class SimulationManagement : MonoBehaviour
         return new List<Faction>();
     }
 
+	public static Dictionary<int, T> GetDataForFactionsList<T> (List<Faction> factions, string identifier) where T : DataBase
+	{
+		Dictionary<int, T> idToData = new Dictionary<int, T>();
+
+		foreach (Faction faction in factions)
+		{
+			if (faction.GetData(identifier, out T data))
+			{
+				idToData.Add(faction.id, data);
+			}
+		}
+
+		return idToData;
+	}
+
+	public static bool CellIsLazy(RealSpacePostion cellCenter)
+	{
+		//A cell is lazy if the player does not exist there
+		//Typically most things in the simulation are lazy as the simulation's processing does not
+		//directly take into account the player
+		//This does not mean the player cannot interact with lazy systems just that the lazy systems can process without
+		//taking into account player input
+		//Some systems are optionally/mostly lazy but becoming active when a player "arrives".
+		//The key example is the current battle system (28/11/2024) that is lazy until a player arrives in a battle
+		//that battle is then no longer controlled by the simulation and instead by the normal game loop.
+
+		return !PlayerLocationManagement.IsPlayerLocation(cellCenter);
+	}
+
+
     //As per the inital design constriction this script always executes after every other (non unity) script.
     //This does not mean it is the final code executed in the frame, we have no control over the execution order outside of scripts
     private void Awake()

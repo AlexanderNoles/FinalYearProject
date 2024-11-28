@@ -7,15 +7,101 @@ public class GlobalBattleData : DataBase
 {
 	public class Battle
 	{
+		public int firstAttacker = -1;
+		public int defender = -1;
+
 		public List<int> involvedFactions = new List<int>();
+
+		public bool BattleWon()
+		{
+			//Are any factions still in conflict with each other?
+			//If so battle has not been won
+
+			foreach (int id in involvedFactions)
+			{
+				if (SimulationManagement.GetFactionByID(id).GetData(Faction.relationshipDataKey, out RelationshipData data))
+				{
+					foreach (int otherId in involvedFactions)
+					{
+						if (data.idToRelationship.ContainsKey(otherId))
+						{
+							if (data.idToRelationship[otherId].conflict > 0)
+							{
+								//Still in conflict
+								return false;
+							}
+						}
+					}
+				}
+			}
+
+
+			return true;
+		}
+
+		public void ResolveTerritoryTransfer(RealSpacePostion pos, bool isLazy = true)
+		{
+			// Decide new owner //
+
+			//If defender is still in battle do nothing, territory stays with them
+			if (involvedFactions.Contains(defender))
+			{
+				return;
+			}
+
+			//If primary (original) attacker is still in battle territory goes to them
+
+			int receiver = -1;
+			if (involvedFactions.Contains(firstAttacker))
+			{
+				receiver = firstAttacker;
+			}
+			else
+			{
+				//Otherwise pick randomly from remaing factions
+				if (isLazy)
+				{
+					receiver = involvedFactions[SimulationManagement.random.Next(0, involvedFactions.Count)];
+				}
+				else
+				{
+					receiver = involvedFactions[Random.Range(0, involvedFactions.Count)];
+				}
+			}
+
+			// Apply transfer //
+
+			if (receiver != -1)
+			{
+				//If this check fails then battle was a complete draw
+				//That would be considered an exact defense so no transfer would take place eithier
+
+				//If the factions don't have territory (for example if they are some kind of huge beast or something) then they simply won't gain or lose territory through this process
+
+				Faction gainFaction = SimulationManagement.GetFactionByID(receiver);
+
+				if (gainFaction.GetData(Faction.Tags.Territory, out TerritoryData gainData))
+				{
+					if (!gainData.territoryCenters.Contains(pos))
+					{
+						gainData.territoryCenters.Add(pos);
+					}
+				}
+
+				Faction lossFaction = SimulationManagement.GetFactionByID(defender);
+
+				if (lossFaction.GetData(Faction.Tags.Territory, out TerritoryData lossData))
+				{
+					lossData.territoryCenters.Remove(pos);
+				}
+			}
+		}
 	}
 
 	public Dictionary<RealSpacePostion, Battle> battles = new Dictionary<RealSpacePostion, Battle>();
 
 	public bool StartBattle(RealSpacePostion pos, int originID, int targetID)
 	{
-		Console.Log(battles.Count);
-
 		if (!battles.ContainsKey(pos))
 		{
 			battles[pos] = new Battle();
@@ -26,6 +112,13 @@ public class GlobalBattleData : DataBase
 		if (!battle.involvedFactions.Contains(originID))
 		{
 			battle.involvedFactions.Add(originID);
+
+			if (battle.firstAttacker == -1)
+			{
+				//Set this faction as the one to claim
+				battle.firstAttacker = originID;
+			}
+
 			//Add new battle reference
 			Faction attacker = SimulationManagement.GetFactionByID(originID);
 			if (attacker.GetData(Faction.battleDataKey, out BattleData attackBData))
@@ -45,6 +138,12 @@ public class GlobalBattleData : DataBase
 			if (!battle.involvedFactions.Contains(targetID))
 			{
 				battle.involvedFactions.Add(targetID);
+
+				if (battle.defender == -1)
+				{
+					//Set this faction as the one to claim
+					battle.defender = targetID;
+				}
 
 				//Get target pending defence data and add this battle as a new entry
 				Faction defender = SimulationManagement.GetFactionByID(targetID);

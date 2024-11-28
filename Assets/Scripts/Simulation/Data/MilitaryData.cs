@@ -6,13 +6,13 @@ using UnityEngine;
 public class MilitaryData : DataBase
 {
 	public int currentFleetCount;
-	public Dictionary<RealSpacePostion, List<Fleet>> cellCenterToFleets = new Dictionary<RealSpacePostion, List<Fleet>>();
+	public Dictionary<RealSpacePostion, List<ShipCollection>> cellCenterToFleets = new Dictionary<RealSpacePostion, List<ShipCollection>>();
 
 	public void AddFleet(RealSpacePostion pos, Fleet fleet)
 	{
 		if (!cellCenterToFleets.ContainsKey(pos))
 		{
-			cellCenterToFleets.Add(pos, new List<Fleet>());
+			cellCenterToFleets.Add(pos, new List<ShipCollection>());
 		}
 
 		cellCenterToFleets[pos].Add(fleet);
@@ -39,7 +39,7 @@ public class MilitaryData : DataBase
 		{
 			if (cellCenterToFleets[pos].Count > 0)
 			{
-				Fleet fleet = cellCenterToFleets[pos][0];
+				Fleet fleet = cellCenterToFleets[pos][0] as Fleet;
 				cellCenterToFleets[pos].RemoveAt(0);
 
 				return fleet;
@@ -68,7 +68,7 @@ public class MilitaryData : DataBase
 
 		for (int f = 0; f < controlledAreasCount && budget > 0; f++)
 		{
-			KeyValuePair<RealSpacePostion, List<Fleet>> fleet = cellCenterToFleets.ElementAt(f);
+			KeyValuePair<RealSpacePostion, List<ShipCollection>> fleet = cellCenterToFleets.ElementAt(f);
 
 			if (!battleData.ongoingBattles.ContainsKey(fleet.Key))
 			{

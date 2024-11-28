@@ -19,5 +19,8 @@ public class TradeShip : Ship
 
         currentJourneysLength = journeyLength;
         this.cargoAmount = cargoAmount;
+
+		//Repair ship
+		health = 10;
     }
 }

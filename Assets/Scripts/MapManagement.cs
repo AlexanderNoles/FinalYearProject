@@ -268,9 +268,7 @@ public class MapManagement : MonoBehaviour
 							{
 								if (military.GetData(Faction.battleDataKey, out BattleData battleData))
 								{
-									Debug.Log(battleData.ongoingBattles.Count);
-
-									foreach (KeyValuePair<RealSpacePostion, List<Fleet>> entry in milData.cellCenterToFleets)
+									foreach (KeyValuePair<RealSpacePostion, List<ShipCollection>> entry in milData.cellCenterToFleets)
 									{
 										Vector3 pos = -entry.Key.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset;
 

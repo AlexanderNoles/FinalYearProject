@@ -9,6 +9,16 @@ public class PlayerLocationManagement : MonoBehaviour
 	private static VisitableLocation previousLocation;
 	private static VisitableLocation location;
 
+	public static bool IsPlayerLocation(RealSpacePostion pos)
+	{
+		if (location == null)
+		{
+			return false;
+		}
+
+		return location.GetPosition().Equals(pos);
+	}
+
 	private void Awake()
 	{
 		locationChanged = true;

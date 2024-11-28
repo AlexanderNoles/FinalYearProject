@@ -1,3 +1,4 @@
+using MonitorBreak.Bebug;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,19 +27,22 @@ public class NationDefenseRoutine : RoutineBase
 			//The system is structured this way because in the future there will be a chance for nations to "refuse" defence requests
 			//this can be for a varierty of reasons, (e.g., We are modeling an information state and they don't "know" about the attack yet)
 
-			int defLength = battleData.pendingDefences.Count;
-			int defenceBudget = Mathf.RoundToInt(militaryData.currentFleetCount / 25.0f);
+			int defenceBudget = Mathf.CeilToInt(militaryData.currentFleetCount / 25.0f);
 
-			for (int i = 0; i < defLength;)
+			while (battleData.pendingDefences.Count > 0)
 			{
 				//Current defence
-				KeyValuePair<RealSpacePostion, BattleData.PendingDefence> currentDef = battleData.pendingDefences.ElementAt(i);
+				KeyValuePair<RealSpacePostion, BattleData.PendingDefence> currentDef = battleData.pendingDefences.ElementAt(0);
 
 				if (!battleData.ongoingBattles.ContainsKey(currentDef.Key))
 				{
-					//Not already engaged here
 					//Add battle reference
 					battleData.ongoingBattles.Add(currentDef.Key, new BattleData.BattleReference());
+
+					if (!nation.HasTag(Faction.Tags.AtWar))
+					{
+						nation.AddTag(Faction.Tags.AtWar);
+					}
 				}
 
 				//Transfer free fleets here

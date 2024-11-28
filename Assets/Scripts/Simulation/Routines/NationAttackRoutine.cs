@@ -4,8 +4,8 @@ using System.Linq;
 using UnityEngine;
 using MonitorBreak.Bebug;
 
-[SimulationManagement.ActiveSimulationRoutine(SimulationManagement.attackRoutineStandardPrio, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Debug)]
-public class NationAttackRoutine : DebugRoutine
+[SimulationManagement.ActiveSimulationRoutine(SimulationManagement.attackRoutineStandardPrio)]
+public class NationAttackRoutine : RoutineBase
 {
 	public override void Run()
 	{
@@ -51,10 +51,17 @@ public class NationAttackRoutine : DebugRoutine
 			int attackBudget = maxAllowedAttacks - batData.ongoingBattles.Count;
 			int fleetBudgerPerAttack = Mathf.CeilToInt(milData.currentFleetCount / 20.0f);
 
-			for (int i = 0; i < warOpponentFactionIDs.Count && attackBudget > 0; i++)
+			while(0 < warOpponentFactionIDs.Count && attackBudget > 0)
 			{
 				int attacksForThisEnemy = Mathf.CeilToInt(attackBudget / (float)warOpponentFactionIDs.Count);
-				Faction enemy = SimulationManagement.GetFactionByID(warOpponentFactionIDs[i]);
+
+				int index = SimulationManagement.random.Next(0, warOpponentFactionIDs.Count);
+
+				//Pick random enemy to attack
+				int enemyID = warOpponentFactionIDs[index];
+				warOpponentFactionIDs.RemoveAt(index);
+
+				Faction enemy = SimulationManagement.GetFactionByID(enemyID);
 
 				if (enemy.GetData(Faction.Tags.Settlements, out SettlementData settleData))
 				{

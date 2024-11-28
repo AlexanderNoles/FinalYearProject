@@ -1817,7 +1817,7 @@ MonoBehaviour:
   runHistory: 1
   historyLength: 35
   drawSettlements: 0
-  drawMilitaryPresence: 0
+  drawMilitaryPresence: 1
   updateMap: 0
 --- !u!1 &1273093546
 GameObject:
