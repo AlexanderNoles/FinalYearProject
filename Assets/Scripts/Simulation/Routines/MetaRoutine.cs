@@ -33,6 +33,8 @@ public class MetaRoutine : RoutineBase
         if (idsOfRemovedFactions.Count > 0)
         {
             //Do cleanup
+			//This cleanup is only done for generic things that all factions should have
+			//Specific systems implement evaluation functions that typically do other things alongside removal
 
             //Factions are now removed from the factions list
             //So we can just iterate through that
@@ -42,9 +44,24 @@ public class MetaRoutine : RoutineBase
             {
                 if (faction.GetData(Faction.relationshipDataKey, out RelationshipData relationshipData))
                 {
-                    relationshipData.idToRelationship.Remove(faction.id);
+					foreach (int id in idsOfRemovedFactions)
+					{
+						relationshipData.idToRelationship.Remove(id);
+					}
                 }
             }
-        }
+
+			//Check current battle data and remove them from that
+			//Get global data
+			SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld)[0].GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
+
+			foreach (KeyValuePair<RealSpacePostion, GlobalBattleData.Battle> battleEntry in globalBattleData.battles)
+			{
+				foreach (int id in idsOfRemovedFactions)
+				{
+					battleEntry.Value.RemoveInvolvedFaction(id);
+				}
+			}
+		}
     }
 }

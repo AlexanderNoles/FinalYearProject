@@ -10,31 +10,23 @@ public class NationSettlementManagementRoutine : RoutineBase
     {
         List<Faction> nations = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Nation);
 
-        List<(int, SettlementData)> nationIndexAndSettleData = new List<(int, SettlementData)>();
-
-        for (int i = 0; i < nations.Count; i++)
-        {
-            if (nations[i].GetData(Faction.Tags.Settlements, out SettlementData data))
-            {
-                nationIndexAndSettleData.Add((i, data));
-            }
-        }
-
-        foreach ((int, SettlementData) currentNation in nationIndexAndSettleData)
-        {
-			//Get relationship data
-			nations[currentNation.Item1].GetData(Faction.relationshipDataKey, out RelationshipData relationshipData);
-			nations[currentNation.Item1].GetData(Faction.Tags.HasMilitary, out MilitaryData militaryData);
-			nations[currentNation.Item1].GetData(Faction.Tags.Population, out PopulationData popData);
+		foreach (Faction nation in nations)
+		{
+			//Get neccesary data
+			nation.GetData(Faction.relationshipDataKey, out RelationshipData relationshipData);
+			nation.GetData(Faction.Tags.HasMilitary, out MilitaryData militaryData);
+			nation.GetData(Faction.Tags.Population, out PopulationData popData);
+			nation.GetData(Faction.Tags.Settlements, out SettlementData settData);
+			nation.GetData(Faction.Tags.CanFightWars, out WarData warData);
+			//
 
 			float maxMilitaryCapacity = SimulationHelper.ValueTanhFalloff(popData.currentPopulationCount, 1000, 9000);
-
 			//Iterate through each settlement
-			foreach (KeyValuePair<RealSpacePostion, SettlementData.Settlement> settlePair in currentNation.Item2.settlements)
-            {
-                SettlementData.Settlement currentSettlement = settlePair.Value;
+			foreach (KeyValuePair<RealSpacePostion, SettlementData.Settlement> settlePair in settData.settlements)
+			{
+				SettlementData.Settlement currentSettlement = settlePair.Value;
 				//Get inverted settlement index
-				int invertedSettlementIndex = currentNation.Item2.settlements.Count - currentSettlement.setID;
+				int invertedSettlementIndex = settData.settlements.Count - currentSettlement.setID;
 
 				#region Trade Control
 				//Trade control
@@ -83,18 +75,19 @@ public class NationSettlementManagementRoutine : RoutineBase
 						while (loopClamp < 25 && ship.tradeTarget == null)
 						{
 							//Get random nation (could we expand this to all factions?)
-							(int, SettlementData) targetNation = nationIndexAndSettleData[SimulationManagement.random.Next(0, nationIndexAndSettleData.Count)];
-							int nationID = nations[targetNation.Item1].id;
+							Faction targetNation = nations[SimulationManagement.random.Next(0, nations.Count)];
 
 							//Are we on good terms with that faction?
 							if (relationshipData == null ||
-								(relationshipData.idToRelationship.ContainsKey(nationID) && relationshipData.idToRelationship[nationID].favourability > 0.3f))
+								(relationshipData.idToRelationship.ContainsKey(targetNation.id) && relationshipData.idToRelationship[targetNation.id].favourability > 0.3f))
 							{
 								//If we are get a random settlement from that faction
 								//! If we want we can make it calcualte distance to that settlement and all that
-								if (targetNation.Item2.settlements.Count > 0)
+								targetNation.GetData(Faction.Tags.Settlements, out SettlementData targetSetData);
+
+								if (targetSetData.settlements.Count > 0)
 								{
-									SettlementData.Settlement targetSettlement = targetNation.Item2.settlements.ElementAt(SimulationManagement.random.Next(0, targetNation.Item2.settlements.Count)).Value;
+									SettlementData.Settlement targetSettlement = targetSetData.settlements.ElementAt(SimulationManagement.random.Next(0, targetSetData.settlements.Count)).Value;
 
 									if (!targetSettlement.Equals(currentSettlement))
 									{
@@ -157,9 +150,8 @@ public class NationSettlementManagementRoutine : RoutineBase
 					{
 						float productionSpeed = SimulationHelper.ValueTanhFalloff(invertedSettlementIndex, 1, 10);
 
-						if (!nations[currentNation.Item1].HasTag(Faction.Tags.AtWar))
+						if (warData.atWarWith.Count > 0)
 						{
-							//Lower production outside war time
 							productionSpeed *= 0.1f;
 						}
 

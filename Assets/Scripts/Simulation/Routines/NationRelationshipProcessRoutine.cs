@@ -14,6 +14,7 @@ public class NationRelationshipProcessRoutine : RoutineBase
 		Dictionary<int, RelationshipData> idToRelationship = SimulationManagement.GetDataForFactionsList<RelationshipData>(factions, Faction.relationshipDataKey);
 		//Get political data for factions that have it (this is important for how nations view other nations)
 		Dictionary<int, PoliticalData> idToPolitics = SimulationManagement.GetDataForFactionsList<PoliticalData>(factions, Faction.Tags.Politics.ToString());
+		Dictionary<int, WarData> idToWar = SimulationManagement.GetDataForFactionsList<WarData>(factions, Faction.Tags.CanFightWars.ToString());
 
 		int count = nations.Count;
 		for (int i = 0; i < count; i++)
@@ -22,6 +23,7 @@ public class NationRelationshipProcessRoutine : RoutineBase
 
 			RelationshipData relationshipData = idToRelationship[nation.id];
 			PoliticalData personalPoliticalData = idToPolitics[nation.id];
+			WarData personalWarData = idToWar[nation.id];
 
 			foreach (KeyValuePair<int, RelationshipData.Relationship> entry in relationshipData.idToRelationship)
 			{
@@ -55,12 +57,12 @@ public class NationRelationshipProcessRoutine : RoutineBase
 
 				if (relationship.favourability < -0.5f)
 				{
-					relationship.inConflict = true;
-
-					if (!nation.HasTag(Faction.Tags.AtWar))
+					if (!personalWarData.atWarWith.Contains(entry.Key))
 					{
-						//Now at war
-						nation.AddTag(Faction.Tags.AtWar);
+						relationship.inConflict = true;
+
+						//Start a dedicated war
+						personalWarData.atWarWith.Add(entry.Key);
 					}
 				}
 			}

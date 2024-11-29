@@ -77,6 +77,7 @@ public class SimulationManagement : MonoBehaviour
     public Dictionary<string, RoutineBase> absentRoutines = new Dictionary<string, RoutineBase>();
 	public const int attackRoutineStandardPrio = -25; 
 	public const int defendRoutineStandardPrio = -30;
+	public const int evaluationRoutineStandardPrio = -3010;
 
 	public static void RunAbsentRoutine(string routineIdentifier)
     {
@@ -99,6 +100,11 @@ public class SimulationManagement : MonoBehaviour
 
         return null;
     }
+
+	public static bool FactionWithIDExists(int id)
+	{
+		return instance.idToFaction.ContainsKey(id);
+	}
 
 	public static void AddFactionToIDDict(Faction faction)
 	{
@@ -198,6 +204,8 @@ public class SimulationManagement : MonoBehaviour
 	}
 
 
+	public GameObject simulationRoutinesStorage;
+
     //As per the inital design constriction this script always executes after every other (non unity) script.
     //This does not mean it is the final code executed in the frame, we have no control over the execution order outside of scripts
     private void Awake()
@@ -225,11 +233,11 @@ public class SimulationManagement : MonoBehaviour
 		//Add game world faction
 		new GameWorld().Simulate();
 
-        //Add all routine instances
-        (constantRoutines, initRoutines, debugRoutines, absentRoutines) = SimulationRoutineExecution.Main(gameObject);
-    }
+		//Add all routine instances
+		RefreshRoutines();
+	}
 
-    private void Start()
+	private void Start()
     {
         if (SimulationSettings.ShouldRunHistory())
         {
@@ -277,7 +285,25 @@ public class SimulationManagement : MonoBehaviour
     {
         public static (List<RoutineBase>, List<InitRoutineBase>, List<RoutineBase>, Dictionary<string, RoutineBase>) Main(GameObject parent)
         {
-            List<RoutineBase> activeRoutines = new List<RoutineBase>();
+			//Remove all components from parent object
+			foreach (Component component in parent.GetComponents<Component>())
+			{
+				if (component is not Transform)
+				{
+					if (Application.isPlaying)
+					{
+						Destroy(component);
+					}
+					else
+					{
+						DestroyImmediate(component);
+					}
+
+				}
+			}
+			//
+
+			List<RoutineBase> activeRoutines = new List<RoutineBase>();
             List<RoutineBase> debugRoutines = new List<RoutineBase>();
             Dictionary<string, RoutineBase> absentRoutines = new Dictionary<string, RoutineBase>();
             List<InitRoutineBase> initRoutines = new List<InitRoutineBase>();
@@ -466,6 +492,23 @@ public class SimulationManagement : MonoBehaviour
     {
         simulatioSpeedModifier = Int32.Parse(newValue);
     }
+
+	[MonitorBreak.Bebug.ConsoleCMD("SIMBURST")]
+	public static void SimulationBurst(string tickCount)
+	{
+		int count = Int32.Parse(tickCount);
+
+		for (int i = 0; i < count; i++)
+		{
+			InitSimulationTick(true);
+		}
+	}
+
+	[ContextMenu("Refresh Routines")]
+	private void RefreshRoutines()
+	{
+		(constantRoutines, initRoutines, debugRoutines, absentRoutines) = SimulationRoutineExecution.Main(simulationRoutinesStorage);
+	}
 }
 
 
@@ -476,9 +519,13 @@ public class SimulationManagerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
+		DrawDefaultInspector();
+
         SimulationManagement manager = (SimulationManagement)target;
 
-        if (manager != null)
+		GUILayout.Label("---");
+
+		if (manager != null)
         {
             GUI.skin.label.fontStyle = FontStyle.Bold;
             GUI.skin.label.fontSize = 13;

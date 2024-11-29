@@ -31,9 +31,13 @@ public class NationExpansionRoutine : RoutineBase
 
 			TerritoryData current = territories[i];
 			nation.GetData(Faction.Tags.Population, out PopulationData popData);
+			nation.GetData(Faction.Tags.CanFightWars, out WarData warData);
 
-			if (nation.HasTag(Faction.Tags.AtWar))
+			if (warData.atWarWith.Count > 0)
 			{
+				//When at war growth rate is dramatically reduced
+				//This prevents wars from continuing forever by just having nations expand as they are destroyed
+				//Realistic too!
 				current.growthRate = Mathf.Lerp(current.growthRate, 0.1f, 0.5f);
 			}
 			else
@@ -42,7 +46,7 @@ public class NationExpansionRoutine : RoutineBase
 			}
 
 			current.territoryClaimUpperLimit += current.growthRate;
-			current.territoryClaimUpperLimit = SimulationHelper.ValueTanhFalloff(current.territoryClaimUpperLimit, 150, -1);
+			current.territoryClaimUpperLimit = SimulationHelper.ValueTanhFalloff(current.territoryClaimUpperLimit, 300, -1);
 
 			if (current.territoryCenters.Count > 0 && current.territoryCenters.Count < current.territoryClaimUpperLimit)
 			{

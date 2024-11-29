@@ -29,6 +29,11 @@ public class GlobalBattleData : DataBase
 		{
 			int indexOf = involvedFactions.IndexOf(id);
 
+			if (indexOf == -1)
+			{
+				return;
+			}
+
 			involvedFactions.RemoveAt(indexOf);
 			involvedFactionsProgress.RemoveAt(indexOf);
 		}
@@ -166,11 +171,14 @@ public class GlobalBattleData : DataBase
 
 					float modifier = 1.0f;
 
-					if (lossFaction.GetData(Faction.Tags.HasMilitary, out MilitaryData milData))
+					if (lossFaction.GetData(Faction.Tags.CanFightWars, out WarData warData))
 					{
-						modifier = milData.warExhaustion;
+						//TODO: Check these two factions are fighting a war
 
-						milData.warExhaustion += 10.0f * milData.warExhaustionGrowthMultiplier;
+
+						modifier = warData.warExhaustion;
+
+						warData.warExhaustion += 10.0f * warData.warExhaustionGrowthMultiplier;
 					}
 
 					//Apply territory cap loss

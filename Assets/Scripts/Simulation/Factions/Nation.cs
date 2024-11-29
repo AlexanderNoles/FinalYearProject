@@ -16,6 +16,7 @@ public class Nation : Faction
 		AddTag(Tags.Politics);
         //This faction is visible to all other factions
         AddTag(Tags.OpenRelationship);
+		AddTag(Tags.CanFightWars);
     }
 
     public override void InitData()
@@ -32,5 +33,7 @@ public class Nation : Faction
 		//but doesn't by defauly have the AtWar tag
 		//Cause it isn't at war!
 		AddData(Tags.HasMilitary, new MilitaryData());
+
+		AddData(Tags.CanFightWars, new WarData());
     }
 }

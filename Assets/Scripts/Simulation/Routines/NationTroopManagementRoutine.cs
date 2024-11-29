@@ -5,10 +5,24 @@ using System.Linq;
 using UnityEngine;
 
 [SimulationManagement.ActiveSimulationRoutine(SimulationManagement.defendRoutineStandardPrio)]
-public class NationDefenseRoutine : RoutineBase
+public class NationTroopManagementRoutine : RoutineBase
 {
 	public override void Run()
 	{
+		//Copied from Discord:
+		//
+		//Maybe defence should not exist
+		//and instead there is just a routine for generally moving about troops
+		//and then the attack routine becomes specifically about wars
+		//a.k.a attack routine sets battles for us to take in a current war
+		//then "defence" routine moves troops about just to any current battle
+		//not just responding to specific defense requests
+		//so each tick we just reavluate all current battles and transfer troops based on needs
+		
+
+
+
+
 		//Get gameworld and universal battle data
 		GameWorld gameworld = (GameWorld)SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld)[0];
 		gameworld.GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
@@ -57,11 +71,6 @@ public class NationDefenseRoutine : RoutineBase
 					{
 						//Add battle reference
 						battleData.ongoingBattles.Add(currentDef.Key, new BattleData.BattleReference());
-
-						if (!nation.HasTag(Faction.Tags.AtWar))
-						{
-							nation.AddTag(Faction.Tags.AtWar);
-						}
 					}
 				}
 

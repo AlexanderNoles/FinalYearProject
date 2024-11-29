@@ -5,7 +5,7 @@ using UnityEngine;
 using MonitorBreak.Bebug;
 
 [SimulationManagement.ActiveSimulationRoutine(SimulationManagement.attackRoutineStandardPrio)]
-public class NationAttackRoutine : RoutineBase
+public class NationWarAttackRoutine : RoutineBase
 {
 	public override void Run()
 	{
@@ -20,67 +20,56 @@ public class NationAttackRoutine : RoutineBase
 
 		foreach (Faction nation in nations)
 		{
-			if (!nation.HasTag(Faction.Tags.AtWar))
+			//Get data
+			nation.GetData(Faction.Tags.CanFightWars, out WarData warData);
+			int warCount = warData.atWarWith.Count;
+
+			if (warCount <= 0)
 			{
-				//Not at war
 				continue;
 			}
 
-			//Get data
 			nation.GetData(Faction.relationshipDataKey, out RelationshipData relData);
 			nation.GetData(Faction.battleDataKey, out BattleData batData);
 			nation.GetData(Faction.Tags.HasMilitary, out MilitaryData milData);
+
+			//Need to iterate through current wars and create battles, the nation troops control routines will act on these battles afterwards but
+			//we still send an initial number of fleets. Because the troop control routine has a transfer limit this means an this battle won't immediately be abandoned
 
 			//Choose points to attack
 			//Current max amount of attacks going on
 			int maxAllowedAttacks = Mathf.RoundToInt(milData.currentFleetCount / 10); //Just use a static 10 modifier
 
-			//Get all enemy factions that we want to attack
-			List<int> warOpponentFactionIDs = new List<int>();
-			foreach (KeyValuePair<int, RelationshipData.Relationship> entry in relData.idToRelationship)
-			{
-				if (entry.Value.inConflict)
-				{
-					//In conflict with this faction
-					//Add it's id to warOpponents
-
-					warOpponentFactionIDs.Add(entry.Key);
-				}
-			}
-
 			int attackBudget = maxAllowedAttacks - batData.ongoingBattles.Count;
 			int fleetBudgerPerAttack = Mathf.RoundToInt(milData.currentFleetCount / 20.0f);
 
-			while(0 < warOpponentFactionIDs.Count && attackBudget > 0 && fleetBudgerPerAttack > 0)
+			if (fleetBudgerPerAttack <= 0)
 			{
-				int attacksForThisEnemy = Mathf.CeilToInt(attackBudget / (float)warOpponentFactionIDs.Count);
-				int index = SimulationManagement.random.Next(0, warOpponentFactionIDs.Count);
+				//No fleet budget!
+				continue;
+			}
 
-				//Pick random enemy to attack
-				int enemyID = warOpponentFactionIDs[index];
-				warOpponentFactionIDs.RemoveAt(index);
+			//Iterate through all wars (or until we run out of budge)
+			for (int i = 0; i < warCount && attackBudget > 0; i++)
+			{
+				int warOpponentID = warData.atWarWith[i];
+				int attacksForThisWar = Mathf.CeilToInt(attackBudget / (float)warCount);
 
-				if (enemyID == nation.id)
-				{
-					throw new System.Exception("We are trying to attack ourself");
-				}
+				//Get actual enemy
+				Faction enemy = SimulationManagement.GetFactionByID(warOpponentID);
 
-				Faction enemy = SimulationManagement.GetFactionByID(enemyID);
-
+				//Get random position in enemy territory
 				if (enemy.GetData(Faction.Tags.Territory, out TerritoryData terData))
 				{
 					if (terData.borders.Count == 0)
 					{
-						//Enemy has no territory!
-						//War is over!
-
-						//We are no longer in conflict with them
-						//relData.idToRelationship[enemyID].inConflict = false;
+						//Enenmy has no territory!
+						//This should mean the war will be ended this tick
 						continue;
 					}
 					else
 					{
-						for (int a = 0; a < attacksForThisEnemy; a++)
+						for (int a = 0; a < attacksForThisWar; a++)
 						{
 							//Create new attack
 							//Currently just pick a position from the enemy at random
@@ -88,7 +77,7 @@ public class NationAttackRoutine : RoutineBase
 
 							//Transfer fleets to new attack if they are free
 							//Function should automatically check if we already have ships there and adjust the budget accordingly
-							int amountTransferred = milData.TransferFreeFleets(fleetBudgerPerAttack, newAttackPos, batData); ;
+							int amountTransferred = milData.TransferFreeFleets(fleetBudgerPerAttack, newAttackPos, batData);
 
 							if (amountTransferred > 0)
 							{
@@ -98,10 +87,6 @@ public class NationAttackRoutine : RoutineBase
 							}
 						}
 					}
-				}
-				else
-				{
-					break;
 				}
 			}
 		}

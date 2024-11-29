@@ -13,13 +13,13 @@ public class BattleResolutionRoutine : RoutineBase
 		gameworld.GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
 
 		//Get all at war factions
-		List<Faction> atWarFactions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.AtWar);
-		Dictionary<int, MilitaryData> idToMilitaryData = SimulationManagement.GetDataForFactionsList<MilitaryData>(atWarFactions, Faction.Tags.HasMilitary.ToString());
-		Dictionary<int, BattleData> idToBattleData = SimulationManagement.GetDataForFactionsList<BattleData>(atWarFactions, Faction.battleDataKey);
+		List<Faction> allFactions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Faction);
+		Dictionary<int, MilitaryData> idToMilitaryData = SimulationManagement.GetDataForFactionsList<MilitaryData>(allFactions, Faction.Tags.HasMilitary.ToString());
+		Dictionary<int, BattleData> idToBattleData = SimulationManagement.GetDataForFactionsList<BattleData>(allFactions, Faction.battleDataKey);
 		Dictionary<int, List<int>> idToOppositionIDs = new Dictionary<int, List<int>>();
 
 		//Pre compute opposition
-		foreach (Faction faction in atWarFactions)
+		foreach (Faction faction in allFactions)
 		{
 			if (faction.GetData(Faction.relationshipDataKey, out RelationshipData data))
 			{
@@ -151,7 +151,9 @@ public class BattleResolutionRoutine : RoutineBase
 							{
 								//Each time damage is taken
 								//We add to war exhaustion
-								militaryData.warExhaustion += damagePerFleet * militaryData.warExhaustionGrowthMultiplier;
+								militaryData.totalDamageBuildup += damagePerFleet;
+
+								//militaryData.warExhaustion += damagePerFleet * militaryData.warExhaustionGrowthMultiplier;
 
 								if (collections[i].TakeDamage(damagePerFleet))
 								{
