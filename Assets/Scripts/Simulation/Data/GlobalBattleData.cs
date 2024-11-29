@@ -10,33 +10,85 @@ public class GlobalBattleData : DataBase
 		public int firstAttacker = -1;
 		public int defender = -1;
 
-		public List<int> involvedFactions = new List<int>();
+		private List<int> involvedFactions = new List<int>();
+		private List<float> involvedFactionsProgress = new List<float>();
 
-		public bool BattleWon()
+		public List<int> GetInvolvedFactions()
 		{
-			//Are any factions still in conflict with each other?
-			//If so battle has not been won
+			return involvedFactions;
+		}
 
-			foreach (int id in involvedFactions)
+
+		public void AddInvolvedFaction(int id)
+		{
+			involvedFactions.Add(id);
+			involvedFactionsProgress.Add(0.0f);
+		}
+
+		public void RemoveInvolvedFaction(int id)
+		{
+			int indexOf = involvedFactions.IndexOf(id);
+
+			involvedFactions.RemoveAt(indexOf);
+			involvedFactionsProgress.RemoveAt(indexOf);
+		}
+
+		public void AddToWinProgress(int index, float amount)
+		{
+			involvedFactionsProgress[index] += amount;
+		}
+
+		public float GetWinProgress(int index)
+		{
+			return involvedFactionsProgress[index];
+		}
+
+
+		public bool NoConflictingFactions()
+		{
+			for (int i = 0; i < involvedFactions.Count; i++)
 			{
-				if (SimulationManagement.GetFactionByID(id).GetData(Faction.relationshipDataKey, out RelationshipData data))
+				if (involvedFactions.Count > 1)
 				{
-					foreach (int otherId in involvedFactions)
+					if (SimulationManagement.GetFactionByID(involvedFactions[i]).GetData(Faction.relationshipDataKey, out RelationshipData data))
 					{
-						if (data.idToRelationship.ContainsKey(otherId))
+						foreach (int otherId in involvedFactions)
 						{
-							if (data.idToRelationship[otherId].conflict > 0)
+							if (data.idToRelationship.ContainsKey(otherId))
 							{
-								//Still in conflict
-								return false;
+								if (data.idToRelationship[otherId].conflict > 0)
+								{
+									//Still in conflict
+									return false;
+								}
 							}
 						}
 					}
 				}
 			}
 
-
 			return true;
+		}
+
+		public bool BattleWon(out int winnerID)
+		{
+			winnerID = -1;
+
+			if (involvedFactions.Count <= 0)
+			{
+				return true;
+			}
+
+			for (int i = 0; i < involvedFactions.Count; i++)
+			{
+				if (involvedFactionsProgress[i] > 1.2f)
+				{
+					winnerID = involvedFactions[i];
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		public void End(RealSpacePostion pos)
@@ -60,7 +112,6 @@ public class GlobalBattleData : DataBase
 		public void ResolveTerritoryTransfer(RealSpacePostion pos, bool isLazy = true)
 		{
 			// Decide new owner //
-
 			//If defender is still in battle do nothing, territory stays with them
 			if (involvedFactions.Contains(defender))
 			{
@@ -113,7 +164,7 @@ public class GlobalBattleData : DataBase
 				{
 					lossData.RemoveTerritory(pos);
 
-					lossData.territoryClaimUpperLimit -= 1.1f;
+					lossData.territoryClaimUpperLimit -= 5f;
 				}
 
 				//Destroy any settlement in this area
@@ -137,10 +188,11 @@ public class GlobalBattleData : DataBase
 		}
 
 		Battle battle = battles[pos];
+		List<int> involvedFactions = battle.GetInvolvedFactions();
 
-		if (!battle.involvedFactions.Contains(originID))
+		if (!involvedFactions.Contains(originID))
 		{
-			battle.involvedFactions.Add(originID);
+			battle.AddInvolvedFaction(originID);
 
 			if (battle.firstAttacker == -1)
 			{
@@ -164,9 +216,9 @@ public class GlobalBattleData : DataBase
 			}
 
 			//Defending faction
-			if (!battle.involvedFactions.Contains(targetID))
+			if (!involvedFactions.Contains(targetID))
 			{
-				battle.involvedFactions.Add(targetID);
+				battle.AddInvolvedFaction(targetID);
 
 				if (battle.defender == -1)
 				{

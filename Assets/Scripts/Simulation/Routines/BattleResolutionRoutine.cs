@@ -52,27 +52,45 @@ public class BattleResolutionRoutine : RoutineBase
 
 			GlobalBattleData.Battle battle = battleKVP.Value;
 
-			bool battleOver = battle.involvedFactions.Count <= 1;
+			List<int> involvedFactions = battle.GetInvolvedFactions();
+			int involvedFactionsCount = involvedFactions.Count;
+			bool battleOver = battle.NoConflictingFactions();
 
-			if (!battleOver)
+			//If enemies are still left this will be used
+			Dictionary<int, float> idToDamageToTake = new Dictionary<int, float>();
+
+			//Because this is a lazy battle we can just estimate the damage to each ship per tick
+			//For this we first need to calculate relative power of each faction
+			//And get their opposition
+			//And then apply their damage spread evenly across all enemy ships 
+			//(Some variance to damage calulation of course)
+			const float battleLengthMultiplier = 10.0f;
+
+			for (int i = 0; i < involvedFactionsCount; i++)
 			{
-				Dictionary<int, float> idToDamageToTake = new Dictionary<int, float>();
+				int id = involvedFactions[i];
+				MilitaryData militaryData = idToMilitaryData[id];
 
-				//Because this is a lazy battle we can just estimate the damage to each ship per tick
-				//For this we first need to calculate relative power of each faction
-				//And get their opposition
-				//And then apply their damage spread evenly across all enemy ships 
-				//(Some variance to damage calulation of course)
-				foreach (int id in battle.involvedFactions)
+				if (militaryData.cellCenterToFleets.ContainsKey(battleKVP.Key))
 				{
-					MilitaryData militaryData = idToMilitaryData[id];
+					//Has ships in this cell
+					//Calculate damage
+					List<ShipCollection> collections = militaryData.cellCenterToFleets[battleKVP.Key];
 
-					if (militaryData.cellCenterToFleets.ContainsKey(battleKVP.Key))
+					float amountToAddToWinProgress = 0.0f;
+					if (battleOver)
 					{
-						//Has ships in this cell
-						//Calculate damage
-						List<ShipCollection> collections = militaryData.cellCenterToFleets[battleKVP.Key];
+						int totalShips = 0;
 
+						foreach (ShipCollection collection in collections)
+						{
+							totalShips += collection.GetShips().Count;
+						}
+
+						amountToAddToWinProgress = Mathf.Max(totalShips / (250.0f * battleLengthMultiplier), 0.001f);
+					}
+					else
+					{
 						float totalDamage = 0;
 						foreach (ShipCollection collection in collections)
 						{
@@ -84,13 +102,15 @@ public class BattleResolutionRoutine : RoutineBase
 							}
 						}
 
+						amountToAddToWinProgress += totalDamage / (500.0f * battleLengthMultiplier);
+
 						List<int> opposition = idToOppositionIDs[id];
 
 						float damagePerEnemy = totalDamage / opposition.Count;
 
 						foreach (int enemyID in opposition)
 						{
-							if (!battle.involvedFactions.Contains(enemyID))
+							if (!involvedFactions.Contains(enemyID))
 							{
 								continue;
 							}
@@ -103,12 +123,17 @@ public class BattleResolutionRoutine : RoutineBase
 							idToDamageToTake[enemyID] += damagePerEnemy;
 						}
 					}
-				}
 
+					battle.AddToWinProgress(i, amountToAddToWinProgress);
+				}
+			}
+
+			if (!battleOver)
+			{
 				//Apply damage to all involved factions
 				List<int> factionsLostBattleThisTick = new List<int>();
 
-				foreach (int id in battle.involvedFactions)
+				foreach (int id in involvedFactions)
 				{
 					if (idToDamageToTake.ContainsKey(id))
 					{
@@ -154,7 +179,7 @@ public class BattleResolutionRoutine : RoutineBase
 						idToMilitaryData[id].cellCenterToFleets.Remove(battleKVP.Key);
 
 						//Remove from battle
-						battle.involvedFactions.Remove(id);
+						battle.RemoveInvolvedFaction(id);
 						idToBattleData[id].ongoingBattles.Remove(battleKVP.Key);
 					}
 				}
@@ -162,7 +187,7 @@ public class BattleResolutionRoutine : RoutineBase
 
 			//Check if battle is won
 			//not in the above if statement so if an outside force removes a faction battles don't freeze in place
-			if (battleOver || battle.BattleWon())
+			if (battle.BattleWon(out int winnerID))
 			{
 				battle.ResolveTerritoryTransfer(battleKVP.Key);
 

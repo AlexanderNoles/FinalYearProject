@@ -182,7 +182,7 @@ public class MapManagement : MonoBehaviour
 
 									foreach (KeyValuePair<RealSpacePostion, GlobalBattleData.Battle> battle in globalBattleData.battles)
 									{
-										int wdhjbnhjawbndhjabhjgdb = battle.Value.involvedFactions.Count;
+										int wdhjbnhjawbndhjabhjgdb = battle.Value.GetInvolvedFactions().Count;
 
 										for (int k = 0; k < wdhjbnhjawbndhjabhjgdb; k++)
 										{
@@ -192,7 +192,8 @@ public class MapManagement : MonoBehaviour
 												Vector3.up,
 												Color.yellow,
 												timeTillNextMapUpdate,
-												true);
+												true,
+												battle.Value.GetWinProgress(k) / 1.2f);
 										}
 									}
 								}

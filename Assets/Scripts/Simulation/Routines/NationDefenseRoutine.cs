@@ -32,7 +32,7 @@ public class NationDefenseRoutine : RoutineBase
 			//The system is structured this way because in the future there will be a chance for nations to "refuse" defence requests
 			//this can be for a varierty of reasons, (e.g., We are modeling an information state and they don't "know" about the attack yet)
 
-			int defenceBudget = Mathf.CeilToInt(militaryData.currentFleetCount / 25.0f);
+			int defenceBudget = Mathf.CeilToInt(militaryData.currentFleetCount / 15.0f);
 
 			for (int i = 0; i < battleData.pendingDefences.Count;)
 			{
@@ -50,7 +50,7 @@ public class NationDefenseRoutine : RoutineBase
 					//
 					//One of the major things to keep in mind is we need to have some AttemptToJoin battle function
 					//Incase the battle is already over
-					globalBattleData.battles[currentDef.Key].involvedFactions.Remove(nation.id);
+					globalBattleData.battles[currentDef.Key].RemoveInvolvedFaction(nation.id);
 				}
 				else
 				{
@@ -68,6 +68,10 @@ public class NationDefenseRoutine : RoutineBase
 
 				battleData.pendingDefences.Remove(currentDef.Key);
 			}
+
+			//Retreat routine
+			//This is included here as it's a part of defence
+
 		}
 	}
 }
