@@ -10,6 +10,8 @@ public class TerritoryData : DataBase
     public HashSet<RealSpacePostion> territoryCenters = new HashSet<RealSpacePostion>();
     public HashSet<RealSpacePostion> borders = new HashSet<RealSpacePostion>();
     public List<Vector3> borderInOrder = new List<Vector3>();
+	public float growthRate;
+	public float territoryClaimUpperLimit;
 
     public bool Contains(RealSpacePostion postion)
     {
@@ -26,6 +28,11 @@ public class TerritoryData : DataBase
 	public void RemoveTerritory(RealSpacePostion center)
 	{
 		territoryCenters.Remove(center);
+
+		if (borders.Contains(center))
+		{
+			borders.Remove(center);
+		}
 
 		BorderCheck(center, false);
 	}

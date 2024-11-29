@@ -66,12 +66,10 @@ public class MilitaryData : DataBase
 		//We need to identify which ships are not currently engaged in a battle
 		//So we scan through the current avliable military and check if their are already positioned at a battle, if they are not we move them to 
 		//the new cell until they we meet our expected fleet amount (or we run out of fleets to send)
-		int controlledAreasCount = cellCenterToFleets.Count;
+		List<(RealSpacePostion, int)> fromPositions = new List<(RealSpacePostion, int)>();
 
-		for (int f = 0; f < controlledAreasCount && budget > 0; f++)
+		foreach (KeyValuePair<RealSpacePostion, List<ShipCollection>> fleet in cellCenterToFleets)
 		{
-			KeyValuePair<RealSpacePostion, List<ShipCollection>> fleet = cellCenterToFleets.ElementAt(f);
-
 			if (!battleData.ongoingBattles.ContainsKey(fleet.Key))
 			{
 				//Not currently in a battle
@@ -80,19 +78,27 @@ public class MilitaryData : DataBase
 				//How many do we want to transfer
 				//Don't want to exceed budget or amount of ships stored at this cell
 				int transferLimit = Mathf.Min(budget, fleet.Value.Count);
+				fromPositions.Add((fleet.Key, transferLimit));
+				budget -= transferLimit;
+			}
 
-				for (int i = 0; i < transferLimit; i++)
-				{
-					//Remove any fleet from previous cell
-					Fleet transferredFleet = RemoveFleet(fleet.Key);
+			if (budget <= 0)
+			{
+				break;
+			}
+		}
 
-					//Add fleet to new cell
-					AddFleet(target, transferredFleet);
+		foreach ((RealSpacePostion, int) entry in fromPositions)
+		{
+			for (int i = 0; i < entry.Item2; i++)
+			{
+				//Remove any fleet from previous cell
+				Fleet transferredFleet = RemoveFleet(entry.Item1);
 
-					fleetTransferredCount++;
+				//Add fleet to new cell
+				AddFleet(target, transferredFleet);
 
-					budget--;
-				}
+				fleetTransferredCount++;
 			}
 		}
 

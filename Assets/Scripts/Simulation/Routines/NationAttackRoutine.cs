@@ -82,7 +82,7 @@ public class NationAttackRoutine : RoutineBase
 						{
 							//Create new attack
 							//Currently just pick a position from the enemy at random
-							RealSpacePostion newAttackPos = terData.borders.ElementAt(SimulationManagement.random.Next(0, terData.territoryCenters.Count));
+							RealSpacePostion newAttackPos = terData.borders.ElementAt(SimulationManagement.random.Next(0, terData.borders.Count));
 
 							//Transfer fleets to new attack if they are free
 							//Function should automatically check if we already have ships there and adjust the budget accordingly

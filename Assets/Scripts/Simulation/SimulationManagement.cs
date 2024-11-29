@@ -365,16 +365,17 @@ public class SimulationManagement : MonoBehaviour
             }
 
             IncrementDay();
+			instance.SimulationTick(isInstant);
 
-            instance.tickTask = Task.Run(() =>
-            {
-                instance.SimulationTick(isInstant);
-            });
+			//instance.tickTask = Task.Run(() =>
+   //         {
+   //             instance.SimulationTick(isInstant);
+   //         });
 
-            if (isInstant)
-            {
-                instance.tickTask.Wait();
-            }
+   //         if (isInstant)
+   //         {
+   //             instance.tickTask.Wait();
+   //         }
         }
     }
 

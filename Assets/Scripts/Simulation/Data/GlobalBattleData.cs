@@ -96,21 +96,24 @@ public class GlobalBattleData : DataBase
 
 				//If the factions don't have territory (for example if they are some kind of huge beast or something) then they simply won't gain or lose territory through this process
 
-				Faction gainFaction = SimulationManagement.GetFactionByID(receiver);
+				//Disabled territory gain, simply loss
+				//Faction gainFaction = SimulationManagement.GetFactionByID(receiver);
 
-				if (gainFaction.GetData(Faction.Tags.Territory, out TerritoryData gainData))
-				{
-					if (!gainData.territoryCenters.Contains(pos))
-					{
-						gainData.AddTerritory(pos);
-					}
-				}
+				//if (gainFaction.GetData(Faction.Tags.Territory, out TerritoryData gainData))
+				//{
+				//	if (!gainData.territoryCenters.Contains(pos))
+				//	{
+				//		gainData.AddTerritory(pos);
+				//	}
+				//}
 
 				Faction lossFaction = SimulationManagement.GetFactionByID(defender);
 
 				if (lossFaction.GetData(Faction.Tags.Territory, out TerritoryData lossData))
 				{
 					lossData.RemoveTerritory(pos);
+
+					lossData.territoryClaimUpperLimit -= 1.1f;
 				}
 
 				//Destroy any settlement in this area

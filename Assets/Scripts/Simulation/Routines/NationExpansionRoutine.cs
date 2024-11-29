@@ -27,38 +27,46 @@ public class NationExpansionRoutine : RoutineBase
 
         for (int i = 0; i < territories.Count; i++)
         {
-            TerritoryData current = territories[i];
-            
-            //For nations this should be based on population data
-            //So we need to grab the population data
-            //If it doesn't exists we can't perform the rest of the routine
+			Faction nation = nations[nationIndexes[i]];
 
-            if (nations[nationIndexes[i]].GetData(Faction.Tags.Population, out PopulationData popData))
-            {
-                float sizeLimit = popData.currentPopulationCount / 10; 
+			TerritoryData current = territories[i];
+			nation.GetData(Faction.Tags.Population, out PopulationData popData);
 
-                if (current.territoryCenters.Count > 0 && current.territoryCenters.Count < sizeLimit)
-                {
-                    RealSpacePostion currentBorder = current.borders.ElementAt(SimulationManagement.random.Next(0, current.borders.Count));
 
-                    List<RealSpacePostion> neighbours = WorldManagement.GetNeighboursInGrid(currentBorder);
+			//Current issue is we are always at war...
+			if (nation.HasTag(Faction.Tags.AtWar))
+			{
+				current.growthRate = Mathf.Lerp(current.growthRate, 0.1f, 0.5f);
+			}
+			else
+			{
+				current.growthRate = Mathf.MoveTowards(current.growthRate, SimulationHelper.ValueTanhFalloff(popData.currentPopulationCount / 100.0f, 2, -1), 0.05f);
+			}
 
-                    foreach (RealSpacePostion pos in neighbours)
-                    {
-                        //If not currently claimed by anyone else and within solar system
-                        if (!AnyContains(territories, pos) && WorldManagement.WithinValidSolarSystem(pos))
-                        {
-                            //If not claimed by us
-                            //! I actually don't think this check is neccesary because of AnyContains above
-                            if (!current.territoryCenters.Contains(pos))
-                            {
-								//Need to perform "should be border" check on both this new territory and it's neighbours
-								current.AddTerritory(pos);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+			current.territoryClaimUpperLimit += current.growthRate;
+			current.territoryClaimUpperLimit = Mathf.Max(0, SimulationHelper.ValueTanhFalloff(current.territoryClaimUpperLimit, 150, -1));
+
+			if (current.territoryCenters.Count > 0 && current.territoryCenters.Count < current.territoryClaimUpperLimit)
+			{
+				RealSpacePostion currentBorder = current.borders.ElementAt(SimulationManagement.random.Next(0, current.borders.Count));
+
+				List<RealSpacePostion> neighbours = WorldManagement.GetNeighboursInGrid(currentBorder);
+
+				foreach (RealSpacePostion pos in neighbours)
+				{
+					//If not currently claimed by anyone else and within solar system
+					if (!AnyContains(territories, pos) && WorldManagement.WithinValidSolarSystem(pos))
+					{
+						//If not claimed by us
+						//! I actually don't think this check is neccesary because of AnyContains above
+						if (!current.territoryCenters.Contains(pos))
+						{
+							//Need to perform "should be border" check on both this new territory and it's neighbours
+							current.AddTerritory(pos);
+						}
+					}
+				}
+			}
+		}
     }
 }

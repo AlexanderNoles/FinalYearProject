@@ -24,7 +24,18 @@ public class NationPopulationControlRoutine : RoutineBase
 
                     //Currently we just use some random gradients
                     popData.populationNaturalGrowthSpeed = Mathf.Log10(Mathf.Max(popData.currentPopulationCount, 1.1f)) / 10.0f;
-                    popData.populationNaturalDeathSpeed = Mathf.Log10(Mathf.Max(popData.currentPopulationCount, 1.1f)) / 20.0f;
+
+					float modifier;
+					if (popData.currentPopulationCount > popData.populationNaturalGrowthLimt)
+					{
+						modifier = 1;
+					}
+					else
+					{
+						modifier = 20.0f;
+					}
+
+                    popData.populationNaturalDeathSpeed = Mathf.Log10(Mathf.Max(popData.currentPopulationCount, 1.1f)) / modifier;
 
                     if (popData.currentPopulationCount > popData.populationNaturalGrowthLimt * 0.9f)
                     {
