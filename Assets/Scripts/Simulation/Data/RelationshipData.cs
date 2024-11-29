@@ -7,12 +7,17 @@ public class RelationshipData : DataBase
     public class Relationship
     {
 		//This is what this faction thinks about the other faction
-		//How much they are in conflict with them
-		//If this falls below a certain threshold for example then a war could end
-		//This is seperated from favourability for a variety of reasons but you can think of it as just keeping the possibility space open
-		public float conflict;
+		//Are they in conflict?
+		//This can be set by a variety of things, perhaps could be a float instead that indicates how much they are in conflict with them?
+		public bool inConflict;
 		//Generally how much they like them
+		//Used as a general benchmark by routines that don't care a huge amount about specifics
+		//Also sets a base line
 		public float favourability;
+		//Instability of a relationship indicates how much it generally changes over time
+		//Being in an alliance can lower instability for example
+		public const float baseInstability = 0.025f;
+		public float instability = baseInstability;
 
         public Relationship(float baseFavour)
         {
@@ -22,4 +27,7 @@ public class RelationshipData : DataBase
 
     public Dictionary<int, Relationship> idToRelationship = new Dictionary<int, Relationship>();
     public float baseFavourability = 0.5f; //What other factions inherently think of this one (For a murderous swarm for example this should be zero)
+
+	//How many ticks till we can start another war
+	public int warLockoutCount = 0;
 }

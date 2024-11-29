@@ -8,51 +8,59 @@ public class NationRelationshipProcessRoutine : RoutineBase
 {
 	public override void Run()
 	{
-		//Currently this routine will just have random change applied to nations relationships that have a chance of being huge
-		//this is temporary for testing, ultimately we want a simple "working" version of the game first
-
-		//Model relationship change
+		//Get all factions and their relationship data
+		List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Faction);
 		List<Faction> nations = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Nation);
+		Dictionary<int, RelationshipData> idToRelationship = SimulationManagement.GetDataForFactionsList<RelationshipData>(factions, Faction.relationshipDataKey);
+		//Get political data for factions that have it (this is important for how nations view other nations)
+		Dictionary<int, PoliticalData> idToPolitics = SimulationManagement.GetDataForFactionsList<PoliticalData>(factions, Faction.Tags.Politics.ToString());
 
-		foreach (Faction faction in nations)
+		int count = nations.Count;
+		for (int i = 0; i < count; i++)
 		{
-			if (faction.GetData(Faction.relationshipDataKey, out RelationshipData data))
+			Nation nation = nations[i] as Nation;
+
+			RelationshipData relationshipData = idToRelationship[nation.id];
+			PoliticalData personalPoliticalData = idToPolitics[nation.id];
+
+			foreach (KeyValuePair<int, RelationshipData.Relationship> entry in relationshipData.idToRelationship)
 			{
-				foreach(KeyValuePair<int, RelationshipData.Relationship> entry in data.idToRelationship)
+				RelationshipData.Relationship relationship = entry.Value;
+
+				float newInstability = RelationshipData.Relationship.baseInstability;
+				float difference = 0.0f;
+
+				if (idToPolitics.ContainsKey(entry.Key))
 				{
-					//Need to replace this system
-					float change = SimulationManagement.random.Next(-105, 101) / 100.0f;
-					float newValue = entry.Value.favourability + Mathf.Pow(change, 3);
-					newValue = SimulationHelper.ValueTanhFalloff(newValue, 1, -1);
-					entry.Value.favourability = newValue;
+					difference = idToPolitics[entry.Key].CalculatePoliticalDistance(personalPoliticalData.economicAxis, personalPoliticalData.authorityAxis);
 
-					//Model response to relationship change
+					//Normalize
+					difference /= PoliticalData.maxDistance;
 
-					//War threshold, currently constant
-					if (newValue < -0.5f)
+					//Shit into negative to positive (-1 to 1) range
+					difference -= 0.5f;
+					difference *= 2;
+
+					newInstability *= Mathf.Abs(difference);
+				}
+
+				//Reduce instability if favourability is above a certain value and difference is negative
+				if (relationship.favourability > 0.4f && difference < 0.0f)
+				{
+					newInstability /= 2;
+				}
+
+				const float changePerTickModifier = 0.2f;
+				relationship.favourability = Mathf.MoveTowards(relationship.favourability, difference, newInstability * changePerTickModifier);
+
+				if (relationship.favourability < -0.5f)
+				{
+					relationship.inConflict = true;
+
+					if (!nation.HasTag(Faction.Tags.AtWar))
 					{
-						//Each tick increase conflict value
-						entry.Value.conflict = SimulationHelper.ValueTanhFalloff(entry.Value.conflict + 50, 100);
-
-						//Currently wars are not formally declared, so we don't tell the other faction that we are in conflict
-						//If we wanted to do that the below section demonstrates how to do that
-						//
-						//if (SimulationManagement.GetFactionByID(entry.Key).GetData(Faction.relationshipDataKey, out RelationshipData otherData))
-						//{
-						//	otherData.idToRelationship[faction.id].conflict = SimulationHelper.ValueTanhFalloff(otherData.idToRelationship[faction.id].conflict + 10, 100);
-						//}
-						//
-
-						if (!faction.HasTag(Faction.Tags.AtWar))
-						{
-							//Now at war
-							faction.AddTag(Faction.Tags.AtWar);
-						}
-					}
-					else
-					{
-						//Reduce conflict over time, currently disbaled
-						//entry.Value.conflict = Mathf.Max(entry.Value.conflict - 1, 0);
+						//Now at war
+						nation.AddTag(Faction.Tags.AtWar);
 					}
 				}
 			}

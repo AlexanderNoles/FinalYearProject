@@ -56,7 +56,7 @@ public class GlobalBattleData : DataBase
 						{
 							if (data.idToRelationship.ContainsKey(otherId))
 							{
-								if (data.idToRelationship[otherId].conflict > 0)
+								if (data.idToRelationship[otherId].inConflict)
 								{
 									//Still in conflict
 									return false;
@@ -164,7 +164,17 @@ public class GlobalBattleData : DataBase
 				{
 					lossData.RemoveTerritory(pos);
 
-					lossData.territoryClaimUpperLimit -= 5f;
+					float modifier = 1.0f;
+
+					if (lossFaction.GetData(Faction.Tags.HasMilitary, out MilitaryData milData))
+					{
+						modifier = milData.warExhaustion;
+
+						milData.warExhaustion += 10.0f * milData.warExhaustionGrowthMultiplier;
+					}
+
+					//Apply territory cap loss
+					lossData.territoryClaimUpperLimit -= 2f * modifier;
 				}
 
 				//Destroy any settlement in this area

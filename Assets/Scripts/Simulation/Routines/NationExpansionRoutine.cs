@@ -32,8 +32,6 @@ public class NationExpansionRoutine : RoutineBase
 			TerritoryData current = territories[i];
 			nation.GetData(Faction.Tags.Population, out PopulationData popData);
 
-
-			//Current issue is we are always at war...
 			if (nation.HasTag(Faction.Tags.AtWar))
 			{
 				current.growthRate = Mathf.Lerp(current.growthRate, 0.1f, 0.5f);
@@ -44,7 +42,7 @@ public class NationExpansionRoutine : RoutineBase
 			}
 
 			current.territoryClaimUpperLimit += current.growthRate;
-			current.territoryClaimUpperLimit = Mathf.Max(0, SimulationHelper.ValueTanhFalloff(current.territoryClaimUpperLimit, 150, -1));
+			current.territoryClaimUpperLimit = SimulationHelper.ValueTanhFalloff(current.territoryClaimUpperLimit, 150, -1);
 
 			if (current.territoryCenters.Count > 0 && current.territoryCenters.Count < current.territoryClaimUpperLimit)
 			{

@@ -13,6 +13,7 @@ public class Nation : Faction
         AddTag(Tags.Emblem);
         AddTag(Tags.Population);
 		AddTag(Tags.HasMilitary);
+		AddTag(Tags.Politics);
         //This faction is visible to all other factions
         AddTag(Tags.OpenRelationship);
     }
@@ -25,9 +26,11 @@ public class Nation : Faction
         AddData(Tags.Settlements, new SettlementData());
         AddData(Tags.Population, new PopulationData());
 
-        //Has war data cause it can go to war
-        //but doesn't by defauly have the AtWar tag
-        //Cause it isn't at war!
-        AddData(Tags.HasMilitary, new MilitaryData());
+		AddData(Tags.Politics, new PoliticalData());
+
+		//Has war data cause it can go to war
+		//but doesn't by defauly have the AtWar tag
+		//Cause it isn't at war!
+		AddData(Tags.HasMilitary, new MilitaryData());
     }
 }

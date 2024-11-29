@@ -39,7 +39,7 @@ public class NationAttackRoutine : RoutineBase
 			List<int> warOpponentFactionIDs = new List<int>();
 			foreach (KeyValuePair<int, RelationshipData.Relationship> entry in relData.idToRelationship)
 			{
-				if (entry.Value.conflict > 0)
+				if (entry.Value.inConflict)
 				{
 					//In conflict with this faction
 					//Add it's id to warOpponents
@@ -72,8 +72,10 @@ public class NationAttackRoutine : RoutineBase
 					if (terData.borders.Count == 0)
 					{
 						//Enemy has no territory!
-						//Currently just continue cause we wanna test this
-						//system works without making every other system in the whole game
+						//War is over!
+
+						//We are no longer in conflict with them
+						//relData.idToRelationship[enemyID].inConflict = false;
 						continue;
 					}
 					else

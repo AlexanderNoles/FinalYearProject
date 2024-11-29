@@ -92,11 +92,14 @@ public class NationSettlementManagementRoutine : RoutineBase
 							{
 								//If we are get a random settlement from that faction
 								//! If we want we can make it calcualte distance to that settlement and all that
-								SettlementData.Settlement targetSettlement = targetNation.Item2.settlements.ElementAt(SimulationManagement.random.Next(0, targetNation.Item2.settlements.Count)).Value;
-
-								if (!targetSettlement.Equals(currentSettlement))
+								if (targetNation.Item2.settlements.Count > 0)
 								{
-									ship.StartNewJourney(targetSettlement.location, SimulationManagement.GetSimulationDaysAsTime(100), 10);
+									SettlementData.Settlement targetSettlement = targetNation.Item2.settlements.ElementAt(SimulationManagement.random.Next(0, targetNation.Item2.settlements.Count)).Value;
+
+									if (!targetSettlement.Equals(currentSettlement))
+									{
+										ship.StartNewJourney(targetSettlement.location, SimulationManagement.GetSimulationDaysAsTime(100), 10);
+									}
 								}
 							}
 

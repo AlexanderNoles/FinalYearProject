@@ -9,7 +9,6 @@ public class NationDefenseRoutine : RoutineBase
 {
 	public override void Run()
 	{
-
 		//Get gameworld and universal battle data
 		GameWorld gameworld = (GameWorld)SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld)[0];
 		gameworld.GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
@@ -69,9 +68,8 @@ public class NationDefenseRoutine : RoutineBase
 				battleData.pendingDefences.Remove(currentDef.Key);
 			}
 
-			//Retreat routine
-			//This is included here as it's a part of defence
-
+			//Retreat code
+			//This should be included here as it's a part of defence
 		}
 	}
 }

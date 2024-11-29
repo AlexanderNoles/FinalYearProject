@@ -5,6 +5,13 @@ using UnityEngine;
 
 public class MilitaryData : DataBase
 {
+	//Increase based on the number of battles
+	//A higher number means war has a larger negative effect on the country
+	public float warExhaustion = 0;
+	//This value should be made higher or lower based on how susceptible a faction is to war exhaustion
+	//Certain factions might set this to zero (such as a fully robotic army).
+	public float warExhaustionGrowthMultiplier = 0.05f;
+
 	public int currentFleetCount;
 	public Dictionary<RealSpacePostion, List<ShipCollection>> cellCenterToFleets = new Dictionary<RealSpacePostion, List<ShipCollection>>();
 

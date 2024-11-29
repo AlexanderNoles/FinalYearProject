@@ -27,7 +27,7 @@ public class BattleResolutionRoutine : RoutineBase
 
 				foreach (KeyValuePair<int, RelationshipData.Relationship> relationship in data.idToRelationship)
 				{
-					if (relationship.Value.conflict > 0)
+					if (relationship.Value.inConflict)
 					{
 						//In conflict
 						newOpposition.Add(relationship.Key);
@@ -149,6 +149,10 @@ public class BattleResolutionRoutine : RoutineBase
 
 							for (int i = 0; i < collections.Count;)
 							{
+								//Each time damage is taken
+								//We add to war exhaustion
+								militaryData.warExhaustion += damagePerFleet * militaryData.warExhaustionGrowthMultiplier;
+
 								if (collections[i].TakeDamage(damagePerFleet))
 								{
 									//All ships destroyed
