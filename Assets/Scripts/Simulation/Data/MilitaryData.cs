@@ -51,7 +51,7 @@ public class MilitaryData : DataBase
 		return null;
 	}
 
-	public int TransferFreeFleets(int budget, RealSpacePostion target, BattleData battleData, int budgetMinimum = 0)
+	public int TransferFreeUnits(int budget, RealSpacePostion target, BattleData battleData, int budgetMinimum = 0)
 	{
 		int fleetTransferredCount = 0;
 

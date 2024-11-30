@@ -10,11 +10,4 @@ public class BattleData : DataBase
 	}
 
 	public Dictionary<RealSpacePostion, BattleReference> ongoingBattles = new Dictionary<RealSpacePostion, BattleReference>();
-
-	public class PendingDefence
-	{
-
-	}
-
-	public Dictionary<RealSpacePostion, PendingDefence> pendingDefences = new Dictionary<RealSpacePostion, PendingDefence>();
 }

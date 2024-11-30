@@ -18,7 +18,6 @@ public class GlobalBattleData : DataBase
 			return involvedFactions;
 		}
 
-
 		public void AddInvolvedFaction(int id)
 		{
 			involvedFactions.Add(id);
@@ -244,16 +243,16 @@ public class GlobalBattleData : DataBase
 					battle.defender = targetID;
 				}
 
-				//Get target pending defence data and add this battle as a new entry
+				//Get target ongoing battle data and add this battle as a new entry
 				Faction defender = SimulationManagement.GetFactionByID(targetID);
 
 				if (defender.GetData(Faction.battleDataKey, out BattleData defendBData))
 				{
-					if (!defendBData.pendingDefences.ContainsKey(pos))
+					if (!defendBData.ongoingBattles.ContainsKey(pos))
 					{
 						//Not currently considering defending this spot already
 						//Add it
-						defendBData.pendingDefences.Add(pos, new BattleData.PendingDefence());
+						defendBData.ongoingBattles.Add(pos, new BattleData.BattleReference());
 					}
 				}
 			}

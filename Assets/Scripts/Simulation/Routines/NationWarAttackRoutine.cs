@@ -77,7 +77,7 @@ public class NationWarAttackRoutine : RoutineBase
 
 							//Transfer fleets to new attack if they are free
 							//Function should automatically check if we already have ships there and adjust the budget accordingly
-							int amountTransferred = milData.TransferFreeFleets(fleetBudgerPerAttack, newAttackPos, batData);
+							int amountTransferred = milData.TransferFreeUnits(fleetBudgerPerAttack, newAttackPos, batData);
 
 							if (amountTransferred > 0)
 							{

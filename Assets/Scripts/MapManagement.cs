@@ -143,15 +143,18 @@ public class MapManagement : MonoBehaviour
                     Vector3 scale = Vector3.one * (float)(WorldManagement.GetGridDensity() / UIManagement.mapRelativeScaleModifier);
                     Vector3 displayOffset = GetDisplayOffset();
 
-                    //RUN BORDER IN ORDER ROUTINE
-                    //This is a very expensive operation that is currently (08/11/2024) the sole reason behind MAP_REFRESH_ENABLED being set to false
-                    //it could almost certainly be optomized in a variety of ways but it runs well enough that for this vertical slice/beta version
-                    //it is fine. The focus should be one other things
+					//RUN BORDER IN ORDER ROUTINE
+					//This is a very expensive operation that is currently (08/11/2024) the sole reason behind MAP_REFRESH_ENABLED being set to false
+					//it could almost certainly be optomized in a variety of ways but it runs well enough that for this vertical slice/beta version
+					//it is fine. The focus should be one other things
 
 					//It also does not handle degenerate cases well, in the sense it doesn't handle them at all hahahahaha
-                    //SimulationManagement.RunAbsentRoutine("BorderInOrder");
+					//SimulationManagement.RunAbsentRoutine("BorderInOrder");
 
-                    foreach (Faction faction in factions)
+					GameWorld gameworld = (GameWorld)SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld)[0];
+					gameworld.GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
+
+					foreach (Faction faction in factions)
 					{
 						Color factionColour = faction.GetColour();
 
@@ -175,10 +178,6 @@ public class MapManagement : MonoBehaviour
 											timeTillNextMapUpdate,
 											true);
 									}
-
-
-									GameWorld gameworld = (GameWorld)SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld)[0];
-									gameworld.GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
 
 									foreach (KeyValuePair<RealSpacePostion, GlobalBattleData.Battle> battle in globalBattleData.battles)
 									{
