@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[SimulationManagement.ActiveSimulationRoutine(SimulationManagement.defendRoutineStandardPrio)]
+[SimulationManagement.ActiveSimulationRoutine(SimulationManagement.defendRoutineStandardPrio, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Normal)]
 public class NationTroopManagementRoutine : RoutineBase
 {
 	public override void Run()
@@ -42,7 +42,7 @@ public class NationTroopManagementRoutine : RoutineBase
 
 			//If we have any avaliable battles
 			List<RealSpacePostion> targets = new List<RealSpacePostion>();
-			if (false) //&& battleData.ongoingBattles.Count > 0)
+			if (battleData.ongoingBattles.Count > 0)
 			{
 				List<float> targetImportance = new List<float>();
 				//Iterate through current battles and calculate the most important ones
@@ -139,53 +139,6 @@ public class NationTroopManagementRoutine : RoutineBase
 			{
 				transferBudger -= militaryData.TransferFreeUnits(maxTransferPer, target, battleData);
 			}
-
-
-
-
-
-			//Iterate through pending defences
-			//Send free fleets there
-
-			//Finally add a battle reference
-
-			//The system is structured this way because in the future there will be a chance for nations to "refuse" defence requests
-			//this can be for a varierty of reasons, (e.g., We are modeling an information state and they don't "know" about the attack yet)
-
-			//int defenceBudget = Mathf.CeilToInt(militaryData.currentFleetCount / 15.0f);
-
-			//for (int i = 0; i < battleData.pendingDefences.Count;)
-			//{
-			//	KeyValuePair<RealSpacePostion, BattleData.PendingDefence> currentDef = battleData.pendingDefences.ElementAt(i);
-
-			//	int transferCount = militaryData.TransferFreeFleets(defenceBudget, currentDef.Key, battleData);
-
-			//	if (transferCount <= 0)
-			//	{
-			//		//Need to notify the battle that we are nont participating
-			//		//Otherwise the battle will hang
-
-			//		//In the future (current date: 28/11/2024) we should make it so the battle is based more on a progress bar
-			//		//So we can wait to defend for a few ticks (but arriving late would incurr a penalty)
-			//		//
-			//		//One of the major things to keep in mind is we need to have some AttemptToJoin battle function
-			//		//Incase the battle is already over
-			//		globalBattleData.battles[currentDef.Key].RemoveInvolvedFaction(nation.id);
-			//	}
-			//	else
-			//	{
-			//		if (!battleData.ongoingBattles.ContainsKey(currentDef.Key))
-			//		{
-			//			//Add battle reference
-			//			battleData.ongoingBattles.Add(currentDef.Key, new BattleData.BattleReference());
-			//		}
-			//	}
-
-			//	battleData.pendingDefences.Remove(currentDef.Key);
-			//}
-
-			//Retreat code
-			//This should be included here as it's a part of defence
 		}
 	}
 }

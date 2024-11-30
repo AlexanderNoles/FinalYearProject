@@ -7,6 +7,7 @@ public class GlobalBattleData : DataBase
 {
 	public class Battle : VisitableLocation
 	{
+		public int startTickID;
 		public int firstAttacker = -1;
 		public int defender = -1;
 
@@ -46,7 +47,6 @@ public class GlobalBattleData : DataBase
 		{
 			return involvedFactionsProgress[index];
 		}
-
 
 		public bool NoConflictingFactions()
 		{
@@ -113,81 +113,51 @@ public class GlobalBattleData : DataBase
 			involvedFactions.Clear();
 		}
 
-		public void ResolveTerritoryTransfer(RealSpacePostion pos, bool isLazy = true)
+		public void ResolveTerritoryTransfer(RealSpacePostion pos, int winnerID, bool isLazy = true)
 		{
 			// Decide new owner //
-			//If defender is still in battle do nothing, territory stays with them
-			if (involvedFactions.Contains(defender))
+			if (winnerID == -1)
 			{
 				return;
 			}
 
-			//If primary (original) attacker is still in battle territory goes to them
-
-			int receiver = -1;
-			if (involvedFactions.Contains(firstAttacker))
+			if (winnerID == defender)
 			{
-				receiver = firstAttacker;
-			}
-			else if(involvedFactions.Count > 0)
-			{
-				//Otherwise pick randomly from remaing factions (if any exist)
-				if (isLazy)
-				{
-					receiver = involvedFactions[SimulationManagement.random.Next(0, involvedFactions.Count)];
-				}
-				else
-				{
-					receiver = involvedFactions[Random.Range(0, involvedFactions.Count)];
-				}
+				//Defender is the winner so nothing happens
+				return;
 			}
 
-			// Apply transfer //
-
-			if (receiver != -1)
+			//Otherwise if winner is hostile to defender than we remove this cell from the defender
+			if (SimulationManagement.GetFactionByID(winnerID).GetData(Faction.relationshipDataKey, out RelationshipData relData))
 			{
-				//If this check fails then battle was a complete draw
-				//That would be considered an exact defense so no transfer would take place eithier
-
-				//If the factions don't have territory (for example if they are some kind of huge beast or something) then they simply won't gain or lose territory through this process
-
-				//Disabled territory gain, simply loss
-				//Faction gainFaction = SimulationManagement.GetFactionByID(receiver);
-
-				//if (gainFaction.GetData(Faction.Tags.Territory, out TerritoryData gainData))
-				//{
-				//	if (!gainData.territoryCenters.Contains(pos))
-				//	{
-				//		gainData.AddTerritory(pos);
-				//	}
-				//}
-
-				Faction lossFaction = SimulationManagement.GetFactionByID(defender);
-
-				if (lossFaction.GetData(Faction.Tags.Territory, out TerritoryData lossData))
+				if (relData.idToRelationship.ContainsKey(defender) && relData.idToRelationship[defender].inConflict)
 				{
-					lossData.RemoveTerritory(pos);
+					Faction lossFaction = SimulationManagement.GetFactionByID(defender);
 
-					float modifier = 1.0f;
-
-					if (lossFaction.GetData(Faction.Tags.CanFightWars, out WarData warData))
+					if (lossFaction.GetData(Faction.Tags.Territory, out TerritoryData lossData))
 					{
-						//TODO: Check these two factions are fighting a war
+						lossData.RemoveTerritory(pos);
 
+						float modifier = 1.0f;
 
-						modifier = warData.warExhaustion;
+						if (lossFaction.GetData(Faction.Tags.CanFightWars, out WarData warData))
+						{
+							if (warData.atWarWith.Contains(winnerID))
+							{
+								modifier = warData.warExhaustion;
+								warData.warExhaustion += 10.0f * warData.warExhaustionGrowthMultiplier;
+							}
+						}
 
-						warData.warExhaustion += 10.0f * warData.warExhaustionGrowthMultiplier;
+						//Apply territory cap loss
+						lossData.territoryClaimUpperLimit -= 2f * modifier;
 					}
 
-					//Apply territory cap loss
-					lossData.territoryClaimUpperLimit -= 2f * modifier;
-				}
-
-				//Destroy any settlement in this area
-				if (lossFaction.GetData(Faction.Tags.Settlements, out SettlementData setData))
-				{
-					setData.settlements.Remove(pos);
+					//Destroy any settlement in this area
+					if (lossFaction.GetData(Faction.Tags.Settlements, out SettlementData setData))
+					{
+						setData.settlements.Remove(pos);
+					}
 				}
 			}
 		}
@@ -201,6 +171,7 @@ public class GlobalBattleData : DataBase
 		if (!battles.ContainsKey(pos))
 		{
 			battles[pos] = new Battle();
+			battles[pos].startTickID = SimulationManagement.currentTickID;
 			totalBattlesCount++;
 		}
 

@@ -27,6 +27,7 @@ public class SimulationManagement : MonoBehaviour
         return tickStartTime;
     }
 
+	public static int currentTickID;
     private float nextTickTime;
     private const float TICK_MAX_LENGTH = 3;
     private float tickInitFrame;
@@ -390,19 +391,20 @@ public class SimulationManagement : MonoBehaviour
                 instance.minimumFrameLength = Time.captureFramerate / (2.0f / simulatioSpeedModifier);
             }
 
-            IncrementDay();
-			instance.SimulationTick(isInstant);
+			currentTickID++;
 
-			//instance.tickTask = Task.Run(() =>
-   //         {
-   //             instance.SimulationTick(isInstant);
-   //         });
+			IncrementDay();
 
-   //         if (isInstant)
-   //         {
-   //             instance.tickTask.Wait();
-   //         }
-        }
+			instance.tickTask = Task.Run(() =>
+			{
+				instance.SimulationTick(isInstant);
+			});
+
+			if (isInstant)
+			{
+				instance.tickTask.Wait();
+			}
+		}
     }
 
     public static void EndSimulationTick()

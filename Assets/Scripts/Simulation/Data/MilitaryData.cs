@@ -23,35 +23,45 @@ public class MilitaryData : DataBase
 
 	public Fleet RemoveFleet(RealSpacePostion pos, Fleet fleet)
 	{
+		Fleet toReturn = null;
+
 		if (cellCenterToFleets.ContainsKey(pos))
 		{
-			if (cellCenterToFleets[pos].Remove(fleet))
+			if (fleet == null)
 			{
-				currentFleetCount--;
-				return fleet;
+				//Should always be at least one in the cell
+				//Otherwise the cell should have been removed
+				toReturn = cellCenterToFleets[pos][0] as Fleet;
+				cellCenterToFleets[pos].RemoveAt(0);
+			}
+			else
+			{
+				if (cellCenterToFleets[pos].Remove(fleet))
+				{
+					toReturn = fleet;
+				}
 			}
 		}
 
-		return null;
+		if (toReturn != null)
+		{
+			currentFleetCount--;
+			if (cellCenterToFleets[pos].Count == 0)
+			{
+				//No remaing ships in this position
+				cellCenterToFleets.Remove(pos);
+			}
+		}
+
+		return toReturn;
 	}
 
 	public Fleet RemoveFleet(RealSpacePostion pos)
 	{
-		if (cellCenterToFleets.ContainsKey(pos))
-		{
-			if (cellCenterToFleets[pos].Count > 0)
-			{
-				Fleet fleet = cellCenterToFleets[pos][0] as Fleet;
-				cellCenterToFleets[pos].RemoveAt(0);
-
-				return fleet;
-			}
-		}
-
-		return null;
+		return RemoveFleet(pos, null);
 	}
 
-	public int TransferFreeUnits(int budget, RealSpacePostion target, BattleData battleData, int budgetMinimum = 0)
+	public int TransferFreeUnits(int budget, RealSpacePostion target, BattleData battleData, int budgetMinimum = 0, bool allowRetreat = false)
 	{
 		int fleetTransferredCount = 0;
 
@@ -72,9 +82,9 @@ public class MilitaryData : DataBase
 
 		foreach (KeyValuePair<RealSpacePostion, List<ShipCollection>> fleet in cellCenterToFleets)
 		{
-			if (!battleData.ongoingBattles.ContainsKey(fleet.Key))
+			if (!battleData.ongoingBattles.ContainsKey(fleet.Key) || allowRetreat)
 			{
-				//Not currently in a battle
+				//Not currently in a battle (or we are allowed to retreat)
 				//Transfer ships out to new target cell
 
 				//How many do we want to transfer

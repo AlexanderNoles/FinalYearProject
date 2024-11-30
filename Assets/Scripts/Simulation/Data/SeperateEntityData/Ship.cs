@@ -28,7 +28,7 @@ public class Ship
 	{
 		health -= damage;
 
-		if (health < 0)
+		if (health <= 0)
 		{
 			destroyed = true;
 		}

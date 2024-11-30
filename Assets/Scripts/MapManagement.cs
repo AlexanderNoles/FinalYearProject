@@ -192,7 +192,7 @@ public class MapManagement : MonoBehaviour
 												Color.yellow,
 												timeTillNextMapUpdate,
 												true,
-												battle.Value.GetWinProgress(k) / 1.2f);
+												Mathf.Max(0.05f, battle.Value.GetWinProgress(k) / 1.2f));
 										}
 									}
 								}
@@ -330,8 +330,15 @@ public class MapManagement : MonoBehaviour
 										minorOffset.Normalize();
 										minorOffset *= 0.1f;
 
-										Debug.DrawRay(pos + minorOffset, Vector3.up * entry.Value.Count * 2, factionColour, timeTillNextMapUpdate);
-										Debug.DrawRay(pos + minorOffset, Vector3.up * entry.Value.Count, color, timeTillNextMapUpdate);
+										int shipCount = 0;
+
+										foreach (ShipCollection collection in entry.Value)
+										{
+											shipCount += collection.GetShips().Count;
+										}
+
+										Debug.DrawRay(pos + minorOffset, Vector3.up * shipCount * 2, factionColour, timeTillNextMapUpdate);
+										Debug.DrawRay(pos + minorOffset, Vector3.up * shipCount, color, timeTillNextMapUpdate);
 									}
 								}
 							}

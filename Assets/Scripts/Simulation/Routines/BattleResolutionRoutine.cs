@@ -1,5 +1,7 @@
+using MonitorBreak.Bebug;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
 
@@ -8,6 +10,8 @@ public class BattleResolutionRoutine : RoutineBase
 {
 	public override void Run()
 	{
+		const float battleLengthMultiplier = 100.0f;
+
 		//Get gameworld and universal battle data
 		GameWorld gameworld = (GameWorld)SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld)[0];
 		gameworld.GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
@@ -54,17 +58,14 @@ public class BattleResolutionRoutine : RoutineBase
 
 			List<int> involvedFactions = battle.GetInvolvedFactions();
 			int involvedFactionsCount = involvedFactions.Count;
-			bool battleOver = battle.NoConflictingFactions();
 
-			//If enemies are still left this will be used
-			Dictionary<int, float> idToDamageToTake = new Dictionary<int, float>();
+			//First we need to khow many ships are in this battle for each faction 
+			//ID
+			//Ships
+			//Ship count
+			//This is important because if no ships are hostile then we need to treat this as a battle that has ended (even if only temporarily)
 
-			//Because this is a lazy battle we can just estimate the damage to each ship per tick
-			//For this we first need to calculate relative power of each faction
-			//And get their opposition
-			//And then apply their damage spread evenly across all enemy ships 
-			//(Some variance to damage calulation of course)
-			const float battleLengthMultiplier = 10.0f;
+			List<(int, List<ShipCollection>, int)> shipCollections = new List<(int, List<ShipCollection>, int)>();
 
 			for (int i = 0; i < involvedFactionsCount; i++)
 			{
@@ -73,66 +74,97 @@ public class BattleResolutionRoutine : RoutineBase
 
 				if (militaryData.cellCenterToFleets.ContainsKey(battleKVP.Key))
 				{
-					//Has ships in this cell
-					//Calculate damage
-					List<ShipCollection> collections = militaryData.cellCenterToFleets[battleKVP.Key];
-
-					float amountToAddToWinProgress = 0.0f;
-					if (battleOver)
+					List<ShipCollection> shipsInCell = militaryData.cellCenterToFleets[battleKVP.Key];
+					if (shipsInCell.Count > 0)
 					{
-						int totalShips = 0;
+						int totalShipCount = 0;
 
-						foreach (ShipCollection collection in collections)
+						foreach (ShipCollection collection in shipsInCell)
 						{
-							totalShips += collection.GetShips().Count;
+							totalShipCount += collection.GetShips().Count;
 						}
 
-						amountToAddToWinProgress = Mathf.Max(totalShips / (250.0f * battleLengthMultiplier), 0.001f);
-					}
-					else
-					{
-						float totalDamage = 0;
-						foreach (ShipCollection collection in collections)
+						if (totalShipCount > 0)
 						{
-							List<Ship> collectionShips = collection.GetShips();
-
-							foreach (Ship ship in collectionShips)
-							{
-								totalDamage += ship.GetDamageWithVariance();
-							}
-						}
-
-						amountToAddToWinProgress += totalDamage / (500.0f * battleLengthMultiplier);
-
-						List<int> opposition = idToOppositionIDs[id];
-
-						float damagePerEnemy = totalDamage / opposition.Count;
-
-						foreach (int enemyID in opposition)
-						{
-							if (!involvedFactions.Contains(enemyID))
-							{
-								continue;
-							}
-
-							if (!idToDamageToTake.ContainsKey(enemyID))
-							{
-								idToDamageToTake[enemyID] = 0.0f;
-							}
-
-							idToDamageToTake[enemyID] += damagePerEnemy;
+							//If this faction has any ships in this chunk
+							shipCollections.Add((id, shipsInCell, totalShipCount));
 						}
 					}
+				}
+			}
 
-					battle.AddToWinProgress(i, amountToAddToWinProgress);
+			//Validate that there are still active hostilities
+			bool battleOver = true;
+			for (int a = 0; a < shipCollections.Count && battleOver; a++)
+			{
+				for (int c = a+1; c < shipCollections.Count && battleOver; c++)
+				{
+					if (idToOppositionIDs[shipCollections[a].Item1].Contains(shipCollections[c].Item1))
+					{
+						battleOver = false;
+					}
+				}
+			}
+
+			//Calculate how much damage each faction in chunk should take
+			//Or if the battle is over we should use the number of ships to add to win progress
+			Dictionary<int, float> idToDamageToTake = new Dictionary<int, float>();
+			float amountToAddToWinProgress = 0.0f;
+
+			for (int i = 0; i < shipCollections.Count; i++)
+			{
+				int id = shipCollections[i].Item1;
+				if (battleOver)
+				{
+					//Just use total number of ships to add to win progress
+					int totalShips = shipCollections[i].Item3;
+
+					amountToAddToWinProgress = Mathf.Max(totalShips / (10f * battleLengthMultiplier), 0.001f);
+					//Apply win progress
+					battle.AddToWinProgress(involvedFactions.IndexOf(id), amountToAddToWinProgress);
+				}
+				else
+				{
+					//Use damage dealt to other ships to add to win progress
+					float totalDamage = 0;
+
+					List<ShipCollection> collections = shipCollections[i].Item2;
+
+					foreach (ShipCollection collection in collections)
+					{
+						List<Ship> collectionShips = collection.GetShips();
+
+						foreach (Ship ship in collectionShips)
+						{           
+							//Because this is a lazy battle we can just estimate the damage to each ship per tick
+							totalDamage += ship.GetDamageWithVariance();
+						}
+					}
+
+					//Add damage that needs to be taken by other factions
+					List<int> opposition = idToOppositionIDs[id];
+					float damagePerEnemy = totalDamage / opposition.Count;
+
+					foreach (int enemyID in opposition)
+					{
+						if (!involvedFactions.Contains(enemyID))
+						{
+							continue;
+						}
+
+						if (!idToDamageToTake.ContainsKey(enemyID))
+						{
+							idToDamageToTake[enemyID] = 0.0f;
+						}
+
+						idToDamageToTake[enemyID] += damagePerEnemy;
+					}
 				}
 			}
 
 			if (!battleOver)
 			{
 				//Apply damage to all involved factions
-				List<int> factionsLostBattleThisTick = new List<int>();
-
 				foreach (int id in involvedFactions)
 				{
 					if (idToDamageToTake.ContainsKey(id))
@@ -150,60 +182,42 @@ public class BattleResolutionRoutine : RoutineBase
 							for (int i = 0; i < collections.Count;)
 							{
 								//Each time damage is taken
-								//We add to war exhaustion
+								//Add to total damage buildup
 								militaryData.totalDamageBuildup += damagePerFleet;
-
-								//militaryData.warExhaustion += damagePerFleet * militaryData.warExhaustionGrowthMultiplier;
 
 								if (collections[i].TakeDamage(damagePerFleet))
 								{
 									//All ships destroyed
 									//Remove fleet from cell
-									collections.RemoveAt(i);
+									militaryData.RemoveFleet(battleKVP.Key, collections[i] as Fleet);
 								}
 								else
 								{
 									i++;
 								}
 							}
-
-							if (collections.Count == 0)
-							{
-								//Remove them from the involved factions
-								factionsLostBattleThisTick.Add(id);
-							}
 						}
-					}
-				}
-
-				//Any change in number of participants
-				if (factionsLostBattleThisTick.Count > 0)
-				{
-					foreach (int id in factionsLostBattleThisTick)
-					{
-						//No ships here
-						idToMilitaryData[id].cellCenterToFleets.Remove(battleKVP.Key);
-
-						//Remove from battle
-						battle.RemoveInvolvedFaction(id);
-						idToBattleData[id].ongoingBattles.Remove(battleKVP.Key);
 					}
 				}
 			}
 
 			//Check if battle is won
-			//not in the above if statement so if an outside force removes a faction battles don't freeze in place
+			//not in the above if(!battleOver) scope so if an outside force removes a faction battles don't freeze in place
 			if (battle.BattleWon(out int winnerID))
 			{
-				battle.ResolveTerritoryTransfer(battleKVP.Key);
+				battle.ResolveTerritoryTransfer(battleKVP.Key, winnerID);
 
 				//For all remaing factions we need to remove their ongoing battle
 				battle.End(battleKVP.Key);
 
+				if (!globalBattleData.battles.Remove(battleKVP.Key))
+				{
+					Console.Log("Trying to remove a battle that doesn't exist!");
+				}
+
 				//We remove battle from list
 				//Need to decrement index so we don't skip a battle
 				b--;
-				globalBattleData.battles.Remove(battleKVP.Key);
 			}
 		}
 	}
