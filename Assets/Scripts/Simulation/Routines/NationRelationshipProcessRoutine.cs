@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MonitorBreak.Bebug;
 
-[SimulationManagement.ActiveSimulationRoutine(0, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Normal)]
+[SimulationManagement.ActiveSimulationRoutine(10, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Normal)]
 public class NationRelationshipProcessRoutine : RoutineBase
 {
 	public override void Run()

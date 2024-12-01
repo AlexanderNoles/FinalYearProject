@@ -10,6 +10,7 @@ public class WorldManagement : MonoBehaviour
     private static List<CelestialBody> majorWorldParts = new List<CelestialBody>();
     private static bool calculatedNewBounds = false;
     private static double solarSystemRadius = 0;
+	private static readonly double lowerSolarSystemLimit = 5000;
 
 	public static readonly float referncePointSolarSystemScaleModifier = 2000.0f;
 	public static readonly float solarSystemScaleModifier = 2000.0f;
@@ -55,8 +56,60 @@ public class WorldManagement : MonoBehaviour
         double mag = pos.Magnitude();
 
         //Limit positions to be within the solar system and not too close to the sun
-        return mag < GetSolarSystemRadius() && mag > 5000;
+        return mag < GetSolarSystemRadius() && mag > lowerSolarSystemLimit;
     }
+
+	public static double ClampToSolarSystemRange(double input)
+	{
+		if (input < lowerSolarSystemLimit)
+		{
+			input = lowerSolarSystemLimit;
+		}
+
+		if (input > GetSolarSystemRadius())
+		{
+			input = GetSolarSystemRadius();
+		}
+
+		return input;
+	}
+
+	public static double LerpInSolarSystemRange(float t, bool clamp = true)
+	{
+		double difference = GetSolarSystemRadius() - lowerSolarSystemLimit;
+
+		if (clamp)
+		{
+			t = Mathf.Clamp(t, -1.0f, 1.0f);
+		}
+
+		float absT = Mathf.Abs(t);
+		float sign = t / absT;
+
+		return sign * ((difference * absT) + lowerSolarSystemLimit);
+	}
+
+	public static RealSpacePostion RandomCellCenterWithinSolarSystem() 
+	{
+		RealSpacePostion toReturn = null;
+
+		do
+		{
+			toReturn = new RealSpacePostion(
+				LerpInSolarSystemRange(SimulationManagement.random.Next(-100, 101) / 100.0f),
+				0,
+				LerpInSolarSystemRange(SimulationManagement.random.Next(-100, 101) / 100.0f)
+				);
+
+			if (!WithinValidSolarSystem(toReturn))
+			{
+				toReturn = null;
+			}
+		}
+		while (toReturn == null);
+
+		return ClampPositionToGrid(toReturn);
+	}
 
     private const double gridDensity = 3000;
     private static readonly int gridDensityIntHalf = (int)gridDensity/2;

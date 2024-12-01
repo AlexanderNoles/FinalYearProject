@@ -18,6 +18,12 @@ public class SimulationManagement : MonoBehaviour
     }
 
     private static int simulationSeed;
+
+	public static int GetSimulationSeed()
+	{
+		return simulationSeed;
+	}
+
     public static System.Random random;
 
     private static float tickStartTime;
@@ -65,6 +71,11 @@ public class SimulationManagement : MonoBehaviour
     {
         return $"{currentDay}/{currentMonth}/{currentYear}";
     }
+
+	public static int YearsToTickNumberCount(int years)
+	{
+		return (int)(DAY_TO_MONTH * MONTH_TO_YEAR) * years;
+	}
 
     private static SimulationManagement instance;
     private Task tickTask;
@@ -219,7 +230,7 @@ public class SimulationManagement : MonoBehaviour
         currentYear = 3004;
         //
 
-        simulationSeed = UnityEngine.Random.Range(-100000, 100000);
+        simulationSeed = UnityEngine.Random.Range(-10000, 10000);
         random = new System.Random(simulationSeed);
 
         instance = this;
@@ -244,7 +255,7 @@ public class SimulationManagement : MonoBehaviour
         {
             //Run history ticks
             //Simulation is run for a period of years before player arrives to get more dynamic results        //It is important this is run in Start so OnEnable can run on objects before this goes off
-            int tickCount = (int)(DAY_TO_MONTH * MONTH_TO_YEAR) * SimulationSettings.HistoryLength();
+            int tickCount = YearsToTickNumberCount(SimulationSettings.HistoryLength());
 
             for (int i = 0; i < tickCount; i++)
             {

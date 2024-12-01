@@ -41,16 +41,17 @@ public class MilitaryData : DataBase
 					toReturn = fleet;
 				}
 			}
-		}
 
-		if (toReturn != null)
-		{
-			currentFleetCount--;
 			if (cellCenterToFleets[pos].Count == 0)
 			{
 				//No remaing ships in this position
 				cellCenterToFleets.Remove(pos);
 			}
+		}
+
+		if (toReturn != null)
+		{
+			currentFleetCount--;
 		}
 
 		return toReturn;

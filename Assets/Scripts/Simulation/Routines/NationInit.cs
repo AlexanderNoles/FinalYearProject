@@ -28,11 +28,6 @@ public class NationInit : InitRoutineBase
             }
         }
 
-        Func<RealSpacePostion, bool> falloffPositionGenerationValidPositionCheck = delegate (RealSpacePostion pos)
-        {
-            return !AnyContains(territoryDatas, pos) && WorldManagement.WithinValidSolarSystem(pos);
-        };
-
         foreach (Faction faction in nations)
         {
             if (faction.GetData(Faction.Tags.Territory, out TerritoryData territory))
@@ -46,23 +41,29 @@ public class NationInit : InitRoutineBase
                         territory.origin = Planet.availablePlanetPositions[0];
                         Planet.availablePlanetPositions.RemoveAt(0);
 
-                        //Do a random falloff spread across the game map
-                        //Disabled because we want to instead start the nation in a place and then run the simulation for 100 years (1 tick is one day)
-                        //to get more dynamic and interesting results
-                        //territory.territoryCenters = GenerationUtility.GenerateFalloffPositionSpread(
-                        //    territory.origin, //Start pos
-                        //    new Vector2(0.02f, 0.5f), //Min max falloff per step
-                        //    100, //Max scale
-                        //    falloffPositionGenerationValidPositionCheck,
-                        //    SimulationManagement.random);
-
-                        territory.territoryCenters.Add(territory.origin);
-                        territory.borders.Add(territory.origin);
+						territory.AddTerritory(territory.origin);
                     }
-                    else if (faction.GetData(Faction.Tags.Faction, out FactionData factionData))
+                    else
                     {
-                        //If no planets avaliable for now just kill this faction
-                        factionData.ForceDeath();
+						//If no planets avaliable pick a random position
+						RealSpacePostion newOrigin = null;
+
+						do
+						{
+							newOrigin = WorldManagement.RandomCellCenterWithinSolarSystem();
+
+							if (!AnyContains(territoryDatas, newOrigin))
+							{
+								territory.origin = newOrigin;
+
+								territory.AddTerritory(territory.origin);
+							}
+							else
+							{
+								newOrigin = null;
+							}
+						}
+						while (newOrigin == null);
                     }
                 }
             }
