@@ -128,51 +128,48 @@ public class NationTroopManagementRoutine : RoutineBase
 			}
 			else
 			{
-
 				//There are no battles going on so just transfer ships back to settlements
 				nation.GetData(Faction.Tags.Settlements, out SettlementData setData);
 
-				//Get random position among settlements
-				RealSpacePostion targetPos = setData.settlements.ElementAt(SimulationManagement.random.Next(0, setData.settlements.Count)).Key;
-
-				//Find ships that are out of nation
-				List<(RealSpacePostion, int)> posAndCount = new List<(RealSpacePostion, int)>();
-
-				//Seperate out into two loops to avoid change while iterating over error
-				//Current obvious alternative is very unperformant
-				foreach (KeyValuePair<RealSpacePostion, List<ShipCollection>> entry in militaryData.cellCenterToFleets)
+				if (setData.settlements.Count > 0)
 				{
-					if (!setData.settlements.ContainsKey(entry.Key))
+					//Get random position among settlements
+					RealSpacePostion targetPos = setData.settlements.ElementAt(SimulationManagement.random.Next(0, setData.settlements.Count)).Key;
+
+					//Find ships that are out of nation
+					List<(RealSpacePostion, int)> posAndCount = new List<(RealSpacePostion, int)>();
+
+					//Seperate out into two loops to avoid change while iterating over error
+					//Current obvious alternative is very unperformant
+					foreach (KeyValuePair<RealSpacePostion, List<ShipCollection>> entry in militaryData.cellCenterToFleets)
 					{
-						//Not in settlement
-						//Transfer as many of these ships as possible
-						int thisTransferBudget = Mathf.Min(transferBudget, entry.Value.Count);
+						if (!setData.settlements.ContainsKey(entry.Key))
+						{
+							//Not in settlement
+							//Transfer as many of these ships as possible
+							int thisTransferBudget = Mathf.Min(transferBudget, entry.Value.Count);
 
-						posAndCount.Add((entry.Key, transferBudget));
+							posAndCount.Add((entry.Key, thisTransferBudget));
 
-						transferBudget -= thisTransferBudget;
+							transferBudget -= thisTransferBudget;
+						}
+
+						if (transferBudget <= 0)
+						{
+							break;
+						}
 					}
 
-					if (transferBudget <= 0)
+					//Transfer fleets back to settlements
+					foreach ((RealSpacePostion, int) entry in posAndCount)
 					{
-						break;
+						for (int i = 0; i < entry.Item2; i++)
+						{
+							Fleet transferTarget = militaryData.RemoveFleet(entry.Item1);
+							militaryData.AddFleet(targetPos, transferTarget);
+						}
 					}
 				}
-
-				//Something about the below create odd issues!
-				//It seems to only happen with this transfer and not the normal one
-				//They also use seemingly the same technique so unsure what is causing this
-				//Probably something dumb I am overlooking
-
-
-				//foreach ((RealSpacePostion, int) entry in posAndCount)
-				//{
-				//	for (int i = 0; i < entry.Item2; i++)
-				//	{
-				//		Fleet transferTarget = militaryData.RemoveFleet(entry.Item1);
-				//		militaryData.AddFleet(targetPos, transferTarget);
-				//	}
-				//}
 			}
 		}
 	}

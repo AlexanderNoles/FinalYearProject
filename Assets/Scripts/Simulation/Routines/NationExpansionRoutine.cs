@@ -46,7 +46,8 @@ public class NationExpansionRoutine : RoutineBase
 			}
 
 			current.territoryClaimUpperLimit += current.growthRate;
-			current.territoryClaimUpperLimit = SimulationHelper.ValueTanhFalloff(current.territoryClaimUpperLimit, 300, -1);
+
+			current.territoryClaimUpperLimit = SimulationHelper.ValueTanhFalloff(current.territoryClaimUpperLimit, Mathf.Clamp(popData.currentPopulationCount * 5.0f, 10, 900), -1);
 
 			if (current.territoryCenters.Count > 0 && current.territoryCenters.Count < current.territoryClaimUpperLimit)
 			{

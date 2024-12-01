@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Linq;
+using static GlobalBattleData;
 
 public class MapManagement : MonoBehaviour
 {
@@ -153,6 +154,7 @@ public class MapManagement : MonoBehaviour
 
 					GameWorld gameworld = (GameWorld)SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld)[0];
 					gameworld.GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
+					gameworld.GetData(Faction.Tags.Historical, out HistoryData historyData);
 
 					foreach (Faction faction in factions)
 					{
@@ -194,6 +196,17 @@ public class MapManagement : MonoBehaviour
 												true,
 												Mathf.Max(0.05f, battle.Value.GetWinProgress(k) / 1.2f));
 										}
+									}
+
+									foreach (KeyValuePair<RealSpacePostion, HistoryData.HistoryCell> historicalTerritory in historyData.previouslyOwnedTerritories)
+									{
+										MonitorBreak.Bebug.Helper.DrawWirePlane(
+											-historicalTerritory.Key.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset,
+											debugScale,
+											Vector3.up,
+											new Color(0.1f, 0.1f, 0.1f, 1.0f),
+											timeTillNextMapUpdate,
+											true);
 									}
 								}
 								else

@@ -9,6 +9,7 @@ public class PoliticalData : DataBase
 
 	public float economicAxis;
 	public float authorityAxis;
+	public float politicalInstability;
 
 	public float CalculatePoliticalDistance(float eco, float auth)
 	{

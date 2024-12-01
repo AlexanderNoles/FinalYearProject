@@ -35,36 +35,42 @@ public class NationInit : InitRoutineBase
                 //If this faction doesn't have an origin, give it one.
                 if (territory.origin == null)
                 {
-                    //Nations should try to grab a planet
-                    if (Planet.availablePlanetPositions.Count > 0)
-                    {
-                        territory.origin = Planet.availablePlanetPositions[0];
-                        Planet.availablePlanetPositions.RemoveAt(0);
+					//Nations should try to grab a planet
+					//If all are claimed then just get a random position
+					for (int i = 0; i < Planet.availablePlanetPositions.Count && territory.origin == null; i++)
+					{
+						territory.origin = Planet.availablePlanetPositions[i];
 
-						territory.AddTerritory(territory.origin);
-                    }
-                    else
-                    {
-						//If no planets avaliable pick a random position
-						RealSpacePostion newOrigin = null;
+						if (!AnyContains(territoryDatas, territory.origin))
+						{
+							//No one owns this planet
+							territory.AddTerritory(territory.origin);
+						}
+						else
+						{
+							territory.origin = null;
+						}
+					}
 
+					//Fallback
+					//Pick random position
+					if (territory.origin == null)
+					{
 						do
 						{
-							newOrigin = WorldManagement.RandomCellCenterWithinSolarSystem();
+							territory.origin = WorldManagement.RandomCellCenterWithinSolarSystem();
 
-							if (!AnyContains(territoryDatas, newOrigin))
+							if (!AnyContains(territoryDatas, territory.origin))
 							{
-								territory.origin = newOrigin;
-
 								territory.AddTerritory(territory.origin);
 							}
 							else
 							{
-								newOrigin = null;
+								territory.origin = null;
 							}
 						}
-						while (newOrigin == null);
-                    }
+						while (territory.origin == null);
+					}
                 }
             }
         }

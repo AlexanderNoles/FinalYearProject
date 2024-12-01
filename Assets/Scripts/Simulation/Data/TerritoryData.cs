@@ -22,6 +22,16 @@ public class TerritoryData : DataBase
 	{
 		territoryCenters.Add(center);
 
+		//Check if this territory is a previously owned territory
+		//If so remove it from history data
+		if (SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld)[0].GetData(Faction.Tags.Historical, out HistoryData historyData))
+		{
+			if (historyData.previouslyOwnedTerritories.ContainsKey(center))
+			{
+				historyData.previouslyOwnedTerritories.Remove(center);
+			}
+		}
+
 		BorderCheck(center, true);
 	}
 

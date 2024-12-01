@@ -12,9 +12,10 @@ public class BattleResolutionRoutine : RoutineBase
 	{
 		const float battleLengthMultiplier = 100.0f;
 
-		//Get gameworld and universal battle data
+		//Get gameworld and universal battle data and histroy data
 		GameWorld gameworld = (GameWorld)SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld)[0];
 		gameworld.GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
+		gameworld.GetData(Faction.Tags.Historical, out HistoryData historyData);
 
 		//Get all at war factions
 		List<Faction> allFactions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Faction);
@@ -205,7 +206,7 @@ public class BattleResolutionRoutine : RoutineBase
 			//not in the above if(!battleOver) scope so if an outside force removes a faction battles don't freeze in place
 			if (battle.BattleWon(out int winnerID))
 			{
-				battle.ResolveTerritoryTransfer(battleKVP.Key, winnerID);
+				battle.ResolveTerritory(battleKVP.Key, historyData, winnerID);
 
 				//For all remaing factions we need to remove their ongoing battle
 				battle.End(battleKVP.Key);

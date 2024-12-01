@@ -11,7 +11,10 @@ public class RandomEventTickRoutine : RoutineBase
 
 		if (currentTickRandomValue % SimulationManagement.YearsToTickNumberCount(5) == 0)
 		{
-			if (SimulationManagement.random.Next(0, 101) > 25)
+			//Every 5 years
+
+			float newFactionChance = 25 + (Mathf.Max(4 - SimulationManagement.GetFactionCount(), 0) * 26);
+			if (SimulationManagement.random.Next(0, 101) < newFactionChance)
 			{
 				//Spawn random faction
 				//Right now we just make a nation

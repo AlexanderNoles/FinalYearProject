@@ -13,7 +13,15 @@ public class WarEffectRoutine : RoutineBase
 		{
 			if (faction.GetData(Faction.Tags.HasMilitary, out MilitaryData milData) && faction.GetData(Faction.Tags.CanFightWars, out WarData warData))
 			{
-				warData.warExhaustion += milData.totalDamageBuildup * warData.warExhaustionGrowthMultiplier;
+				if (warData.atWarWith.Count > 0)
+				{
+					warData.warExhaustion += milData.totalDamageBuildup * warData.warExhaustionGrowthMultiplier;
+				}
+				else
+				{
+					warData.warExhaustion = Mathf.Max(0, warData.warExhaustion - (1 / warData.warExhaustionGrowthMultiplier));
+				}
+
 				milData.totalDamageBuildup = 0.0f;
 			}
 		}

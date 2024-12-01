@@ -31,7 +31,8 @@ public class Faction
         //(This means that every faction will will know if it's existence)
         //This doesn't mean it immediately has a dual relationship with every other faction (cause it may not know about them, for example not all nations immediately know about the player)
         OpenRelationship,
-		CanFightWars //Ceratin factions can not fight wars
+		CanFightWars, //Ceratin factions can not fight wars, this does not mean they cannot fight battles just not full scale wars
+		Historical //Is this faction historical in some sense (e.g., does it represent a fallen empire)
     }
 
     //Useful keys for data that doesn't cleanly belong to a tag

@@ -113,6 +113,11 @@ public class SimulationManagement : MonoBehaviour
         return null;
     }
 
+	public static int GetFactionCount()
+	{
+		return instance.idToFaction.Count;
+	}
+
 	public static bool FactionWithIDExists(int id)
 	{
 		return instance.idToFaction.ContainsKey(id);

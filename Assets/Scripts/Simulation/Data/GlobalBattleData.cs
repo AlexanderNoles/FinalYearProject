@@ -113,7 +113,7 @@ public class GlobalBattleData : DataBase
 			involvedFactions.Clear();
 		}
 
-		public void ResolveTerritoryTransfer(RealSpacePostion pos, int winnerID, bool isLazy = true)
+		public void ResolveTerritory(RealSpacePostion pos, HistoryData historyData, int winnerID, bool isLazy = true)
 		{
 			// Decide new owner //
 			if (winnerID == -1)
@@ -151,6 +151,20 @@ public class GlobalBattleData : DataBase
 
 						//Apply territory cap loss
 						lossData.territoryClaimUpperLimit -= 2f * modifier;
+
+
+						//Need to add the ability to transfer this to history data of some kind
+						if (historyData != null)
+						{
+							if (!historyData.previouslyOwnedTerritories.ContainsKey(pos))
+							{
+								historyData.previouslyOwnedTerritories.Add(pos, new HistoryData.HistoryCell());
+							}
+							else
+							{
+								Debug.LogError("Battle fighting over unowned territory?");
+							}
+						}
 					}
 
 					//Destroy any settlement in this area
