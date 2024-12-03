@@ -222,6 +222,15 @@ public class SimulationManagement : MonoBehaviour
 
 
 	public GameObject simulationRoutinesStorage;
+	private int historyTicksLeft;
+	private int maxHistoryTicks;
+
+	public static float GetHistoryRunPercentage()
+	{
+		return Mathf.Clamp01(1.0f - (instance.historyTicksLeft / (float)instance.maxHistoryTicks));
+	}
+
+	private const bool batchHistory = false;
 
     //As per the inital design constriction this script always executes after every other (non unity) script.
     //This does not mean it is the final code executed in the frame, we have no control over the execution order outside of scripts
@@ -255,17 +264,36 @@ public class SimulationManagement : MonoBehaviour
 	}
 
 	private void Start()
-    {
-        if (SimulationSettings.ShouldRunHistory())
+	{        
+		//It is important this is run in Start so OnEnable can run on objects before this goes off
+		if (SimulationSettings.ShouldRunHistory())
         {
-            //Run history ticks
-            //Simulation is run for a period of years before player arrives to get more dynamic results        //It is important this is run in Start so OnEnable can run on objects before this goes off
-            int tickCount = YearsToTickNumberCount(SimulationSettings.HistoryLength());
+			int tickCount = YearsToTickNumberCount(SimulationSettings.HistoryLength());
 
-            for (int i = 0; i < tickCount; i++)
-            {
-                InitSimulationTick(true);
-            }
+			if (!batchHistory)
+			{
+				//Setup async history run
+				//First active History running ui
+				UIManagement.SetHistoryUIActive(true);
+
+				//Then we need to disable player input till the history burst is over
+				InputManagement.InputEnabled = false;
+
+				//Then we need to set a tick burst count
+				historyTicksLeft = tickCount;
+				maxHistoryTicks = tickCount;
+				InitSimulationTick(false, tickCount);
+			}
+			else
+			{
+				//Run history ticks
+				//Simulation is run for a period of years before player arrives to get more dynamic results
+
+				for (int i = 0; i < tickCount; i++)
+				{
+					InitSimulationTick(true);
+				}
+			}
         }
     }
 
@@ -391,7 +419,7 @@ public class SimulationManagement : MonoBehaviour
     }
 
     //Multithread control
-    public static void InitSimulationTick(bool isInstant)
+    public static void InitSimulationTick(bool isInstant, int count = 1)
     {
         if (instance != null) 
         {
@@ -407,13 +435,27 @@ public class SimulationManagement : MonoBehaviour
                 instance.minimumFrameLength = Time.captureFramerate / (2.0f / simulatioSpeedModifier);
             }
 
-			currentTickID++;
-
-			IncrementDay();
-
 			instance.tickTask = Task.Run(() =>
 			{
-				instance.SimulationTick(isInstant);
+				for (int i = 0; i < count; i++)
+				{
+					currentTickID++;
+
+					IncrementDay();
+
+					instance.SimulationTick(isInstant);
+
+					if (instance.historyTicksLeft > 0)
+					{
+						instance.historyTicksLeft--;
+
+						if (instance.historyTicksLeft <= 0)
+						{
+							//Re-enable player input
+							InputManagement.InputEnabled = true;
+						}
+					}
+				}
 			});
 
 			if (isInstant)
@@ -425,6 +467,11 @@ public class SimulationManagement : MonoBehaviour
 
     public static void EndSimulationTick()
     {
+		if (SimulationSettings.ShouldRunHistory() && instance.historyTicksLeft > 0)
+		{
+			return;
+		}
+
         if (instance != null)
         {
             if (instance.tickTask != null)
@@ -479,16 +526,20 @@ public class SimulationManagement : MonoBehaviour
         //We also have a minimum frame count so a spiked frame won't cause quick ticks
         //(This is an imperfect system but works more than well enough for the use case)
         if (
-            Time.time > nextTickTime 
+            (Time.time > nextTickTime 
             && (Time.frameCount > tickInitFrame + minimumFrameLength)
             && (tickTask == null || tickTask.IsCompleted))
+			
+			&&
+
+			!(SimulationSettings.ShouldRunHistory() && historyTicksLeft > 0)
+			)
         {
             if (simulatioSpeedModifier > 0)
             {
                 nextTickTime = (Time.time + (TICK_MAX_LENGTH / simulatioSpeedModifier));
             }
 
-			//DEBUG: NON INSTANT TICKS
             InitSimulationTick(false);
         }
     }

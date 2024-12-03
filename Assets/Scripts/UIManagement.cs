@@ -7,12 +7,14 @@ public class UIManagement : MonoBehaviour
     private static UIManagement instance;
 
     //! NEED A PRIORITY SYSTEM A UI AT SOME POINT
-    public GameObject map;
+    public GameObject mapParent;
     public const float mapRelativeScaleModifier = 1000.0f;
     public AnimationCurve mapIntroCurve;
     private static GameObject mapObject;
     private static float mapIntroT;
     private static bool oneFrameBuffer = false;
+
+	public HistoryUIManagement historyUI;
 
     public static bool MapIntroRunning()
     {
@@ -41,20 +43,32 @@ public class UIManagement : MonoBehaviour
         return mapObject != null && mapObject.activeSelf; 
     }
 
+	public static void SetHistoryUIActive(bool _bool)
+	{
+		if (_bool)
+		{
+			instance.historyUI.Activate();
+		}
+		else
+		{
+			instance.historyUI.Deactivate();
+		}
+	}
+
     private void Awake()
     {
         instance = this;
 
-        mapObject = map.gameObject;
+        mapObject = mapParent.gameObject;
         mapObject.SetActive(false);
         mapIntroT = 0.0f;
     }
 
     private void Update()
     {
-        if (map != null)
+        if (mapParent != null)
         {
-            if (InputManagement.GetKeyDown(KeyCode.M, true) && MonitorBreak.Bebug.Console.GetConsoleState() != MonitorBreak.Bebug.Console.ConsoleState.FullScreen)
+            if (InputManagement.GetKeyDown(KeyCode.M) && MonitorBreak.Bebug.Console.GetConsoleState() != MonitorBreak.Bebug.Console.ConsoleState.FullScreen)
             {
                 bool active = !mapObject.activeSelf;
 
