@@ -18,17 +18,7 @@ public class SettlementData : DataBase
 			public override void InitDraw()
 			{
 				//Core generator
-				generation = new GeneratorManagement.GenerationInit().
-					AtSpot(Vector3.zero);
-
-				//Create building generator
-				GeneratorManagement.Generation buildingGeneration =
-					new GeneratorManagement.GenerationInit().
-					SetTargetPrimitive(GeneratorManagement.PRIMITIVE_INDEXES.CUBE).ForceBackToInit().
-					AtSpot(Vector3.zero).
-					SetSize(new Vector3(30, 30, 30));
-
-				generation.Concat(buildingGeneration);
+				generation = new GeneratorManagement.StructureGeneration().SpawnStructure(GeneratorManagement.STRUCTURES_INDEXES.SETTLEMENT, Vector3.zero);
 				generation.FinalizeGeneration();
 			}
 

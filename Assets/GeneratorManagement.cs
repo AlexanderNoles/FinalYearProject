@@ -10,14 +10,26 @@ public class GeneratorManagement : MonoBehaviour
 	//HELPER INDEXES
 	public enum PRIMITIVE_INDEXES
 	{
-		CUBE
+		CUBE = 0
 	}
 
 	public MultiObjectPool primitivePool;
 
+	public enum STRUCTURES_INDEXES
+	{
+		SETTLEMENT = 0
+	}
+
+	public MultiObjectPool structuresPool;
+
 	private void Awake()
 	{
 		_instance = this;
+	}
+
+	public static Transform GetStructure(int index)
+	{
+		return _instance.structuresPool.GetObject(index).transform;
 	}
 
 	public static Transform GetPrimitive(int index) 
@@ -45,6 +57,7 @@ public class GeneratorManagement : MonoBehaviour
 	{
 		//We use linked lists so generators can easily be combined
 		public LinkedList<(int, Transform)> targets = new LinkedList<(int, Transform)>();
+
 		public int currentPrimitveIndex = (int)PRIMITIVE_INDEXES.CUBE;
 
 		public Generation SetTargetPrimitive(PRIMITIVE_INDEXES newIndex)
@@ -165,6 +178,19 @@ public class GeneratorManagement : MonoBehaviour
 		public Generation MultiplySize(float modifier)
 		{
 			return MultiplySize(Vector3.one * modifier);
+		}
+	}
+
+	public class StructureGeneration : GenerationInit
+	{
+		public StructureGeneration SpawnStructure(STRUCTURES_INDEXES index, Vector3 worldPos)
+		{
+			Transform newTarget = GetStructure((int)index);
+			newTarget.position = worldPos;
+
+			targets.AddLast((currentPrimitveIndex, newTarget));
+
+			return this;
 		}
 	}
 

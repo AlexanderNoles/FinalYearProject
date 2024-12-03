@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 14063470}
   - component: {fileID: 14063471}
   - component: {fileID: 14063472}
+  - component: {fileID: 14063473}
   m_Layer: 0
   m_Name: GeneratorManagement
   m_TagString: Untagged
@@ -170,6 +171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   primitivePool: {fileID: 14063472}
+  structuresPool: {fileID: 14063473}
 --- !u!114 &14063472
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,6 +191,28 @@ MonoBehaviour:
     baseObject: {fileID: 2354209562463337396, guid: 3a29a830706928748bb56813edc1d5ac,
       type: 3}
     baseNumberOfObjects: 25
+    generateAsNeeded: 1
+    currentUpdatedObjectPointer: 0
+    automaticallySetParent: 0
+--- !u!114 &14063473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 14063469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca3a3b334a5db2d48b0841b895098083, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  generateOnAwake: 1
+  pools:
+  - name: SETTLEMENT
+    mode: 0
+    baseObject: {fileID: 7181530414214187603, guid: 6f8fd4471dff9ce49ae3f7b45e864878,
+      type: 3}
+    baseNumberOfObjects: 2
     generateAsNeeded: 1
     currentUpdatedObjectPointer: 0
     automaticallySetParent: 0
@@ -2349,8 +2373,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b684983c5257684cb5bcf73ae866205, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runHistory: 0
-  historyLength: 500
+  runHistory: 1
+  historyLength: 50
   drawSettlements: 0
   drawMilitaryPresence: 1
   updateMap: 1
