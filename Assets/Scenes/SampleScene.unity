@@ -2374,7 +2374,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   runHistory: 0
-  historyLength: 50
+  historyLength: 500
   drawSettlements: 0
   drawMilitaryPresence: 1
   updateMap: 1

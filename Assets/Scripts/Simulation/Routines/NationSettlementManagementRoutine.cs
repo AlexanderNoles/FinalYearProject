@@ -148,7 +148,7 @@ public class NationSettlementManagementRoutine : RoutineBase
 								//Just restore 20% of health each tick
 								//Currently (28/11/2024, 15:45) no routine to make ships retreat back to base after winning
 								//Should be easy to add but I want to make a general retreat routine instead (so that includes fleeing from battle)
-								ship.health += ship.GetMaxHealth() * 0.2f;
+								ship.health = Mathf.Clamp(ship.health + (ship.GetMaxHealth() * 0.2f), 0, ship.GetMaxHealth());
 							}
 						}
 					}

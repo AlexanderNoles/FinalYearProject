@@ -7,6 +7,8 @@ public class GlobalBattleData : DataBase
 {
 	public class Battle : VisitableLocation
 	{
+		public float backgroundProgression;
+
 		public int startTickID;
 		public int firstAttacker = -1;
 		public int defender = -1;
@@ -78,7 +80,7 @@ public class GlobalBattleData : DataBase
 		{
 			winnerID = -1;
 
-			if (involvedFactions.Count <= 0)
+			if (involvedFactions.Count <= 0 || backgroundProgression >= 1.0f)
 			{
 				return true;
 			}

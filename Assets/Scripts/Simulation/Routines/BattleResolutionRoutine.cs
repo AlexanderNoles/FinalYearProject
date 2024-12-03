@@ -94,113 +94,123 @@ public class BattleResolutionRoutine : RoutineBase
 				}
 			}
 
-			//Validate that there are still active hostilities
-			bool battleOver = true;
-			for (int a = 0; a < shipCollections.Count && battleOver; a++)
+			if (shipCollections.Count <= 0)
 			{
-				for (int c = a+1; c < shipCollections.Count && battleOver; c++)
-				{
-					if (idToOppositionIDs[shipCollections[a].Item1].Contains(shipCollections[c].Item1))
-					{
-						battleOver = false;
-					}
-				}
+				//Currently no one involved in this battle
+				//This can occur from a dead draw between ships
+				battle.backgroundProgression += 0.01f;
 			}
-
-			//Calculate how much damage each faction in chunk should take
-			//Or if the battle is over we should use the number of ships to add to win progress
-			Dictionary<int, float> idToDamageToTake = new Dictionary<int, float>();
-			float amountToAddToWinProgress = 0.0f;
-
-			for (int i = 0; i < shipCollections.Count; i++)
+			else
 			{
-				int id = shipCollections[i].Item1;
-				if (battleOver)
+				//Validate that there are still active hostilities
+				bool battleOver = true;
+				for (int a = 0; a < shipCollections.Count && battleOver; a++)
 				{
-					//Just use total number of ships to add to win progress
-					int totalShips = shipCollections[i].Item3;
-
-					amountToAddToWinProgress = Mathf.Max(totalShips / (10f * battleLengthMultiplier), 0.001f);
-					//Apply win progress
-					battle.AddToWinProgress(involvedFactions.IndexOf(id), amountToAddToWinProgress);
-				}
-				else
-				{
-					//Use damage dealt to other ships to add to win progress
-					float totalDamage = 0;
-
-					List<ShipCollection> collections = shipCollections[i].Item2;
-
-					foreach (ShipCollection collection in collections)
+					for (int c = a + 1; c < shipCollections.Count && battleOver; c++)
 					{
-						List<Ship> collectionShips = collection.GetShips();
-
-						foreach (Ship ship in collectionShips)
-						{           
-							//Because this is a lazy battle we can just estimate the damage to each ship per tick
-							totalDamage += ship.GetDamageWithVariance();
+						if (idToOppositionIDs[shipCollections[a].Item1].Contains(shipCollections[c].Item1))
+						{
+							battleOver = false;
 						}
 					}
-
-					//Add damage that needs to be taken by other factions
-					List<int> opposition = idToOppositionIDs[id];
-					float damagePerEnemy = totalDamage / opposition.Count;
-
-					foreach (int enemyID in opposition)
-					{
-						if (!involvedFactions.Contains(enemyID))
-						{
-							continue;
-						}
-
-						if (!idToDamageToTake.ContainsKey(enemyID))
-						{
-							idToDamageToTake[enemyID] = 0.0f;
-						}
-
-						idToDamageToTake[enemyID] += damagePerEnemy;
-					}
 				}
-			}
 
-			if (!battleOver)
-			{
-				//Apply damage to all involved factions
-				foreach (int id in involvedFactions)
+				//Calculate how much damage each faction in chunk should take
+				//Or if the battle is over we should use the number of ships to add to win progress
+				Dictionary<int, float> idToDamageToTake = new Dictionary<int, float>();
+				float amountToAddToWinProgress = 0.0f;
+
+				for (int i = 0; i < shipCollections.Count; i++)
 				{
-					if (idToDamageToTake.ContainsKey(id))
+					int id = shipCollections[i].Item1;
+					if (battleOver)
 					{
-						float damageToTake = idToDamageToTake[id];
+						//Just use total number of ships to add to win progress
+						int totalShips = shipCollections[i].Item3;
 
-						MilitaryData militaryData = idToMilitaryData[id];
+						amountToAddToWinProgress = Mathf.Max(totalShips / (10f * battleLengthMultiplier), 0.001f);
+						//Apply win progress
+						battle.AddToWinProgress(involvedFactions.IndexOf(id), amountToAddToWinProgress);
+					}
+					else
+					{
+						//Use damage dealt to other ships to add to win progress
+						float totalDamage = 0;
 
-						if (militaryData.cellCenterToFleets.ContainsKey(battleKVP.Key))
+						List<ShipCollection> collections = shipCollections[i].Item2;
+
+						foreach (ShipCollection collection in collections)
 						{
-							List<ShipCollection> collections = militaryData.cellCenterToFleets[battleKVP.Key];
+							List<Ship> collectionShips = collection.GetShips();
 
-							float damagePerFleet = damageToTake / collections.Count;
-
-							for (int i = 0; i < collections.Count;)
+							foreach (Ship ship in collectionShips)
 							{
-								//Each time damage is taken
-								//Add to total damage buildup
-								militaryData.totalDamageBuildup += damagePerFleet;
+								//Because this is a lazy battle we can just estimate the damage to each ship per tick
+								totalDamage += ship.GetDamageWithVariance();
+							}
+						}
 
-								if (collections[i].TakeDamage(damagePerFleet))
+						//Add damage that needs to be taken by other factions
+						List<int> opposition = idToOppositionIDs[id];
+						float damagePerEnemy = totalDamage / opposition.Count;
+
+						foreach (int enemyID in opposition)
+						{
+							if (!involvedFactions.Contains(enemyID))
+							{
+								continue;
+							}
+
+							if (!idToDamageToTake.ContainsKey(enemyID))
+							{
+								idToDamageToTake[enemyID] = 0.0f;
+							}
+
+							idToDamageToTake[enemyID] += damagePerEnemy;
+						}
+					}
+				}
+
+				if (!battleOver)
+				{
+					//Apply damage to all involved factions
+					foreach (int id in involvedFactions)
+					{
+						if (idToDamageToTake.ContainsKey(id))
+						{
+							float damageToTake = idToDamageToTake[id];
+
+							MilitaryData militaryData = idToMilitaryData[id];
+
+							if (militaryData.cellCenterToFleets.ContainsKey(battleKVP.Key))
+							{
+								List<ShipCollection> collections = militaryData.cellCenterToFleets[battleKVP.Key];
+
+								float damagePerFleet = damageToTake / collections.Count;
+
+								for (int i = 0; i < collections.Count;)
 								{
-									//All ships destroyed
-									//Remove fleet from cell
-									militaryData.RemoveFleet(battleKVP.Key, collections[i] as Fleet);
-								}
-								else
-								{
-									i++;
+									//Each time damage is taken
+									//Add to total damage buildup
+									militaryData.totalDamageBuildup += damagePerFleet;
+
+									if (collections[i].TakeDamage(damagePerFleet))
+									{
+										//All ships destroyed
+										//Remove fleet from cell
+										militaryData.RemoveFleet(battleKVP.Key, collections[i] as Fleet);
+									}
+									else
+									{
+										i++;
+									}
 								}
 							}
 						}
 					}
 				}
 			}
+			
 
 			//Check if battle is won
 			//not in the above if(!battleOver) scope so if an outside force removes a faction battles don't freeze in place
