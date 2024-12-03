@@ -153,6 +153,8 @@ public class CameraManagement : MonoBehaviour
 
     private Vector3 positionLastFrame;
 
+	public float surroundingsMoveMultiplier = 1.0f;
+
     private void Awake()
     {
         instance = this;
@@ -316,7 +318,7 @@ public class CameraManagement : MonoBehaviour
         SetBackingCameraRotation(transform.rotation);
 
         Vector3 offset = transform.position - positionLastFrame;
-        WorldManagement.MoveWorldCenter(offset);
+        WorldManagement.MoveWorldCenter(offset * surroundingsMoveMultiplier);
 
         positionLastFrame = transform.position;
     }

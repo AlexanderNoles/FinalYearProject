@@ -34,6 +34,7 @@ public class SimulationManagement : MonoBehaviour
     }
 
 	public static int currentTickID;
+	private static int typicallyTickBatchCount = 1;
     private float nextTickTime;
     private const float TICK_MAX_LENGTH = 3;
     private float tickInitFrame;
@@ -219,7 +220,6 @@ public class SimulationManagement : MonoBehaviour
 
 		return !PlayerLocationManagement.IsPlayerLocation(location);
 	}
-
 
 	public GameObject simulationRoutinesStorage;
 	private int historyTicksLeft;
@@ -540,7 +540,7 @@ public class SimulationManagement : MonoBehaviour
                 nextTickTime = (Time.time + (TICK_MAX_LENGTH / simulatioSpeedModifier));
             }
 
-            InitSimulationTick(false);
+            InitSimulationTick(false, typicallyTickBatchCount);
         }
     }
 
@@ -553,14 +553,27 @@ public class SimulationManagement : MonoBehaviour
     [MonitorBreak.Bebug.ConsoleCMD("SIMLIGHTSPEED")]
     public static void LightspeedSimulation()
     {
-        simulatioSpeedModifier = -1;
-    }
+        simulatioSpeedModifier = -1; 
+	}
 
-    [MonitorBreak.Bebug.ConsoleCMD("SIMSPEED")]
+	[MonitorBreak.Bebug.ConsoleCMD("SIMABSURDSPEED")]
+	public static void AbsurdspeedSimulation()
+	{
+		simulatioSpeedModifier = -1;
+		typicallyTickBatchCount = 30;
+	}
+
+	[MonitorBreak.Bebug.ConsoleCMD("SIMSPEED")]
     public static void SimulationSpeed(string newValue)
     {
         simulatioSpeedModifier = Int32.Parse(newValue);
     }
+
+	[MonitorBreak.Bebug.ConsoleCMD("SIMBATCH")]
+	public static void SimulationBatch(string newValue)
+	{
+		typicallyTickBatchCount = Int32.Parse(newValue);
+	}
 
 	[MonitorBreak.Bebug.ConsoleCMD("SIMBURST")]
 	public static void SimulationBurst(string tickCount)
