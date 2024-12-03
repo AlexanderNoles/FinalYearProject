@@ -17,6 +17,7 @@ public class Nation : Faction
         //This faction is visible to all other factions
         AddTag(Tags.OpenRelationship);
 		AddTag(Tags.CanFightWars);
+		AddTag(Tags.HasEconomy);
     }
 
     public override void InitData()
@@ -35,5 +36,7 @@ public class Nation : Faction
 		AddData(Tags.HasMilitary, new MilitaryData());
 
 		AddData(Tags.CanFightWars, new WarData());
+
+		AddData(Tags.HasEconomy, new EconomyData());
     }
 }

@@ -1,3 +1,4 @@
+using MonitorBreak.Bebug;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,12 @@ public class NationSettlementManagementRoutine : RoutineBase
 			nation.GetData(Faction.Tags.Population, out PopulationData popData);
 			nation.GetData(Faction.Tags.Settlements, out SettlementData settData);
 			nation.GetData(Faction.Tags.CanFightWars, out WarData warData);
+			nation.GetData(Faction.Tags.HasEconomy, out EconomyData economyData);
 			//
+
+			//Basic effect of population
+			//More is gained from trade and 
+			economyData.purchasingPower -= (popData.currentPopulationCount / 300.0f) * (SimulationManagement.random.Next(-10, 51 + Mathf.FloorToInt(warData.warExhaustion * 0.1f)) / 100.0f);
 
 			float maxMilitaryCapacity = SimulationHelper.ValueTanhFalloff(popData.currentPopulationCount, 1000, 9000);
 			//Iterate through each settlement
@@ -27,6 +33,8 @@ public class NationSettlementManagementRoutine : RoutineBase
 				SettlementData.Settlement currentSettlement = settlePair.Value;
 				//Get inverted settlement index
 				int invertedSettlementIndex = settData.settlements.Count - currentSettlement.setID;
+
+				economyData.purchasingPower += (invertedSettlementIndex * 0.05f);
 
 				#region Trade Control
 				//Trade control
@@ -63,6 +71,7 @@ public class NationSettlementManagementRoutine : RoutineBase
 							//Apply effect of trade
 							//This is a simplification from what should realistically happen
 							//(trade is half completed when goods are delivered and fully completed when ship arrives back)
+							economyData.purchasingPower += ship.cargoAmount * 10.0f;
 
 							//Signal we want a new trade
 							ship.tradeTarget = null;
@@ -166,6 +175,8 @@ public class NationSettlementManagementRoutine : RoutineBase
 				}
 				#endregion
 			}
+
+			economyData.purchasingPower = SimulationHelper.ValueTanhFalloff(economyData.purchasingPower, 3000);
 		}
     }
 }

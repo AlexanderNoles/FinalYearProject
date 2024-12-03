@@ -27,6 +27,7 @@ public class Faction
         Emblem, //Does this faction have an emblem?
 		HasMilitary, //Does this faction have a military?
 		Politics, //Does this faction engage in politics?
+		HasEconomy, //Does this faction have an economy?
         //Is this faction visible in a way that makes it so every other faction has a relationship with it?
         //(This means that every faction will will know if it's existence)
         //This doesn't mean it immediately has a dual relationship with every other faction (cause it may not know about them, for example not all nations immediately know about the player)
