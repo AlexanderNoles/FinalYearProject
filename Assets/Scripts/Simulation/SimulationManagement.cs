@@ -544,7 +544,13 @@ public class SimulationManagement : MonoBehaviour
         }
     }
 
-    [MonitorBreak.Bebug.ConsoleCMD("SIMTURBO")]
+	[MonitorBreak.Bebug.ConsoleCMD("SIMSEED", "Get the current simulation's seed")]
+	public static void OutputSimSeedToConsole()
+	{
+		MonitorBreak.Bebug.Console.Log(GetSimulationSeed());
+	}
+
+	[MonitorBreak.Bebug.ConsoleCMD("SIMTURBO")]
     public static void TurboSimulation()
     {
         simulatioSpeedModifier = 100.0f;

@@ -2373,10 +2373,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b684983c5257684cb5bcf73ae866205, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runHistory: 0
+  runHistory: 1
   historyLength: 500
   drawSettlements: 0
-  drawMilitaryPresence: 1
+  drawMilitaryPresence: 0
   updateMap: 1
 --- !u!1 &1273093546
 GameObject:
