@@ -128,9 +128,11 @@ public class TerritoryData : DataBase
 	};
 
 
-	public List<List<Vector3>> CalculateMapBorderPositions(Vector3 offset, out Vector3 iconPosition)
+	public List<List<Vector3>> CalculateMapBorderPositions(Vector3 offset, out Vector3 iconPosition, out Vector3 iconScale)
 	{
 		iconPosition = Vector3.zero;
+		iconScale = Vector3.zero;
+
 		int currentAverageCount = 0;
 		int largestBorderIndex = -1;
 
@@ -227,11 +229,14 @@ public class TerritoryData : DataBase
 				List<Vector3> toAddToOutput = new List<Vector3>();
 
 				int loopClamp = 10000;
+				Vector3 sumOfPositions = Vector3.zero;
 				do
 				{
 					//Add current to output first
 					Vector3 outputPos = GetMapPosition(currentPoint);
 					toAddToOutput.Add(outputPos);
+					//The add position to sum
+					sumOfPositions += outputPos;
 
 					//If it is not already there add cell pos to closed
 					if (!alreadyVisited.Contains(currentCellPos))
@@ -283,8 +288,9 @@ public class TerritoryData : DataBase
 					//We want the largest area to have the icon over it
 					if (currentAverageCount < toAddToOutput.Count)
 					{
-						largestBorderIndex = output.Count;
+						iconPosition = sumOfPositions / toAddToOutput.Count;
 						currentAverageCount = toAddToOutput.Count;
+						largestBorderIndex = output.Count;
 					}
 
 					output.Add(toAddToOutput);
@@ -301,8 +307,43 @@ public class TerritoryData : DataBase
 
 		if (largestBorderIndex != -1)
 		{
-			//We found at least one border that had more than 0 points
-			//Need to calculate a largest box
+			// //Method for finding the Icon position and scale
+			// //This is represented by a box
+			// //So essentially;
+			// //Start at average pos clamped to grid
+			// //Expand a square from that position
+			// //Stop expanding an edge if it intersects a position not owned
+
+			// //Actually maybe sleep before implementation, incase something better and obvious comes up
+			// //Last thought before honk mim mimim, perhaps we could (depending on cost) not use the average position
+			// //if the result doesn't reach some desired threshold based on the algorithm we could just pick random points within
+			// //our territory and repeat the steps till we get a desired result
+			// //This sound like a really bad idea if we want pleasing looking icon placement actually, sleep time
+
+			//This is actually just very unneccesary, we have to stop caring about looks as much
+
+			//
+
+			//Instead simply iterate through the largest border and find the offset from the average pos
+			//use that offset to get a position more weighted to the shape of the border
+			List<Vector3> points = output[largestBorderIndex];
+			Vector3 summedOffset = Vector3.zero;
+
+			foreach (Vector3 pos in points)
+			{
+				Vector3 difference = iconPosition - pos;
+
+				float scale = difference.magnitude;
+				if (iconScale.x < scale)
+				{
+					iconScale = Vector3.one * scale;
+				}
+
+				summedOffset += difference;
+			}
+
+			iconPosition += summedOffset;
+			iconScale = Vector3.one * SimulationHelper.ValueTanhFalloff(iconScale.x, 14);
 		}
 
 		return output;

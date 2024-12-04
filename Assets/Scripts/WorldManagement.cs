@@ -245,7 +245,8 @@ public class RealSpacePostion
         this.z = z;
     }
 
-    public RealSpacePostion Add(RealSpacePostion postion)
+	//OPERATIONS
+	public RealSpacePostion Add(RealSpacePostion postion)
     {
         x += postion.x;
         y += postion.y;
@@ -254,7 +255,15 @@ public class RealSpacePostion
         return this;
     }
 
-    //OPERATIONS
+	public RealSpacePostion Divide(float value)
+	{
+		x /= value;
+		y /= value;
+		z /= value;
+
+		return this;
+	}
+
     public void Add(Vector3 value)
     {
         x += value.x;

@@ -207,7 +207,7 @@ public class MapManagement : MonoBehaviour
 								else
 								{
 									//New method
-									List<List<Vector3>> borderLines = territoryData.CalculateMapBorderPositions(displayOffset, out Vector3 averagePos);
+									List<List<Vector3>> borderLines = territoryData.CalculateMapBorderPositions(displayOffset, out Vector3 iconPos, out Vector3 iconScale);
 
 									foreach (List<Vector3> line in borderLines)
 									{
@@ -233,8 +233,8 @@ public class MapManagement : MonoBehaviour
 
 									if (faction.GetData(Faction.Tags.Emblem, out EmblemData emblemData))
 									{
-										Transform centralIcon = mapElementsPools.UpdateNextObjectPosition(5, averagePos - (Vector3.up * 0.25f));
-										centralIcon.localScale = Vector3.one * 14;
+										Transform centralIcon = mapElementsPools.UpdateNextObjectPosition(5, iconPos - (Vector3.up * 0.25f));
+										centralIcon.localScale = iconScale;
 
 										if (!cachedTransformToNationIconRenderers.ContainsKey(centralIcon))
 										{
