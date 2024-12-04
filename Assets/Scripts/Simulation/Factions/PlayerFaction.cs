@@ -8,9 +8,12 @@ using UnityEngine;
 //For example, the population requires some amount of resources to survive so resources or money must be gained from somewhere.
 //Or battles must be won so the population can survive so better weapons and technology must be sought out.
 //Or alliances must be made so the population can survive.
-//The majority of the game is based around keeping the population functioning.
+//The majority of the game is based around keeping the population functioning because in return the population act as the lifeblood
+//of the ship.
 public class PlayerFaction : Faction
 {
+	public const string shipDataKey = "ShipData";
+
 	public override void InitTags()
 	{
 		base.InitTags();
@@ -31,5 +34,9 @@ public class PlayerFaction : Faction
 		AddData(Tags.Faction, new FactionData());
 
 		AddData(Tags.Population, new PopulationData());
+
+		//This holds all the basic ship data
+		//(a.k.a data that isn't covered by a more specific module)
+		AddData(shipDataKey, new PlayerShipData());
 	}
 }
