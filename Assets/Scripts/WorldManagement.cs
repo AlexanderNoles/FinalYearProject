@@ -112,12 +112,18 @@ public class WorldManagement : MonoBehaviour
 	}
 
     private const double gridDensity = 3000;
-    private static readonly int gridDensityIntHalf = (int)gridDensity/2;
+	private static readonly double gridDensityHalf = gridDensity / 2;
+	private static readonly int gridDensityIntHalf = (int)gridDensity/2;
 
     public static double GetGridDensity()
     {
         return gridDensity;
     }
+
+	public static double GetGridDensityHalf()
+	{
+		return gridDensityHalf;
+	}
 
     public static RealSpacePostion ClampPositionToGrid(RealSpacePostion pos)
     {

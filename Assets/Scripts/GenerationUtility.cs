@@ -5,7 +5,21 @@ using UnityEngine;
 
 public static class GenerationUtility 
 {
-    public static readonly Vector3[] orthagonalOffsets = new Vector3[] {
+	public static readonly Vector3[] normalizedDiagonalOffsets = new Vector3[] {
+		new Vector3(-1,0,1).normalized,
+		new Vector3(-1,0,-1).normalized,
+		new Vector3(1,0,-1).normalized,
+		new Vector3(1,0,1).normalized
+	};
+
+	public static readonly Vector3[] diagonalOffsets = new Vector3[] {
+		new Vector3(-1,0,1),
+		new Vector3(-1,0,-1),
+		new Vector3(1,0,-1),
+		new Vector3(1,0,1)
+	};
+
+	public static readonly Vector3[] orthagonalOffsets = new Vector3[] {
         new Vector3(1,0,0),
         new Vector3(0,0,1),
         new Vector3(-1,0,0),

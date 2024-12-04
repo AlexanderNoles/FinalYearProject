@@ -50,32 +50,6 @@ public class GlobalBattleData : DataBase
 			return involvedFactionsProgress[index];
 		}
 
-		public bool NoConflictingFactions()
-		{
-			for (int i = 0; i < involvedFactions.Count; i++)
-			{
-				if (involvedFactions.Count > 1)
-				{
-					if (SimulationManagement.GetFactionByID(involvedFactions[i]).GetData(Faction.relationshipDataKey, out RelationshipData data))
-					{
-						foreach (int otherId in involvedFactions)
-						{
-							if (data.idToRelationship.ContainsKey(otherId))
-							{
-								if (data.idToRelationship[otherId].inConflict)
-								{
-									//Still in conflict
-									return false;
-								}
-							}
-						}
-					}
-				}
-			}
-
-			return true;
-		}
-
 		public bool BattleWon(out int winnerID)
 		{
 			winnerID = -1;

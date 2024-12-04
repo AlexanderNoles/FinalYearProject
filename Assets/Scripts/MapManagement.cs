@@ -12,7 +12,7 @@ public class MapManagement : MonoBehaviour
     private const int mapRingPool = 0;
     private const int shipIndicatorPool = 1;
     private const int mapBasePool = 2;
-	private const bool debugMode = true;
+	private const bool debugMode = false;
 
     private List<(Transform, Transform)> mapObjectsAndParents;
     private bool pastFirstFrameOfMapAnim = false;
@@ -23,8 +23,8 @@ public class MapManagement : MonoBehaviour
     private float dateRefreshTime;
 
     private Dictionary<Transform, MeshRenderer> mapRingMeshRenderes;
-    private Dictionary<Transform, LineRenderer> borderRenderers;
-    private Dictionary<Transform, SpriteRenderer> nationIconRenderers;
+	private Dictionary<Transform, LineRenderer> cachedTransformToBorderRenderer = new Dictionary<Transform, LineRenderer>();
+    private Dictionary<Transform, SpriteRenderer> cachedTransformToNationIconRenderers = new Dictionary<Transform, SpriteRenderer>();
     private Dictionary<Transform, LineRenderer> tradeRouteRenderers;
 
 
@@ -37,11 +37,6 @@ public class MapManagement : MonoBehaviour
     private void Start()
     {
         mapRingMeshRenderes = mapElementsPools.GetComponentsOnAllActiveObjects<MeshRenderer>(0);
-
-        borderRenderers = mapElementsPools.GetComponentsOnAllActiveObjects<LineRenderer>(3);
-
-        nationIconRenderers = mapElementsPools.GetComponentsOnAllActiveObjects<SpriteRenderer>(5);
-
         tradeRouteRenderers = mapElementsPools.GetComponentsOnAllActiveObjects<LineRenderer>(6);
     }
 
@@ -170,10 +165,10 @@ public class MapManagement : MonoBehaviour
 								{
 									Vector3 debugScale = new Vector3(1, 0, 1) * (float)(WorldManagement.GetGridDensity() / UIManagement.mapRelativeScaleModifier) * 0.8f;
 
-									for (int i = 0; i < territoryData.territoryCenters.Count; i++)
+									for (int i = 0; i < territoryData.borders.Count; i++)
 									{
 										MonitorBreak.Bebug.Helper.DrawWirePlane(
-											-territoryData.territoryCenters.ElementAt(i).TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset,
+											-territoryData.borders.ElementAt(i).TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset,
 											debugScale,
 											Vector3.up,
 											factionColour,
@@ -211,69 +206,43 @@ public class MapManagement : MonoBehaviour
 								}
 								else
 								{
+									//New method
+									List<List<Vector3>> borderLines = territoryData.CalculateMapBorderPositions(displayOffset, out Vector3 averagePos);
 
-									Vector3 averagePos = Vector3.zero;
-									Transform borderRenderer = mapElementsPools.UpdateNextObjectPosition(3, Vector3.zero);
-									LineRenderer lineRenderer = borderRenderers[borderRenderer];
-
-									//Idea is we start at a given border point and we traverse round the border creating a line
-									//When faced with multiple options on where to go we split and do both, we want the path that maximises closeness to the original shape
-									//In our case "closeness to the original shape" can be defined by how close the number of generated points is too the full number of borders
-									//So in esscense we want to maximize the amount of border points we traverse (ideally all of them)
-
-									if (lineRenderer != null)
+									foreach (List<Vector3> line in borderLines)
 									{
+										Transform borderRendererTransform = mapElementsPools.UpdateNextObjectPosition(3, Vector3.zero);
+
+										if (!cachedTransformToBorderRenderer.ContainsKey(borderRendererTransform))
+										{
+											cachedTransformToBorderRenderer.Add(borderRendererTransform, borderRendererTransform.GetComponent<LineRenderer>());
+										}
+
+										LineRenderer lineRenderer = cachedTransformToBorderRenderer[borderRendererTransform];
+
+										if (lineRenderer != null)
+										{
 #pragma warning disable CS0618 // Type or member is obsolete
-										lineRenderer.SetColors(factionColour, factionColour);
+											lineRenderer.SetColors(factionColour, factionColour);
 #pragma warning restore CS0618 // Type or member is obsolete
 
-										if (territoryData.borderInOrder != null)
-										{
-											//Apply the found path to the line renderer
-											count = territoryData.borderInOrder.Count;
-											lineRenderer.positionCount = count + 1;
-
-											for (int i = 0; i < count; i++)
-											{
-												Vector3 pos = territoryData.borderInOrder[i] + displayOffset;
-
-												lineRenderer.SetPosition(i, pos);
-												averagePos += pos;
-											}
-
-											//Make it loop
-											lineRenderer.SetPosition(count, lineRenderer.GetPosition(0));
-
-											if (faction.GetData(Faction.Tags.Emblem, out EmblemData emblemData))
-											{
-												averagePos /= count;
-
-												Vector3 averageOffset = Vector3.zero;
-												float max = 0;
-
-												Vector3[] allPositions = new Vector3[lineRenderer.positionCount];
-												lineRenderer.GetPositions(allPositions);
-
-												for (int i = 0; i < count; i++)
-												{
-													Vector3 offset = allPositions[i] - averagePos;
-													averageOffset += offset;
-
-													max = Mathf.Max(max, Mathf.Abs(offset.x), Mathf.Abs(offset.z));
-												}
-
-												Transform centralIcon = mapElementsPools.UpdateNextObjectPosition(5, averagePos - averageOffset - (Vector3.up * 0.25f));
-												float iconScale = 14 * Mathf.Log(max, 30);
-
-												centralIcon.localScale = Vector3.one * Mathf.Clamp(iconScale, 1, 100);
-
-												if (centralIcon != null)
-												{
-													nationIconRenderers[centralIcon].sprite = emblemData.icon;
-													nationIconRenderers[centralIcon].color = emblemData.mainColour;
-												}
-											}
+											lineRenderer.positionCount = line.Count;
+											lineRenderer.SetPositions(line.ToArray());
 										}
+									}
+
+									if (faction.GetData(Faction.Tags.Emblem, out EmblemData emblemData))
+									{
+										Transform centralIcon = mapElementsPools.UpdateNextObjectPosition(5, averagePos - (Vector3.up * 0.25f));
+										centralIcon.localScale = Vector3.one * 14;
+
+										if (!cachedTransformToNationIconRenderers.ContainsKey(centralIcon))
+										{
+											cachedTransformToNationIconRenderers.Add(centralIcon, centralIcon.GetComponent<SpriteRenderer>());
+										}
+
+										cachedTransformToNationIconRenderers[centralIcon].sprite = emblemData.icon;
+										cachedTransformToNationIconRenderers[centralIcon].color = emblemData.mainColour;
 									}
 								}
                             }

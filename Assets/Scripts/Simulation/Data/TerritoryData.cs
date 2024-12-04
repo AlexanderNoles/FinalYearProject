@@ -103,4 +103,269 @@ public class TerritoryData : DataBase
 			}
 		}
 	}
+
+
+	// DRAWER METHOD FOR MAP //
+
+	//First we need to pick a current valid start position
+	//We will need to pick a starting position multiple times so this is part of the loop
+	//If the starting position fails the degen check then all points will be automatically added as a seperate line
+	//and the process will repeat
+	//We only care about the already traveresed border positions during this start position check (so we don't keep traversing the same thing)
+
+	private Vector3 mapDrawOffset;
+
+	//
+
+	//First is the orthagonal vector (N, W, S, E) then their diagonal pair (the cell to check to see if we can traverse this direction), then their opposite diagonal
+	//pair (the cell we are now traversing along)
+	private static readonly (Vector3, Vector3, Vector3)[] CounterClockwiseOffsets = new (Vector3, Vector3, Vector3)[4]
+	{
+		(new Vector3(0, 0, 1), new Vector3(-1, 0, 1), new Vector3(1, 0, 1)),
+		(new Vector3(-1, 0, 0), new Vector3(-1, 0, -1), new Vector3(-1, 0, 1)),
+		(new Vector3(0, 0, -1), new Vector3(1, 0, -1), new Vector3(-1, 0, -1)),
+		(new Vector3(1, 0, 0), new Vector3(1, 0, 1), new Vector3(1, 0, -1))
+	};
+
+
+	public List<List<Vector3>> CalculateMapBorderPositions(Vector3 offset, out Vector3 iconPosition)
+	{
+		iconPosition = Vector3.zero;
+		int currentAverageCount = 0;
+		int largestBorderIndex = -1;
+
+		mapDrawOffset = offset;
+		double halfDensity = WorldManagement.GetGridDensityHalf();
+		double fullDensity = WorldManagement.GetGridDensity();
+
+		List<List<Vector3>> output = new List<List<Vector3>>();
+
+		HashSet<RealSpacePostion> alreadyVisited = new HashSet<RealSpacePostion>();
+
+		int loopFailsafe = 0;
+		while (alreadyVisited.Count != borders.Count && loopFailsafe < 100000)
+		{
+			//Establish start position
+			RealSpacePostion startPos = null;
+
+			foreach (RealSpacePostion pos in borders)
+			{
+				if (!alreadyVisited.Contains(pos))
+				{
+					//We've found our potential start position!
+					startPos = pos;
+
+					//Establish this is not a degenrate case
+					//We do this here so we don't have to iterate through the whole set again
+					if (IsAlone(startPos))
+					{
+						List<RealSpacePostion> points = GetPoints(startPos);
+						List<Vector3> toAddToOutput = new List<Vector3>();
+
+						foreach (RealSpacePostion point in points)
+						{
+							toAddToOutput.Add(GetMapPosition(point));
+						}
+
+						//Add to already visited so we don't add this again
+						alreadyVisited.Add(pos);
+
+						//Add to output
+						output.Add(toAddToOutput);
+					}
+					else
+					{
+						break;
+					}
+				}
+			}
+
+			if (startPos != null)
+			{
+				//Main part of routine
+				//We have established we have a valid start pos
+				//No we need to find a valid point for this cell
+				List<RealSpacePostion> startPosPoints = GetPoints(startPos);
+
+				RealSpacePostion startPoint = null;
+
+				//Perform a basic interior check on all the start pos points
+				//This just means getting their points and using them
+				//If any aren't "solid" we have our position
+				foreach (RealSpacePostion point in startPosPoints)
+				{
+					List<RealSpacePostion> checkPoints = GetPoints(point);
+
+					bool validPoint = false;
+					foreach (RealSpacePostion checkPoint in checkPoints)
+					{
+						if (!borders.Contains(checkPoint))
+						{
+							validPoint = true;
+							break;
+						}
+					}
+
+					if (validPoint)
+					{
+						//We have found a valid start point!
+						startPoint = point; 
+						break;
+					}
+				}
+
+				if (startPoint == null)
+				{
+					throw new Exception("No valid points from this border for map draw, this means it isn't a border cell and shouldn't be in the border set!");
+				}
+
+				//Set current
+				RealSpacePostion currentCellPos = startPos;
+				RealSpacePostion currentPoint = startPoint;
+
+				//Instatiate new output
+				List<Vector3> toAddToOutput = new List<Vector3>();
+
+				int loopClamp = 10000;
+				do
+				{
+					//Add current to output first
+					Vector3 outputPos = GetMapPosition(currentPoint);
+					toAddToOutput.Add(outputPos);
+
+					//If it is not already there add cell pos to closed
+					if (!alreadyVisited.Contains(currentCellPos))
+					{
+						alreadyVisited.Add(currentCellPos);
+					}
+
+					//Find our next point
+					//This means iterate through orthagonal directions until that direction passes a validation check
+					//We iterate in a counter clockwise order so the points are ordered counter clockwise.
+
+					foreach ((Vector3, Vector3, Vector3) direction in CounterClockwiseOffsets)
+					{
+						RealSpacePostion freeCheckPos = new RealSpacePostion(
+							currentPoint.x + (direction.Item2.x * halfDensity),
+							0,
+							currentPoint.z + (direction.Item2.z * halfDensity));
+
+						RealSpacePostion filledCheckPos = new RealSpacePostion(
+							currentPoint.x + (direction.Item3.x * halfDensity),
+							0,
+							currentPoint.z + (direction.Item3.z * halfDensity));
+
+						if (!territoryCenters.Contains(freeCheckPos) && territoryCenters.Contains(filledCheckPos))
+						{
+							//Validate the new cell to traverse along is not a singular cell and is not only connected by a corner
+							if (!IsAlone(filledCheckPos) && !OnlyConnectedByCorner(filledCheckPos, currentCellPos, currentPoint))
+							{
+								//Setup new variables
+								currentCellPos = filledCheckPos;
+								currentPoint = new RealSpacePostion(
+									currentPoint.x + (direction.Item1.x * fullDensity),
+									0,
+									currentPoint.z + (direction.Item1.z * fullDensity)
+									);
+
+								//We've found our valid position so we can stop and go onto the next iteration
+								break;
+							}
+						}
+					}
+
+					loopClamp--;
+				}
+				while (!currentPoint.Equals(startPoint) && loopClamp > 0); //We run the loop once so we won't crash out immediately
+
+				if (toAddToOutput.Count > 0)
+				{
+					//We want the largest area to have the icon over it
+					if (currentAverageCount < toAddToOutput.Count)
+					{
+						largestBorderIndex = output.Count;
+						currentAverageCount = toAddToOutput.Count;
+					}
+
+					output.Add(toAddToOutput);
+				}
+			}
+			else
+			{
+				//No more valid start positions, we are done
+				break;
+			}
+
+			loopFailsafe++;
+		}
+
+		if (largestBorderIndex != -1)
+		{
+			//We found at least one border that had more than 0 points
+			//Need to calculate a largest box
+		}
+
+		return output;
+	}
+
+	private bool IsAlone(RealSpacePostion input)
+	{
+		List<RealSpacePostion> neighbours = WorldManagement.GetNeighboursInGrid(input);
+
+		foreach (RealSpacePostion neighbour in neighbours)
+		{
+			if (territoryCenters.Contains(neighbour))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private bool OnlyConnectedByCorner(RealSpacePostion posA, RealSpacePostion posB, RealSpacePostion cornerPos)
+	{
+		List<RealSpacePostion> cornersPoints = GetPoints(cornerPos);
+
+		foreach (RealSpacePostion checkPos in cornersPoints)
+		{
+			if (territoryCenters.Contains(checkPos) && !checkPos.Equals(posA) && !checkPos.Equals(posB))
+			{
+				//Any other connecting cell
+				return false;
+			}
+		}
+
+		//If no other connecting cells
+		double fullDistance = Math.Abs(posA.x - posB.x) + Math.Abs(posA.z - posB.z);
+		if (fullDistance > WorldManagement.GetGridDensity() * 1.5f)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	private List<RealSpacePostion> GetPoints(RealSpacePostion input)
+	{
+		List<RealSpacePostion> toReturn = new List<RealSpacePostion>();
+
+		foreach (Vector3 offset in GenerationUtility.diagonalOffsets)
+		{
+			toReturn.Add(
+				new RealSpacePostion(
+					input.x + (offset.x * WorldManagement.GetGridDensityHalf()), 
+					0,
+					input.z + (offset.z * WorldManagement.GetGridDensityHalf())));
+		}
+
+		return toReturn;
+	}  
+
+	private Vector3 GetMapPosition(RealSpacePostion input)
+	{
+		return -input.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + mapDrawOffset;
+	}
 }

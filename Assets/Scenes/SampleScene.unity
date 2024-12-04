@@ -2374,7 +2374,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   runHistory: 1
-  historyLength: 500
+  historyLength: 50
   drawSettlements: 0
   drawMilitaryPresence: 0
   updateMap: 1
@@ -2898,8 +2898,8 @@ MonoBehaviour:
     mode: 1
     baseObject: {fileID: 3760223648091498855, guid: 4ee2c236d9fa7f5409c627e0217415e7,
       type: 3}
-    baseNumberOfObjects: 10
-    generateAsNeeded: 0
+    baseNumberOfObjects: 25
+    generateAsNeeded: 1
     currentUpdatedObjectPointer: 0
     automaticallySetParent: 0
   - name: SettlementIndicator

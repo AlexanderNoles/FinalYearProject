@@ -32,6 +32,7 @@ public class BattleResolutionRoutine : RoutineBase
 
 				foreach (KeyValuePair<int, RelationshipData.Relationship> relationship in data.idToRelationship)
 				{
+					//Change this to some other kinda of check so we can get rid of inConflict (we want to keep things dynamic and setting this flag hampers that)
 					if (relationship.Value.inConflict)
 					{
 						//In conflict
