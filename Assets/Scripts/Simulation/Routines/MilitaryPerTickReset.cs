@@ -15,6 +15,7 @@ public class MilitaryPerTickReset : RoutineBase
 			if (faction.GetData(Faction.Tags.HasMilitary, out MilitaryData militaryData))
 			{
 				militaryData.markedTransfers.Clear();
+				militaryData.totalDamageBuildup = 0.0f;
 			}
 		}
 	}

@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerManagement : MonoBehaviour
 {
     private static PlayerManagement instance;
+	private PlayerFaction playerFaction;
 
     private void Awake()
     {
@@ -17,4 +18,10 @@ public class PlayerManagement : MonoBehaviour
     {
         return instance.transform.position;
     }
+
+	public static void InitPlayerFaction()
+	{
+		instance.playerFaction = new PlayerFaction();
+		instance.playerFaction.Simulate();
+	}
 }

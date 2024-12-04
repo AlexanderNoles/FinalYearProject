@@ -295,6 +295,11 @@ public class SimulationManagement : MonoBehaviour
 				}
 			}
         }
+		else
+		{
+			//Not running history so just init player faction
+			PlayerManagement.InitPlayerFaction();
+		}
     }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
@@ -453,6 +458,9 @@ public class SimulationManagement : MonoBehaviour
 						{
 							//Re-enable player input
 							InputManagement.InputEnabled = true;
+
+							//Init player faction
+							PlayerManagement.InitPlayerFaction();
 						}
 					}
 				}

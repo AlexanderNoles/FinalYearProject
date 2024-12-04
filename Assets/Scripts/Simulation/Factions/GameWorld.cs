@@ -8,6 +8,7 @@ public class GameWorld : Faction
 	{
 		base.InitTags();
 		AddTag(Tags.GameWorld);
+		AddTag(Tags.Unkillable);
 	}
 
 	public override void InitData()

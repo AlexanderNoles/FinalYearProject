@@ -20,10 +20,18 @@ public class MetaRoutine : RoutineBase
             {
                 if (factionData.deathFlag)
                 {
-                    //Remove this faction from the simulation
-                    SimulationManagement.RemoveFactionFully(faction);
-                    idsOfRemovedFactions.Add(faction.id);
-                    continue; //Perform nothing else for this faction as it is now dead (including incrementing the index)
+					if (faction.HasTag(Faction.Tags.Unkillable))
+					{
+						//This faction cannot die, for example if it is the game world
+						factionData.deathFlag = false;
+					}
+					else
+					{
+						//Remove this faction from the simulation
+						SimulationManagement.RemoveFactionFully(faction);
+						idsOfRemovedFactions.Add(faction.id);
+						continue; //Perform nothing else for this faction as it is now dead (including incrementing the index)
+					}
                 }
             }
 

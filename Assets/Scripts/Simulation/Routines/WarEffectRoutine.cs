@@ -21,8 +21,6 @@ public class WarEffectRoutine : RoutineBase
 				{
 					warData.warExhaustion = Mathf.Max(0, warData.warExhaustion - (1 / warData.warExhaustionGrowthMultiplier));
 				}
-
-				milData.totalDamageBuildup = 0.0f;
 			}
 		}
 	}

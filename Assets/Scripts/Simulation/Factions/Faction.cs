@@ -16,9 +16,10 @@ public class Faction
     //Tags
     public enum Tags
     {
-        //This is a global tag that allows routines to grab every faction
-        Faction,
+        Faction, //This is a global tag that allows routines to grab every faction
 		GameWorld, //This is the game world faction
+		Player, //This is the player's faction
+		Unkillable, //This faction cannot be destroyed by the MetaRoutine
         //
         Territory, //Does this faction contain some territory?
         Settlements, //Does this faction have settlements?
@@ -29,10 +30,10 @@ public class Faction
 		Politics, //Does this faction engage in politics?
 		HasEconomy, //Does this faction have an economy?
         //Is this faction visible in a way that makes it so every other faction has a relationship with it?
-        //(This means that every faction will will know if it's existence)
+        //(This means that every faction will will know of it's existence)
         //This doesn't mean it immediately has a dual relationship with every other faction (cause it may not know about them, for example not all nations immediately know about the player)
         OpenRelationship,
-		CanFightWars, //Ceratin factions can not fight wars, this does not mean they cannot fight battles just not full scale wars
+		CanFightWars, //Certain factions can not fight wars, this does not mean they cannot fight battles just not full scale wars (Imagine wars as dedicated campaigns of battles that have some end condition)
 		Historical //Is this faction historical in some sense (e.g., does it represent a fallen empire)
     }
 
