@@ -2337,6 +2337,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   constantRoutines:
+  - {fileID: 1732171659}
   - {fileID: 1732171658}
   - {fileID: 1732171657}
   - {fileID: 1732171656}
@@ -2374,9 +2375,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   runHistory: 0
-  historyLength: 50
+  historyLength: 500
   drawSettlements: 0
-  drawMilitaryPresence: 0
+  drawMilitaryPresence: 1
   updateMap: 1
 --- !u!1 &1273093546
 GameObject:
@@ -2918,12 +2919,12 @@ MonoBehaviour:
     generateAsNeeded: 0
     currentUpdatedObjectPointer: 0
     automaticallySetParent: 0
-  - name: TradeRouteIndicator
+  - name: BattleIndicator
     mode: 1
-    baseObject: {fileID: 3760223648091498855, guid: f68b108c0d78530438627e66d543120d,
+    baseObject: {fileID: 7985986221752967480, guid: 2b3e737e5910b1a49ac12c7cb55ef057,
       type: 3}
-    baseNumberOfObjects: 2000
-    generateAsNeeded: 0
+    baseNumberOfObjects: 20
+    generateAsNeeded: 1
     currentUpdatedObjectPointer: 0
     automaticallySetParent: 0
 --- !u!1 &1732171635
@@ -2936,6 +2937,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1732171636}
   - component: {fileID: 1732171643}
+  - component: {fileID: 1732171659}
   - component: {fileID: 1732171642}
   - component: {fileID: 1732171641}
   - component: {fileID: 1732171658}
@@ -3241,6 +3243,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 78d9dfd08184b0241af49815e7bf75f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1732171659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1732171635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52d220396dfd15d40bd278639e0ad58d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1754566610

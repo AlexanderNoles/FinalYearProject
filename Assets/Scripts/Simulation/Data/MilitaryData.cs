@@ -9,6 +9,14 @@ public class MilitaryData : DataBase
 
 	public int currentFleetCount;
 	public Dictionary<RealSpacePostion, List<ShipCollection>> cellCenterToFleets = new Dictionary<RealSpacePostion, List<ShipCollection>>();
+	public List<(RealSpacePostion, RealSpacePostion)> markedTransfers = new List<(RealSpacePostion, RealSpacePostion)>();
+
+	public void MarkTransfer(RealSpacePostion from, RealSpacePostion to)
+	{
+		markedTransfers.Add((from, to));
+	}
+
+
 
 	public void AddFleet(RealSpacePostion pos, Fleet fleet)
 	{
@@ -113,6 +121,9 @@ public class MilitaryData : DataBase
 
 				fleetTransferredCount++;
 			}
+
+			//Mark a transfer
+			MarkTransfer(entry.Item1, target);
 		}
 
 		return fleetTransferredCount;

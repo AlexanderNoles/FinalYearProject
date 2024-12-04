@@ -4,6 +4,8 @@ using UnityEngine;
 using TMPro;
 using System.Linq;
 using static GlobalBattleData;
+using static SettlementData;
+using System.Linq.Expressions;
 
 public class MapManagement : MonoBehaviour
 {
@@ -25,7 +27,6 @@ public class MapManagement : MonoBehaviour
     private Dictionary<Transform, MeshRenderer> mapRingMeshRenderes;
 	private Dictionary<Transform, LineRenderer> cachedTransformToBorderRenderer = new Dictionary<Transform, LineRenderer>();
     private Dictionary<Transform, SpriteRenderer> cachedTransformToNationIconRenderers = new Dictionary<Transform, SpriteRenderer>();
-    private Dictionary<Transform, LineRenderer> tradeRouteRenderers;
 
 
     public static Vector3 GetDisplayOffset()
@@ -37,7 +38,6 @@ public class MapManagement : MonoBehaviour
     private void Start()
     {
         mapRingMeshRenderes = mapElementsPools.GetComponentsOnAllActiveObjects<MeshRenderer>(0);
-        tradeRouteRenderers = mapElementsPools.GetComponentsOnAllActiveObjects<LineRenderer>(6);
     }
 
     private void OnEnable()
@@ -136,21 +136,19 @@ public class MapManagement : MonoBehaviour
                     //We need to get all the factions with the territory tag and then spawn territory squares based on that
                     List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Territory);
 
-                    Vector3 scale = Vector3.one * (float)(WorldManagement.GetGridDensity() / UIManagement.mapRelativeScaleModifier);
                     Vector3 displayOffset = GetDisplayOffset();
-
-					//RUN BORDER IN ORDER ROUTINE
-					//This is a very expensive operation that is currently (08/11/2024) the sole reason behind MAP_REFRESH_ENABLED being set to false
-					//it could almost certainly be optomized in a variety of ways but it runs well enough that for this vertical slice/beta version
-					//it is fine. The focus should be one other things
-
-					//It also does not handle degenerate cases well, in the sense it doesn't handle them at all hahahahaha
-					//SimulationManagement.RunAbsentRoutine("BorderInOrder");
 
 					GameWorld gameworld = (GameWorld)SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld)[0];
 					gameworld.GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
 					gameworld.GetData(Faction.Tags.Historical, out HistoryData historyData);
 
+					//Draw battle indicators
+					foreach (KeyValuePair<RealSpacePostion, Battle> battle in globalBattleData.battles)
+					{
+						mapElementsPools.UpdateNextObjectPosition(6, -battle.Key.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset + Vector3.down * 0.1f);
+					}
+
+					//Draw per faction data
 					foreach (Faction faction in factions)
 					{
 						Color factionColour = faction.GetColour();
@@ -228,6 +226,8 @@ public class MapManagement : MonoBehaviour
 
 											lineRenderer.positionCount = line.Count;
 											lineRenderer.SetPositions(line.ToArray());
+
+											lineRenderer.loop = true;
 										}
 									}
 
@@ -246,81 +246,94 @@ public class MapManagement : MonoBehaviour
 									}
 								}
                             }
-                        }
-                    }
+						}
 
-
-					if (SimulationSettings.DrawSettlements())
-                    {
-						List<Faction> settlements = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Settlements);
-						foreach (Faction settlement in settlements)
-                        {
-                            if (settlement.GetData(Faction.Tags.Settlements, out SettlementData data))
-                            {
-                                foreach (KeyValuePair<RealSpacePostion, SettlementData.Settlement> s in data.settlements)
-                                {
-                                    mapElementsPools.UpdateNextObjectPosition(4, -s.Value.actualSettlementPos.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset);
-
-                                    //Trade trade paths
-                                    //foreach (SettlementData.Settlement.TradeFleet tradeFleet in s.Value.tradeFleets)
-                                    //{
-                                    //    foreach (TradeShip ship in tradeFleet.ships)
-                                    //    {
-                                    //        if (ship.tradeTarget != null)
-                                    //        {
-                                    //            LineRenderer renderer = tradeRouteRenderers[mapElementsPools.UpdateNextObjectPosition(6, Vector3.zero)];
-                                    //            renderer.positionCount = 2;
-                                    //            renderer.SetPosition(0,
-                                    //                -ship.homeLocation.GetPosition().TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset);
-                                    //            renderer.SetPosition(1,
-                                    //                -ship.tradeTarget.GetPosition().TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset);
-                                    //        }
-                                    //    }
-                                    //}
-                                }
-                            }
-                        }
-                    }
-
-					if (SimulationSettings.DrawMilitaryPresence())
-					{
-						//This is a very dirty way of doing this but
-						//All of this will be replaced with non debug UI at some point I pray
-
-						List<Faction> mil = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.HasMilitary);
-
-						foreach (Faction military in mil)
+						if (SimulationSettings.DrawSettlements())
 						{
-							Color factionColour = military.GetColour();
-
-							if (military.GetData(Faction.Tags.HasMilitary, out MilitaryData milData))
+							if (faction.GetData(Faction.Tags.Settlements, out SettlementData data))
 							{
-								if (military.GetData(Faction.battleDataKey, out BattleData battleData))
+								foreach (KeyValuePair<RealSpacePostion, SettlementData.Settlement> s in data.settlements)
 								{
-									foreach (KeyValuePair<RealSpacePostion, List<ShipCollection>> entry in milData.cellCenterToFleets)
+									mapElementsPools.UpdateNextObjectPosition(4, -s.Value.actualSettlementPos.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset);
+								}
+							}
+						}
+
+						if (SimulationSettings.DrawMilitaryPresence())
+						{
+							PathHelper.SimplePathParameters pathParams = new PathHelper.SimplePathParameters();
+
+							if (faction.GetData(Faction.Tags.HasMilitary, out MilitaryData milData))
+							{
+								if (debugMode)
+								{
+									if (faction.GetData(Faction.battleDataKey, out BattleData battleData))
 									{
-										Vector3 pos = -entry.Key.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset;
-
-										Color color = Color.green;
-										if (battleData.ongoingBattles.ContainsKey(entry.Key))
+										foreach (KeyValuePair<RealSpacePostion, List<ShipCollection>> entry in milData.cellCenterToFleets)
 										{
-											color = Color.red;
+											Vector3 pos = -entry.Key.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset;
+
+											Color color = Color.green;
+											if (battleData.ongoingBattles.ContainsKey(entry.Key))
+											{
+												color = Color.red;
+											}
+
+											Vector3 minorOffset = Random.onUnitSphere;
+											minorOffset.y = 0;
+											minorOffset.Normalize();
+											minorOffset *= 0.1f;
+
+											int shipCount = 0;
+
+											foreach (ShipCollection collection in entry.Value)
+											{
+												shipCount += collection.GetShips().Count;
+											}
+
+											Debug.DrawRay(pos + minorOffset, Vector3.up * shipCount * 2, factionColour, timeTillNextMapUpdate);
+											Debug.DrawRay(pos + minorOffset, Vector3.up * shipCount, color, timeTillNextMapUpdate);
+										}
+									}
+								}
+								else
+								{
+									foreach ((RealSpacePostion, RealSpacePostion) entry in milData.markedTransfers)
+									{
+										Transform borderRendererTransform = mapElementsPools.UpdateNextObjectPosition(3, Vector3.zero);
+
+										if (!cachedTransformToBorderRenderer.ContainsKey(borderRendererTransform))
+										{
+											cachedTransformToBorderRenderer.Add(borderRendererTransform, borderRendererTransform.GetComponent<LineRenderer>());
 										}
 
-										Vector3 minorOffset = Random.onUnitSphere;
-										minorOffset.y = 0;
-										minorOffset.Normalize();
-										minorOffset *= 0.1f;
+										LineRenderer lineRenderer = cachedTransformToBorderRenderer[borderRendererTransform];
 
-										int shipCount = 0;
-
-										foreach (ShipCollection collection in entry.Value)
+										if (lineRenderer != null)
 										{
-											shipCount += collection.GetShips().Count;
-										}
+#pragma warning disable CS0618 // Type or member is obsolete
+											lineRenderer.SetColors(Color.black, factionColour);
+#pragma warning restore CS0618 // Type or member is obsolete
 
-										Debug.DrawRay(pos + minorOffset, Vector3.up * shipCount * 2, factionColour, timeTillNextMapUpdate);
-										Debug.DrawRay(pos + minorOffset, Vector3.up * shipCount, color, timeTillNextMapUpdate);
+											Vector3 startPos = -entry.Item1.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset;
+											Vector3 endPos = -entry.Item2.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset;
+
+											Vector3 difference = endPos - startPos;
+											pathParams.forwardVector = difference.normalized;
+											pathParams.rightVector = Vector3.up * (difference.magnitude * 0.4f);
+
+											PathHelper.SimplePath simplePath = PathHelper.GenerateSimplePathStatic(startPos, endPos, pathParams);
+
+											Vector3[] newLinePositions = new Vector3[11];
+											for (int i = 0; i <= 10; i++)
+											{
+												newLinePositions[i] = simplePath.GetPosition(i / 10.0f);
+											}
+
+											lineRenderer.loop = false;
+											lineRenderer.positionCount = 11;
+											lineRenderer.SetPositions(newLinePositions);
+										}
 									}
 								}
 							}
@@ -331,7 +344,7 @@ public class MapManagement : MonoBehaviour
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(4);
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(5);
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(6);
-                }
+				}
 
                 if (Time.time > dateRefreshTime)
                 {
