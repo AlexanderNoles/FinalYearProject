@@ -191,7 +191,7 @@ public class GeneratorManagement : MonoBehaviour
 		public StructureGeneration SpawnStructure(STRUCTURES_INDEXES index, Vector3 worldPos)
 		{
 			Transform newTarget = GetStructure((int)index);
-			newTarget.position = worldPos;
+			newTarget.localPosition = worldPos;
 
 			targets.AddLast((currentPrimitveIndex, newTarget));
 

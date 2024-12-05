@@ -22,11 +22,11 @@ public class PlayerCapitalShip : MonoBehaviour
 	private static Quaternion startTurnRot;
 	private static float jumpT;
 	private static float rotateT;
-	private float growthOnLocationT;
+	private float postJumpT;
 
 	private static float jumpBuildupBuffer;
 
-	private const float jumpBaseLineSpeed = 10000.0f;
+	private const float jumpBaseLineSpeed = 2000.0f;
 	private static float thisJumpSpeed;
 
 	private enum JumpStage
@@ -38,6 +38,11 @@ public class PlayerCapitalShip : MonoBehaviour
 		Done
 	}
 
+	[Header("Effects")]
+	public ParticleSystem inJumpPS;
+	private Transform psTrans;
+	public GameObject surroundingCylinder;
+
 
 	private void Awake()
 	{
@@ -45,6 +50,7 @@ public class PlayerCapitalShip : MonoBehaviour
 		jumping = false;
 
 		transform = base.transform;
+		psTrans = inJumpPS.transform;
 	}
 
 	public static void UpdatePCSPosition(RealSpacePostion pos)
@@ -102,27 +108,9 @@ public class PlayerCapitalShip : MonoBehaviour
 	{
 		if (InputManagement.GetKeyDown(KeyCode.R))
 		{
-			//Get a random settlement location to teleport to
-			List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Settlements);
-
-			SettlementData.Settlement newTarget = null;
-
-			while (newTarget == null)
-			{
-				int targetIndex = Random.Range(0, factions.Count);
-				if (factions[targetIndex].GetData(Faction.Tags.Settlements, out SettlementData data))
-				{
-					if (data.settlements.Count > 0)
-					{
-						newTarget = data.settlements.ElementAt(Random.Range(0, data.settlements.Count)).Value;
-					}
-				}
-			}
-
-			if (newTarget != null)
-			{
-				StartJump(newTarget.location);
-			}
+			ArbitraryLocation newLocation = new ArbitraryLocation();
+			newLocation.SetLocation(new RealSpacePostion(30000, 0, 0));
+			StartJump(newLocation);
 		}
 
 		if (jumping)
@@ -150,6 +138,12 @@ public class PlayerCapitalShip : MonoBehaviour
 				else
 				{
 					PlayerLocationManagement.ForceUnloadCurrentLocation();
+					inJumpPS.Play();
+					psTrans.localPosition = Vector3.forward * 5.0f;
+
+					surroundingCylinder.SetActive(true);
+					surroundingCylinder.transform.localPosition = new Vector3(0, 0, 1000);
+
 					jumpStage++;
 				}
 			}
@@ -160,6 +154,8 @@ public class PlayerCapitalShip : MonoBehaviour
 				{
 					jumpT += Time.deltaTime * thisJumpSpeed;
 
+					surroundingCylinder.transform.localPosition = Vector3.Lerp(surroundingCylinder.transform.localPosition, new Vector3(0, 0, 0), Time.deltaTime);
+
 					WorldManagement.SetWorldCenterPosition(RealSpacePostion.Lerp(jumpStart, jumpTarget.GetPosition(), jumpCurve.Evaluate(jumpT)));
 					UpdatePCSPosition(WorldManagement.worldCenterPosition);
 
@@ -168,7 +164,9 @@ public class PlayerCapitalShip : MonoBehaviour
 						//We have arrived
 						jumpStage++;
 
-						growthOnLocationT = 0.0f;
+						postJumpT = 0.0f;
+
+						inJumpPS.Stop();
 
 						//currently just ending jump here
 						EndJump();
@@ -179,13 +177,25 @@ public class PlayerCapitalShip : MonoBehaviour
 
 		if (jumpStage == JumpStage.PostJump)
 		{
-			growthOnLocationT += Time.deltaTime * 5.0f;
+			postJumpT += Time.deltaTime * 5.0f;
 
-			GeneratorManagement.SetOffset(-transform.forward * 50 * Mathf.Clamp01(growthOnLocationT));
+			psTrans.localPosition = new Vector3(0, 0, Mathf.Lerp(5, 0, Mathf.Clamp01(postJumpT)));
 
-			if (growthOnLocationT >= 1.0f)
+			GeneratorManagement.SetOffset(transform.forward * 500 * (1.0f - Mathf.Clamp01(postJumpT)));
+
+			if (postJumpT >= 1.0f)
 			{
 				jumpStage++;
+			}
+		}
+
+		if (!jumping && surroundingCylinder.activeSelf)
+		{
+			surroundingCylinder.transform.localPosition = Vector3.Lerp(surroundingCylinder.transform.localPosition, new Vector3(0, 0, -1000), Time.deltaTime);
+
+			if (surroundingCylinder.transform.localPosition.z < -990)
+			{
+				surroundingCylinder.SetActive(false);
 			}
 		}
 	}
