@@ -5,6 +5,13 @@ using static UnityEngine.GraphicsBuffer;
 
 public class SurroundingsRenderingManagement : MonoBehaviour
 {
+	private static Vector3 cameraOffset = Vector3.zero;
+
+	public static void SetCameraOffset(Vector3 input)
+	{
+		cameraOffset = input;
+	}
+
     public GameObject skybox;
 
     private static List<SurroundingObject> controlledObjects = new List<SurroundingObject>();
@@ -87,7 +94,7 @@ public class SurroundingsRenderingManagement : MonoBehaviour
             for (int i = 0; i < controlledObjects.Count; i++)
             {
                 //Get offset from world center
-                RealSpacePostion offset = WorldManagement.OffsetFromWorldCenter(controlledObjects[i].postion);
+                RealSpacePostion offset = WorldManagement.OffsetFromWorldCenter(controlledObjects[i].postion, cameraOffset);
                 //Get distance to world center
                 double magnitude = offset.Magnitude();
 

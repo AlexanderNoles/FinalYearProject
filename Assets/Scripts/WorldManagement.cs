@@ -152,7 +152,7 @@ public class WorldManagement : MonoBehaviour
     private const double debugMultiplier = 1000.0f;
     private const float debugSize = 2.0f;
     private static List<Vector3> debugPositions = new List<Vector3>();
-    public static RealSpacePostion worldCenterPosition;   
+    public static RealSpacePostion worldCenterPosition;
 
     public static void SetWorldCenterPosition(RealSpacePostion initialPos)
     {
@@ -173,14 +173,14 @@ public class WorldManagement : MonoBehaviour
 
     //OPERATIONS
 
-    public static RealSpacePostion OffsetFromWorldCenter(RealSpacePostion position)
+    public static RealSpacePostion OffsetFromWorldCenter(RealSpacePostion position, Vector3 additionalOffset)
     {
 #if UNITY_EDITOR
         debugPositions.Add(position.TruncatedVector3(debugMultiplier));
 #endif
         RealSpacePostion toReturn = new RealSpacePostion(position);
 
-        return toReturn.Subtract(worldCenterPosition);
+        return toReturn.Subtract(worldCenterPosition).Subtract(additionalOffset);
     }
 
     private void OnDrawGizmos()
@@ -271,11 +271,13 @@ public class RealSpacePostion
         z += value.z;
     }
 
-    public void Subtract(Vector3 value)
+    public RealSpacePostion Subtract(Vector3 value)
     {
         x -= value.x;
         y -= value.y;
         z -= value.z;
+
+		return this;
     }
 
     public RealSpacePostion Subtract(RealSpacePostion value)
@@ -309,4 +311,13 @@ public class RealSpacePostion
     {
         return new Vector3((float)(x/modifier), (float)(y / modifier), (float)(z / modifier));
     }
+
+	public static RealSpacePostion Lerp(RealSpacePostion a, RealSpacePostion b, float t)
+	{
+		return new RealSpacePostion(
+			(a.x + (b.x - a.x) * t),
+			(a.y + (b.y - a.y) * t),
+			(a.z + (b.z - a.z) * t)
+			); 
+	}
 }

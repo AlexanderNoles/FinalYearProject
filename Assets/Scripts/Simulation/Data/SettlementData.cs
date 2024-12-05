@@ -32,14 +32,9 @@ public class SettlementData : DataBase
                 return actualSettlement.actualSettlementPos;
             }
 
-			public override Vector3 GetEntryOffset()
+			public override float GetEntryOffset()
 			{
-				Vector3 offset = Random.onUnitSphere;
-				offset.y = 0;
-				offset.Normalize();
-				offset *= 100.0f;
-
-				return offset;
+				return 100.0f;
 			}
 		}
 

@@ -317,8 +317,7 @@ public class CameraManagement : MonoBehaviour
 
         SetBackingCameraRotation(transform.rotation);
 
-        Vector3 offset = transform.position - positionLastFrame;
-        WorldManagement.MoveWorldCenter(offset * surroundingsMoveMultiplier);
+		SurroundingsRenderingManagement.SetCameraOffset(transform.position * surroundingsMoveMultiplier);
 
         positionLastFrame = transform.position;
     }

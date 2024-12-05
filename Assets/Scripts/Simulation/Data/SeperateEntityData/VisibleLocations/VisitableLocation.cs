@@ -19,8 +19,8 @@ public class VisitableLocation : Location
 
 	}
 
-	public virtual Vector3 GetEntryOffset()
+	public virtual float GetEntryOffset()
 	{
-		return Vector3.zero;
+		return 0.0f;
 	}
 }

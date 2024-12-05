@@ -27,6 +27,11 @@ public class GeneratorManagement : MonoBehaviour
 		_instance = this;
 	}
 
+	public static void SetOffset(Vector3 offset)
+	{
+		_instance.transform.position = offset;
+	}
+
 	public static Transform GetStructure(int index)
 	{
 		return _instance.structuresPool.GetObject(index).transform;

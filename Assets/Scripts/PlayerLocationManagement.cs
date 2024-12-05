@@ -43,7 +43,7 @@ public class PlayerLocationManagement : MonoBehaviour
 		}
 
 		//Run update once to get allow the system to run setup before any other updates run without duplicate code
-		Update();
+		LateUpdate();
 	}
 
 	public static void UpdateLocation(VisitableLocation newLocation)
@@ -53,35 +53,17 @@ public class PlayerLocationManagement : MonoBehaviour
 		locationChanged = true;
 	}
 
-	private void Update()
+	public static void ForceUnloadCurrentLocation()
 	{
-#if UNITY_EDITOR
-		if (InputManagement.GetKeyDown(KeyCode.R))
+		if (location != null)
 		{
-			//Get a random settlement location to teleport to
-			List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Settlements);
-
-			SettlementData.Settlement newTarget = null;
-
-			while (newTarget == null)
-			{
-				int targetIndex = Random.Range(0, factions.Count);
-				if (factions[targetIndex].GetData(Faction.Tags.Settlements, out SettlementData data))
-				{
-					if (data.settlements.Count > 0)
-					{
-						newTarget = data.settlements.ElementAt(Random.Range(0, data.settlements.Count)).Value;
-					}
-				}
-			}
-
-			if (newTarget != null)
-			{
-				UpdateLocation(newTarget.location);
-			}
+			location.Cleanup();
+			location = null;
 		}
-#endif
+	}
 
+	private void LateUpdate()
+	{
 		if (locationChanged)
 		{
 			if (previousLocation != null)
@@ -107,34 +89,37 @@ public class PlayerLocationManagement : MonoBehaviour
 
 	private void UpdateWorldPosition()
 	{
-		//Transfer world to new position
-		//And place ship and camera at entry position
 		RealSpacePostion centralPos = location.GetPosition();
-		Vector3 offset = location.GetEntryOffset();
-		//We want the ship to arrive at the entry position not camera, so we need to account for offset from the ship
-		Vector3 cameraDisplacement = CameraManagement.GetCameraDisplacementFromTarget();
+		WorldManagement.SetWorldCenterPosition(centralPos);
+		PlayerCapitalShip.UpdatePCSPosition(WorldManagement.worldCenterPosition);
 
-		//New RS world center pos is equal to the RS center + offset + camera displacement
-		WorldManagement.SetWorldCenterPosition(new RealSpacePostion(
-			centralPos.x + offset.x + cameraDisplacement.x,
-			centralPos.y + offset.y + cameraDisplacement.y,
-			centralPos.z + offset.z + cameraDisplacement.z
-			));
+		////Transfer world to new position
+		////And place ship and camera at entry position
+		//Vector3 offset = location.GetEntryOffset();
+		////We want the ship to arrive at the entry position not camera, so we need to account for offset from the ship
+		//Vector3 cameraDisplacement = CameraManagement.GetCameraDisplacementFromTarget();
 
-		//New ship pos is relative to world center so it is just offset
-		PlayerCapitalShip.SetRealWorldPos(offset);
+		////New RS world center pos is equal to the RS center + offset + camera displacement
+		//WorldManagement.SetWorldCenterPosition(new RealSpacePostion(
+		//	centralPos.x + offset.x + cameraDisplacement.x,
+		//	centralPos.y + offset.y + cameraDisplacement.y,
+		//	centralPos.z + offset.z + cameraDisplacement.z
+		//	));
 
-		//New player RS pos is just the central pos + offset but as a RS pos
-		PlayerCapitalShip.UpdatePCSPosition(new RealSpacePostion(
-			centralPos.x + offset.x,
-			centralPos.y + offset.y,
-			centralPos.z + offset.z
-			));
+		////New ship pos is relative to world center so it is just offset
+		//PlayerCapitalShip.SetRealWorldPos(offset);
 
-		PlayerCapitalShip.ModelLookAt(Vector3.zero);
+		////New player RS pos is just the central pos + offset but as a RS pos
+		//PlayerCapitalShip.UpdatePCSPosition(new RealSpacePostion(
+		//	centralPos.x + offset.x,
+		//	centralPos.y + offset.y,
+		//	centralPos.z + offset.z
+		//	));
 
-		//New camera world pos is equal to offset + camera displacement
-		//This needs to happen after setting PCS position as it uses it to disable the lerp correctly
-		CameraManagement.SetCameraPositionExternal(offset + cameraDisplacement, true);
+		////PlayerCapitalShip.ModelLookAt(Vector3.zero);
+
+		////New camera world pos is equal to offset + camera displacement
+		////This needs to happen after setting PCS position as it uses it to disable the lerp correctly
+		//CameraManagement.SetCameraPositionExternal(offset + cameraDisplacement, true);
 	}
 }
