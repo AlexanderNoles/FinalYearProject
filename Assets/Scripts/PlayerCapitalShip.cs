@@ -25,6 +25,7 @@ public class PlayerCapitalShip : MonoBehaviour
 	private float postJumpT;
 
 	private static float jumpBuildupBuffer;
+	private const float jumpBuildupMax = 10.0f;
 
 	private const float jumpBaseLineSpeed = 2000.0f;
 	private static float thisJumpSpeed;
@@ -39,10 +40,22 @@ public class PlayerCapitalShip : MonoBehaviour
 	}
 
 	[Header("Effects")]
-	public ParticleSystem inJumpPS;
-	private Transform psTrans;
-	public GameObject surroundingCylinder;
+	public ParticleSystem jumpPs;
+	public Transform arcaneRingsParent;
+	private List<Transform> arcaneRings = new List<Transform>();
+	private List<Vector3> endOfJumpCachedRingPositions = new List<Vector3>();
+	public LineRenderer trail;
+	private const float maxTrailLength = 100.0f;
+	public GameObject fireEffect;
+	public GameObject portal;
+	public MeshRenderer pulseRenderer;
+	private Material pulseMat;
+	private float pulseT;
+	public Transform piercer;
 
+	public AnimationCurve backingBuildupCurve;
+	public Transform backingEngineBuildup;
+	public GameObject engineLine;
 
 	private void Awake()
 	{
@@ -50,13 +63,34 @@ public class PlayerCapitalShip : MonoBehaviour
 		jumping = false;
 
 		transform = base.transform;
-		psTrans = inJumpPS.transform;
+
+		portal.SetActive(false);
+		fireEffect.SetActive(false);
+		engineLine.SetActive(false);
+
+		pulseMat = pulseRenderer.material;
+		pulseMat.SetFloat("_T", 0.0f);
+
+
+		piercer.localScale = Vector3.zero;
+
+		//Get arcane rings
+		foreach (Transform ring in arcaneRingsParent)
+		{
+			arcaneRings.Add(ring);
+			ring.localScale = Vector3.zero;
+		}
 	}
 
 	public static void UpdatePCSPosition(RealSpacePostion pos)
 	{
 		instance.pcsRSP = pos;
-		Shader.SetGlobalVector("_PCSPosition", instance.pcsRSP.TruncatedVector3(20000));
+		Shader.SetGlobalVector("_PCSPosition", instance.pcsRSP.AsTruncatedVector3(20000));
+	}
+
+	public static RealSpacePostion GetPCSPosition()
+	{
+		return instance.pcsRSP;
 	}
 
 	public static void SetRealWorldPos(Vector3 pos)
@@ -93,7 +127,7 @@ public class PlayerCapitalShip : MonoBehaviour
 		RealSpacePostion difference = new RealSpacePostion(target.GetPosition()).Subtract(instance.pcsRSP);
 		thisJumpSpeed = (float)(jumpBaseLineSpeed / difference.Magnitude());
 
-		Vector3 vectorDifference = difference.TruncatedVector3(20000);
+		Vector3 vectorDifference = difference.AsTruncatedVector3(20000);
 
 		lookAtTargetRot = Quaternion.LookRotation(vectorDifference, Vector3.up);
 		startTurnRot = instance.transform.rotation;
@@ -101,16 +135,31 @@ public class PlayerCapitalShip : MonoBehaviour
 		//Setup control variables
 		jumpT = 0.0f;
 		rotateT = 0.0f;
-		jumpBuildupBuffer = 3.0f;
+		jumpBuildupBuffer = jumpBuildupMax;
 	}
 
 	private void Update()
 	{
 		if (InputManagement.GetKeyDown(KeyCode.R))
 		{
-			ArbitraryLocation newLocation = new ArbitraryLocation();
-			newLocation.SetLocation(new RealSpacePostion(30000, 0, 0));
-			StartJump(newLocation);
+			//Get a random settlement location to teleport to
+			List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Settlements);
+			SettlementData.Settlement newTarget = null;
+			while (newTarget == null)
+			{
+				int targetIndex = Random.Range(0, factions.Count);
+				if (factions[targetIndex].GetData(Faction.Tags.Settlements, out SettlementData data))
+				{
+					if (data.settlements.Count > 0)
+					{
+						newTarget = data.settlements.ElementAt(Random.Range(0, data.settlements.Count)).Value;
+					}
+				}
+			}
+			if (newTarget != null)
+			{
+				StartJump(newTarget.location);
+			}
 		}
 
 		if (jumping)
@@ -124,6 +173,8 @@ public class PlayerCapitalShip : MonoBehaviour
 
 					if (rotateT >= 1.0f)
 					{
+						portal.SetActive(true);
+
 						//Move to next stage
 						jumpStage++;
 					}
@@ -134,15 +185,45 @@ public class PlayerCapitalShip : MonoBehaviour
 				if (jumpBuildupBuffer > 0.0f)
 				{
 					jumpBuildupBuffer -= Time.deltaTime;
+					float percentage = Mathf.Clamp01(jumpBuildupBuffer / jumpBuildupMax);
+
+					for (int i = 0; i < arcaneRings.Count; i++)
+					{
+						float ringT = Mathf.Pow(Mathf.Pow( Mathf.Clamp01((1.0f - percentage) * 2.0f) * 2.0f, 2.0f), (i * 0.25f) + 1);
+
+						arcaneRings[i].localPosition = Vector3.forward * (40.0f - ((5.0f - Mathf.Clamp01(jumpBuildupBuffer / jumpBuildupMax)) * i * 2f));
+						arcaneRings[i].localScale = Vector3.one * (ringT + (0.1f * Mathf.Sin(Time.time * 250)));
+					}
+
+					float piercerLength = 500.0f;
+					piercer.localPosition = new Vector3(0, 0, piercerLength);
+					float horiScale = Mathf.Max(Mathf.Lerp(-1f, 1f, percentage), 0.0f);
+					piercer.localScale = new Vector3(horiScale, piercerLength * 2.0f, horiScale);
+
+
+					backingEngineBuildup.localScale = Vector3.one * ((2.0f + (Mathf.Sin(Time.time * 50.0f) * 0.1f)) * backingBuildupCurve.Evaluate((1.0f - percentage) * 1.2f));
 				}
 				else
 				{
 					PlayerLocationManagement.ForceUnloadCurrentLocation();
-					inJumpPS.Play();
-					psTrans.localPosition = Vector3.forward * 5.0f;
 
-					surroundingCylinder.SetActive(true);
-					surroundingCylinder.transform.localPosition = new Vector3(0, 0, 1000);
+					fireEffect.SetActive(true);
+					jumpPs.Play();
+					portal.SetActive(false);
+
+					engineLine.SetActive(true);
+
+					piercer.localScale = Vector3.zero;
+
+					pulseT = 1.0f;
+
+					//Setup trail
+					trail.gameObject.SetActive(true);
+					trail.SetPositions(new Vector3[2]
+					{
+						Vector3.zero,
+						Vector3.zero
+					});
 
 					jumpStage++;
 				}
@@ -154,7 +235,7 @@ public class PlayerCapitalShip : MonoBehaviour
 				{
 					jumpT += Time.deltaTime * thisJumpSpeed;
 
-					surroundingCylinder.transform.localPosition = Vector3.Lerp(surroundingCylinder.transform.localPosition, new Vector3(0, 0, 0), Time.deltaTime);
+					trail.SetPosition(1, new Vector3(0, 0, Mathf.Lerp(0, -maxTrailLength, jumpT * 15.0f)));
 
 					WorldManagement.SetWorldCenterPosition(RealSpacePostion.Lerp(jumpStart, jumpTarget.GetPosition(), jumpCurve.Evaluate(jumpT)));
 					UpdatePCSPosition(WorldManagement.worldCenterPosition);
@@ -163,13 +244,33 @@ public class PlayerCapitalShip : MonoBehaviour
 					{
 						//We have arrived
 						jumpStage++;
+						endOfJumpCachedRingPositions.Clear();
 
 						postJumpT = 0.0f;
 
-						inJumpPS.Stop();
+						jumpPs.Stop();
+
+						fireEffect.SetActive(false);
+
+						backingEngineBuildup.localScale = Vector3.zero;
+						engineLine.SetActive(false);
+
+						pulseT = 1.0f;
 
 						//currently just ending jump here
 						EndJump();
+					}
+
+					for (int i = 0; i < arcaneRings.Count; i++)
+					{
+						Vector3 targetPosition = Vector3.back * (4.0f + ((((i + 1) * (jumpT + 1.0f) * 3.0f) + (0.1f * Mathf.Sin(Time.time * 500.0f))) * 5.0f));
+
+						arcaneRings[i].localPosition = Vector3.Lerp(arcaneRings[i].localPosition, targetPosition, 10.0f * Time.deltaTime);
+
+						if (jumpT >= 1.0f)
+						{
+							endOfJumpCachedRingPositions.Add(arcaneRings[i].localPosition);
+						}
 					}
 				}
 			}
@@ -177,26 +278,35 @@ public class PlayerCapitalShip : MonoBehaviour
 
 		if (jumpStage == JumpStage.PostJump)
 		{
-			postJumpT += Time.deltaTime * 5.0f;
+			postJumpT += Time.deltaTime;
 
-			psTrans.localPosition = new Vector3(0, 0, Mathf.Lerp(5, 0, Mathf.Clamp01(postJumpT)));
+			trail.SetPosition(0, new Vector3(0, 0, Mathf.Lerp(0, -maxTrailLength, postJumpT)));
 
-			GeneratorManagement.SetOffset(transform.forward * 500 * (1.0f - Mathf.Clamp01(postJumpT)));
+			for (int i = 0; i < arcaneRings.Count; i++)
+			{
+				arcaneRings[i].localPosition = Vector3.Lerp(endOfJumpCachedRingPositions[i], Vector3.forward * 500.0f, postJumpT);
+				arcaneRings[i].localScale = Vector3.Lerp(arcaneRings[i].localScale, Vector3.one * 1000.0f, Time.deltaTime * 2.0f);
+			}
+
+			GeneratorManagement.SetOffset(transform.forward * 500 * (1.0f - Mathf.Clamp01(postJumpT * 5f)));
 
 			if (postJumpT >= 1.0f)
 			{
 				jumpStage++;
+				trail.gameObject.SetActive(false);
+
+				foreach (Transform ring in arcaneRings)
+				{
+					ring.localScale = Vector3.zero;
+				}
 			}
 		}
 
-		if (!jumping && surroundingCylinder.activeSelf)
+		if (pulseT > 0.0f)
 		{
-			surroundingCylinder.transform.localPosition = Vector3.Lerp(surroundingCylinder.transform.localPosition, new Vector3(0, 0, -1000), Time.deltaTime);
+			pulseT -= Time.deltaTime * 2.0f;
 
-			if (surroundingCylinder.transform.localPosition.z < -990)
-			{
-				surroundingCylinder.SetActive(false);
-			}
+			pulseMat.SetFloat("_T", 1.0f - pulseT);
 		}
 	}
 

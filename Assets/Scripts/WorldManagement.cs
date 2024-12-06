@@ -176,7 +176,7 @@ public class WorldManagement : MonoBehaviour
     public static RealSpacePostion OffsetFromWorldCenter(RealSpacePostion position, Vector3 additionalOffset)
     {
 #if UNITY_EDITOR
-        debugPositions.Add(position.TruncatedVector3(debugMultiplier));
+        debugPositions.Add(position.AsTruncatedVector3(debugMultiplier));
 #endif
         RealSpacePostion toReturn = new RealSpacePostion(position);
 
@@ -185,7 +185,7 @@ public class WorldManagement : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Vector3 playerPos = worldCenterPosition.TruncatedVector3(debugMultiplier);
+        Vector3 playerPos = worldCenterPosition.AsTruncatedVector3(debugMultiplier);
 
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(playerPos, debugSize/2);
@@ -307,7 +307,7 @@ public class RealSpacePostion
         return new RealSpacePostion(x / mag, y / mag, z / mag);
     }
 
-    public Vector3 TruncatedVector3(double modifier)
+    public Vector3 AsTruncatedVector3(double modifier)
     {
         return new Vector3((float)(x/modifier), (float)(y / modifier), (float)(z / modifier));
     }

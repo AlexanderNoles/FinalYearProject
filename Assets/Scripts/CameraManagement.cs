@@ -178,6 +178,8 @@ public class CameraManagement : MonoBehaviour
                 {
                     if (UIManagement.FirstFrameMapIntroRunning())
                     {
+						backingCamera.position = (new Vector3(0, 1, -1).normalized * cameraOffsetInMap) - PlayerCapitalShip.GetPCSPosition().AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
+
                         inMapRot = new Vector2(45, 0);
                         actualBackingCameraData.renderPostProcessing = true;
                         actualBackingCameraData.SetRenderer(0);
@@ -207,14 +209,12 @@ public class CameraManagement : MonoBehaviour
 
                     backingCamera.position += relativeWasdInput * (Time.deltaTime * (InputManagement.GetKey(KeyCode.LeftShift) ? 75 : 50));
 
-                    Vector3 anchorPos = MapManagement.GetDisplayOffset();
-
-                    Vector3 offsetFromAnchor = backingCamera.position - anchorPos;
+                    Vector3 offsetFromAnchor = backingCamera.position;
 
                     float mag = Mathf.Clamp(offsetFromAnchor.magnitude, 5, 150);
 
                     offsetFromAnchor = offsetFromAnchor.normalized * mag;
-                    backingCamera.position = anchorPos + offsetFromAnchor;
+                    backingCamera.position = offsetFromAnchor;
                 }
 
                 backingCamera.rotation = Quaternion.Euler(inMapRot.x, inMapRot.y, 0);

@@ -61,18 +61,17 @@ public class SurroundingsRenderingManagement : MonoBehaviour
 			{
 				if (UIManagement.FirstFrameMapIntroRunning())
 				{
-					Vector3 worldCenterPos = WorldManagement.worldCenterPosition.TruncatedVector3(UIManagement.mapRelativeScaleModifier);
-					transform.position = worldCenterPos;
 					skybox.SetActive(false);
 				}
 
                 float evaluatedIntroT = UIManagement.EvaluatedMapIntroT();
 
-				Vector3 currentOffset = ((Vector3.down + Vector3.forward).normalized * Mathf.Lerp(0.0f, CameraManagement.cameraOffsetInMap, evaluatedIntroT));
+				//Animation temporarily disabled
+				Vector3 currentOffset = Vector3.down * Mathf.Lerp(0.0f, CameraManagement.cameraOffsetInMap, 1.0f - evaluatedIntroT);
 
 				foreach (SurroundingObject obj in controlledObjects)
                 {
-                    obj.transform.localPosition = -obj.postion.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + currentOffset;
+                    obj.transform.localPosition = -obj.postion.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier) + currentOffset;
 					obj.SetShellOffset(-1);
 					obj.SetObjectVisualScale((obj.scale / UIManagement.mapRelativeScaleModifier));
 				}

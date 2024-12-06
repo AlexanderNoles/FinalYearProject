@@ -67,7 +67,7 @@ public class MapNode : INode
 
     public Vector3 GetPosition()
     {
-        return -actualPos.TruncatedVector3(modifier);
+        return -actualPos.AsTruncatedVector3(modifier);
     }
 
     public MapNode(RealSpacePostion pos, TerritoryData parentData)

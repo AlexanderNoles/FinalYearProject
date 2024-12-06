@@ -112,9 +112,6 @@ public class TerritoryData : DataBase
 	//If the starting position fails the degen check then all points will be automatically added as a seperate line
 	//and the process will repeat
 	//We only care about the already traveresed border positions during this start position check (so we don't keep traversing the same thing)
-
-	private Vector3 mapDrawOffset;
-
 	//
 
 	//First is the orthagonal vector (N, W, S, E) then their diagonal pair (the cell to check to see if we can traverse this direction), then their opposite diagonal
@@ -128,7 +125,7 @@ public class TerritoryData : DataBase
 	};
 
 
-	public List<List<Vector3>> CalculateMapBorderPositions(Vector3 offset, out Vector3 iconPosition, out Vector3 iconScale)
+	public List<List<Vector3>> CalculateMapBorderPositions(out Vector3 iconPosition, out Vector3 iconScale)
 	{
 		iconPosition = Vector3.zero;
 		iconScale = Vector3.zero;
@@ -136,7 +133,6 @@ public class TerritoryData : DataBase
 		int currentAverageCount = 0;
 		int largestBorderIndex = -1;
 
-		mapDrawOffset = offset;
 		double halfDensity = WorldManagement.GetGridDensityHalf();
 		double fullDensity = WorldManagement.GetGridDensity();
 
@@ -407,6 +403,6 @@ public class TerritoryData : DataBase
 
 	private Vector3 GetMapPosition(RealSpacePostion input)
 	{
-		return -input.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + mapDrawOffset;
+		return -input.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
 	}
 }

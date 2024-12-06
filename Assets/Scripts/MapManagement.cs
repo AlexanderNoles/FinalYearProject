@@ -28,13 +28,6 @@ public class MapManagement : MonoBehaviour
 	private Dictionary<Transform, LineRenderer> cachedTransformToBorderRenderer = new Dictionary<Transform, LineRenderer>();
     private Dictionary<Transform, SpriteRenderer> cachedTransformToNationIconRenderers = new Dictionary<Transform, SpriteRenderer>();
 
-
-    public static Vector3 GetDisplayOffset()
-    {
-        return (new Vector3(0, -1, 1).normalized * CameraManagement.cameraOffsetInMap) +
-                        WorldManagement.worldCenterPosition.TruncatedVector3(UIManagement.mapRelativeScaleModifier);
-    }
-
     private void Start()
     {
         mapRingMeshRenderes = mapElementsPools.GetComponentsOnAllActiveObjects<MeshRenderer>(0);
@@ -50,10 +43,15 @@ public class MapManagement : MonoBehaviour
     {
         if (UIManagement.MapActive())
         {
-            if (UIManagement.MapIntroRunning() || extraFrame)
+			mapElementsPools.UpdateNextObjectPosition(shipIndicatorPool, -PlayerCapitalShip.GetPCSPosition().AsTruncatedVector3(UIManagement.mapRelativeScaleModifier));
+			mapElementsPools.PruneObjectsNotUpdatedThisFrame(shipIndicatorPool);
+
+			if (UIManagement.MapIntroRunning() || extraFrame)
             {
                 if (!UIManagement.MapIntroRunning())
                 {
+					//Extra frame after map intro runs
+
                     //Want to run for an extra frame otherwise surroundings rendering could move out of sync after we've finished
                     //This actually happens a lot because of the speed of the map intro animation
                     extraFrame = false;
@@ -83,12 +81,9 @@ public class MapManagement : MonoBehaviour
                     foreach (SurroundingObject surroundingObject in surroundingObjects)
                     {
                         mapObjectsAndParents.Add((surroundingObject.transform, surroundingObject.GetInWorldParent()));
-                    }
+                    };
 
-                    Vector3 shipIndicatorPos = new Vector3(0, -1, 1).normalized * CameraManagement.cameraOffsetInMap;
-                    mapElementsPools.UpdateNextObjectPosition(shipIndicatorPool, shipIndicatorPos);
-
-                    mapBasePos = shipIndicatorPos + WorldManagement.worldCenterPosition.TruncatedVector3(UIManagement.mapRelativeScaleModifier);
+                    mapBasePos = Vector3.zero;
                 }
 
                 foreach ((Transform, Transform) entry in mapObjectsAndParents)
@@ -104,7 +99,6 @@ public class MapManagement : MonoBehaviour
                     Vector3 scale = entry.Item1.position - parentPos;
                     scale.y = 0;
                     float scaleMag = Mathf.Max(1, scale.magnitude);
-
 
                     Transform mapRing = mapElementsPools.UpdateNextObjectPosition(mapRingPool, parentPos);
                     mapRing.localScale = new Vector3(scaleMag, 1, scaleMag) * 2;
@@ -136,8 +130,6 @@ public class MapManagement : MonoBehaviour
                     //We need to get all the factions with the territory tag and then spawn territory squares based on that
                     List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Territory);
 
-                    Vector3 displayOffset = GetDisplayOffset();
-
 					GameWorld gameworld = (GameWorld)SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld)[0];
 					gameworld.GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
 					gameworld.GetData(Faction.Tags.Historical, out HistoryData historyData);
@@ -145,7 +137,7 @@ public class MapManagement : MonoBehaviour
 					//Draw battle indicators
 					foreach (KeyValuePair<RealSpacePostion, Battle> battle in globalBattleData.battles)
 					{
-						mapElementsPools.UpdateNextObjectPosition(6, -battle.Key.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset + Vector3.down * 0.1f);
+						mapElementsPools.UpdateNextObjectPosition(6, -battle.Key.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier) + Vector3.down * 0.1f);
 					}
 
 					//Draw per faction data
@@ -166,7 +158,7 @@ public class MapManagement : MonoBehaviour
 									for (int i = 0; i < territoryData.borders.Count; i++)
 									{
 										MonitorBreak.Bebug.Helper.DrawWirePlane(
-											-territoryData.borders.ElementAt(i).TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset,
+											-territoryData.borders.ElementAt(i).AsTruncatedVector3(UIManagement.mapRelativeScaleModifier),
 											debugScale,
 											Vector3.up,
 											factionColour,
@@ -181,7 +173,7 @@ public class MapManagement : MonoBehaviour
 										for (int k = 0; k < wdhjbnhjawbndhjabhjgdb; k++)
 										{
 											MonitorBreak.Bebug.Helper.DrawWirePlane(
-												-battle.Key.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset,
+												-battle.Key.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier),
 												debugScale * (1.0f + (k * 0.1f)),
 												Vector3.up,
 												Color.yellow,
@@ -194,7 +186,7 @@ public class MapManagement : MonoBehaviour
 									foreach (KeyValuePair<RealSpacePostion, HistoryData.HistoryCell> historicalTerritory in historyData.previouslyOwnedTerritories)
 									{
 										MonitorBreak.Bebug.Helper.DrawWirePlane(
-											-historicalTerritory.Key.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset,
+											-historicalTerritory.Key.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier),
 											debugScale,
 											Vector3.up,
 											new Color(0.1f, 0.1f, 0.1f, 1.0f),
@@ -205,7 +197,7 @@ public class MapManagement : MonoBehaviour
 								else
 								{
 									//New method
-									List<List<Vector3>> borderLines = territoryData.CalculateMapBorderPositions(displayOffset, out Vector3 iconPos, out Vector3 iconScale);
+									List<List<Vector3>> borderLines = territoryData.CalculateMapBorderPositions(out Vector3 iconPos, out Vector3 iconScale);
 
 									foreach (List<Vector3> line in borderLines)
 									{
@@ -254,7 +246,7 @@ public class MapManagement : MonoBehaviour
 							{
 								foreach (KeyValuePair<RealSpacePostion, SettlementData.Settlement> s in data.settlements)
 								{
-									mapElementsPools.UpdateNextObjectPosition(4, -s.Value.actualSettlementPos.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset);
+									mapElementsPools.UpdateNextObjectPosition(4, -s.Value.actualSettlementPos.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier));
 								}
 							}
 						}
@@ -271,7 +263,7 @@ public class MapManagement : MonoBehaviour
 									{
 										foreach (KeyValuePair<RealSpacePostion, List<ShipCollection>> entry in milData.cellCenterToFleets)
 										{
-											Vector3 pos = -entry.Key.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset;
+											Vector3 pos = -entry.Key.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
 
 											Color color = Color.green;
 											if (battleData.ongoingBattles.ContainsKey(entry.Key))
@@ -315,8 +307,8 @@ public class MapManagement : MonoBehaviour
 											lineRenderer.SetColors(Color.black, factionColour);
 #pragma warning restore CS0618 // Type or member is obsolete
 
-											Vector3 startPos = -entry.Item1.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset;
-											Vector3 endPos = -entry.Item2.TruncatedVector3(UIManagement.mapRelativeScaleModifier) + displayOffset;
+											Vector3 startPos = -entry.Item1.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
+											Vector3 endPos = -entry.Item2.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
 
 											Vector3 difference = endPos - startPos;
 											pathParams.forwardVector = difference.normalized;
