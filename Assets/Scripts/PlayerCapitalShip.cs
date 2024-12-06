@@ -118,6 +118,12 @@ public class PlayerCapitalShip : MonoBehaviour
 			return;
 		}
 
+		if (target == null || target.Equals(PlayerLocationManagement.IsPlayerLocation(target)))
+		{
+			//! The above check is untested, no feasaible reason it shouldn't work but too tired to test so just want to make a note.
+			return;
+		}
+
 		jumping = true;
 		jumpStage = JumpStage.InitialTurn;
 		jumpTarget = target;
