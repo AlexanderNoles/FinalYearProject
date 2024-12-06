@@ -14,6 +14,8 @@ public class UIManagement : MonoBehaviour
     private static float mapIntroT;
     private static bool oneFrameBuffer = false;
 
+	private bool mapButtonPressed = false;
+
 	public HistoryUIManagement historyUI;
 
     public static bool MapIntroRunning()
@@ -68,17 +70,19 @@ public class UIManagement : MonoBehaviour
     {
         if (mapParent != null)
         {
-            if (InputManagement.GetKeyDown(KeyCode.M) && MonitorBreak.Bebug.Console.GetConsoleState() != MonitorBreak.Bebug.Console.ConsoleState.FullScreen)
+            if ((InputManagement.GetKeyDown(KeyCode.M) || mapButtonPressed) && MonitorBreak.Bebug.Console.GetConsoleState() != MonitorBreak.Bebug.Console.ConsoleState.FullScreen)
             {
-                bool active = !mapObject.activeSelf;
+				mapButtonPressed = false;
 
-                mapObject.SetActive(active);
+				bool active = !mapObject.activeSelf;
 
-                CameraManagement.SetMainCameraActive(!active);
-                SurroundingsRenderingManagement.SetActivePlanetLighting(!active);
+				mapObject.SetActive(active);
 
-                mapIntroT = 1.0f;
-            }
+				CameraManagement.SetMainCameraActive(!active);
+				SurroundingsRenderingManagement.SetActivePlanetLighting(!active);
+
+				mapIntroT = 1.0f;
+			}
             else
             {
                 if (MapActive())
@@ -105,4 +109,11 @@ public class UIManagement : MonoBehaviour
             }
         }
     }
+
+	public void ToggleMapButton()
+	{
+		//This has to be done (instead of simply using this function for toggling the map and calling that when m is pressed)
+		//because the first frame of map animation system relies on UIManagement running before anything that uses it in the frame
+		mapButtonPressed = true;
+	}
 }

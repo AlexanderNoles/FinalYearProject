@@ -57,6 +57,8 @@ public class PlayerCapitalShip : MonoBehaviour
 	public Transform backingEngineBuildup;
 	public GameObject engineLine;
 
+	public GameObject outerEffect;
+
 	private void Awake()
 	{
 		instance = this;
@@ -67,6 +69,7 @@ public class PlayerCapitalShip : MonoBehaviour
 		portal.SetActive(false);
 		fireEffect.SetActive(false);
 		engineLine.SetActive(false);
+		outerEffect.SetActive(false);
 
 		pulseMat = pulseRenderer.material;
 		pulseMat.SetFloat("_T", 0.0f);
@@ -212,6 +215,7 @@ public class PlayerCapitalShip : MonoBehaviour
 					portal.SetActive(false);
 
 					engineLine.SetActive(true);
+					outerEffect.SetActive(true);
 
 					piercer.localScale = Vector3.zero;
 
@@ -254,6 +258,7 @@ public class PlayerCapitalShip : MonoBehaviour
 
 						backingEngineBuildup.localScale = Vector3.zero;
 						engineLine.SetActive(false);
+						outerEffect.SetActive(false);
 
 						pulseT = 1.0f;
 
@@ -285,7 +290,7 @@ public class PlayerCapitalShip : MonoBehaviour
 			for (int i = 0; i < arcaneRings.Count; i++)
 			{
 				arcaneRings[i].localPosition = Vector3.Lerp(endOfJumpCachedRingPositions[i], Vector3.forward * 500.0f, postJumpT);
-				arcaneRings[i].localScale = Vector3.Lerp(arcaneRings[i].localScale, Vector3.one * 1000.0f, Time.deltaTime * 2.0f);
+				arcaneRings[i].localScale = Vector3.Lerp(arcaneRings[i].localScale, new Vector3(1, 0, 1) * 1000.0f, Time.deltaTime * 2.0f);
 			}
 
 			GeneratorManagement.SetOffset(transform.forward * 500 * (1.0f - Mathf.Clamp01(postJumpT * 5f)));

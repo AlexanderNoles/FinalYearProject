@@ -25,6 +25,7 @@ public class GameManagement : MonoBehaviour
         };
 
         debugOutput = new DebugOutput(sections, Vector2.zero, true);
+		debugOutput.render = false;
 
         fpsHandle = debugOutput.AddPart(0, new DebugOutput.Part(DebugOutput.Part.PartType.Text, "0 FPS"));
         otherFpsInfoHandle = debugOutput.AddPart(0, new DebugOutput.Part(DebugOutput.Part.PartType.Text, "0 FPS"));
