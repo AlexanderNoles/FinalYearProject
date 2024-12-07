@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class VisualDatabase : MonoBehaviour
 {
+	public static readonly string goodColourString = "#4bed32ff";
+	public static readonly string badColourString = "#c4372dff";
+	public static readonly string statisticColour = "#d1b536";
+
+
+
+
+	[Header("Other Factions")]
     private static VisualDatabase instance;
 
     private static int currentColourIndex = 0;
@@ -11,6 +19,15 @@ public class VisualDatabase : MonoBehaviour
 
     private static int currentIconIndex = 0;
     public List<Sprite> factionIcons = new List<Sprite>();
+
+	[Header("Player")]
+	public List<Sprite> unitIconImages = new List<Sprite>();
+
+	private static readonly Dictionary<System.Type, int> unitTypeToIconSprite = new Dictionary<System.Type, int>() 
+	{
+		{typeof(LivingQuartersUnit), 0},
+		{typeof(FactoryUnit), 1}
+	};
 
     private void Awake()
     {
@@ -32,4 +49,14 @@ public class VisualDatabase : MonoBehaviour
 
         return instance.factionIcons[currentIconIndex];
     }
+
+	public static Sprite GetUnitSpriteFromType(System.Type type)
+	{
+		if (instance != null && unitTypeToIconSprite.ContainsKey(type))
+		{
+			return instance.unitIconImages[unitTypeToIconSprite[type]];
+		}
+
+		return null;
+	}
 }

@@ -6,7 +6,7 @@ public class UIManagement : MonoBehaviour
 {
     private static UIManagement instance;
 
-    //! NEED A PRIORITY SYSTEM A UI AT SOME POINT
+	[Header("Map")]
     public GameObject mapParent;
     public const float mapRelativeScaleModifier = 1000.0f;
     public AnimationCurve mapIntroCurve;
@@ -16,7 +16,11 @@ public class UIManagement : MonoBehaviour
 
 	private bool mapButtonPressed = false;
 
+	[Header("History")]
 	public HistoryUIManagement historyUI;
+
+	[Header("Ship Management")]
+	public GameObject shipManagementUI;
 
     public static bool MapIntroRunning()
     {
@@ -108,6 +112,11 @@ public class UIManagement : MonoBehaviour
                 }
             }
         }
+
+		if (InputManagement.GetKeyDown(KeyCode.E))
+		{
+			ToggleShipManagement();
+		}
     }
 
 	public void ToggleMapButton()
@@ -115,5 +124,10 @@ public class UIManagement : MonoBehaviour
 		//This has to be done (instead of simply using this function for toggling the map and calling that when m is pressed)
 		//because the first frame of map animation system relies on UIManagement running before anything that uses it in the frame
 		mapButtonPressed = true;
+	}
+
+	public void ToggleShipManagement()
+	{
+		shipManagementUI.SetActive(!shipManagementUI.activeSelf);
 	}
 }

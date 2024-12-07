@@ -39,6 +39,12 @@ public class SimulationManagement : MonoBehaviour
     private const float TICK_MAX_LENGTH = 3;
     private float tickInitFrame;
     private float minimumFrameLength = 0;
+	private static bool forceTick;
+
+	public static void ForceTick()
+	{
+		forceTick = true;
+	}
 
     public static float GetSimulationDaysAsTime(int dayNumber)
     {
@@ -176,7 +182,7 @@ public class SimulationManagement : MonoBehaviour
 
     public static List<Faction> GetAllFactionsWithTag(Faction.Tags tag)
     {
-        if (instance.factions.ContainsKey(tag))
+        if (instance != null && instance.factions.ContainsKey(tag))
         {
             return instance.factions[tag];
         }
@@ -533,7 +539,7 @@ public class SimulationManagement : MonoBehaviour
         //Check enought time has passed before we do the next tick
         //We also have a minimum frame count so a spiked frame won't cause quick ticks
         //(This is an imperfect system but works more than well enough for the use case)
-        if (
+        if ((
             (Time.time > nextTickTime 
             && (Time.frameCount > tickInitFrame + minimumFrameLength)
             && (tickTask == null || tickTask.IsCompleted))
@@ -542,7 +548,14 @@ public class SimulationManagement : MonoBehaviour
 
 			!(SimulationSettings.ShouldRunHistory() && historyTicksLeft > 0)
 			)
+
+			||
+
+			forceTick
+			)
         {
+			forceTick = false;
+
             if (simulatioSpeedModifier > 0)
             {
                 nextTickTime = (Time.time + (TICK_MAX_LENGTH / simulatioSpeedModifier));

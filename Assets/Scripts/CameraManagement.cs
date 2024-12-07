@@ -114,6 +114,11 @@ public class CameraManagement : MonoBehaviour
 		instance.positionLastFrame = instance.transform.position;
 	}
 
+	public static void AddRotation(Vector2 input)
+	{
+		instance.cameraRot += input;
+	}
+
     //////
     
     public static void SetMainCameraActive(bool active)
@@ -234,21 +239,22 @@ public class CameraManagement : MonoBehaviour
 
         if (currentMode == Mode.Normal)
         {
-            //Rotate camera
+			//Rotate camera
+			Vector2 cameraInput = Vector2.zero;
+
             if (InputManagement.GetMouseButton(InputManagement.cameraMove))
             {
-                Vector2 cameraInput = InputManagement.MouseInput();
-
-                cameraRot.y += cameraInput.y;
-                cameraRot.x = Mathf.Clamp(cameraRot.x + cameraInput.x, -85, 85);
-
-                cameraAxis.rotation = Quaternion.Euler(cameraRot.x, cameraRot.y, 0.0f);
-
-                mainCamera.transform.LookAt(cameraAxis);
+                cameraInput = InputManagement.MouseInput();
             }
 
-            //Move camera out
-            float scrollInput = InputManagement.ScrollWheelInput();
+			cameraRot.y += cameraInput.y;
+			cameraRot.x = Mathf.Clamp(cameraRot.x + cameraInput.x, -85, 85);
+
+			cameraAxis.rotation = Quaternion.Euler(cameraRot.x, cameraRot.y, 0.0f);
+			mainCamera.transform.LookAt(cameraAxis);
+
+			//Move camera out
+			float scrollInput = InputManagement.ScrollWheelInput();
 
             currentCameraZoomTarget = Mathf.Clamp(currentCameraZoomTarget - scrollInput, 10, 250);
             transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.back * currentCameraZoomTarget, Time.deltaTime * 5.0f);
@@ -312,7 +318,7 @@ public class CameraManagement : MonoBehaviour
             Vector3 wasdInput = InputManagement.WASDInput();
             Vector3 relativeWasdInput = ((wasdInput.z * cameraRight) + (wasdInput.x * cameraForward)).normalized;
 
-            cameraAxis.position += relativeWasdInput * Time.deltaTime * (InputManagement.GetKey(KeyCode.LeftShift) ? 1000 : 50);
+            cameraAxis.position += relativeWasdInput * Time.deltaTime * (InputManagement.GetKey(KeyCode.LeftShift) ? 10000 : 50);
         }
 
         SetBackingCameraRotation(transform.rotation);

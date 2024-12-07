@@ -9,7 +9,6 @@ using System.Linq.Expressions;
 
 public class MapManagement : MonoBehaviour
 {
-    public TextMeshProUGUI dateLabel;
     public MultiObjectPool mapElementsPools;
     private const int mapRingPool = 0;
     private const int shipIndicatorPool = 1;
@@ -63,9 +62,6 @@ public class MapManagement : MonoBehaviour
 				//Can't use UIManagment's first frame of intro anim because we get set active a frame after the intro anim starts :(
                 if (!pastFirstFrameOfMapAnim)
                 {
-                    //Do inital date set
-                    dateLabel.text = SimulationManagement.GetDateString();
-
                     //Disable any map elements that might still be showing
                     //The parent object will have been set inactive so they won't actually render
                     //But they would now cause we have turned the object active again
@@ -340,7 +336,6 @@ public class MapManagement : MonoBehaviour
 
                 if (Time.time > dateRefreshTime)
                 {
-                    dateLabel.text = SimulationManagement.GetDateString();
                     dateRefreshTime = Time.time + (1.0f / SimulationManagement.GetSimulationSpeed());
                 }
             }

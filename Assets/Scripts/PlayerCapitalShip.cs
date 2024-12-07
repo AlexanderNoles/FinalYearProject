@@ -118,9 +118,9 @@ public class PlayerCapitalShip : MonoBehaviour
 			return;
 		}
 
-		if (target == null || target.Equals(PlayerLocationManagement.IsPlayerLocation(target)))
+		if (target == null || PlayerLocationManagement.IsPlayerLocation(target))
 		{
-			//! The above check is untested, no feasaible reason it shouldn't work but too tired to test so just want to make a note.
+			Debug.LogWarning("Can't jump to same location");
 			return;
 		}
 
@@ -178,7 +178,12 @@ public class PlayerCapitalShip : MonoBehaviour
 				if (rotateT < 1.0f)
 				{
 					rotateT += Time.deltaTime * 0.1f;
+					float originalY = transform.rotation.eulerAngles.y;
 					transform.rotation = Quaternion.Lerp(startTurnRot, lookAtTargetRot, turnCurve.Evaluate(rotateT));
+
+					float difference = transform.rotation.eulerAngles.y - originalY;
+
+					CameraManagement.AddRotation(new Vector2(0, difference));
 
 					if (rotateT >= 1.0f)
 					{
@@ -235,6 +240,9 @@ public class PlayerCapitalShip : MonoBehaviour
 						Vector3.zero
 					});
 
+					SimulationManagement.SimulationSpeed("10");
+					SimulationManagement.ForceTick();
+
 					jumpStage++;
 				}
 			}
@@ -253,6 +261,7 @@ public class PlayerCapitalShip : MonoBehaviour
 					if (jumpT >= 1.0f)
 					{
 						//We have arrived
+						SimulationManagement.SimulationSpeed("1");
 						jumpStage++;
 						endOfJumpCachedRingPositions.Clear();
 
