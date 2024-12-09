@@ -3,6 +3,6 @@
 }
 { item
 	//This is a test item
-	health: "0.2"
+	health: "100"
 	testKey2: "I love kissing *testAlias*!"
 }
