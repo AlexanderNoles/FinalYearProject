@@ -10,7 +10,6 @@ public class InformationDisplayControl : MonoBehaviour
 
 	[Header("General")]
 	public TextMeshProUGUI title;
-	public Image backingImage;
 	public TextMeshProUGUI description;
 
 	private string normalDescriptionString;
@@ -42,7 +41,6 @@ public class InformationDisplayControl : MonoBehaviour
 		}
 
 		title.text = input.GetTitle();
-		backingImage.sprite = input.GetBackingImage();
 		description.text = normalDescriptionString;
 
 		blocker.SetActive(false);
@@ -60,7 +58,7 @@ public class InformationDisplayControl : MonoBehaviour
 
 	private void Update()
 	{
-		if (!blocker.activeSelf && InputManagement.GetKeyDown(KeyCode.T) && !string.IsNullOrEmpty(extendedDescriptionString))
+		if (!blocker.activeSelf && InputManagement.GetKeyDown(KeyCode.T) && !noExtraInfo)
 		{
 			if (showingExtendedDescription)
 			{

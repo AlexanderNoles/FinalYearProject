@@ -27,7 +27,15 @@ public class PlayerCapitalShip : MonoBehaviour
 	private static float jumpBuildupBuffer;
 	private const float jumpBuildupMax = 10.0f;
 
-	private const float jumpBaseLineSpeed = 2000.0f;
+	private const float jumpBaseLineSpeed = 500.0f;
+
+	[MonitorBreak.Bebug.ConsoleCMD("SHIPSPEED")]
+	public static void SetShipSpeedCMD(string newSpeed)
+	{
+		shipSpeedMultiplier = int.Parse(newSpeed);
+	}
+
+	private static float shipSpeedMultiplier = 1;
 	private static float thisJumpSpeed;
 
 	private enum JumpStage
@@ -251,7 +259,7 @@ public class PlayerCapitalShip : MonoBehaviour
 				//Lerp the world center from current to target
 				if (jumpT < 1.0f)
 				{
-					jumpT += Time.deltaTime * thisJumpSpeed;
+					jumpT += Time.deltaTime * thisJumpSpeed * shipSpeedMultiplier;
 
 					trail.SetPosition(1, new Vector3(0, 0, Mathf.Lerp(0, -maxTrailLength, jumpT * 15.0f)));
 

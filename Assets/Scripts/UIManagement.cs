@@ -19,8 +19,8 @@ public class UIManagement : MonoBehaviour
 	[Header("History")]
 	public HistoryUIManagement historyUI;
 
-	[Header("Ship Management")]
-	public GameObject shipManagementUI;
+	[Header("Inventory")]
+	public GameObject inventoryUI;
 
     public static bool MapIntroRunning()
     {
@@ -115,7 +115,7 @@ public class UIManagement : MonoBehaviour
 
 		if (InputManagement.GetKeyDown(KeyCode.E))
 		{
-			ToggleShipManagement();
+			ToggleInventory();
 		}
     }
 
@@ -126,8 +126,8 @@ public class UIManagement : MonoBehaviour
 		mapButtonPressed = true;
 	}
 
-	public void ToggleShipManagement()
+	public void ToggleInventory()
 	{
-		shipManagementUI.SetActive(!shipManagementUI.activeSelf);
+		inventoryUI.SetActive(!inventoryUI.activeSelf);
 	}
 }

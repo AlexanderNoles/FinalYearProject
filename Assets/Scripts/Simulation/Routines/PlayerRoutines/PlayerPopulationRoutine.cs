@@ -15,9 +15,7 @@ public class PlayerPopulationRoutine : RoutineBase
 
 			if (faction.GetData(Faction.Tags.Population, out PopulationData populationData))
 			{
-				populationData.populationNaturalGrowthLimt = 300 + (300 * shipData.CountUnit<LivingQuartersUnit>());
-
-				Console.Log(populationData.populationNaturalGrowthLimt);
+				populationData.populationNaturalGrowthLimt = 300;
 
 				//Growth rate changes based on the nature of the ship
 				//Divide the growth rate by simulation speed because sim speed will only be raised in typical gameplay when warping

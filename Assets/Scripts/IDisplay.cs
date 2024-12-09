@@ -6,6 +6,6 @@ public interface IDisplay
 {
 	public string GetTitle();
 	public string GetDescription();
-	public Sprite GetBackingImage();
+	public Sprite GetIcon();
 	public string GetExtraInformation();
 }

@@ -13,6 +13,8 @@ using UnityEngine;
 public class PlayerFaction : Faction
 {
 	public const string shipDataKey = "ShipData";
+	public const string inventoryDataKey = "InventoryData";
+	public const string statDataKey = "StatData";
 
 	public override void InitTags()
 	{
@@ -38,5 +40,8 @@ public class PlayerFaction : Faction
 		//This holds all the basic ship data
 		//(a.k.a data that isn't covered by a more specific module)
 		AddData(shipDataKey, new PlayerShipData());
+
+		AddData(inventoryDataKey, new PlayerInventory());
+		AddData(statDataKey, new PlayerStats());
 	}
 }

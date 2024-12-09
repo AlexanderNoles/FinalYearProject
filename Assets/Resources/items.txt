@@ -1,0 +1,8 @@
+{ aliases
+	testAlias: "women"
+}
+{ item
+	//This is a test item
+	health: "0.2"
+	testKey2: "I love kissing *testAlias*!"
+}

@@ -20,15 +20,6 @@ public class VisualDatabase : MonoBehaviour
     private static int currentIconIndex = 0;
     public List<Sprite> factionIcons = new List<Sprite>();
 
-	[Header("Player")]
-	public List<Sprite> unitIconImages = new List<Sprite>();
-
-	private static readonly Dictionary<System.Type, int> unitTypeToIconSprite = new Dictionary<System.Type, int>() 
-	{
-		{typeof(LivingQuartersUnit), 0},
-		{typeof(FactoryUnit), 1}
-	};
-
     private void Awake()
     {
         instance = this;
@@ -49,14 +40,4 @@ public class VisualDatabase : MonoBehaviour
 
         return instance.factionIcons[currentIconIndex];
     }
-
-	public static Sprite GetUnitSpriteFromType(System.Type type)
-	{
-		if (instance != null && unitTypeToIconSprite.ContainsKey(type))
-		{
-			return instance.unitIconImages[unitTypeToIconSprite[type]];
-		}
-
-		return null;
-	}
 }
