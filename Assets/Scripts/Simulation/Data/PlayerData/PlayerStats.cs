@@ -6,7 +6,8 @@ public class PlayerStats : DataBase
 {
 	public static readonly Dictionary<string, float> statIdentifierToDefault = new Dictionary<string, float>() 
 	{
-		{Stats.health.ToString(), 100}
+		{Stats.health.ToString(), 100},
+		{Stats.healthregen.ToString(), 1}
 	};
 
 	public static float GetDefaultStatValue(string identifier)
@@ -79,7 +80,8 @@ public class PlayerStats : DataBase
 //Used to allow autofill in code editors
 public enum Stats
 {
-	health
+	health,
+	healthregen
 }
 
 public class StatContributor

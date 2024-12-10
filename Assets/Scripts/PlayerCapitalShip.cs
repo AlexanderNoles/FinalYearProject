@@ -15,8 +15,25 @@ public class PlayerCapitalShip : MonoBehaviour
 	private static PlayerCapitalShip instance;
 	private RealSpacePostion pcsRSP;
 	private static bool jumping;
+
+	public static bool IsJumping()
+	{
+		return jumping;
+	}
+
 	private static JumpStage jumpStage;
 	private static VisitableLocation jumpTarget;
+
+	public static RealSpacePostion GetTargetPosition()
+	{
+		if (jumpTarget == null)
+		{
+			throw new System.Exception("No jump target!");
+		}
+
+		return jumpTarget.GetPosition();
+	}
+
 	private static RealSpacePostion jumpStart;
 	private static Quaternion lookAtTargetRot;
 	private static Quaternion startTurnRot;

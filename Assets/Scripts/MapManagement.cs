@@ -25,9 +25,10 @@ public class MapManagement : MonoBehaviour
 
     private Dictionary<Transform, MeshRenderer> mapRingMeshRenderes;
 	private Dictionary<Transform, LineRenderer> cachedTransformToBorderRenderer = new Dictionary<Transform, LineRenderer>();
-    private Dictionary<Transform, SpriteRenderer> cachedTransformToNationIconRenderers = new Dictionary<Transform, SpriteRenderer>();
+	private Dictionary<Transform, LineRenderer> cachedTransformToJourneyRenderers = new Dictionary<Transform, LineRenderer>();
+	private Dictionary<Transform, SpriteRenderer> cachedTransformToNationIconRenderers = new Dictionary<Transform, SpriteRenderer>();
 
-    private void Start()
+	private void Start()
     {
         mapRingMeshRenderes = mapElementsPools.GetComponentsOnAllActiveObjects<MeshRenderer>(0);
     }
@@ -42,7 +43,8 @@ public class MapManagement : MonoBehaviour
     {
         if (UIManagement.MapActive())
         {
-			mapElementsPools.UpdateNextObjectPosition(shipIndicatorPool, -PlayerCapitalShip.GetPCSPosition().AsTruncatedVector3(UIManagement.mapRelativeScaleModifier));
+			Vector3 playerPos = -PlayerCapitalShip.GetPCSPosition().AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
+			mapElementsPools.UpdateNextObjectPosition(shipIndicatorPool, playerPos);
 			mapElementsPools.PruneObjectsNotUpdatedThisFrame(shipIndicatorPool);
 
 			if (UIManagement.MapIntroRunning() || extraFrame)
@@ -69,8 +71,9 @@ public class MapManagement : MonoBehaviour
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(4);
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(5);
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(6);
+					mapElementsPools.PruneObjectsNotUpdatedThisFrame(7);
 
-                    mapObjectsAndParents = new List<(Transform, Transform)>();
+					mapObjectsAndParents = new List<(Transform, Transform)>();
 
                     List<SurroundingObject> surroundingObjects = SurroundingsRenderingManagement.GetControlledObjects();
 
@@ -117,7 +120,27 @@ public class MapManagement : MonoBehaviour
 			}
             else
             {
-                if (Time.time > mapRefreshTime && (SimulationSettings.UpdateMap() || mapRefreshTime == 0))
+				if (PlayerCapitalShip.IsJumping())
+				{
+					//Update journey indicator
+					Transform newJourneyIndicator = mapElementsPools.UpdateNextObjectPosition(7, Vector3.zero);
+
+					if (!cachedTransformToJourneyRenderers.ContainsKey(newJourneyIndicator))
+					{
+						cachedTransformToJourneyRenderers.Add(newJourneyIndicator, newJourneyIndicator.GetComponent<LineRenderer>());
+					}
+
+					LineRenderer target = cachedTransformToJourneyRenderers[newJourneyIndicator];
+					target.SetPositions(new Vector3[2]
+					{
+					playerPos,
+					-PlayerCapitalShip.GetTargetPosition().AsTruncatedVector3(UIManagement.mapRelativeScaleModifier)
+					});
+				}
+
+				mapElementsPools.PruneObjectsNotUpdatedThisFrame(7);
+
+				if (Time.time > mapRefreshTime && (SimulationSettings.UpdateMap() || mapRefreshTime == 0))
                 {
 					float timeTillNextMapUpdate = (5.0f / SimulationManagement.GetSimulationSpeed());
 

@@ -11,6 +11,7 @@ public class InformationDisplayControl : MonoBehaviour
 	[Header("General")]
 	public TextMeshProUGUI title;
 	public TextMeshProUGUI description;
+	public GameObject flash;
 
 	private string normalDescriptionString;
 	private string extendedDescriptionString;
@@ -20,6 +21,11 @@ public class InformationDisplayControl : MonoBehaviour
 
 	public void Draw(IDisplay input)
 	{
+		//Flash
+		flash.SetActive(false);
+		flash.SetActive(true);
+		//
+
 		string descriptionText = input.GetDescription();
 		string extraInformation = input.GetExtraInformation();
 

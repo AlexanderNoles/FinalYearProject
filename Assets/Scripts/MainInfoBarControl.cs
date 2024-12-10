@@ -6,6 +6,7 @@ using UnityEngine;
 public class MainInfoBarControl : PostTickUpdate
 {
 	public TextMeshProUGUI populationLabel;
+	public TextMeshProUGUI healthLabel;
 
 	protected override void PostTick()
 	{
@@ -14,9 +15,11 @@ public class MainInfoBarControl : PostTickUpdate
 
 		foreach (Faction faction in player)
 		{
+			faction.GetData(PlayerFaction.statDataKey, out PlayerStats playerStats);
 			faction.GetData(Faction.Tags.Population, out PopulationData populationData);
 			
 			populationLabel.text = Mathf.FloorToInt(populationData.currentPopulationCount).ToString();
+			healthLabel.text = Mathf.FloorToInt(playerStats.GetStat(Stats.health.ToString())).ToString();
         }
 	}
 }

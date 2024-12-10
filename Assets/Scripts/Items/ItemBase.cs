@@ -8,6 +8,11 @@ public class ItemBase : IDisplay
 	private ItemDatabase.ItemData cachedItemData = null;
 	private List<StatContributor> statContributors = new List<StatContributor>();
 
+	public bool LinkedToItem()
+	{
+		return cachedItemData != null;
+	}
+
 	public int GetStatContributorsCount()
 	{
 		return statContributors.Count;
@@ -15,6 +20,11 @@ public class ItemBase : IDisplay
 
 	public void ApplyStatContributors(PlayerStats target)
 	{
+		if (cachedItemData == null)
+		{
+			return;
+		}
+
 		foreach (KeyValuePair<string, string> entry in cachedItemData.nonPredefinedKeyToValue)
 		{
 			if (target.statToValue.ContainsKey(entry.Key))
@@ -70,6 +80,11 @@ public class ItemBase : IDisplay
 
 	public Sprite GetIcon()
 	{
+		if (cachedItemData == null)
+		{
+			return null;
+		}
+
 		return cachedItemData.icon;
 	}
 

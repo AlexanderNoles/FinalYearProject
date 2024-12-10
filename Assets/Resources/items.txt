@@ -1,8 +1,24 @@
 { aliases
-	testAlias: "women"
+	goodColour: "#4bed32ff"
+	badColour: "#c4372dff"
+	statColour: "#d1b536"
+	health: "<color=*statColour*>Health</color> represents the overall condition of your ship. If it reaches 0 you die."
 }
-{ item
+{ item (debug)
 	//This is a test item
 	health: "100"
-	testKey2: "I love kissing *testAlias*!"
+	icon: "basic"
+	name: "Test Item"
+	description: "This item is a debug item that should not be included in the final game"
+	extra: "This is for alias testing: *health* wowee"
 }
+{ item (debug)
+	//This is a second test item
+	health: "-25"
+	healthregen: "5"
+	icon: "angry"
+	name: "Test Item #2"
+	description: "Wowee wowee, <color=*goodColour*>I love my creature!</color>"
+	extra: "This is for alias testing: *health* wowee"
+}
+

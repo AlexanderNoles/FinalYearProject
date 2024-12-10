@@ -46,7 +46,6 @@ public class ItemDatabase
 	{
 		currentItemIndex = 0;
 		itemIDToItemData.Clear();
-		const string seperator = ":";
 		Dictionary<string, string> aliasDict = new Dictionary<string, string>();
 
 		//Load file from resources
@@ -76,6 +75,13 @@ public class ItemDatabase
 
 				//Remove section start token and whitespace
 				sectionKey = PrepKeyString(line.Replace("{", ""));
+
+#if !UNITY_EDITOR
+				if (sectionKey.Contains("(debug)"))
+				{
+					inSection = false;
+				}
+#endif
 			}
 			else if (line.Contains("}"))
 			{
@@ -98,7 +104,7 @@ public class ItemDatabase
 				{
 					//This is an aliases definition section
 					//split input string based on ":" character
-					string[] parts = line.Split(seperator);
+					string[] parts = GetKeyAndBody(line);
 
 					if (parts.Length > 0)
 					{
@@ -111,7 +117,7 @@ public class ItemDatabase
 				{
 					//This is an item definition section
 
-					string[] parts = line.Split(seperator);
+					string[] parts = GetKeyAndBody(line);
 
 					if (parts.Length > 0)
 					{
@@ -159,6 +165,11 @@ public class ItemDatabase
 				}
 			}
 		}
+	}
+
+	private static string[] GetKeyAndBody(string input)
+	{
+		return input.Split(':', 2);
 	}
 
 	private static string PrepKeyString(string input, bool makeLower = true)

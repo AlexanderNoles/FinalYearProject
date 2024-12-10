@@ -18,6 +18,7 @@ public class InventoryUIManagement : MonoBehaviour
 	//UI Elements
 	public RectTransform slotArea;
 	public GameObject slotBaseObject;
+	public InformationDisplayControl selectedItemInformationDisplay;
 	private List<InventorySlotUI> inventorySlots = new List<InventorySlotUI>();
 
 	//This is the area covered by a inventory slot UI component, this includes padding
@@ -47,7 +48,8 @@ public class InventoryUIManagement : MonoBehaviour
 
 					//DEBUG
 					//Give player random items for testing
-					for (int i = 0; i < targetData.targetInventory.GetInventoryCapacity(); i++)
+					int count = Mathf.RoundToInt(targetData.targetInventory.GetInventoryCapacity() * Random.Range(0.6f, 1.0f));
+					for (int i = 0; i < count; i++)
 					{
 						targetData.targetInventory.AddItemToInventory(new ItemBase(ItemDatabase.GetRandomItemIndex()));
 					}
@@ -115,6 +117,12 @@ public class InventoryUIManagement : MonoBehaviour
 				}
 			}
 
+			//Flip axis if more than 6 (currently default) slots
+			if (inventoryCapacity > 6)
+			{
+				(xLimit, yLimit) = (yLimit, xLimit);
+			}
+
 			//Need to perform two (one positive, one negative) iterations per each rounded half of the limits
 			//we stop immeditely if the number of iterations reaches the limit
 			int totalYIterations = 0;
@@ -180,8 +188,18 @@ public class InventoryUIManagement : MonoBehaviour
 
 				//Then we do an initial draw on this slots
 				//If there is no item in that slot then this function will pass null
-				newSlot.Draw(targetData.targetInventory.GetInventoryItemAtPosition(i));
+				newSlot.Draw(targetData.targetInventory.GetInventoryItemAtPosition(i), this);
 			}
 		}
+	}
+
+	public void DisplayItemInfo(ItemBase item)
+	{
+		if (!item.LinkedToItem())
+		{
+			return;
+		}
+
+		selectedItemInformationDisplay.Draw(item);
 	}
 }
