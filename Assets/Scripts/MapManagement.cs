@@ -25,7 +25,6 @@ public class MapManagement : MonoBehaviour
 
     private Dictionary<Transform, MeshRenderer> mapRingMeshRenderes;
 	private Dictionary<Transform, LineRenderer> cachedTransformToBorderRenderer = new Dictionary<Transform, LineRenderer>();
-	private Dictionary<Transform, LineRenderer> cachedTransformToJourneyRenderers = new Dictionary<Transform, LineRenderer>();
 	private Dictionary<Transform, SpriteRenderer> cachedTransformToNationIconRenderers = new Dictionary<Transform, SpriteRenderer>();
 
 	private void Start()
@@ -123,19 +122,15 @@ public class MapManagement : MonoBehaviour
 				if (PlayerCapitalShip.IsJumping())
 				{
 					//Update journey indicator
-					Transform newJourneyIndicator = mapElementsPools.UpdateNextObjectPosition(7, Vector3.zero);
+					Vector3 playerTargetPos = -PlayerCapitalShip.GetTargetPosition().AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
 
-					if (!cachedTransformToJourneyRenderers.ContainsKey(newJourneyIndicator))
-					{
-						cachedTransformToJourneyRenderers.Add(newJourneyIndicator, newJourneyIndicator.GetComponent<LineRenderer>());
-					}
+					//Find displacement
+					Vector3 displacement = playerTargetPos - playerPos;
 
-					LineRenderer target = cachedTransformToJourneyRenderers[newJourneyIndicator];
-					target.SetPositions(new Vector3[2]
-					{
-					playerPos,
-					-PlayerCapitalShip.GetTargetPosition().AsTruncatedVector3(UIManagement.mapRelativeScaleModifier)
-					});
+					Transform newJourneyIndicator = mapElementsPools.UpdateNextObjectPosition(7, playerPos + (displacement / 2.0f) + (Vector3.up * 0.001f));
+					//Division by 10 = division by (5 * 2). 5 is the unit scale for a plane
+					newJourneyIndicator.localScale = new Vector3(0.05f, 1, displacement.magnitude / 10);
+					newJourneyIndicator.LookAt(playerPos);
 				}
 
 				mapElementsPools.PruneObjectsNotUpdatedThisFrame(7);
