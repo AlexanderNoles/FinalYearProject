@@ -16,11 +16,7 @@ public class CalculateStatsRoutine : RoutineBase
 			faction.GetData(PlayerFaction.statDataKey, out PlayerStats statData);
 
 			//Reset stats to default
-			statData.statToValue.Clear();
-			foreach (KeyValuePair<string, float> statAndDefault in PlayerStats.statIdentifierToDefault)
-			{
-				statData.statToValue.Add(statAndDefault.Key, statAndDefault.Value);
-			}
+			statData.ResetStatsToDefault();
 			//
 
 			//Get inventory data

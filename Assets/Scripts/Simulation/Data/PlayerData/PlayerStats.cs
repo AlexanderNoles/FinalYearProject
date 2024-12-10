@@ -14,6 +14,24 @@ public class PlayerStats : DataBase
 		return statIdentifierToDefault[identifier];
 	}
 
+	public void ResetStatsToDefault()
+	{
+		foreach (KeyValuePair<string, float> entry in statIdentifierToDefault)
+		{
+			ResetStatToDefault(entry.Key);
+		}
+	}
+
+	public void ResetStatToDefault(string identifier)
+	{
+		if (!statToValue.ContainsKey(identifier))
+		{
+			statToValue.Add(identifier, 0);
+		}
+
+		statToValue[identifier] = GetDefaultStatValue(identifier);
+	}
+
 	//Stats dictionary
 	public Dictionary<string, float> statToValue = new Dictionary<string, float>();
 

@@ -9,8 +9,10 @@ public class ItemDatabase
 	{
 		//Representation of a item loaded from the items file
 		//Acts as a helper for getting data about items
-
 		public string iconPath;
+		public string name;
+		public string description;
+		public string extraDescription;
 
 		//Typically keys in the file are matched to actual variables but there should be a backup in the form of a dict in case
 		//there is not a corresponding variable.
@@ -20,7 +22,6 @@ public class ItemDatabase
 
 	public static Dictionary<int, ItemData> itemIDToItemData = new Dictionary<int, ItemData>();
 	private static int currentItemIndex = 0;
-
 
 	public static ItemData GetRandomItem()
 	{
