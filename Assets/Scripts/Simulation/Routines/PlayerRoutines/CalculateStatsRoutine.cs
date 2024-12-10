@@ -41,7 +41,7 @@ public class CalculateStatsRoutine : RoutineBase
 					if (statData.statToValue.ContainsKey(entry.Key))
 					{
 						//Convert second entry string to modifer and apply
-						statData.statToValue[entry.Key] += float.Parse(entry.Value);
+						//statData.statToValue[entry.Key] += float.Parse(entry.Value);
 					}
 				}
 			}

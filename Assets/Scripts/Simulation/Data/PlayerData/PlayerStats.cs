@@ -26,23 +26,52 @@ public class PlayerStats : DataBase
 	{
 		if (!statToValue.ContainsKey(identifier))
 		{
-			statToValue.Add(identifier, 0);
+			statToValue.Add(identifier, new List<StatContributor>());
 		}
 
-		statToValue[identifier] = GetDefaultStatValue(identifier);
+		statToValue[identifier].Clear();
+		//Only add the default contributor
+		statToValue[identifier].Add(new StatContributor(GetDefaultStatValue(identifier), identifier));
 	}
 
 	//Stats dictionary
-	public Dictionary<string, float> statToValue = new Dictionary<string, float>();
+	public Dictionary<string, List<StatContributor>> statToValue = new Dictionary<string, List<StatContributor>>();
 
-	public void SetStat(string identifier, float newValue)
+	public void AddContributorToStat(string identifier, StatContributor newValue)
 	{
-		statToValue[identifier] = newValue;
+		if (!statToValue.ContainsKey(identifier))
+		{
+			//Do nothing if we don't have this stat
+			return;
+		}
+
+		statToValue[identifier].Add(newValue);
 	}
 
-	public float GetStat(string identifer)
+	public List<StatContributor> GetStatContributors(string identifier)
 	{
-		return statToValue[identifer];
+		if (statToValue.ContainsKey(identifier))
+		{
+			return statToValue[identifier];
+		}
+
+		return null;
+	}
+
+	public float GetStat(string identifier)
+	{
+		float toReturn = 0.0f;
+		if (statToValue.ContainsKey(identifier))
+		{
+			List<StatContributor> contributors = statToValue[identifier];
+
+			foreach (StatContributor contributor in contributors)
+			{
+				toReturn += contributor.value;
+			}
+		}
+
+		return toReturn;
 	}
 }
 
@@ -51,4 +80,16 @@ public class PlayerStats : DataBase
 public enum Stats
 {
 	health
+}
+
+public class StatContributor
+{
+	public string statIdentifier;
+	public float value;
+
+	public StatContributor(float newValue, string statIdentifier)
+	{
+		value = newValue;
+		this.statIdentifier = statIdentifier;
+	}
 }

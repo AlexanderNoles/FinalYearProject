@@ -23,4 +23,9 @@ public class InventoryBase : DataBase
 	{
 
 	}
+
+	public virtual void RemoveItemFromInventory(ItemBase item)
+	{
+
+	}
 }

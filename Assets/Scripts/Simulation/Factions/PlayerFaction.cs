@@ -41,7 +41,13 @@ public class PlayerFaction : Faction
 		//(a.k.a data that isn't covered by a more specific module)
 		AddData(shipDataKey, new PlayerShipData());
 
-		AddData(inventoryDataKey, new PlayerInventory());
-		AddData(statDataKey, new PlayerStats());
+
+		PlayerStats stats = new PlayerStats();
+		stats.ResetStatsToDefault();
+		AddData(statDataKey, stats);
+
+		PlayerInventory inventory = new PlayerInventory();
+		inventory.SetStatsTarget(stats);
+		AddData(inventoryDataKey, inventory);
 	}
 }

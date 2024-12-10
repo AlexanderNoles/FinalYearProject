@@ -51,13 +51,6 @@ public class InventoryUIManagement : MonoBehaviour
 					{
 						targetData.targetInventory.AddItemToInventory(new ItemBase(ItemDatabase.GetRandomItemIndex()));
 					}
-
-					//Run absent routine
-					SimulationManagement.RunAbsentRoutine("PlayerStatsCalculation");
-
-					//Output stats data
-					playerOwnedFactions[0].GetData(PlayerFaction.statDataKey, out PlayerStats statData);
-					Debug.Log(statData.GetStat(Stats.health.ToString()));
 				}
 			}
 		}

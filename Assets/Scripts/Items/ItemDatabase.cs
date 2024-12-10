@@ -9,7 +9,7 @@ public class ItemDatabase
 	{
 		//Representation of a item loaded from the items file
 		//Acts as a helper for getting data about items
-		public string iconPath;
+		public Sprite icon;
 		public string name;
 		public string description;
 		public string extraDescription;
@@ -123,17 +123,33 @@ public class ItemDatabase
 						string key = PrepKeyString(parts[0]);
 						string textBody = PrepTextBody(parts[1], aliasDict);
 
-
-						/*
-						 * Key:
-						 * iconPath - Image path relative to resources folder "icons"
-						 */
-
 						//If key matches any item attribute key then we apply it to the current item being put into the database
 						//if it doesn't match we put it into a general backup dictionary, all stat modifications go in here
-						if (key.Contains("iconPath"))
+						if (key.Contains("icon"))
 						{
-							newItem.iconPath = textBody;
+							//Load sprite from resources
+							Sprite newIcon = Resources.Load<Sprite>($"icons/{textBody}");
+
+							if (newIcon != null)
+							{
+								newItem.icon = newIcon;
+							}
+							else
+							{
+								Debug.LogWarning($"Icon path is invalid: {textBody}");
+							}
+						}
+						else if (key.Contains("name"))
+						{
+							newItem.name = textBody;
+						}
+						else if (key.Contains("description"))
+						{
+							newItem.description = textBody;
+						}
+						else if (key.Contains("extra"))
+						{
+							newItem.extraDescription = textBody;
 						}
 						else
 						{
@@ -145,9 +161,16 @@ public class ItemDatabase
 		}
 	}
 
-	private static string PrepKeyString(string input)
+	private static string PrepKeyString(string input, bool makeLower = true)
 	{
-		return input.Replace(@"\s", "").Replace("\t", "").Replace(" ", "").ToLower();
+		string output = input.Replace(@"\s", "").Replace("\t", "").Replace(" ", "");
+
+		if (makeLower)
+		{
+			output = output.ToLower();
+		}
+
+		return output;
 	}
 
 	private static string PrepTextBody(string input, Dictionary<string, string> aliasDict)
