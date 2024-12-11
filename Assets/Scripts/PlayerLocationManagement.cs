@@ -9,8 +9,27 @@ public class PlayerLocationManagement : MonoBehaviour
 	private static bool locationChanged = false;
 	private static VisitableLocation previousLocation;
 	private static VisitableLocation location;
+	private static VisitableLocation preparedWarpLocation = null;
 
 	public static UnityEvent onLocationChanged = new UnityEvent();
+
+	public static VisitableLocation GetCurrentLocation()
+	{
+		if (location == null)
+		{
+			if (PlayerCapitalShip.IsJumping())
+			{
+				return preparedWarpLocation;
+			}
+		}
+
+		return GetCurrentLocationRaw();
+	}
+
+	public static VisitableLocation GetCurrentLocationRaw()
+	{
+		return location;
+	}
 
 	public static bool IsPlayerLocation(RealSpacePostion pos)
 	{
@@ -34,6 +53,13 @@ public class PlayerLocationManagement : MonoBehaviour
 
 	private void Awake()
 	{
+		if (preparedWarpLocation == null)
+		{
+			//This acts as a location to display when the ship is traveling throught the warp
+			preparedWarpLocation = new WarpLocation();
+		}
+
+
 		//Remove any leftover listeners
 		onLocationChanged.RemoveAllListeners();
 

@@ -116,12 +116,12 @@ public class UIManagement : MonoBehaviour
             }
         }
 
-		if (InputManagement.GetKeyDown(KeyCode.E))
+		if (InputManagement.GetKeyDown(KeyCode.Tab))
 		{
 			ToggleInventory();
 		}
 
-		if (InputManagement.GetKeyDown(KeyCode.G))
+		if (InputManagement.GetKeyDown(KeyCode.E))
 		{
 			ToggleLocationInformation();
 		}

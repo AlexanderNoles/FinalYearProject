@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class InformationDisplayControl : MonoBehaviour
 {
 	public GameObject blocker;
+	public bool lockBlocker = false;
 
 	[Header("General")]
 	public TextMeshProUGUI title;
@@ -49,7 +50,7 @@ public class InformationDisplayControl : MonoBehaviour
 		title.text = input.GetTitle();
 		description.text = normalDescriptionString;
 
-		blocker.SetActive(false);
+		SetBlocker(false);
 	}
 
 	private void OnEnable()
@@ -59,7 +60,17 @@ public class InformationDisplayControl : MonoBehaviour
 
 	public void DisplayBlocker()
 	{
-		blocker.SetActive(true);
+		SetBlocker(true);
+	}
+
+	private void SetBlocker(bool _bool)
+	{
+		if (lockBlocker)
+		{
+			return;
+		}
+
+		blocker.SetActive(_bool);
 	}
 
 	private void Update()

@@ -12,12 +12,12 @@ public class SettlementData : DataBase
 
         public class SettlementLocation : VisitableLocation
         {
+			public Shop shop;
             public Settlement actualSettlement;
 			private GeneratorManagement.Generation generation;
 
 			public override void InitDraw()
 			{
-				//Core generator
 				generation = new GeneratorManagement.StructureGeneration().SpawnStructure(GeneratorManagement.STRUCTURES_INDEXES.SETTLEMENT, Vector3.zero);
 				generation.FinalizeGeneration();
 			}
@@ -35,6 +35,35 @@ public class SettlementData : DataBase
 			public override float GetEntryOffset()
 			{
 				return 100.0f;
+			}
+
+			//UI DRAW FUNCTIONS
+
+			public override string GetTitle()
+			{
+				return "Settlement";
+			}
+
+			public override string GetDescription()
+			{
+				RealSpacePostion pos = GetPosition();
+
+				return $"Coordinates: (X:{pos.x}, Y:{pos.z})";
+			}
+
+			public override string GetExtraInformation()
+			{
+				return $"<color={VisualDatabase.statisticColour}>Settlements</color> are important locations, from here you can buy <color={VisualDatabase.goodColourString}>Items</color> and <color={VisualDatabase.goodColourString}>Fuel</color> to support your endeavours.";
+			}
+
+			public override bool HasShop()
+			{
+				return shop != null;
+			}
+
+			public override Shop GetShop()
+			{
+				return shop;
 			}
 		}
 
@@ -60,6 +89,7 @@ public class SettlementData : DataBase
 
             location = new SettlementLocation();
             location.actualSettlement = this;
+			location.shop = new Shop();
         }
     }
 
