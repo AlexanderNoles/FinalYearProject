@@ -5,6 +5,7 @@ using UnityEngine;
 public class ShopControlUI : MonoBehaviour
 {
 	private Shop shopData;
+	public MultiObjectPool shopSlotsPool;
 
 	public bool IsDisplayedData(Shop shop)
 	{
@@ -22,6 +23,9 @@ public class ShopControlUI : MonoBehaviour
 		{
 			//Set as target
 			shopData = shop;
+
+			//Perform initial draw
+			Draw();
 			
 			//And set active if not
 			//We don't want to set a shop inactive if we just displayed our shop data in it
@@ -32,6 +36,12 @@ public class ShopControlUI : MonoBehaviour
 			//Simply toggle shop
 			gameObject.SetActive(!gameObject.activeSelf);
 		}
+	}
+
+	public void Draw()
+	{
+		//Get positions
+		List<(float, Vector2)> positions = UIHelper.CalculateSpreadPositions(shopData.capacity, 110);
 	}
 
 	public void Hide()

@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class Shop
 {
-
+	public int capacity = 8;
 }
