@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerLocationManagement : MonoBehaviour
 {
 	private static bool locationChanged = false;
 	private static VisitableLocation previousLocation;
 	private static VisitableLocation location;
+
+	public static UnityEvent onLocationChanged = new UnityEvent();
 
 	public static bool IsPlayerLocation(RealSpacePostion pos)
 	{
@@ -31,6 +34,9 @@ public class PlayerLocationManagement : MonoBehaviour
 
 	private void Awake()
 	{
+		//Remove any leftover listeners
+		onLocationChanged.RemoveAllListeners();
+
 		locationChanged = true;
 		location = null;
 
@@ -49,7 +55,7 @@ public class PlayerLocationManagement : MonoBehaviour
 	public static void UpdateLocation(VisitableLocation newLocation)
 	{
 		previousLocation = location;
-		location = newLocation;
+		ChangeLocation(newLocation);
 		locationChanged = true;
 	}
 
@@ -58,8 +64,16 @@ public class PlayerLocationManagement : MonoBehaviour
 		if (location != null)
 		{
 			location.Cleanup();
-			location = null;
+			ChangeLocation(null);
 		}
+	}
+
+	//Automatically triggers the OnLocationChangeEvent
+	private static void ChangeLocation(VisitableLocation newLocation)
+	{
+		location = newLocation;
+		onLocationChanged.Invoke();
+
 	}
 
 	private void LateUpdate()
@@ -92,34 +106,5 @@ public class PlayerLocationManagement : MonoBehaviour
 		RealSpacePostion centralPos = location.GetPosition();
 		WorldManagement.SetWorldCenterPosition(centralPos);
 		PlayerCapitalShip.UpdatePCSPosition(WorldManagement.worldCenterPosition);
-
-		////Transfer world to new position
-		////And place ship and camera at entry position
-		//Vector3 offset = location.GetEntryOffset();
-		////We want the ship to arrive at the entry position not camera, so we need to account for offset from the ship
-		//Vector3 cameraDisplacement = CameraManagement.GetCameraDisplacementFromTarget();
-
-		////New RS world center pos is equal to the RS center + offset + camera displacement
-		//WorldManagement.SetWorldCenterPosition(new RealSpacePostion(
-		//	centralPos.x + offset.x + cameraDisplacement.x,
-		//	centralPos.y + offset.y + cameraDisplacement.y,
-		//	centralPos.z + offset.z + cameraDisplacement.z
-		//	));
-
-		////New ship pos is relative to world center so it is just offset
-		//PlayerCapitalShip.SetRealWorldPos(offset);
-
-		////New player RS pos is just the central pos + offset but as a RS pos
-		//PlayerCapitalShip.UpdatePCSPosition(new RealSpacePostion(
-		//	centralPos.x + offset.x,
-		//	centralPos.y + offset.y,
-		//	centralPos.z + offset.z
-		//	));
-
-		////PlayerCapitalShip.ModelLookAt(Vector3.zero);
-
-		////New camera world pos is equal to offset + camera displacement
-		////This needs to happen after setting PCS position as it uses it to disable the lerp correctly
-		//CameraManagement.SetCameraPositionExternal(offset + cameraDisplacement, true);
 	}
 }

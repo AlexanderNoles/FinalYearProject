@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -208,7 +209,9 @@ public class PlayerCapitalShip : MonoBehaviour
 
 					float difference = transform.rotation.eulerAngles.y - originalY;
 
-					CameraManagement.AddRotation(new Vector2(0, difference));
+					//Only add rotation to the main camera
+					//Don't want any rotation in map
+					CameraManagement.AddRotationMainOnly(new Vector2(0, difference));
 
 					if (rotateT >= 1.0f)
 					{

@@ -63,14 +63,13 @@ public class MapManagement : MonoBehaviour
 				//Can't use UIManagment's first frame of intro anim because we get set active a frame after the intro anim starts :(
                 if (!pastFirstFrameOfMapAnim)
                 {
-                    //Disable any map elements that might still be showing
-                    //The parent object will have been set inactive so they won't actually render
-                    //But they would now cause we have turned the object active again
-                    mapElementsPools.PruneObjectsNotUpdatedThisFrame(3);
-                    mapElementsPools.PruneObjectsNotUpdatedThisFrame(4);
-                    mapElementsPools.PruneObjectsNotUpdatedThisFrame(5);
-                    mapElementsPools.PruneObjectsNotUpdatedThisFrame(6);
-					mapElementsPools.PruneObjectsNotUpdatedThisFrame(7);
+					//Disable any map elements that might still be showing
+					//The parent object will have been set inactive so they won't actually render
+					//But they would now cause we have turned the object active again
+					for (int i = 3; i <= 8; i++)
+					{
+						mapElementsPools.PruneObjectsNotUpdatedThisFrame(i);
+					}
 
 					mapObjectsAndParents = new List<(Transform, Transform)>();
 
@@ -127,13 +126,23 @@ public class MapManagement : MonoBehaviour
 					//Find displacement
 					Vector3 displacement = playerTargetPos - playerPos;
 
-					Transform newJourneyIndicator = mapElementsPools.UpdateNextObjectPosition(7, playerPos + (displacement / 2.0f) + (Vector3.up * 0.001f));
 					//Division by 10 = division by (5 * 2). 5 is the unit scale for a plane
-					newJourneyIndicator.localScale = new Vector3(0.05f, 1, displacement.magnitude / 10);
-					newJourneyIndicator.LookAt(playerPos);
+					const float buffer = 0.1f;
+					float length = (displacement.magnitude / 10);
+
+					//Don't display once close to destination so journey indicator doesn't flip (visually break)
+					if (length > buffer)
+					{
+						Transform journeyLineIndicator = mapElementsPools.UpdateNextObjectPosition(7, playerPos + (displacement / 2.0f) + (Vector3.up * 0.001f));
+						journeyLineIndicator.localScale = new Vector3(0.05f, 1, length - buffer);
+						journeyLineIndicator.LookAt(playerPos);
+					}
+
+					mapElementsPools.UpdateNextObjectPosition(8, playerTargetPos);
 				}
 
 				mapElementsPools.PruneObjectsNotUpdatedThisFrame(7);
+				mapElementsPools.PruneObjectsNotUpdatedThisFrame(8);
 
 				if (Time.time > mapRefreshTime && (SimulationSettings.UpdateMap() || mapRefreshTime == 0))
                 {

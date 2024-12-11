@@ -22,6 +22,9 @@ public class UIManagement : MonoBehaviour
 	[Header("Inventory")]
 	public GameObject inventoryUI;
 
+	[Header("Location")]
+	public GameObject locationUI;
+
     public static bool MapIntroRunning()
     {
         return mapIntroT > 0.0f || oneFrameBuffer;
@@ -117,7 +120,12 @@ public class UIManagement : MonoBehaviour
 		{
 			ToggleInventory();
 		}
-    }
+
+		if (InputManagement.GetKeyDown(KeyCode.G))
+		{
+			ToggleLocationInformation();
+		}
+	}
 
 	public void ToggleMapButton()
 	{
@@ -129,5 +137,10 @@ public class UIManagement : MonoBehaviour
 	public void ToggleInventory()
 	{
 		inventoryUI.SetActive(!inventoryUI.activeSelf);
+	}
+
+	public void ToggleLocationInformation()
+	{
+		locationUI.SetActive(!locationUI.activeSelf);
 	}
 }

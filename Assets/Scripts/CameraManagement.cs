@@ -67,8 +67,7 @@ public class CameraManagement : MonoBehaviour
 
     public static void OnTargetChanged()
     {
-        currentCameraZoomTarget = 10.0f;
-        offsetFromTarget = Vector3.zero;
+		//Do nothing currently
     }
 
     public Transform GetCurrentTarget()
@@ -109,14 +108,23 @@ public class CameraManagement : MonoBehaviour
 		{
 			instance.transform.position = pos;
 		}
-
-		//Make sure there is no errouneous move of the world center
-		instance.positionLastFrame = instance.transform.position;
 	}
 
 	public static void AddRotation(Vector2 input)
 	{
 		instance.cameraRot += input;
+	}
+
+	public static void AddRotationMainOnly(Vector2 input)
+	{
+		if (UIManagement.MapActive())
+		{
+			instance.cachedCameraRot += input;
+		}
+		else
+		{
+			AddRotation(input);
+		}
 	}
 
     //////
@@ -144,19 +152,20 @@ public class CameraManagement : MonoBehaviour
     /////
 
     public Transform cameraAxis;
+	public Transform backingCameraAxis;
     private Vector2 cameraRot;
-    private Vector2 inMapRot;
+	private Vector2 cachedCameraRot;
     private Camera mainCamera;
     public Transform backingCamera;
     private UniversalAdditionalCameraData actualBackingCameraData;
     private static float currentCameraZoomTarget;
+	private float cachedZoomTarget;
     private static Vector3 offsetFromTarget;
+	private Vector3 cachedOffsetFromTarget;
     private const float moveSpeed = 5.0f;
     private const float sprintSpeed = 15.0f;
     private const float lerpLimit = 0.01f;
     private const float moveLimit = 250.0f;
-
-    private Vector3 positionLastFrame;
 
 	public float surroundingsMoveMultiplier = 1.0f;
 
@@ -167,78 +176,70 @@ public class CameraManagement : MonoBehaviour
 
         mainCamera = GetComponent<Camera>();
         actualBackingCameraData = backingCamera.GetComponent<UniversalAdditionalCameraData>();
-
-        positionLastFrame = transform.position;
     }
 
     private void Update()
     {
-        //If most things aren't being rendered
-        if (!mainCamera.enabled)
-        {
-            //Do backing camera solo stuff
-            if (UIManagement.MapActive())
-            {
-                if (UIManagement.MapIntroRunning())
-                {
-                    if (UIManagement.FirstFrameMapIntroRunning())
-                    {
-						backingCamera.position = (new Vector3(0, 1, -1).normalized * cameraOffsetInMap) - PlayerCapitalShip.GetPCSPosition().AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
-
-                        inMapRot = new Vector2(45, 0);
-                        actualBackingCameraData.renderPostProcessing = true;
-                        actualBackingCameraData.SetRenderer(0);
-                    }
-                }
-                else
-                {
-                    //Rotation
-                    if (InputManagement.GetMouseButton(InputManagement.cameraMove))
-                    {
-                        Vector2 cameraInput = InputManagement.MouseInput();
-
-                        inMapRot.y += cameraInput.y;
-                        inMapRot.x = Mathf.Clamp(inMapRot.x + cameraInput.x, -85, 85);
-                    }
-
-                    //Move Camera around
-                    Vector3 wasdInput = InputManagement.WASDInput();
-
-                    Vector3 cameraForward = backingCamera.forward;
-                    cameraForward.Normalize();
-
-                    Vector3 cameraRight = backingCamera.right;
-                    cameraRight.Normalize();
-
-                    Vector3 relativeWasdInput = ((wasdInput.z * cameraRight) + (wasdInput.x * cameraForward)).normalized;
-
-                    backingCamera.position += relativeWasdInput * (Time.deltaTime * (InputManagement.GetKey(KeyCode.LeftShift) ? 75 : 50));
-
-                    Vector3 offsetFromAnchor = backingCamera.position;
-
-                    float mag = Mathf.Clamp(offsetFromAnchor.magnitude, 5, 150);
-
-                    offsetFromAnchor = offsetFromAnchor.normalized * mag;
-                    backingCamera.position = offsetFromAnchor;
-                }
-
-                backingCamera.rotation = Quaternion.Euler(inMapRot.x, inMapRot.y, 0);
-            }
-
-            return;
-        }
-        else
-        {
-            if (actualBackingCameraData.renderPostProcessing)
-            {
-                backingCamera.position = Vector3.zero;
-                actualBackingCameraData.renderPostProcessing = false;
-                actualBackingCameraData.SetRenderer(1);
-            }
-        }
-
         if (currentMode == Mode.Normal)
         {
+			Transform targetCamera = null;
+			Transform targetCamearAxis = null;
+
+			if (mainCamera.enabled)
+			{
+				if (actualBackingCameraData.renderPostProcessing)
+				{
+					backingCameraAxis.position = Vector3.zero;
+					backingCameraAxis.rotation = Quaternion.identity;
+
+					backingCamera.localPosition = Vector3.zero;
+					actualBackingCameraData.renderPostProcessing = false;
+					actualBackingCameraData.SetRenderer(1);
+
+					//Reset to previous camera parameters
+					cameraRot = cachedCameraRot;
+					offsetFromTarget = cachedOffsetFromTarget;
+					currentCameraZoomTarget = cachedZoomTarget;
+				}
+
+				targetCamera = transform;
+				targetCamearAxis = cameraAxis;
+			}
+			else if (UIManagement.MapActive())
+			{
+				if (UIManagement.FirstFrameMapIntroRunning())
+				{
+					//cache variables to reapply later
+					cachedZoomTarget = currentCameraZoomTarget;
+					cachedCameraRot = cameraRot;
+					cachedOffsetFromTarget = offsetFromTarget;
+
+					//Set initial zoom level
+					currentCameraZoomTarget = 50;
+
+					//Set rotation target
+					cameraRot = new Vector2(45, 0);
+					//Set specifc position so camera plays rotate animation on map opening
+					backingCamera.localPosition = Vector3.back * currentCameraZoomTarget;
+
+					//Set offset from center to zero
+					offsetFromTarget = Vector3.zero;
+
+					actualBackingCameraData.renderPostProcessing = true;
+					actualBackingCameraData.SetRenderer(0);
+				}
+
+				targetCamera = backingCamera;
+				targetCamearAxis = backingCameraAxis;
+			}
+
+			if (targetCamera == null || targetCamearAxis == null)
+			{
+				return;
+			}
+
+			#region Camera Control
+
 			//Rotate camera
 			Vector2 cameraInput = Vector2.zero;
 
@@ -250,45 +251,49 @@ public class CameraManagement : MonoBehaviour
 			cameraRot.y += cameraInput.y;
 			cameraRot.x = Mathf.Clamp(cameraRot.x + cameraInput.x, -85, 85);
 
-			cameraAxis.rotation = Quaternion.Euler(cameraRot.x, cameraRot.y, 0.0f);
-			mainCamera.transform.LookAt(cameraAxis);
+			targetCamearAxis.rotation = Quaternion.Euler(cameraRot.x, cameraRot.y, 0.0f);
+			targetCamera.LookAt(targetCamearAxis);
 
 			//Move camera out
 			float scrollInput = InputManagement.ScrollWheelInput();
 
-            currentCameraZoomTarget = Mathf.Clamp(currentCameraZoomTarget - scrollInput, 10, 250);
-            transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.back * currentCameraZoomTarget, Time.deltaTime * 5.0f);
+            currentCameraZoomTarget = Mathf.Clamp(currentCameraZoomTarget - scrollInput, 10, 150);
+			targetCamera.localPosition = Vector3.Lerp(targetCamera.localPosition, Vector3.back * currentCameraZoomTarget, Time.deltaTime * 5.0f);
 
-            //Move camera about
-            if (InputManagement.GetKeyDown(KeyCode.Space))
-            {
-                offsetFromTarget = Vector3.zero;
-            }
-            else
-            {
-                Vector3 wasdInput = InputManagement.WASDInput();
+			//Move camera about
+			if (!UIManagement.MapActive())
+			{
+				//No movement allowed in the map
+				if (InputManagement.GetKeyDown(KeyCode.Space))
+				{
+					offsetFromTarget = Vector3.zero;
+				}
+				else
+				{
+					Vector3 wasdInput = InputManagement.WASDInput();
 
-                //Get wasdInput relative to the direction the camera is facing
-                Vector3 cameraForward = transform.forward;
-                cameraForward.y = 0;
-                cameraForward.Normalize();
+					//Get wasdInput relative to the direction the camera is facing
+					Vector3 cameraForward = targetCamera.forward;
+					cameraForward.y = 0;
+					cameraForward.Normalize();
 
-                Vector3 cameraRight = transform.right;
-                cameraRight.y = 0;
-                cameraRight.Normalize();
+					Vector3 cameraRight = targetCamera.right;
+					cameraRight.y = 0;
+					cameraRight.Normalize();
 
-                Vector3 relativeWasdInput = ((wasdInput.z * cameraRight) + (wasdInput.x * cameraForward)).normalized;
+					Vector3 relativeWasdInput = ((wasdInput.z * cameraRight) + (wasdInput.x * cameraForward)).normalized;
 
-                //Apply to offset
-                offsetFromTarget += relativeWasdInput * Time.deltaTime * (InputManagement.GetKey(KeyCode.LeftShift) ? sprintSpeed : moveSpeed);
+					//Apply to offset
+					offsetFromTarget += relativeWasdInput * Time.deltaTime * (InputManagement.GetKey(KeyCode.LeftShift) ? sprintSpeed : moveSpeed);
 
-                offsetFromTarget = Vector3.ClampMagnitude(offsetFromTarget, moveLimit);
-            }
+					offsetFromTarget = Vector3.ClampMagnitude(offsetFromTarget, moveLimit);
+				}
+			}
 
             Vector3 newTargetPosition = GetTargetPosition() + offsetFromTarget;
 
             float lerpT;
-            if (Vector3.Distance(newTargetPosition, cameraAxis.position) > lerpLimit)
+            if (Vector3.Distance(newTargetPosition, targetCamearAxis.position) > lerpLimit)
             {
                 lerpT = Time.deltaTime * 9.0f;
             }
@@ -298,9 +303,11 @@ public class CameraManagement : MonoBehaviour
                 lerpT = 1.0f;
             }
 
-			cameraAxis.position = Vector3.Lerp(cameraAxis.position, newTargetPosition, lerpT);
-        }
-        else if (currentMode == Mode.Debug)
+			targetCamearAxis.position = Vector3.Lerp(targetCamearAxis.position, newTargetPosition, lerpT);
+
+			#endregion
+		}
+		else if (currentMode == Mode.Debug)
         {
             transform.localPosition = Vector3.zero;
 
@@ -321,11 +328,11 @@ public class CameraManagement : MonoBehaviour
             cameraAxis.position += relativeWasdInput * Time.deltaTime * (InputManagement.GetKey(KeyCode.LeftShift) ? 10000 : 50);
         }
 
-        SetBackingCameraRotation(transform.rotation);
-
-		SurroundingsRenderingManagement.SetCameraOffset(transform.position * surroundingsMoveMultiplier);
-
-        positionLastFrame = transform.position;
+		if (mainCamera.enabled)
+		{
+			SetBackingCameraRotation(transform.rotation); 
+			SurroundingsRenderingManagement.SetCameraOffset(transform.position * surroundingsMoveMultiplier);
+		}
     }
 
     [ConsoleCMD("DCamera")]

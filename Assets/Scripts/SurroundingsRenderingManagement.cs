@@ -84,7 +84,7 @@ public class SurroundingsRenderingManagement : MonoBehaviour
 				skybox.SetActive(true);
 			}
 
-            transform.position = CameraManagement.GetBackingCameraPosition();
+            transform.position = Vector3.zero;
 
             List<(double, RealSpacePostion, int)> distanceOffsetAndIndex = new List<(double, RealSpacePostion, int)>();
 
