@@ -12,6 +12,12 @@ public class LocationInformationUI : MonoBehaviour
 	public StandardButton shopButton;
 	private Shop shopData;
 	public ShopControlUI shopControl;
+	private FloatingWindow shopWindow;
+
+	private void Awake()
+	{
+		shopWindow = shopControl.GetComponent<FloatingWindow>();
+	}
 
 	private void OnEnable()
 	{
@@ -73,6 +79,7 @@ public class LocationInformationUI : MonoBehaviour
 	public void ToggleShopButton()
 	{
 		shopControl.ToggleOrGrab(shopData);
+		shopWindow.MoveToFront();
 	}
 
 	private void Update()

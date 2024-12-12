@@ -20,7 +20,7 @@ public class UIManagement : MonoBehaviour
 	public HistoryUIManagement historyUI;
 
 	[Header("Inventory")]
-	public GameObject inventoryUI;
+	public FloatingWindow inventoryUI;
 
 	[Header("Location")]
 	public GameObject locationUI;
@@ -136,7 +136,8 @@ public class UIManagement : MonoBehaviour
 
 	public void ToggleInventory()
 	{
-		inventoryUI.SetActive(!inventoryUI.activeSelf);
+		inventoryUI.gameObject.SetActive(!inventoryUI.gameObject.activeSelf);
+		inventoryUI.MoveToFront();
 	}
 
 	public void ToggleLocationInformation()

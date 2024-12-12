@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static TMPro.TMP_Compatibility;
 
-public class InventoryUIManagement : MonoBehaviour
+public class InventoryUIManagement : FloatingWindow
 {
+	private static InventoryUIManagement instance;
+
 	//Target of this UI
 	private class InventoryTarget
 	{
@@ -19,7 +20,7 @@ public class InventoryUIManagement : MonoBehaviour
 	public RectTransform slotArea;
 	public GameObject slotBaseObject;
 	public InformationDisplayControl selectedItemInformationDisplay;
-	private List<SlotUI> inventorySlots = new List<SlotUI>();
+	private static List<SlotUI> inventorySlots = new List<SlotUI>();
 
 	//This is the area covered by a inventory slot UI component, this includes padding
 	//This can be calculated by simply getting the base slot object scale (150), dividing by 2 (75) and adding padding (+15) if need be
@@ -28,6 +29,7 @@ public class InventoryUIManagement : MonoBehaviour
 
 	private void OnEnable()
 	{
+		instance = this;
 		//Get data
 		if (targetData == null)
 		{
@@ -48,6 +50,19 @@ public class InventoryUIManagement : MonoBehaviour
 				}
 			}
 		}
+
+		//Do initial draw
+		Draw();
+	}
+
+	private void OnDisable()
+	{
+		instance = null;
+	}
+
+	private void Draw()
+	{
+		inventorySlots.Clear();
 
 		//Create inventory slots
 		if (targetData != null)
@@ -74,11 +89,21 @@ public class InventoryUIManagement : MonoBehaviour
 				inventorySlots.Add(newSlot);
 
 				//Then we do an initial draw on this slots
-				//If there is no item in that slot then this function will pass null
-				ItemBase target = targetData.targetInventory.GetInventoryItemAtPosition(i);
-				newSlot.Draw(target, () => { DisplayItemInfo(target); });
+				DrawSlot(i);
 			}
 		}
+	}
+
+	public static void DrawSlot(int index)
+	{
+		if (instance == null)
+		{
+			return;
+		}
+
+		ItemBase target = instance.targetData.targetInventory.GetInventoryItemAtPosition(index);
+		//If there is no item in that slot then this function will pass null
+		inventorySlots[index].Draw(target, () => { instance.DisplayItemInfo(target); });
 	}
 
 	public void DisplayItemInfo(ItemBase item)

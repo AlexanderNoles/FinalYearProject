@@ -79,6 +79,9 @@ public class PlayerInventory : InventoryBase
 
 		//Add item to inventory
 		itemBases.Add(item);
+
+		//Ask inventory ui to redraw, if the ui element is not active this function will do nothing
+		InventoryUIManagement.DrawSlot(itemBases.Count - 1);
 	}
 
 	public override void RemoveItemFromInventory(ItemBase item)

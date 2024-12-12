@@ -54,7 +54,7 @@ public class PlayerCapitalShip : MonoBehaviour
 		shipSpeedMultiplier = int.Parse(newSpeed);
 	}
 
-	private static float shipSpeedMultiplier = 1000;
+	private static float shipSpeedMultiplier = 1;
 	private static float thisJumpSpeed;
 
 	private enum JumpStage
