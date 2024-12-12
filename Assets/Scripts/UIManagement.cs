@@ -7,7 +7,7 @@ public class UIManagement : MonoBehaviour
     private static UIManagement instance;
 
 	[Header("Map")]
-    public GameObject mapParent;
+    public GameObject map;
     public const float mapRelativeScaleModifier = 1000.0f;
     public AnimationCurve mapIntroCurve;
     private static GameObject mapObject;
@@ -68,14 +68,14 @@ public class UIManagement : MonoBehaviour
     {
         instance = this;
 
-        mapObject = mapParent.gameObject;
+        mapObject = map.gameObject;
         mapObject.SetActive(false);
         mapIntroT = 0.0f;
     }
 
     private void Update()
     {
-        if (mapParent != null)
+        if (map != null)
         {
             if ((InputManagement.GetKeyDown(KeyCode.M) || mapButtonPressed) && MonitorBreak.Bebug.Console.GetConsoleState() != MonitorBreak.Bebug.Console.ConsoleState.FullScreen)
             {

@@ -3,6 +3,7 @@
 	badColour: "#c4372dff"
 	statColour: "#d1b536"
 	health: "<color=*statColour*>Health</color> represents the overall condition of your ship. If it reaches 0 you die."
+	healthRegen: "<color=*statColour*>Health Regen</color> represents the amount of <color=*statColour*>Health</color> healed each tick."
 }
 { item (debug)
 	//This is a test item
@@ -22,5 +23,15 @@
 	price: "75"
 	description: "Wowee wowee, <color=*goodColour*>I love my creature!</color>"
 	extra: "This is for alias testing: *health* wowee"
+}
+{ item
+	//Generator
+	health: "-25"
+	healthregen: "5"
+	icon: "generator"
+	name: "Max-Pulse Generator"
+	price: "75"
+	description: "Decreases <color=*statColour*>Health</color> slightly but increases <color=*statColour*>Health Regen</color> substantially."
+	extra: "*health* *healthRegen*"
 }
 

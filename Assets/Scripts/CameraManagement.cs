@@ -134,6 +134,11 @@ public class CameraManagement : MonoBehaviour
         instance.mainCamera.enabled = active;
     }
 
+	public static Camera GetBackingCamera()
+	{
+		return instance.actualBackingCamera;
+	}
+
     public static void SetBackingCameraPosition(Vector3 position)
     {
         instance.backingCamera.position = position;
@@ -157,6 +162,7 @@ public class CameraManagement : MonoBehaviour
 	private Vector2 cachedCameraRot;
     private Camera mainCamera;
     public Transform backingCamera;
+	private Camera actualBackingCamera;
     private UniversalAdditionalCameraData actualBackingCameraData;
     private static float currentCameraZoomTarget;
 	private float cachedZoomTarget;
@@ -175,6 +181,7 @@ public class CameraManagement : MonoBehaviour
         targets.Clear();
 
         mainCamera = GetComponent<Camera>();
+		actualBackingCamera = backingCamera.GetComponent<Camera>();
         actualBackingCameraData = backingCamera.GetComponent<UniversalAdditionalCameraData>();
     }
 

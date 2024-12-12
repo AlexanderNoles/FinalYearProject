@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DestinationMapRIng 1
-  m_Shader: {fileID: -6465566751694194690, guid: bd4d8b6563146c948a344161d91e898e,
+  m_Name: MapTargetIndicator
+  m_Shader: {fileID: -6465566751694194690, guid: 49279f003a63cf1458bf84d9ce0bc44b,
     type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0

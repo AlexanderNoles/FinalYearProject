@@ -7,7 +7,8 @@ public class PlayerStats : DataBase
 	public static readonly Dictionary<string, float> statIdentifierToDefault = new Dictionary<string, float>() 
 	{
 		{Stats.health.ToString(), 100},
-		{Stats.healthregen.ToString(), 1}
+		{Stats.healthregen.ToString(), 1},
+		{Stats.jumprange.ToString(), 10}
 	};
 
 	public static float GetDefaultStatValue(string identifier)
@@ -81,7 +82,8 @@ public class PlayerStats : DataBase
 public enum Stats
 {
 	health,
-	healthregen
+	healthregen,
+	jumprange
 }
 
 public class StatContributor

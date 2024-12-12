@@ -68,6 +68,11 @@ public class MapManagement : MonoBehaviour
 					//But they would now cause we have turned the object active again
 					for (int i = 3; i <= 8; i++)
 					{
+						if (i == 4)
+						{
+							continue;
+						}
+
 						mapElementsPools.PruneObjectsNotUpdatedThisFrame(i);
 					}
 
@@ -263,16 +268,16 @@ public class MapManagement : MonoBehaviour
                             }
 						}
 
-						if (SimulationSettings.DrawSettlements())
-						{
-							if (faction.GetData(Faction.Tags.Settlements, out SettlementData data))
-							{
-								foreach (KeyValuePair<RealSpacePostion, SettlementData.Settlement> s in data.settlements)
-								{
-									mapElementsPools.UpdateNextObjectPosition(4, -s.Value.actualSettlementPos.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier));
-								}
-							}
-						}
+						//if (SimulationSettings.DrawSettlements())
+						//{
+						//	if (faction.GetData(Faction.Tags.Settlements, out SettlementData data))
+						//	{
+						//		foreach (KeyValuePair<RealSpacePostion, SettlementData.Settlement> s in data.settlements)
+						//		{
+						//			mapElementsPools.UpdateNextObjectPosition(4, -s.Value.actualSettlementPos.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier));
+						//		}
+						//	}
+						//}
 
 						if (SimulationSettings.DrawMilitaryPresence())
 						{
@@ -356,7 +361,6 @@ public class MapManagement : MonoBehaviour
 					}
 
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(3);
-                    mapElementsPools.PruneObjectsNotUpdatedThisFrame(4);
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(5);
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(6);
 				}

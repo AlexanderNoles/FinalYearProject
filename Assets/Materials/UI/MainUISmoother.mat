@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MainUI
+  m_Name: MainUISmoother
   m_Shader: {fileID: -6465566751694194690, guid: ab39aaafe9ef61d4da15c293bf42b3bc,
     type: 3}
   m_Parent: {fileID: 0}

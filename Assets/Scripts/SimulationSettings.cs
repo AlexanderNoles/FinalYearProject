@@ -9,7 +9,6 @@ public class SimulationSettings : MonoBehaviour
     private static SimulationSettings instance;
     public bool runHistory;
 	public int historyLength = 30;
-    public bool drawSettlements;
 	public bool drawMilitaryPresence;
     public bool updateMap;
 
@@ -30,14 +29,6 @@ public class SimulationSettings : MonoBehaviour
 	{
 		return instance.historyLength;
 	}
-
-    public static bool DrawSettlements()
-    {
-#if UNITY_EDITOR
-        return instance.drawSettlements;
-#endif
-        return true;
-    }
 
 	public static bool DrawMilitaryPresence()
 	{

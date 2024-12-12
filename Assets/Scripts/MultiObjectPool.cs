@@ -232,6 +232,17 @@ public class MultiObjectPool : MonoBehaviour
             return activeObjectsList[currentUpdatedObjectPointer - 1].transform;
         }
 
+		public void HideAll()
+		{
+			for (int i = 0; i < activeObjectsList.Count; i++)
+			{
+				activeObjectsList[i].Hide();
+			}
+
+			//Reset pointer
+			currentUpdatedObjectPointer = 0;
+		}
+
         public void PruneObjectsNotUpdatedThisFrame()
         {
             //Hide all objects not updated this frame
@@ -344,10 +355,15 @@ public class MultiObjectPool : MonoBehaviour
         pools[poolIndex].PruneObjectsNotUpdatedThisFrame();
     }
 
-    /// <summary>
-    /// Unlike GetObject this will automatically update the information on the object and set it active
-    /// </summary>
-    public ObjectFromPool<T> SpawnObject<T>(int poolIndex, Vector3 position)
+	public void HideAllObjects(int poolIndex)
+	{
+		pools[poolIndex].HideAll();
+	}
+
+	/// <summary>
+	/// Unlike GetObject this will automatically update the information on the object and set it active
+	/// </summary>
+	public ObjectFromPool<T> SpawnObject<T>(int poolIndex, Vector3 position)
     {
         //Return a blank if there is no object
         ObjectFromPool<T> toReturn = new ObjectFromPool<T>();

@@ -6,12 +6,12 @@ public class PostTickUpdate : MonoBehaviour
 {
 	protected int lastTickUpdatedOn;
 
-	private void OnEnable()
+	protected virtual void OnEnable()
 	{
 		lastTickUpdatedOn = -1;
 	}
 
-	private void Update()
+	protected virtual void Update()
 	{
 		if (SimulationManagement.currentTickID != lastTickUpdatedOn)
 		{

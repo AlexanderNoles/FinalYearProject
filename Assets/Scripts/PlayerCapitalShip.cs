@@ -176,27 +176,27 @@ public class PlayerCapitalShip : MonoBehaviour
 
 	private void Update()
 	{
-		if (InputManagement.GetKeyDown(KeyCode.R))
-		{
-			//Get a random settlement location to teleport to
-			List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Settlements);
-			SettlementData.Settlement newTarget = null;
-			while (newTarget == null)
-			{
-				int targetIndex = Random.Range(0, factions.Count);
-				if (factions[targetIndex].GetData(Faction.Tags.Settlements, out SettlementData data))
-				{
-					if (data.settlements.Count > 0)
-					{
-						newTarget = data.settlements.ElementAt(Random.Range(0, data.settlements.Count)).Value;
-					}
-				}
-			}
-			if (newTarget != null)
-			{
-				StartJump(newTarget.location);
-			}
-		}
+		//if (InputManagement.GetKeyDown(KeyCode.R))
+		//{
+		//	//Get a random settlement location to teleport to
+		//	List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Settlements);
+		//	SettlementData.Settlement newTarget = null;
+		//	while (newTarget == null)
+		//	{
+		//		int targetIndex = Random.Range(0, factions.Count);
+		//		if (factions[targetIndex].GetData(Faction.Tags.Settlements, out SettlementData data))
+		//		{
+		//			if (data.settlements.Count > 0)
+		//			{
+		//				newTarget = data.settlements.ElementAt(Random.Range(0, data.settlements.Count)).Value;
+		//			}
+		//		}
+		//	}
+		//	if (newTarget != null)
+		//	{
+		//		StartJump(newTarget.location);
+		//	}
+		//}
 
 		if (jumping)
 		{
