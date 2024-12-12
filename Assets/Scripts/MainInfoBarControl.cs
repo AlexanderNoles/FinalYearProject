@@ -5,8 +5,28 @@ using UnityEngine;
 
 public class MainInfoBarControl : PostTickUpdate
 {
+	private static MainInfoBarControl instance;
+
 	public TextMeshProUGUI populationLabel;
 	public TextMeshProUGUI healthLabel;
+	public TextMeshProUGUI currencyLabel;
+
+	private void Awake()
+	{
+		instance = this;
+		//Inital draw
+		ForceRedraw();
+	}
+
+	public static void ForceRedraw()
+	{
+		if (instance == null)
+		{
+			return;
+		}
+
+		instance.PostTick();
+	}
 
 	protected override void PostTick()
 	{
@@ -15,11 +35,15 @@ public class MainInfoBarControl : PostTickUpdate
 
 		foreach (Faction faction in player)
 		{
+			//We could cache these but they have a complexity of O(1) so it's probably fine to do it like this
+			//Plus in the future GetData might end the typical simulation tick instead of the simulation clamp, so we should be using GetData.
 			faction.GetData(PlayerFaction.statDataKey, out PlayerStats playerStats);
 			faction.GetData(Faction.Tags.Population, out PopulationData populationData);
-			
+			faction.GetData(PlayerFaction.inventoryDataKey, out PlayerInventory playerInventory);
+
 			populationLabel.text = Mathf.FloorToInt(populationData.currentPopulationCount).ToString();
 			healthLabel.text = Mathf.FloorToInt(playerStats.GetStat(Stats.health.ToString())).ToString();
+			currencyLabel.text = Mathf.FloorToInt(playerInventory.mainCurrency).ToString();
         }
 	}
 }

@@ -41,6 +41,7 @@ public class PlayerCapitalShip : MonoBehaviour
 	private static float jumpT;
 	private static float rotateT;
 	private float postJumpT;
+	private static float nextJumpAllowedTime;
 
 	private static float jumpBuildupBuffer;
 	private const float jumpBuildupMax = 10.0f;
@@ -53,7 +54,7 @@ public class PlayerCapitalShip : MonoBehaviour
 		shipSpeedMultiplier = int.Parse(newSpeed);
 	}
 
-	private static float shipSpeedMultiplier = 1;
+	private static float shipSpeedMultiplier = 1000;
 	private static float thisJumpSpeed;
 
 	private enum JumpStage
@@ -139,7 +140,7 @@ public class PlayerCapitalShip : MonoBehaviour
 
 	public static void StartJump(VisitableLocation target)
 	{
-		if (jumping)
+		if (jumping || nextJumpAllowedTime > Time.time)
 		{
 			return;
 		}
@@ -361,6 +362,7 @@ public class PlayerCapitalShip : MonoBehaviour
 	private void EndJump()
 	{
 		jumping = false;
+		nextJumpAllowedTime = Time.time + 5.0f;
 
 		//Update current player location
 		PlayerLocationManagement.UpdateLocation(jumpTarget);

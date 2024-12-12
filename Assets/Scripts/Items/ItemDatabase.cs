@@ -13,6 +13,7 @@ public class ItemDatabase
 		public string name;
 		public string description;
 		public string extraDescription;
+		public float basePrice;
 
 		//Typically keys in the file are matched to actual variables but there should be a backup in the form of a dict in case
 		//there is not a corresponding variable.
@@ -156,6 +157,10 @@ public class ItemDatabase
 						else if (key.Contains("extra"))
 						{
 							newItem.extraDescription = textBody;
+						}
+						else if (key.Contains("price"))
+						{
+							newItem.basePrice = float.Parse(textBody);
 						}
 						else
 						{

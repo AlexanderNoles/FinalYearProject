@@ -6,6 +6,7 @@ public class LocationInformationUI : MonoBehaviour
 {
 	public GameObject blocker;
 	public InformationDisplayControl informationDisplayControl;
+	private VisitableLocation cachedLocation;
 
 	[Header("Shop")]
 	public StandardButton shopButton;
@@ -34,6 +35,7 @@ public class LocationInformationUI : MonoBehaviour
 	{
 		//Get current location
 		VisitableLocation currentLocation = PlayerLocationManagement.GetCurrentLocation();
+		cachedLocation = currentLocation;
 
 		if (currentLocation == null)
 		{
@@ -65,5 +67,14 @@ public class LocationInformationUI : MonoBehaviour
 	public void ToggleShopButton()
 	{
 		shopControl.ToggleOrGrab(shopData);
+	}
+
+	private void Update()
+	{
+		if (InputManagement.GetKeyDown(KeyCode.Q) && cachedLocation.HasShop())
+		{
+			//Toggle shop
+			ToggleShopButton();
+		}
 	}
 }

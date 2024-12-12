@@ -1,15 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class InventorySlotUI : MonoBehaviour
+public class SlotUI : MonoBehaviour
 {
 	public Image slotIcon;
-	public Button displayInfoButton;
+	public Button button;
 	private ItemBase target;
 
-	public void Draw(ItemBase newTarget, InventoryUIManagement parent)
+	public void Draw(ItemBase newTarget, UnityAction onButtonClick)
 	{
 		target = newTarget;
 
@@ -23,13 +24,10 @@ public class InventorySlotUI : MonoBehaviour
 			//Display item
 			slotIcon.gameObject.SetActive(true);
 			slotIcon.sprite = newTarget.GetIcon();
-			displayInfoButton.enabled = true;
+			button.enabled = true;
 
-			displayInfoButton.onClick.RemoveAllListeners();
-			displayInfoButton.onClick.AddListener(() =>
-			{
-				parent.DisplayItemInfo(newTarget);
-			});
+			button.onClick.RemoveAllListeners();
+			button.onClick.AddListener(onButtonClick);
 		}
 	}
 }

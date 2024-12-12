@@ -19,7 +19,7 @@ public class InventoryUIManagement : MonoBehaviour
 	public RectTransform slotArea;
 	public GameObject slotBaseObject;
 	public InformationDisplayControl selectedItemInformationDisplay;
-	private List<InventorySlotUI> inventorySlots = new List<InventorySlotUI>();
+	private List<SlotUI> inventorySlots = new List<SlotUI>();
 
 	//This is the area covered by a inventory slot UI component, this includes padding
 	//This can be calculated by simply getting the base slot object scale (150), dividing by 2 (75) and adding padding (+15) if need be
@@ -45,14 +45,6 @@ public class InventoryUIManagement : MonoBehaviour
 					targetData = new InventoryTarget();
 					targetData.targetFaction = playerOwnedFactions[0] as PlayerFaction;
 					targetData.targetInventory = data;
-
-					//DEBUG
-					//Give player random items for testing
-					int count = Mathf.RoundToInt(targetData.targetInventory.GetInventoryCapacity() * Random.Range(0.6f, 1.0f));
-					for (int i = 0; i < count; i++)
-					{
-						targetData.targetInventory.AddItemToInventory(new ItemBase(ItemDatabase.GetRandomItemIndex()));
-					}
 				}
 			}
 		}
@@ -75,7 +67,7 @@ public class InventoryUIManagement : MonoBehaviour
 			//Actually create all inventory slots
 			for (int i = 0; i < outputPositions.Count; i++)
 			{
-				InventorySlotUI newSlot = Instantiate(slotBaseObject, slotArea).GetComponent<InventorySlotUI>();
+				SlotUI newSlot = Instantiate(slotBaseObject, slotArea).GetComponent<SlotUI>();
 				(newSlot.transform as RectTransform).anchoredPosition = outputPositions[i].Item2;
 
 				//Add slot to slot list for tracking later
@@ -83,7 +75,8 @@ public class InventoryUIManagement : MonoBehaviour
 
 				//Then we do an initial draw on this slots
 				//If there is no item in that slot then this function will pass null
-				newSlot.Draw(targetData.targetInventory.GetInventoryItemAtPosition(i), this);
+				ItemBase target = targetData.targetInventory.GetInventoryItemAtPosition(i);
+				newSlot.Draw(target, () => { DisplayItemInfo(target); });
 			}
 		}
 	}

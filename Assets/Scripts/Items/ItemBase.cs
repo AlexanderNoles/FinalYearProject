@@ -8,6 +8,11 @@ public class ItemBase : IDisplay
 	private ItemDatabase.ItemData cachedItemData = null;
 	private List<StatContributor> statContributors = new List<StatContributor>();
 
+	public float GetPrice()
+	{
+		return cachedItemData.basePrice;
+	}
+
 	public bool LinkedToItem()
 	{
 		return cachedItemData != null;

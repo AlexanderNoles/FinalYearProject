@@ -9,6 +9,7 @@ public class PlayerInventory : InventoryBase
 	protected const int inventorySize = 8;
 	private List<ItemBase> itemBases = new List<ItemBase>();
 	private PlayerStats target = null;
+	public float mainCurrency = 500;
 
 	public void SetStatsTarget(PlayerStats newTarget)
 	{
@@ -34,6 +35,30 @@ public class PlayerInventory : InventoryBase
 
 		return itemBases[index];
 	}
+
+	public bool AttemptToBuy(ItemBase target)
+	{
+		//Do we have space?
+		if (itemBases.Count < inventorySize)
+		{
+			//Get price of item
+			float price = target.GetPrice();
+
+			//Can we afford item?
+			if (price <= mainCurrency)
+			{
+				//Subtract price
+				mainCurrency -= price;
+
+				//Add item to inventory
+				AddItemToInventory(target);
+
+				return true;
+			}
+		}
+
+		return false;
+    }
 
 	public override void AddItemToInventory(ItemBase item)
 	{

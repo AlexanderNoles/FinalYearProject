@@ -9,6 +9,7 @@
 	health: "100"
 	icon: "basic"
 	name: "Test Item"
+	price: "100"
 	description: "This item is a debug item that should not be included in the final game"
 	extra: "This is for alias testing: *health* wowee"
 }
@@ -18,6 +19,7 @@
 	healthregen: "5"
 	icon: "angry"
 	name: "Test Item #2"
+	price: "75"
 	description: "Wowee wowee, <color=*goodColour*>I love my creature!</color>"
 	extra: "This is for alias testing: *health* wowee"
 }

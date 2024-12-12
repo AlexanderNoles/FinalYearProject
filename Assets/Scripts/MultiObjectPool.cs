@@ -8,15 +8,35 @@ public class MultiObjectPool : MonoBehaviour
     [Tooltip("Automatically Generate Objects On Awake")]
     public bool generateOnAwake = false;
     private Transform selfTransform;
+	private bool initSetupRun = false;
 
     private void Awake()
     {
-        selfTransform = transform;
-        foreach (ObjectPool pool in pools)
-        {
-            pool.Setup(selfTransform, generateOnAwake);
-        }
+		if (initSetupRun)
+		{
+			return;
+		}
+
+		InitSetup();
     }
+
+	public void ForceSetup()
+	{
+		if (!initSetupRun)
+		{
+			initSetupRun = true;
+			InitSetup();
+		}
+	}
+
+	private void InitSetup()
+	{
+		selfTransform = transform;
+		foreach (ObjectPool pool in pools)
+		{
+			pool.Setup(selfTransform, generateOnAwake);
+		}
+	}
 
     public void AddNewPools(List<int> numbers, List<GameObject> baseObjects)
     {

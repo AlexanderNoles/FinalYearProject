@@ -51,7 +51,13 @@ public class FadeOnEnable : MonoBehaviour
         }
     }
 
-    public bool finished()
+	public void Restart()
+	{
+		gameObject.SetActive(false);
+		gameObject.SetActive(true);
+	}
+
+    public bool Finished()
     {
         float currentAlpha;
         if (nonUI)
@@ -65,7 +71,7 @@ public class FadeOnEnable : MonoBehaviour
         return currentAlpha > targetAlpha * 0.99f;
     }
 
-    public float getCurrentAlpha()
+    public float GetCurrentAlpha()
     {
         if (nonUI)
         {
