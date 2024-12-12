@@ -33,6 +33,12 @@ public class LocationInformationUI : MonoBehaviour
 
 	public void Draw()
 	{
+		if (cachedLocation != null && shopControl.IsDisplayedData(shopData))
+		{
+			//Don't want to be able to access shop when we have left location
+			shopControl.Hide();
+		}
+
 		//Get current location
 		VisitableLocation currentLocation = PlayerLocationManagement.GetCurrentLocation();
 		cachedLocation = currentLocation;
