@@ -191,6 +191,7 @@ public class CameraManagement : MonoBehaviour
         {
 			Transform targetCamera = null;
 			Transform targetCamearAxis = null;
+			float lowerCameraLimit = -85f;
 
 			if (mainCamera.enabled)
 			{
@@ -214,6 +215,8 @@ public class CameraManagement : MonoBehaviour
 			}
 			else if (UIManagement.MapActive())
 			{
+				lowerCameraLimit = 5;
+
 				if (UIManagement.FirstFrameMapIntroRunning())
 				{
 					//cache variables to reapply later
@@ -256,7 +259,7 @@ public class CameraManagement : MonoBehaviour
             }
 
 			cameraRot.y += cameraInput.y;
-			cameraRot.x = Mathf.Clamp(cameraRot.x + cameraInput.x, -85, 85);
+			cameraRot.x = Mathf.Clamp(cameraRot.x + cameraInput.x, lowerCameraLimit, 85);
 
 			targetCamearAxis.rotation = Quaternion.Euler(cameraRot.x, cameraRot.y, 0.0f);
 			targetCamera.LookAt(targetCamearAxis);

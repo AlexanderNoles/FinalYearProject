@@ -362,7 +362,7 @@ public class PlayerCapitalShip : MonoBehaviour
 	private void EndJump()
 	{
 		jumping = false;
-		nextJumpAllowedTime = Time.time + 5.0f;
+		nextJumpAllowedTime = Time.time + 1.0f;
 
 		//Update current player location
 		PlayerLocationManagement.UpdateLocation(jumpTarget);

@@ -71,7 +71,7 @@ public class PlayerLocationManagement : MonoBehaviour
 		if (location == null)
 		{
 			//No location was loaded
-			location = new ArbitraryLocation().SetLocation(new RealSpacePostion(0, 0, 50000));
+			location = new ArbitraryLocation().SetLocation(new RealSpacePostion(0, 0, 20000));
 		}
 
 		//Run update once to get allow the system to run setup before any other updates run without duplicate code

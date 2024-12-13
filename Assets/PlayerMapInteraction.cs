@@ -5,7 +5,12 @@ using UnityEngine;
 public class PlayerMapInteraction : PostTickUpdate
 {
 	public MultiObjectPool mapPools;
+
+	[Header("Effects")]
 	public Transform targetIcon;
+	public Transform rangeIndicator;
+	private Material rangeIndicatorMat;
+	private float cachedRange;
 
 	private class LocationOnMap
 	{
@@ -16,10 +21,17 @@ public class PlayerMapInteraction : PostTickUpdate
 	private bool doneInitialDraw;
 	private Dictionary<Vector3, List<LocationOnMap>> cellCenterToLocations = new Dictionary<Vector3, List<LocationOnMap>>();
 
+	private void Awake()
+	{
+		rangeIndicatorMat = rangeIndicator.GetComponent<MeshRenderer>().material;
+	}
+
 	protected override void OnEnable()
 	{
 		base.OnEnable();
+		rangeIndicator.gameObject.SetActive(false);
 		targetIcon.gameObject.SetActive(false);
+		Shader.SetGlobalFloat("_ShipRange", 0.0f);
 		doneInitialDraw = false;
 		mapPools.HideAllObjects(4);
 	}
@@ -63,6 +75,12 @@ public class PlayerMapInteraction : PostTickUpdate
 			players[0].GetData(PlayerFaction.statDataKey, out PlayerStats playerStats);
 			chunkRange = Mathf.FloorToInt(playerStats.GetStat(Stats.jumprange.ToString()));
 		}
+
+		const float buffer = 1;
+		float calculatedRange = (chunkRange * density) + buffer;
+		cachedRange = calculatedRange;
+
+		rangeIndicatorMat.SetFloat("_Radius", calculatedRange);
 
 		VisitableLocation currentPlayerLocation = PlayerLocationManagement.GetCurrentLocation();
 		RealSpacePostion currentPlayerCellCenter = WorldManagement.ClampPositionToGrid(currentPlayerLocation.GetPosition());
@@ -139,22 +157,33 @@ public class PlayerMapInteraction : PostTickUpdate
 
 		//If they click then start jump to that position
 
-		if (PlayerCapitalShip.IsJumping())
+		Vector3 pos = -WorldManagement.worldCenterPosition.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
+		rangeIndicator.position = pos + Vector3.up * 0.05f;
+		Shader.SetGlobalVector("_WCMapPos", pos);
+
+		if (UIManagement.MapIntroRunning())
 		{
-			//Don't let them set a new position if we are jumping
-			targetIcon.gameObject.SetActive(false);
+			if (UIManagement.LastFrameMapIntroRunning())
+			{
+				rangeIndicator.gameObject.SetActive(true);
+			}
+
 			return;
 		}
-
-		//Wait till map anim is finished to draw
-		if (!doneInitialDraw)
+		else
 		{
-			if (!UIManagement.MapIntroRunning())
+			if (!doneInitialDraw)
 			{
 				doneInitialDraw = true;
 				DrawAvaliableLocations();
 			}
+			Shader.SetGlobalFloat("_ShipRange", cachedRange);
+		}
 
+		if (PlayerCapitalShip.IsJumping())
+		{
+			//Don't let them set a new position if we are jumping
+			targetIcon.gameObject.SetActive(false);
 			return;
 		}
 
