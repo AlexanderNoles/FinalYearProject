@@ -46,6 +46,7 @@ public class VisitableLocation : Location, IDisplay
 		return "";
 	}
 
+	//Shop
 	public virtual bool HasShop()
 	{
 		return false;
@@ -54,5 +55,16 @@ public class VisitableLocation : Location, IDisplay
 	public virtual Shop GetShop()
 	{
 		return null;
+	}
+
+	//Fuel
+	public virtual bool CanBuyFuel()
+	{
+		return false;
+	}
+
+	public virtual float FuelPerMoneyUnit()
+	{
+		return 1.0f;
 	}
 }

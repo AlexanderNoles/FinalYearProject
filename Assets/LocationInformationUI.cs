@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class LocationInformationUI : MonoBehaviour
@@ -13,6 +14,11 @@ public class LocationInformationUI : MonoBehaviour
 	private Shop shopData;
 	public ShopControlUI shopControl;
 	private FloatingWindow shopWindow;
+
+	[Header("Fuel")]
+	public StandardButton fuelButton;
+	private bool currentLocationCanFuel;
+	private float cachedFuelPerMoneyUnit;
 
 	private void Awake()
 	{
@@ -73,6 +79,13 @@ public class LocationInformationUI : MonoBehaviour
 			{
 				shopButton.Enable(false);
 			}
+
+			currentLocationCanFuel = currentLocation.CanBuyFuel();
+
+			if (currentLocationCanFuel)
+			{
+				cachedFuelPerMoneyUnit = currentLocation.FuelPerMoneyUnit();
+			}
 		}
 	}
 
@@ -82,12 +95,47 @@ public class LocationInformationUI : MonoBehaviour
 		shopWindow.MoveToFront();
 	}
 
+	public void BuyFuel()
+	{
+		//Get player inventory
+		List<Faction> players = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Player);
+
+		if(players.Count > 0)
+		{
+			players[0].GetData(PlayerFaction.inventoryDataKey, out PlayerInventory playerInventory);
+
+			const float maxFuelBuyRate = 50;
+			float moneyToSpend = Mathf.Min(maxFuelBuyRate, playerInventory.mainCurrency);
+
+			if (moneyToSpend > 0)
+			{
+				//Can afford any fuel
+				//Subtract money
+				playerInventory.mainCurrency -= moneyToSpend;
+				playerInventory.fuel += moneyToSpend * cachedFuelPerMoneyUnit;
+
+				//Redraw main bar
+				MainInfoBarControl.ForceRedraw();
+			}
+		}
+	}
+
 	private void Update()
 	{
+		if (blocker.activeSelf)
+		{
+			return;
+		}
+
 		if (InputManagement.GetKeyDown(KeyCode.Q) && cachedLocation.HasShop())
 		{
 			//Toggle shop
 			ToggleShopButton();
 		}
+
+		//If jumping don't allow refuel
+		//This is because it interfers with the fuel count down during jump effect
+		//Also it would be weird to buy fuel will about to jump
+		fuelButton.Enable(currentLocationCanFuel && !PlayerCapitalShip.IsJumping());
 	}
 }

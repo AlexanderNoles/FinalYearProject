@@ -65,6 +65,11 @@ public class SettlementData : DataBase
 			{
 				return shop;
 			}
+
+			public override bool CanBuyFuel()
+			{
+				return true;
+			}
 		}
 
 

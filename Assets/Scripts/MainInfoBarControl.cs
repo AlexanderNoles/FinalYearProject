@@ -10,6 +10,7 @@ public class MainInfoBarControl : PostTickUpdate
 	public TextMeshProUGUI populationLabel;
 	public TextMeshProUGUI healthLabel;
 	public TextMeshProUGUI currencyLabel;
+	public TextMeshProUGUI fuelLabel;
 
 	private void Awake()
 	{
@@ -44,6 +45,17 @@ public class MainInfoBarControl : PostTickUpdate
 			populationLabel.text = Mathf.FloorToInt(populationData.currentPopulationCount).ToString();
 			healthLabel.text = Mathf.FloorToInt(playerStats.GetStat(Stats.health.ToString())).ToString();
 			currencyLabel.text = Mathf.FloorToInt(playerInventory.mainCurrency).ToString();
-        }
+
+			if (!PlayerCapitalShip.IsJumping())
+			{
+				//During jump don't update fuel label automatically
+				UpdateFuelLabel(playerInventory.fuel);
+			}
+		}
+	}
+
+	public static void UpdateFuelLabel(float value)
+	{
+		instance.fuelLabel.text = Mathf.FloorToInt(value).ToString();
 	}
 }

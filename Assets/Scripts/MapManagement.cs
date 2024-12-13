@@ -114,7 +114,7 @@ public class MapManagement : MonoBehaviour
 					}
                 }
 
-                Vector3 mapBasePosThisFrame = mapBasePos + (Vector3.up * Mathf.Lerp(-25, -2, UIManagement.EvaluatedMapIntroT()));
+                Vector3 mapBasePosThisFrame = mapBasePos + (Vector3.up * Mathf.Lerp(-25, -0.1f, UIManagement.EvaluatedMapIntroT()));
                 mapElementsPools.UpdateNextObjectPosition(mapBasePool, mapBasePosThisFrame);
 
                 mapElementsPools.PruneObjectsNotUpdatedThisFrame(mapRingPool);

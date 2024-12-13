@@ -1,9 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public static class UIHelper
 {
+	public static List<RaycastResult> ElementsUnderMouse()
+	{
+		PointerEventData pointerData = new PointerEventData(EventSystem.current)
+		{
+			pointerId = -1,
+		};
+
+		pointerData.position = Input.mousePosition;
+
+		List<RaycastResult> results = new List<RaycastResult>();
+		EventSystem.current.RaycastAll(pointerData, results);
+
+		return results;
+	}
+
 	public static List<(float, Vector2)> CalculateSpreadPositions(int count, int bufferBetween, int flipThreshold = 6)
 	{
 		List<(float, Vector2)> toReturn = new List<(float, Vector2)>();

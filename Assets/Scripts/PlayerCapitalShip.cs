@@ -41,6 +41,8 @@ public class PlayerCapitalShip : MonoBehaviour
 	private static float jumpT;
 	private static float rotateT;
 	private float postJumpT;
+	private float fuelAtBeginningOfJump;
+	private float fuelAtEndOfJump;
 	private static float nextJumpAllowedTime;
 
 	private static float jumpBuildupBuffer;
@@ -151,6 +153,9 @@ public class PlayerCapitalShip : MonoBehaviour
 			return;
 		}
 
+		//By default don't change fuel during jump
+		instance.fuelAtEndOfJump = -1;
+
 		jumping = true;
 		jumpStage = JumpStage.InitialTurn;
 		jumpTarget = target;
@@ -174,30 +179,19 @@ public class PlayerCapitalShip : MonoBehaviour
 		jumpBuildupBuffer = jumpBuildupMax;
 	}
 
+	public static void HaveFuelChangeOverJump(float startValue, float endValue)
+	{
+		instance.fuelAtEndOfJump = endValue;
+		instance.fuelAtBeginningOfJump = startValue;
+	}
+
+	public static double CalculateDistance(RealSpacePostion to)
+	{
+		return new RealSpacePostion(to).Subtract(instance.pcsRSP).Magnitude();
+	}
+
 	private void Update()
 	{
-		//if (InputManagement.GetKeyDown(KeyCode.R))
-		//{
-		//	//Get a random settlement location to teleport to
-		//	List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Settlements);
-		//	SettlementData.Settlement newTarget = null;
-		//	while (newTarget == null)
-		//	{
-		//		int targetIndex = Random.Range(0, factions.Count);
-		//		if (factions[targetIndex].GetData(Faction.Tags.Settlements, out SettlementData data))
-		//		{
-		//			if (data.settlements.Count > 0)
-		//			{
-		//				newTarget = data.settlements.ElementAt(Random.Range(0, data.settlements.Count)).Value;
-		//			}
-		//		}
-		//	}
-		//	if (newTarget != null)
-		//	{
-		//		StartJump(newTarget.location);
-		//	}
-		//}
-
 		if (jumping)
 		{
 			if (jumpStage == JumpStage.InitialTurn)
@@ -281,6 +275,12 @@ public class PlayerCapitalShip : MonoBehaviour
 				if (jumpT < 1.0f)
 				{
 					jumpT += Time.deltaTime * thisJumpSpeed * shipSpeedMultiplier;
+
+					if (fuelAtEndOfJump != -1)
+					{
+						//Fuel is changing during jump
+						MainInfoBarControl.UpdateFuelLabel(Mathf.Lerp(fuelAtBeginningOfJump, fuelAtEndOfJump, jumpT));
+					}
 
 					trail.SetPosition(1, new Vector3(0, 0, Mathf.Lerp(0, -maxTrailLength, jumpT * 15.0f)));
 

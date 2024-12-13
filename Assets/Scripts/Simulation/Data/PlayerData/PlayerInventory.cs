@@ -10,6 +10,7 @@ public class PlayerInventory : InventoryBase
 	private List<ItemBase> itemBases = new List<ItemBase>();
 	private PlayerStats target = null;
 	public float mainCurrency = 500;
+	public float fuel = 500;
 
 	public void SetStatsTarget(PlayerStats newTarget)
 	{

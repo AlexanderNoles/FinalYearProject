@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerMapInteraction : PostTickUpdate
 {
@@ -11,6 +14,14 @@ public class PlayerMapInteraction : PostTickUpdate
 	public Transform rangeIndicator;
 	private Material rangeIndicatorMat;
 	private float cachedRange;
+
+	[Header("Location Information Disaply")]
+	public Canvas canvas;
+	private RectTransform canvasRect;
+	public RectTransform floatingLocationInformationPopup;
+	public TextMeshProUGUI locationTitleLabel;
+	public TextMeshProUGUI locationDescLabel;
+	public TextMeshProUGUI fuelCostLabel;
 
 	private class LocationOnMap
 	{
@@ -23,6 +34,7 @@ public class PlayerMapInteraction : PostTickUpdate
 
 	private void Awake()
 	{
+		canvasRect = canvas.transform as RectTransform;
 		rangeIndicatorMat = rangeIndicator.GetComponent<MeshRenderer>().material;
 	}
 
@@ -83,20 +95,30 @@ public class PlayerMapInteraction : PostTickUpdate
 		rangeIndicatorMat.SetFloat("_Radius", calculatedRange);
 
 		VisitableLocation currentPlayerLocation = PlayerLocationManagement.GetCurrentLocation();
-		RealSpacePostion currentPlayerCellCenter = WorldManagement.ClampPositionToGrid(currentPlayerLocation.GetPosition());
+		RealSpacePostion playerPos = currentPlayerLocation.GetPosition();
+		RealSpacePostion currentPlayerCellCenter = WorldManagement.ClampPositionToGrid(playerPos);
 
-		for (int x = -chunkRange; x <= chunkRange; x++)
+		double gridDensity = WorldManagement.GetGridDensity();
+		//Get the players offset from their cell center
+		//The range check works on a cell basis but jump distance should be measured from player's actual position
+		//So the x and z need to be offset so we can calculate correctly
+		float playerXOffsetFromCellCenter = (float)((currentPlayerCellCenter.x - playerPos.x) / gridDensity);
+		float playerZOffsetFromCellCenter = (float)((currentPlayerCellCenter.z - playerPos.z) / gridDensity);
+
+		int bufferedChunkRange = chunkRange + 1;
+
+		for (int x = -bufferedChunkRange; x <= bufferedChunkRange; x++)
 		{
-			for (int z = -chunkRange; z <= chunkRange; z++)
+			for (int z = -bufferedChunkRange; z <= bufferedChunkRange; z++)
 			{
 				//Within circle
-				if (Mathf.Abs(x) + Mathf.Abs(z) <= chunkRange)
+				if (Mathf.Abs(x + playerXOffsetFromCellCenter) + Mathf.Abs(z + playerZOffsetFromCellCenter) <= bufferedChunkRange)
 				{
 					//Find offset from cell center
 					RealSpacePostion currentCellCenter = new RealSpacePostion(
-						currentPlayerCellCenter.x + (WorldManagement.GetGridDensity() * x), 
+						currentPlayerCellCenter.x + (gridDensity * x), 
 						0, 
-						currentPlayerCellCenter.z + (WorldManagement.GetGridDensity() * z));
+						currentPlayerCellCenter.z + (gridDensity * z));
 
 					//Iterate through all factions
 					//If they have a location in this chunk place it on the map
@@ -111,7 +133,6 @@ public class PlayerMapInteraction : PostTickUpdate
 								SettlementData.Settlement settlement = settlementData.settlements[currentCellCenter];
 								Vector3 pos = -settlement.actualSettlementPos.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
 
-								mapPools.UpdateNextObjectPosition(4, pos);
 								AddPosition(pos, settlement.location);
 							}
 						}
@@ -124,6 +145,14 @@ public class PlayerMapInteraction : PostTickUpdate
 
 	private void AddPosition(Vector3 worldPos, VisitableLocation location)
 	{
+		if (PlayerLocationManagement.GetCurrentLocation().Equals(location))
+		{
+			//Can't travel to same location
+			return;
+		}
+
+		mapPools.UpdateNextObjectPosition(4, worldPos);
+
 		//Get on map cell center
 		Vector3 cellCenter = ClampPositionToGridMap(worldPos);
 
@@ -180,13 +209,14 @@ public class PlayerMapInteraction : PostTickUpdate
 			Shader.SetGlobalFloat("_ShipRange", cachedRange);
 		}
 
-		if (PlayerCapitalShip.IsJumping())
+		if (PlayerCapitalShip.IsJumping() || UIHelper.ElementsUnderMouse().Count > 0)
 		{
-			//Don't let them set a new position if we are jumping
+			//Don't let them set a new position if we are jumping or if we are currently  moused over a ui object
 			targetIcon.gameObject.SetActive(false);
 			return;
 		}
 
+		//Intersection with x z plane
 		Ray mouseViewRay = CameraManagement.GetBackingCamera().ScreenPointToRay(Input.mousePosition);
 
 		//If we intersect with the plane
@@ -233,17 +263,55 @@ public class PlayerMapInteraction : PostTickUpdate
 
 			if (foundLocation)
 			{
+				//Disaply target information
 				targetIcon.position = targetLocation.worldPos;
+				locationTitleLabel.text = targetLocation.actualLocationData.GetTitle();
+				locationDescLabel.text = targetLocation.actualLocationData.GetDescription();
 
-				if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
+				//Move window to be below mouse
+				RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, Input.mousePosition, canvas.worldCamera, out Vector2 mousePos);
+				floatingLocationInformationPopup.position = canvasRect.TransformPoint(mousePos);
+
+				//Calculate fuel cost
+				int fuelCost;
+
+				//Fuel is calculated in this script because this form of travel uses fuel
+				//Some forms of travel won't so it's not done directly in the jump function
+				double distance = PlayerCapitalShip.CalculateDistance(targetLocation.actualLocationData.GetPosition());
+				fuelCost = (int)Math.Floor(distance / 100);
+
+				//Disaply fuel cost
+				fuelCostLabel.text = fuelCost.ToString();
+
+				//Get inventory
+				List<Faction> players = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Player);
+				if (players.Count > 0)
 				{
-					PlayerCapitalShip.StartJump(targetLocation.actualLocationData);
+					players[0].GetData(PlayerFaction.inventoryDataKey, out PlayerInventory inventory);
 
-					//Set initial draw back to false so when the player arrives the inital draw is done again
-					//Otherwise locations won't show up till next post tick call
-					doneInitialDraw = false;
+					if (inventory.fuel >= fuelCost)
+					{
+						fuelCostLabel.color = Color.green;
 
-					mapPools.HideAllObjects(4);
+						if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
+						{
+							PlayerCapitalShip.StartJump(targetLocation.actualLocationData);
+
+							//Remove fuel and have player ship change the ui label over the course of the jump
+							PlayerCapitalShip.HaveFuelChangeOverJump(inventory.fuel, inventory.fuel - fuelCost);
+							inventory.fuel -= fuelCost;
+
+							//Set initial draw back to false so when the player arrives the inital draw is done again
+							//Otherwise locations won't show up till next post tick call
+							doneInitialDraw = false;
+
+							mapPools.HideAllObjects(4);
+						}
+					}
+					else
+					{
+						fuelCostLabel.color = Color.red;
+					}
 				}
 			}
 		}
