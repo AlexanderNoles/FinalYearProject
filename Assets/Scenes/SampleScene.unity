@@ -12412,7 +12412,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   runHistory: 1
-  historyLength: 50
+  historyLength: 500
   drawMilitaryPresence: 1
   updateMap: 1
 --- !u!1 &1273093546
