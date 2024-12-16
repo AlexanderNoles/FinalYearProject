@@ -339,7 +339,7 @@ public class TerritoryData : DataBase
 			}
 
 			iconPosition += summedOffset;
-			iconScale = Vector3.one * SimulationHelper.ValueTanhFalloff(iconScale.x, 14);
+			iconScale = Vector3.one * MathHelper.ValueTanhFalloff(iconScale.x, 14);
 		}
 
 		return output;

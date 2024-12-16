@@ -26,7 +26,7 @@ public class NationSettlementManagementRoutine : RoutineBase
 			//More is gained from trade and 
 			economyData.purchasingPower -= (popData.currentPopulationCount / 300.0f) * (SimulationManagement.random.Next(-10, 51 + Mathf.FloorToInt(warData.warExhaustion * 0.1f)) / 100.0f);
 
-			float maxMilitaryCapacity = SimulationHelper.ValueTanhFalloff(popData.currentPopulationCount, 1000, 9000);
+			float maxMilitaryCapacity = MathHelper.ValueTanhFalloff(popData.currentPopulationCount, 1000, 9000);
 			//Iterate through each settlement
 			foreach (KeyValuePair<RealSpacePostion, SettlementData.Settlement> settlePair in settData.settlements)
 			{
@@ -122,8 +122,8 @@ public class NationSettlementManagementRoutine : RoutineBase
 					//Then add new ships if there is capacity
 
 					//Max units for this settlement using inverted settlement id, this means older sets will have a higher capacity
-					float maxUnitStorageCapacity = SimulationHelper.ValueTanhFalloff(invertedSettlementIndex, 5);
-					int fleetShipLimitForSettlement = Mathf.RoundToInt(SimulationHelper.ValueTanhFalloff(invertedSettlementIndex, 3));
+					float maxUnitStorageCapacity = MathHelper.ValueTanhFalloff(invertedSettlementIndex, 5);
+					int fleetShipLimitForSettlement = Mathf.RoundToInt(MathHelper.ValueTanhFalloff(invertedSettlementIndex, 3));
 					fleetShipLimitForSettlement = Mathf.Max(1, fleetShipLimitForSettlement);
 					int fleetCountInCell = 0;
 					RealSpacePostion cellCenter = settlePair.Key;
@@ -157,7 +157,7 @@ public class NationSettlementManagementRoutine : RoutineBase
 
 					if (maxAmountToAdd >= 1)
 					{
-						float productionSpeed = SimulationHelper.ValueTanhFalloff(invertedSettlementIndex, 1, 10);
+						float productionSpeed = MathHelper.ValueTanhFalloff(invertedSettlementIndex, 1, 10);
 
 						if (warData.atWarWith.Count > 0)
 						{
@@ -176,7 +176,7 @@ public class NationSettlementManagementRoutine : RoutineBase
 				#endregion
 			}
 
-			economyData.purchasingPower = SimulationHelper.ValueTanhFalloff(economyData.purchasingPower, 3000);
+			economyData.purchasingPower = MathHelper.ValueTanhFalloff(economyData.purchasingPower, 3000);
 		}
     }
 }

@@ -46,7 +46,7 @@ public class PlayerBattleBehaviour : BattleBehaviour
 				if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
 				{
 					//Yippee!
-					AddTarget(newTarget);
+					ToggleTarget(newTarget);
 				}
 			}
 		}

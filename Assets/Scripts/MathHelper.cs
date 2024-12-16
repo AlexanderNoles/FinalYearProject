@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class SimulationHelper
+public static class MathHelper
 {
 	public static float ValueTanhFalloff(float input, float modifier = 1, float additionalHorizontalStretch = 1)
 	{

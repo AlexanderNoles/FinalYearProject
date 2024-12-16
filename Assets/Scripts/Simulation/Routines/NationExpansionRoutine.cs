@@ -41,12 +41,12 @@ public class NationExpansionRoutine : RoutineBase
 			}
 			else
 			{
-				current.growthRate = Mathf.MoveTowards(current.growthRate, SimulationHelper.ValueTanhFalloff(popData.currentPopulationCount / 100.0f, 2, -1), 0.05f);
+				current.growthRate = Mathf.MoveTowards(current.growthRate, MathHelper.ValueTanhFalloff(popData.currentPopulationCount / 100.0f, 2, -1), 0.05f);
 			}
 
 			current.territoryClaimUpperLimit += current.growthRate;
 
-			current.territoryClaimUpperLimit = SimulationHelper.ValueTanhFalloff(current.territoryClaimUpperLimit, Mathf.Clamp(popData.currentPopulationCount * 5.0f, 10, 900), -1);
+			current.territoryClaimUpperLimit = MathHelper.ValueTanhFalloff(current.territoryClaimUpperLimit, Mathf.Clamp(popData.currentPopulationCount * 5.0f, 10, 900), -1);
 
 			if (current.territoryCenters.Count > 0 && current.territoryCenters.Count < current.territoryClaimUpperLimit)
 			{

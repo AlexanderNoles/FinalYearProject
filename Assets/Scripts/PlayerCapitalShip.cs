@@ -68,6 +68,9 @@ public class PlayerCapitalShip : MonoBehaviour
 		Done
 	}
 
+	private float rotationalMovement;
+	private float normalEnginesIntensity;
+
 	[Header("Effects")]
 	public ParticleSystem jumpPs;
 	public Transform arcaneRingsParent;
@@ -103,6 +106,8 @@ public class PlayerCapitalShip : MonoBehaviour
 		pulseMat = pulseRenderer.material;
 		pulseMat.SetFloat("_T", 0.0f);
 
+		//Set inital jump stage
+		jumpStage = JumpStage.Done;
 
 		piercer.localScale = Vector3.zero;
 
@@ -160,6 +165,11 @@ public class PlayerCapitalShip : MonoBehaviour
 		jumpStage = JumpStage.InitialTurn;
 		jumpTarget = target;
 
+		//Zero current rotational movement
+		instance.rotationalMovement = 0;
+		//Zero current engine intensity
+		instance.normalEnginesIntensity = 0;
+
 		//Clone the position
 		jumpStart = new RealSpacePostion(WorldManagement.worldCenterPosition);
 
@@ -192,6 +202,66 @@ public class PlayerCapitalShip : MonoBehaviour
 
 	private void Update()
 	{
+		//Ship Movement
+		if (jumpStage == JumpStage.Done)
+		{
+			//Not jumping
+			bool mapActive = UIManagement.MapActive();
+
+			//Rotational Movement
+			const float rotationalModifier = 0.01f;
+			float rotationalChangeModifier = rotationalModifier * Time.deltaTime;
+			if (InputManagement.GetKey(KeyCode.E) && !mapActive)
+			{
+				rotationalMovement += rotationalChangeModifier;
+			}
+			else if (InputManagement.GetKey(KeyCode.Q) && !mapActive)
+			{
+				rotationalMovement -= rotationalChangeModifier;
+			}
+			else
+			{
+				rotationalMovement = Mathf.Lerp(rotationalMovement, 0.0f, rotationalChangeModifier * 200.0f);
+			}
+
+			rotationalMovement = MathHelper.ValueTanhFalloff(rotationalMovement, 4, -1);
+
+			transform.rotation = Quaternion.Euler(
+				transform.rotation.eulerAngles.x,
+				transform.rotation.eulerAngles.y + rotationalMovement,
+				transform.rotation.eulerAngles.z
+				);
+
+			CameraManagement.AddRotationMainOnly(new Vector2(0, rotationalMovement));
+			//
+
+			//Engines
+			const float engineIntensityModifier = 0.1f;
+			float engineChangeModifier = Time.deltaTime * engineIntensityModifier;
+			if (InputManagement.GetKey(KeyCode.W) && !mapActive)
+			{
+				normalEnginesIntensity += engineChangeModifier;
+			}
+			else
+			{
+				if (InputManagement.GetKey(KeyCode.S) && !mapActive)
+				{
+					normalEnginesIntensity -= engineChangeModifier;
+				}
+
+				normalEnginesIntensity = Mathf.Lerp(normalEnginesIntensity, 0.0f, engineChangeModifier);
+			}
+
+			normalEnginesIntensity = Mathf.Max(MathHelper.ValueTanhFalloff(normalEnginesIntensity, 0.05f, -1), 0.0f);
+
+			Vector3 changeThisFrame = transform.forward * normalEnginesIntensity;
+
+			transform.position += changeThisFrame;
+			//
+		}
+
+		//JUMP ANIMATION
+
 		if (jumping)
 		{
 			if (jumpStage == JumpStage.InitialTurn)
@@ -357,6 +427,8 @@ public class PlayerCapitalShip : MonoBehaviour
 
 			pulseMat.SetFloat("_T", 1.0f - pulseT);
 		}
+	
+		//
 	}
 
 	private void EndJump()

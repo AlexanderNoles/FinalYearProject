@@ -275,40 +275,13 @@ public class CameraManagement : MonoBehaviour
             currentCameraZoomTarget = Mathf.Clamp(currentCameraZoomTarget - scrollInput, 10, 150);
 			targetCamera.localPosition = Vector3.Lerp(targetCamera.localPosition, Vector3.back * currentCameraZoomTarget, Time.deltaTime * 5.0f);
 
-			//Move camera about
-			if (!UIManagement.MapActive())
-			{
-				//No movement allowed in the map
-				if (InputManagement.GetKeyDown(KeyCode.Space))
-				{
-					offsetFromTarget = Vector3.zero;
-				}
-				else
-				{
-					Vector3 wasdInput = InputManagement.WASDInput();
-
-					//Get wasdInput relative to the direction the camera is facing
-					Vector3 cameraForward = targetCamera.forward;
-					cameraForward.y = 0;
-					cameraForward.Normalize();
-
-					Vector3 cameraRight = targetCamera.right;
-					cameraRight.y = 0;
-					cameraRight.Normalize();
-
-					Vector3 relativeWasdInput = ((wasdInput.z * cameraRight) + (wasdInput.x * cameraForward)).normalized;
-
-					//Apply to offset
-					offsetFromTarget += relativeWasdInput * Time.deltaTime * (InputManagement.GetKey(KeyCode.LeftShift) ? sprintSpeed : moveSpeed);
-
-					offsetFromTarget = Vector3.ClampMagnitude(offsetFromTarget, moveLimit);
-				}
-			}
-
             Vector3 newTargetPosition = GetTargetPosition() + offsetFromTarget;
 
             float lerpT;
-            if (Vector3.Distance(newTargetPosition, targetCamearAxis.position) > lerpLimit)
+			//Lerp is disabled because the effect looks weird with ship movement
+			//Also it feels unnecesary
+			const bool lerpEnabled = false;
+            if (Vector3.Distance(newTargetPosition, targetCamearAxis.position) > lerpLimit && lerpEnabled) 
             {
                 lerpT = Time.deltaTime * 9.0f;
             }

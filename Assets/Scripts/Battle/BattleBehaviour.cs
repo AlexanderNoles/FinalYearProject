@@ -35,6 +35,15 @@ public class BattleBehaviour : MonoBehaviour
 		BattleManagement.DeRegisterBattleBehaviour(cachedCollider);
 	}
 
+	protected void ToggleTarget(BattleBehaviour target)
+	{
+        if (!currentTargets.Remove(target))
+        {
+            //If target is not removed (i.e., it was not in the list)
+			currentTargets.Add(target);
+        }
+    }
+
 	protected void AddTarget(BattleBehaviour newTarget)
 	{
 		//Can't attack ourself
