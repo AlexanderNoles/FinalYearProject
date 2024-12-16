@@ -5,6 +5,13 @@ using UnityEngine;
 public class UIManagement : MonoBehaviour
 {
     private static UIManagement instance;
+	private static bool onlyMapMode = false;
+
+	[MonitorBreak.Bebug.ConsoleCMD("ML_TOGGLE")]
+	public static void ToggleLockToMap()
+	{
+		onlyMapMode = !onlyMapMode;
+	}
 
 	[Header("Map")]
     public GameObject map;
@@ -75,9 +82,9 @@ public class UIManagement : MonoBehaviour
 
     private void Update()
     {
-        if (map != null)
+        if (map != null && SimulationManagement.GetHistoryRunPercentage() >= 1.0f)
         {
-            if ((InputManagement.GetKeyDown(KeyCode.M) || mapButtonPressed) && MonitorBreak.Bebug.Console.GetConsoleState() != MonitorBreak.Bebug.Console.ConsoleState.FullScreen)
+            if ((InputManagement.GetKeyDown(KeyCode.M) || mapButtonPressed || (onlyMapMode && !mapObject.activeSelf)) && MonitorBreak.Bebug.Console.GetConsoleState() != MonitorBreak.Bebug.Console.ConsoleState.FullScreen)
             {
 				mapButtonPressed = false;
 
