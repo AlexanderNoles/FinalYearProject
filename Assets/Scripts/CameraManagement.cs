@@ -134,6 +134,11 @@ public class CameraManagement : MonoBehaviour
         instance.mainCamera.enabled = active;
     }
 
+	public static Camera GetMainCamera()
+	{
+		return instance.mainCamera;
+	}
+
 	public static Camera GetBackingCamera()
 	{
 		return instance.actualBackingCamera;

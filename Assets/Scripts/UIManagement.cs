@@ -128,7 +128,7 @@ public class UIManagement : MonoBehaviour
 			ToggleInventory();
 		}
 
-		if (InputManagement.GetKeyDown(KeyCode.E))
+		if (InputManagement.GetKeyDown(KeyCode.R))
 		{
 			ToggleLocationInformation();
 		}
