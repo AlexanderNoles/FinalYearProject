@@ -21,5 +21,21 @@ public class RandomEventTickRoutine : RoutineBase
 				new Nation().Simulate();
 			}
 		}
+
+		if (currentTickRandomValue % SimulationManagement.MonthToTickNumberCount(1) == 0)
+		{
+			//Every month
+			List<Faction> nations = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Nation);
+
+			//For every nation we have some chance to spawn offshoots
+			foreach (Faction nation in nations)
+			{
+				if (SimulationManagement.random.Next(0, 101) < 1)
+				{
+					//Spawn some pirates
+					new PirateCrew().Simulate();
+				}
+			}
+		}
 	}
 }

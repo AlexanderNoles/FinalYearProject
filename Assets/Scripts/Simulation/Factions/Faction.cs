@@ -20,6 +20,7 @@ public class Faction
 		GameWorld, //This is the game world faction
 		Player, //This is the player's faction
 		Unkillable, //This faction cannot be destroyed by the MetaRoutine
+		Insignificant, //Is this faction insignificant?
         //
         Territory, //Does this faction contain some territory?
         Settlements, //Does this faction have settlements?
@@ -29,6 +30,7 @@ public class Faction
 		HasMilitary, //Does this faction have a military?
 		Politics, //Does this faction engage in politics?
 		HasEconomy, //Does this faction have an economy?
+		Capital, //Does this faction have a capital?
         //Is this faction visible in a way that makes it so every other faction has a relationship with it?
         //(This means that every faction will will know of it's existence)
         //This doesn't mean it immediately has a dual relationship with every other faction (cause it may not know about them, for example not all nations immediately know about the player)

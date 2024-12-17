@@ -46,6 +46,11 @@ public class VisitableLocation : Location, IDisplay
 		return "";
 	}
 
+	public virtual Color GetMapColour()
+	{
+		return Color.white;
+	}
+
 	//Shop
 	public virtual bool HasShop()
 	{

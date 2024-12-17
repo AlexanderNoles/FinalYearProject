@@ -7,6 +7,7 @@ public class GlobalBattleData : DataBase
 {
 	public class Battle : VisitableLocation
 	{
+		public RealSpacePostion postion;
 		public float backgroundProgression;
 
 		public int startTickID;
@@ -151,6 +152,16 @@ public class GlobalBattleData : DataBase
 				}
 			}
 		}
+
+		public Battle(RealSpacePostion pos)
+		{
+			postion = pos;
+		}
+
+		public override RealSpacePostion GetPosition()
+		{
+			return postion;
+		}
 	}
 
 	public Dictionary<RealSpacePostion, Battle> battles = new Dictionary<RealSpacePostion, Battle>();
@@ -160,7 +171,7 @@ public class GlobalBattleData : DataBase
 	{
 		if (!battles.ContainsKey(pos))
 		{
-			battles[pos] = new Battle();
+			battles[pos] = new Battle(pos);
 			battles[pos].startTickID = SimulationManagement.currentTickID;
 			totalBattlesCount++;
 		}

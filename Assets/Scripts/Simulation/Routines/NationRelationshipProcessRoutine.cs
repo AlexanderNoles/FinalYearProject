@@ -61,8 +61,12 @@ public class NationRelationshipProcessRoutine : RoutineBase
 					{
 						relationship.inConflict = true;
 
-						//Start a dedicated war
-						personalWarData.atWarWith.Add(entry.Key);
+						if (!SimulationManagement.GetFactionByID(entry.Key).HasTag(Faction.Tags.Insignificant))
+						{
+							//If this faction is not insignificant
+							//Start a dedicated war
+							personalWarData.atWarWith.Add(entry.Key);
+						}
 					}
 				}
 			}

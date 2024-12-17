@@ -35,6 +35,16 @@ public class PlayerCapitalShip : MonoBehaviour
 		return jumpTarget.GetPosition();
 	}
 
+	public static bool IsTargetPosition(RealSpacePostion pos)
+	{
+		if (pos == null || jumpTarget == null)
+		{
+			return false;
+		}
+
+		return pos.Equals(jumpTarget);
+	}
+
 	private static RealSpacePostion jumpStart;
 	private static Quaternion lookAtTargetRot;
 	private static Quaternion startTurnRot;

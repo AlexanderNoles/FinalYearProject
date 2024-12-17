@@ -84,6 +84,11 @@ public class SimulationManagement : MonoBehaviour
 		return (int)(DAY_TO_MONTH * MONTH_TO_YEAR) * years;
 	}
 
+	public static int MonthToTickNumberCount(int months)
+	{
+		return (int)DAY_TO_MONTH * months;
+	}
+
     private static SimulationManagement instance;
     private Task tickTask;
     [HideInInspector]
@@ -217,14 +222,18 @@ public class SimulationManagement : MonoBehaviour
 		//The key example is the current battle system (28/11/2024) that is lazy until a player arrives in a battle
 		//that battle is then no longer controlled by the simulation and instead by the normal game loop.
 
-		return !PlayerLocationManagement.IsPlayerLocation(cellCenter);
+
+		return !PlayerLocationManagement.IsPlayerLocation(cellCenter) && !PlayerCapitalShip.IsTargetPosition(cellCenter);
 	}
 
 	public static bool LocationIsLazy(VisitableLocation location)
 	{
 		//See above function "CellIsLazy"
 
-		return !PlayerLocationManagement.IsPlayerLocation(location);
+		//Additionally (as of 17/12/2024) the location lazy check now takes into account the place the player is traveling to
+		//as travel times mean if we don't the player could arrive and the location could have changed dramatically.
+
+		return !PlayerLocationManagement.IsPlayerLocation(location) && !PlayerCapitalShip.IsTargetPosition(location.GetPosition());
 	}
 
 	public GameObject simulationRoutinesStorage;
@@ -448,27 +457,34 @@ public class SimulationManagement : MonoBehaviour
 
 			instance.tickTask = Task.Run(() =>
 			{
-				for (int i = 0; i < count; i++)
+				try
 				{
-					currentTickID++;
-
-					IncrementDay();
-
-					instance.SimulationTick(isInstant);
-
-					if (instance.historyTicksLeft > 0)
+					for (int i = 0; i < count; i++)
 					{
-						instance.historyTicksLeft--;
+						currentTickID++;
 
-						if (instance.historyTicksLeft <= 0)
+						IncrementDay();
+
+						instance.SimulationTick(isInstant);
+
+						if (instance.historyTicksLeft > 0)
 						{
-							//Re-enable player input
-							InputManagement.InputEnabled = true;
+							instance.historyTicksLeft--;
 
-							//Init player faction
-							PlayerManagement.InitPlayerFaction();
+							if (instance.historyTicksLeft <= 0)
+							{
+								//Re-enable player input
+								InputManagement.InputEnabled = true;
+
+								//Init player faction
+								PlayerManagement.InitPlayerFaction();
+							}
 						}
 					}
+				}
+				catch (Exception e)
+				{
+					MonitorBreak.Bebug.Console.Log(e);
 				}
 			});
 

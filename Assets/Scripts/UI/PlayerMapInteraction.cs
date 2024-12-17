@@ -31,6 +31,7 @@ public class PlayerMapInteraction : PostTickUpdate
 
 	private bool doneInitialDraw;
 	private Dictionary<Vector3, List<LocationOnMap>> cellCenterToLocations = new Dictionary<Vector3, List<LocationOnMap>>();
+	private Dictionary<Transform, SpriteRenderer> transformToLocationRenderer = new Dictionary<Transform, SpriteRenderer>();
 
 	private void Awake()
 	{
@@ -77,6 +78,7 @@ public class PlayerMapInteraction : PostTickUpdate
 
 		List<Faction> allFactions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Faction);
 		Dictionary<int, SettlementData> idToSetData = SimulationManagement.GetDataForFactionsList<SettlementData>(allFactions, Faction.Tags.Settlements.ToString());
+		Dictionary<int, CapitalData> idToCapitalData = SimulationManagement.GetDataForFactionsList<CapitalData>(allFactions, Faction.Tags.Capital.ToString());
 
 		int chunkRange = 10;
 
@@ -137,6 +139,19 @@ public class PlayerMapInteraction : PostTickUpdate
 							}
 						}
 						//
+
+						//Capitals
+						if (idToCapitalData.ContainsKey(faction.id))
+						{
+							CapitalData capitalData = idToCapitalData[faction.id];
+							if (capitalData.position.Equals(currentCellCenter))
+							{
+								Vector3 pos = -capitalData.position.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
+
+								AddPosition(pos, capitalData.location);
+							}
+						}
+						//
 					}
 				}
 			}
@@ -151,7 +166,14 @@ public class PlayerMapInteraction : PostTickUpdate
 			return;
 		}
 
-		mapPools.UpdateNextObjectPosition(4, worldPos);
+		Transform newLocationTrans = mapPools.UpdateNextObjectPosition(4, worldPos);
+
+		if (!transformToLocationRenderer.ContainsKey(newLocationTrans))
+		{
+			transformToLocationRenderer.Add(newLocationTrans, newLocationTrans.GetComponent<SpriteRenderer>());
+		}
+
+		transformToLocationRenderer[newLocationTrans].color = location.GetMapColour();
 
 		//Get on map cell center
 		Vector3 cellCenter = ClampPositionToGridMap(worldPos);
