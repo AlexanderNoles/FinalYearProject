@@ -11,7 +11,7 @@ public class WeaponProfile
 
 	public virtual float ShotsPerAttack()
 	{
-		return 10.0f;
+		return 1.0f;
 	}
 
 	public virtual float GetTimeBetweenAttacks()

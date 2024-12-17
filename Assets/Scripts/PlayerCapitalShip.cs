@@ -71,6 +71,8 @@ public class PlayerCapitalShip : MonoBehaviour
 	private float rotationalMovement;
 	private float normalEnginesIntensity;
 
+	public Rigidbody rigidbodyTarget;
+
 	[Header("Effects")]
 	public ParticleSystem jumpPs;
 	public Transform arcaneRingsParent;
@@ -169,6 +171,7 @@ public class PlayerCapitalShip : MonoBehaviour
 		instance.rotationalMovement = 0;
 		//Zero current engine intensity
 		instance.normalEnginesIntensity = 0;
+		instance.UpdateEngineIntensityShaderAuto();
 
 		//Clone the position
 		jumpStart = new RealSpacePostion(WorldManagement.worldCenterPosition);
@@ -198,6 +201,16 @@ public class PlayerCapitalShip : MonoBehaviour
 	public static double CalculateDistance(RealSpacePostion to)
 	{
 		return new RealSpacePostion(to).Subtract(instance.pcsRSP).Magnitude();
+	}
+
+	private void UpdateEngineIntensityShaderAuto()
+	{
+		UpdateEngineIntensityShaderDirect(normalEnginesIntensity / 5.0f);
+	}
+
+	private void UpdateEngineIntensityShaderDirect(float t)
+	{
+		Shader.SetGlobalFloat("_PCSEngineIntensity", t);
 	}
 
 	private void Update()
@@ -236,27 +249,23 @@ public class PlayerCapitalShip : MonoBehaviour
 			//
 
 			//Engines
-			const float engineIntensityModifier = 0.1f;
-			float engineChangeModifier = Time.deltaTime * engineIntensityModifier;
+			const float engineAcceleration = 15;
+			float engineChangeModifier = engineAcceleration * Time.deltaTime;
 			if (InputManagement.GetKey(KeyCode.W) && !mapActive)
 			{
 				normalEnginesIntensity += engineChangeModifier;
 			}
-			else
+			else if (InputManagement.GetKey(KeyCode.S) && !mapActive)
 			{
-				if (InputManagement.GetKey(KeyCode.S) && !mapActive)
-				{
-					normalEnginesIntensity -= engineChangeModifier;
-				}
-
-				normalEnginesIntensity = Mathf.Lerp(normalEnginesIntensity, 0.0f, engineChangeModifier);
+				normalEnginesIntensity = Mathf.Lerp(normalEnginesIntensity, 0.0f, engineChangeModifier * 0.2f);
 			}
 
-			normalEnginesIntensity = Mathf.Max(MathHelper.ValueTanhFalloff(normalEnginesIntensity, 0.05f, -1), 0.0f);
+			normalEnginesIntensity = Mathf.Clamp(normalEnginesIntensity, 0.0f, 5.0f);
+			UpdateEngineIntensityShaderAuto();
 
-			Vector3 changeThisFrame = transform.forward * normalEnginesIntensity;
+			Vector3 velocity = transform.forward * normalEnginesIntensity;
 
-			transform.position += changeThisFrame;
+			rigidbodyTarget.velocity = velocity;
 			//
 		}
 
@@ -264,6 +273,7 @@ public class PlayerCapitalShip : MonoBehaviour
 
 		if (jumping)
 		{
+
 			if (jumpStage == JumpStage.InitialTurn)
 			{
 				if (rotateT < 1.0f)
@@ -307,8 +317,8 @@ public class PlayerCapitalShip : MonoBehaviour
 					float horiScale = Mathf.Max(Mathf.Lerp(-1f, 1f, percentage), 0.0f);
 					piercer.localScale = new Vector3(horiScale, piercerLength * 2.0f, horiScale);
 
-
 					backingEngineBuildup.localScale = Vector3.one * ((2.0f + (Mathf.Sin(Time.time * 50.0f) * 0.1f)) * backingBuildupCurve.Evaluate((1.0f - percentage) * 1.2f));
+					UpdateEngineIntensityShaderDirect(percentage);
 				}
 				else
 				{
@@ -431,10 +441,20 @@ public class PlayerCapitalShip : MonoBehaviour
 		//
 	}
 
+	private void FixedUpdate()
+	{
+		if (jumping)
+		{
+			//Force a clamp on velocity
+			rigidbodyTarget.velocity = Vector3.zero;
+		}
+	}
+
 	private void EndJump()
 	{
 		jumping = false;
 		nextJumpAllowedTime = Time.time + 1.0f;
+		UpdateEngineIntensityShaderDirect(0.0f);
 
 		//Update current player location
 		PlayerLocationManagement.UpdateLocation(jumpTarget);

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BattleBehaviour : MonoBehaviour
 {
+	public Collider target;
+
 	//This id should only really be used for testing
 	//All bBehaviour lookups should be done through colliders
 	private int bBehaviourID;
@@ -13,26 +15,24 @@ public class BattleBehaviour : MonoBehaviour
 
 	protected List<WeaponProfile> weapons = new List<WeaponProfile>();
 	protected List<BattleBehaviour> currentTargets = new List<BattleBehaviour>();
-	protected Collider cachedCollider = null;
 
 	protected virtual void Awake()
 	{
 		transform = base.transform;
 		bBehaviourID = Random.Range(-100000, 100000);
-		cachedCollider = GetComponent<BoxCollider>();
 	}
 
 	protected virtual void OnEnable()
 	{
-		if (cachedCollider != null)
+		if (target != null)
 		{
-			BattleManagement.RegisterBattleBehaviour(cachedCollider, this);
+			BattleManagement.RegisterBattleBehaviour(target, this);
 		}
 	}
 
 	protected virtual void OnDisable()
 	{
-		BattleManagement.DeRegisterBattleBehaviour(cachedCollider);
+		BattleManagement.DeRegisterBattleBehaviour(target);
 	}
 
 	protected void ToggleTarget(BattleBehaviour target)
@@ -169,7 +169,7 @@ public class BattleBehaviour : MonoBehaviour
 	protected virtual void DrawAttack(Vector3 targetPos, WeaponProfile weaponProfile)
 	{
 		//Be default simply ask the battle management script to draw a line to the target positon from our fire position
-		BattleManagement.CreateBasicBeamEffect(GetFireFromPosition(), targetPos, 0.1f);
+		BattleManagement.CreateBasicBeamEffect(GetFireFromPosition(targetPos), targetPos, 0.1f);
 	}
 
 	protected virtual Vector3 GetTargetablePosition()
@@ -181,7 +181,7 @@ public class BattleBehaviour : MonoBehaviour
 		return transform.position + Random.onUnitSphere * fuzziness;
 	}
 
-	protected virtual Vector3 GetFireFromPosition()
+	protected virtual Vector3 GetFireFromPosition(Vector3 targetPos)
 	{
 		return transform.position;
 	}

@@ -20,7 +20,7 @@ public class BoxDescribedBattleBehaviour : BattleBehaviour
 		return PointWithinBounds();
 	}
 
-	protected override Vector3 GetFireFromPosition()
+	protected override Vector3 GetFireFromPosition(Vector3 targetPos)
 	{
 		return PointWithinBounds();
 	}
