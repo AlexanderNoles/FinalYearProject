@@ -73,15 +73,31 @@ public class NationWarAttackRoutine : RoutineBase
 						{
 							//Create new attack
 							//Currently just pick a position from the enemy at random
-							RealSpacePostion newAttackPos = terData.borders.ElementAt(SimulationManagement.random.Next(0, terData.borders.Count));
+							RealSpacePostion attackCell = terData.borders.ElementAt(SimulationManagement.random.Next(0, terData.borders.Count));
 
 							//Transfer fleets to new attack if they are free
 							//Function should automatically check if we already have ships there and adjust the budget accordingly
-							int amountTransferred = milData.TransferFreeUnits(fleetBudgerPerAttack, newAttackPos, batData);
+							int amountTransferred = milData.TransferFreeUnits(fleetBudgerPerAttack, attackCell, batData);
 
 							if (amountTransferred > 0)
 							{
-								globalBattleData.StartBattle(newAttackPos, nation.id, enemy.id);
+								RealSpacePostion actualPos = null;
+
+								//If this is a brand new battle
+								if (!globalBattleData.battles.ContainsKey(attackCell))
+								{
+									if (enemy.GetData(Faction.Tags.Settlements, out SettlementData setData) && setData.settlements.ContainsKey(attackCell))
+									{
+										//If target has a settlement in this cell target that settlement specifically
+										actualPos = setData.settlements[attackCell].actualSettlementPos;
+									}
+									else
+									{
+										actualPos = WorldManagement.RandomPositionInCell(attackCell, SimulationManagement.random);
+									}
+								}
+
+								globalBattleData.StartOrJoinBattle(attackCell, actualPos, nation.id, enemy.id);
 								//Lower remaining attack budget
 								attackBudget--;
 							}

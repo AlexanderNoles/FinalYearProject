@@ -236,6 +236,13 @@ public class SimulationManagement : MonoBehaviour
 		return !PlayerLocationManagement.IsPlayerLocation(location) && !PlayerCapitalShip.IsTargetPosition(location.GetPosition());
 	}
 
+	public static bool PositionIsLazy(RealSpacePostion position)
+	{
+		//See above two functions, this is used for battles as they will map to a given position, possible a settlement position
+
+		return !PlayerLocationManagement.IsPlayerLocation(position) && !PlayerCapitalShip.IsTargetPosition(position);
+	}
+
 	public GameObject simulationRoutinesStorage;
 	private int historyTicksLeft;
 	private int maxHistoryTicks;

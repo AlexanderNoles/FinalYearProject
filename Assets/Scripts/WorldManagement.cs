@@ -141,7 +141,7 @@ public class WorldManagement : MonoBehaviour
         return toReturn;
     }
 
-    public static RealSpacePostion RandomPositionInChunk(RealSpacePostion chunkCenter, System.Random random)
+    public static RealSpacePostion RandomPositionInCell(RealSpacePostion chunkCenter, System.Random random)
     {
         return new RealSpacePostion(
             chunkCenter.x + random.Next(-gridDensityIntHalf, gridDensityIntHalf),

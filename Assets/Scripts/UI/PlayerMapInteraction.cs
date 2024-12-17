@@ -144,11 +144,15 @@ public class PlayerMapInteraction : PostTickUpdate
 						if (idToCapitalData.ContainsKey(faction.id))
 						{
 							CapitalData capitalData = idToCapitalData[faction.id];
-							if (capitalData.position.Equals(currentCellCenter))
-							{
-								Vector3 pos = -capitalData.position.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
 
-								AddPosition(pos, capitalData.location);
+							if (capitalData.position != null)
+							{
+								if (capitalData.position.Equals(currentCellCenter))
+								{
+									Vector3 pos = -capitalData.position.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
+
+									AddPosition(pos, capitalData.location);
+								}
 							}
 						}
 						//

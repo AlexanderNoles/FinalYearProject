@@ -167,16 +167,16 @@ public class GlobalBattleData : DataBase
 	public Dictionary<RealSpacePostion, Battle> battles = new Dictionary<RealSpacePostion, Battle>();
 	public static int totalBattlesCount = 0;
 
-	public bool StartBattle(RealSpacePostion pos, int originID, int targetID)
+	public bool StartOrJoinBattle(RealSpacePostion key, RealSpacePostion actualPos, int originID, int targetID)
 	{
-		if (!battles.ContainsKey(pos))
+		if (!battles.ContainsKey(key))
 		{
-			battles[pos] = new Battle(pos);
-			battles[pos].startTickID = SimulationManagement.currentTickID;
+			battles[key] = new Battle(actualPos);
+			battles[key].startTickID = SimulationManagement.currentTickID;
 			totalBattlesCount++;
 		}
 
-		Battle battle = battles[pos];
+		Battle battle = battles[key];
 		List<int> involvedFactions = battle.GetInvolvedFactions();
 
 		if (!involvedFactions.Contains(originID))
@@ -193,10 +193,10 @@ public class GlobalBattleData : DataBase
 			Faction attacker = SimulationManagement.GetFactionByID(originID);
 			if (attacker.GetData(Faction.battleDataKey, out BattleData attackBData))
 			{
-				if (!attackBData.ongoingBattles.ContainsKey(pos))
+				if (!attackBData.ongoingBattles.ContainsKey(key))
 				{
 					//This check should always pass
-					attackBData.ongoingBattles.Add(pos, new BattleData.BattleReference());
+					attackBData.ongoingBattles.Add(key, new BattleData.BattleReference());
 				}
 				else
 				{
@@ -220,11 +220,11 @@ public class GlobalBattleData : DataBase
 
 				if (defender.GetData(Faction.battleDataKey, out BattleData defendBData))
 				{
-					if (!defendBData.ongoingBattles.ContainsKey(pos))
+					if (!defendBData.ongoingBattles.ContainsKey(key))
 					{
 						//Not currently considering defending this spot already
 						//Add it
-						defendBData.ongoingBattles.Add(pos, new BattleData.BattleReference());
+						defendBData.ongoingBattles.Add(key, new BattleData.BattleReference());
 					}
 				}
 			}

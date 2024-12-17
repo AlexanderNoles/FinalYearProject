@@ -53,7 +53,7 @@ public class SettlementRoutine : RoutineBase
 
                         if (pos != null && !settlementData.settlements.ContainsKey(pos))
                         {
-                            SettlementData.Settlement newSettlement = new SettlementData.Settlement(WorldManagement.RandomPositionInChunk(pos, SimulationManagement.random));
+                            SettlementData.Settlement newSettlement = new SettlementData.Settlement(WorldManagement.RandomPositionInCell(pos, SimulationManagement.random));
 
                             settlementData.AddSettlement(pos, newSettlement);
                         }

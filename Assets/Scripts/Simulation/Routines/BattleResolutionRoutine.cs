@@ -49,7 +49,7 @@ public class BattleResolutionRoutine : RoutineBase
 			KeyValuePair<RealSpacePostion, GlobalBattleData.Battle> battleKVP = globalBattleData.battles.ElementAt(b);
 
 			//Battles are visitable locations so we can just pass the battle
-			if (!SimulationManagement.LocationIsLazy(battleKVP.Value))
+			if (!SimulationManagement.PositionIsLazy(battleKVP.Value.GetPosition()))
 			{
 				//This battle is being proccessed by the typical game loop
 				//not by the simulation

@@ -165,7 +165,7 @@ public class MapManagement : MonoBehaviour
 					//Draw battle indicators
 					foreach (KeyValuePair<RealSpacePostion, Battle> battle in globalBattleData.battles)
 					{
-						mapElementsPools.UpdateNextObjectPosition(6, -battle.Key.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier) + Vector3.down * 0.1f);
+						mapElementsPools.UpdateNextObjectPosition(6, -battle.Value.GetPosition().AsTruncatedVector3(UIManagement.mapRelativeScaleModifier) + Vector3.down * 0.1f);
 					}
 
 					//Draw per faction data
@@ -336,7 +336,19 @@ public class MapManagement : MonoBehaviour
 #pragma warning restore CS0618 // Type or member is obsolete
 
 											Vector3 startPos = -entry.Item1.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
-											Vector3 endPos = -entry.Item2.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
+											RealSpacePostion endPosRS;
+
+											//Draw to actual battle pos
+											if (globalBattleData.battles.ContainsKey(entry.Item2))
+											{
+												 endPosRS = globalBattleData.battles[entry.Item2].GetPosition();
+											}
+                                            else
+                                            {
+												endPosRS = entry.Item2;
+                                            }
+
+                                            Vector3 endPos = endPosRS.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
 
 											Vector3 difference = endPos - startPos;
 											pathParams.forwardVector = difference.normalized;
