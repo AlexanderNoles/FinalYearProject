@@ -7,13 +7,28 @@ using UnityEngine.Events;
 public class PlayerLocationManagement : MonoBehaviour
 {
 	private static bool locationChanged = false;
-	private static VisitableLocation previousLocation;
-	private static VisitableLocation location;
-	private static VisitableLocation preparedWarpLocation = null;
+	private static List<VisitableLocation> previousLocation;
+	private static List<VisitableLocation> location;
+	private static List<VisitableLocation> preparedWarpLocation = null;
 
 	public static UnityEvent onLocationChanged = new UnityEvent();
 
-	public static VisitableLocation GetCurrentLocation()
+	public static VisitableLocation GetCurrentPrimaryLocation()
+	{
+		if (PlayerCapitalShip.IsJumping())
+		{
+			return preparedWarpLocation[0];
+		}
+
+		if (location.Count == 0)
+		{
+			return null;
+		}
+
+		return location[0];
+	}
+
+	public static List<VisitableLocation> GetCurrentLocation()
 	{
 		if (location == null)
 		{
@@ -26,59 +41,77 @@ public class PlayerLocationManagement : MonoBehaviour
 		return GetCurrentLocationRaw();
 	}
 
-	public static VisitableLocation GetCurrentLocationRaw()
+	public static List<VisitableLocation> GetCurrentLocationRaw()
 	{
 		return location;
 	}
 
 	public static bool IsPlayerLocation(RealSpacePostion pos)
 	{
-		if (location == null)
+		foreach (VisitableLocation location in location)
 		{
-			return false;
+			if (location.GetPosition().Equals(pos))
+			{
+				return true;
+			}
 		}
 
-		return location.GetPosition().Equals(pos);
+		return false;
+	}
+
+	public static bool IsPlayerLocation(List<VisitableLocation> locations)
+	{
+		foreach (VisitableLocation location in locations)
+		{
+			if (IsPlayerLocation(location)) 
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public static bool IsPlayerLocation(VisitableLocation location)
 	{
-		if (PlayerLocationManagement.location == null)
+		if (PlayerLocationManagement.location.Count == 0)
 		{
 			return false;
 		}
 
-		return PlayerLocationManagement.location.Equals(location);
+		return PlayerLocationManagement.location.Contains(location);
 	}
 
 	private void Awake()
 	{
-		if (preparedWarpLocation == null)
-		{
-			//This acts as a location to display when the ship is traveling throught the warp
-			preparedWarpLocation = new WarpLocation();
-		}
-
+		location = new List<VisitableLocation>();
+		previousLocation = new List<VisitableLocation>();           
+		//This acts as a location to display when the ship is traveling throught the warp
+		preparedWarpLocation = new List<VisitableLocation>() { new WarpLocation() };
 
 		//Remove any leftover listeners
 		onLocationChanged.RemoveAllListeners();
 
 		locationChanged = true;
-		location = null;
 
 		//Will try to load position here from save file
 
-		if (location == null)
+		if (location.Count == 0)
 		{
 			//No location was loaded
-			location = new ArbitraryLocation().SetLocation(new RealSpacePostion(0, 0, 20000));
+			AddLocation(new ArbitraryLocation().SetLocation(new RealSpacePostion(0, 0, 20000)));
 		}
 
 		//Run update once to get allow the system to run setup before any other updates run without duplicate code
 		LateUpdate();
 	}
 
-	public static void UpdateLocation(VisitableLocation newLocation)
+	private static void AddLocation(VisitableLocation newLocation)
+	{
+		location.Add(newLocation);
+	}
+
+	public static void UpdateLocation(List<VisitableLocation> newLocation)
 	{
 		previousLocation = location;
 		ChangeLocation(newLocation);
@@ -89,13 +122,17 @@ public class PlayerLocationManagement : MonoBehaviour
 	{
 		if (location != null)
 		{
-			location.Cleanup();
-			ChangeLocation(null);
+			foreach (VisitableLocation location in location)
+			{
+				location.Cleanup();
+			}
+
+			ChangeLocation(new List<VisitableLocation>());
 		}
 	}
 
 	//Automatically triggers the OnLocationChangeEvent
-	private static void ChangeLocation(VisitableLocation newLocation)
+	private static void ChangeLocation(List<VisitableLocation> newLocation)
 	{
 		location = newLocation;
 		onLocationChanged.Invoke();
@@ -106,30 +143,41 @@ public class PlayerLocationManagement : MonoBehaviour
 	{
 		if (locationChanged)
 		{
-			if (previousLocation != null)
+			if (previousLocation.Count != 0)
 			{
-				previousLocation.Cleanup();
-				previousLocation = null;
+				foreach(VisitableLocation location in previousLocation)
+				{
+					location.Cleanup();
+				}
+
+				previousLocation.Clear();
 			}
 
 			if (location != null)
 			{
-				location.InitDraw();
+				foreach (VisitableLocation location in location)
+				{
+					location.InitDraw();
+				}
+
 				UpdateWorldPosition();
 			}
 
 			locationChanged = false;
 		}
 
-		if (location != null)
+		if (location.Count != 0)
 		{
-			location.Draw();
+			foreach (VisitableLocation location in location)
+			{
+				location.Draw();
+			}
 		}
 	}
 
 	private void UpdateWorldPosition()
 	{
-		RealSpacePostion centralPos = location.GetPosition();
+		RealSpacePostion centralPos = GetCurrentPrimaryLocation().GetPosition();
 		WorldManagement.SetWorldCenterPosition(centralPos);
 		PlayerCapitalShip.UpdatePCSPosition(WorldManagement.worldCenterPosition);
 	}

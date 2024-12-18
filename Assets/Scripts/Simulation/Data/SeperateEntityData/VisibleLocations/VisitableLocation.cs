@@ -33,7 +33,9 @@ public class VisitableLocation : Location, IDisplay
 
 	public virtual string GetDescription()
 	{
-		return "A location.";
+		RealSpacePostion pos = GetPosition();
+
+		return $"Coordinates: (X:{pos.x}, Y:{pos.z})";
 	}
 
 	public virtual Sprite GetIcon()

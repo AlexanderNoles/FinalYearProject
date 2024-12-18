@@ -44,13 +44,6 @@ public class SettlementData : DataBase
 				return "Settlement";
 			}
 
-			public override string GetDescription()
-			{
-				RealSpacePostion pos = GetPosition();
-
-				return $"Coordinates: (X:{pos.x}, Y:{pos.z})";
-			}
-
 			public override string GetExtraInformation()
 			{
 				return $"<color={VisualDatabase.statisticColour}>Settlements</color> are important locations, from here you can buy <color={VisualDatabase.goodColourString}>Items</color> and <color={VisualDatabase.goodColourString}>Fuel</color> to support your endeavours.";

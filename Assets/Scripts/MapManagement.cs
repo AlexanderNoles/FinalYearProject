@@ -348,7 +348,7 @@ public class MapManagement : MonoBehaviour
 												endPosRS = entry.Item2;
                                             }
 
-                                            Vector3 endPos = endPosRS.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
+                                            Vector3 endPos = -endPosRS.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
 
 											Vector3 difference = endPos - startPos;
 											pathParams.forwardVector = difference.normalized;

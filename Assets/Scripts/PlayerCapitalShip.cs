@@ -23,16 +23,16 @@ public class PlayerCapitalShip : MonoBehaviour
 	}
 
 	private static JumpStage jumpStage;
-	private static VisitableLocation jumpTarget;
+	private static List<VisitableLocation> jumpTarget;
 
 	public static RealSpacePostion GetTargetPosition()
 	{
-		if (jumpTarget == null)
+		if (jumpTarget.Count == 0)
 		{
 			throw new System.Exception("No jump target!");
 		}
 
-		return jumpTarget.GetPosition();
+		return jumpTarget[0].GetPosition();
 	}
 
 	public static bool IsTargetPosition(RealSpacePostion pos)
@@ -159,14 +159,19 @@ public class PlayerCapitalShip : MonoBehaviour
 
 	public static void StartJump(VisitableLocation target)
 	{
+		StartJump(new List<VisitableLocation>() { target });
+	}
+
+	public static void StartJump(List<VisitableLocation> compoundTargets)
+	{
 		if (jumping || nextJumpAllowedTime > Time.time)
 		{
 			return;
 		}
 
-		if (target == null || PlayerLocationManagement.IsPlayerLocation(target))
+		if (compoundTargets.Count == 0 || PlayerLocationManagement.IsPlayerLocation(compoundTargets[0]))
 		{
-			Debug.LogWarning("Can't jump to same location");
+			Debug.LogWarning("Can't jump to same location (or location is non-existant!)");
 			return;
 		}
 
@@ -175,7 +180,7 @@ public class PlayerCapitalShip : MonoBehaviour
 
 		jumping = true;
 		jumpStage = JumpStage.InitialTurn;
-		jumpTarget = target;
+		jumpTarget = compoundTargets;
 
 		//Zero current rotational movement
 		instance.rotationalMovement = 0;
@@ -188,7 +193,7 @@ public class PlayerCapitalShip : MonoBehaviour
 
 		//Setup rotation
 		//Get difference between positions jumpBaseLineSpeed
-		RealSpacePostion difference = new RealSpacePostion(target.GetPosition()).Subtract(instance.pcsRSP);
+		RealSpacePostion difference = new RealSpacePostion(compoundTargets[0].GetPosition()).Subtract(instance.pcsRSP);
 		thisJumpSpeed = (float)(jumpBaseLineSpeed / difference.Magnitude());
 
 		Vector3 vectorDifference = difference.AsTruncatedVector3(20000);
@@ -374,7 +379,7 @@ public class PlayerCapitalShip : MonoBehaviour
 
 					trail.SetPosition(1, new Vector3(0, 0, Mathf.Lerp(0, -maxTrailLength, jumpT * 15.0f)));
 
-					WorldManagement.SetWorldCenterPosition(RealSpacePostion.Lerp(jumpStart, jumpTarget.GetPosition(), jumpCurve.Evaluate(jumpT)));
+					WorldManagement.SetWorldCenterPosition(RealSpacePostion.Lerp(jumpStart, jumpTarget[0].GetPosition(), jumpCurve.Evaluate(jumpT)));
 					UpdatePCSPosition(WorldManagement.worldCenterPosition);
 
 					if (jumpT >= 1.0f)
@@ -470,7 +475,7 @@ public class PlayerCapitalShip : MonoBehaviour
 		PlayerLocationManagement.UpdateLocation(jumpTarget);
 
 		//Set in engine position relative to current look direction (i.e., direction we entered location from)
-		Vector3 newPosition = -transform.forward * jumpTarget.GetEntryOffset();
+		Vector3 newPosition = -transform.forward * jumpTarget[0].GetEntryOffset();
 
 		transform.position = newPosition;
 		//Make sure the camera doesn't just lerp to the new positions so it looks seamless

@@ -162,6 +162,16 @@ public class GlobalBattleData : DataBase
 		{
 			return postion;
 		}
+
+		public override string GetTitle()
+		{
+			return "Battlefield";
+		}
+
+		public override Color GetMapColour()
+		{
+			return Color.yellow;
+		}
 	}
 
 	public Dictionary<RealSpacePostion, Battle> battles = new Dictionary<RealSpacePostion, Battle>();
