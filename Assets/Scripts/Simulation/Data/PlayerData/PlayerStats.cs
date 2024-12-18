@@ -8,7 +8,7 @@ public class PlayerStats : DataBase
 	{
 		{Stats.health.ToString(), 100},
 		{Stats.healthregen.ToString(), 1},
-		{Stats.jumprange.ToString(), 25}
+		{Stats.jumprange.ToString(), 10}
 	};
 
 	public static float GetDefaultStatValue(string identifier)

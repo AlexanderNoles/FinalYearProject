@@ -163,10 +163,11 @@ public class MapManagement : MonoBehaviour
 					gameworld.GetData(Faction.Tags.Historical, out HistoryData historyData);
 
 					//Draw battle indicators
-					foreach (KeyValuePair<RealSpacePostion, Battle> battle in globalBattleData.battles)
-					{
-						mapElementsPools.UpdateNextObjectPosition(6, -battle.Value.GetPosition().AsTruncatedVector3(UIManagement.mapRelativeScaleModifier) + Vector3.down * 0.1f);
-					}
+					//Disabled because I didn't like how it looked
+					//foreach (KeyValuePair<RealSpacePostion, Battle> battle in globalBattleData.battles)
+					//{
+					//	mapElementsPools.UpdateNextObjectPosition(6, -battle.Value.GetPosition().AsTruncatedVector3(UIManagement.mapRelativeScaleModifier) + Vector3.down * 0.1f);
+					//}
 
 					//Draw per faction data
 					foreach (Faction faction in factions)
