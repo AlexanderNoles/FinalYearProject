@@ -11,4 +11,9 @@ public class StandardButton : MonoBehaviour
 	{
 		target.interactable = enabled;
 	}
+
+	public bool Enabled()
+	{
+		return target.interactable;
+	}
 }

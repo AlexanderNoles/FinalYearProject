@@ -39,6 +39,12 @@ public class BattleBehaviour : MonoBehaviour
 	{
         if (!currentTargets.Remove(target))
         {
+			//Can't attack ourself
+			if (Equals(target))
+			{
+				return;
+			}
+
             //If target is not removed (i.e., it was not in the list)
 			currentTargets.Add(target);
         }

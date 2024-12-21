@@ -207,8 +207,7 @@ public class MapManagement : MonoBehaviour
 												Vector3.up,
 												Color.yellow,
 												timeTillNextMapUpdate,
-												true,
-												Mathf.Max(0.05f, battle.Value.GetWinProgress(k) / 1.2f));
+												true);
 										}
 									}
 

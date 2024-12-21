@@ -33,7 +33,7 @@ public class RandomEventTickRoutine : RoutineBase
 				if (SimulationManagement.random.Next(0, 101) < 1)
 				{
 					//Spawn some pirates
-					new PirateCrew().Simulate();
+					//new PirateCrew().Simulate();
 				}
 			}
 		}

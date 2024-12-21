@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class ItemDatabase
 {
+	private const bool debugItemsEnabled = false;
+
+
+
 	//Item data storage
 	public class ItemData
 	{
@@ -77,12 +81,13 @@ public class ItemDatabase
 				//Remove section start token and whitespace
 				sectionKey = PrepKeyString(line.Replace("{", ""));
 
-#if !UNITY_EDITOR
-				if (sectionKey.Contains("(debug)"))
+				if (!Application.isEditor || !debugItemsEnabled)
 				{
-					inSection = false;
+					if (sectionKey.Contains("(debug)"))
+					{
+						inSection = false;
+					}
 				}
-#endif
 			}
 			else if (line.Contains("}"))
 			{

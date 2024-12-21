@@ -106,27 +106,4 @@ public class PlayerBattleBehaviour : BattleBehaviour
 		//Process all current targets
 		ProcessTargets();
 	}
-
-	//[ContextMenu("Calculate Dominant Components")]
-	//public void CalculateDominantComponent()
-	//{
-	//	firePointDominantComponents.Clear();
-
-	//	foreach (Vector3 firepoint in firePoints)
-	//	{
-	//		Vector3 calculatedDominantComponent;
-	//		if (Mathf.Abs(firepoint.x) > Mathf.Abs(firepoint.z))
-	//		{
-	//			//X component is dominant
-	//			calculatedDominantComponent = Vector3.right * (firepoint.x / Mathf.Abs(firepoint.x));
-	//		}
-	//		else
-	//		{
-	//			//Z component is dominamt
-	//			calculatedDominantComponent = Vector3.forward * (firepoint.z / Mathf.Abs(firepoint.z));
-	//		}
-
-	//		firePointDominantComponents.Add(calculatedDominantComponent);
-	//	}
-	//}
 }
