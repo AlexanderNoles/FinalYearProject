@@ -11,7 +11,14 @@ public class ItemBase : IDisplay
 
 	public float GetPrice()
 	{
-		return cachedItemData.basePrice;
+		float price = cachedItemData.basePrice;
+
+		//Modify price by current global economic conditions
+		price *= 1000.0f; //Currently static
+
+		//Should modify based on faction economic state here
+
+		return price;
 	}
 
 	public bool LinkedToItem()

@@ -89,9 +89,9 @@ public class ShopControlUI : FloatingWindow
 			if (itemIndex < shopData.itemsInShop.Count)
 			{
 				//Still have items to display
-				ItemBase target = shopData.itemsInShop[itemIndex];
+				Shop.ShopEntry target = shopData.itemsInShop[itemIndex];
 				int indexClone = itemIndex;
-				cachedTransformToSlotUI[newSlot].Draw(shopData.itemsInShop[itemIndex], () => { DisplayItemForPurchase(indexClone, target); });
+				cachedTransformToSlotUI[newSlot].Draw(target.item, () => { DisplayItemForPurchase(indexClone, target); });
 			}
 			else
 			{
@@ -104,9 +104,9 @@ public class ShopControlUI : FloatingWindow
 		shopSlotsPool.PruneObjectsNotUpdatedThisFrame(slotIndexInPool);
 	}
 
-	public void DisplayItemForPurchase(int index, ItemBase targetItem)
+	public void DisplayItemForPurchase(int index, Shop.ShopEntry targetItem)
 	{
-		if (targetItem != null && targetItem.LinkedToItem())
+		if (targetItem.item != null && targetItem.item.LinkedToItem())
 		{
 			if (targetItemIndex == index)
 			{
@@ -116,12 +116,12 @@ public class ShopControlUI : FloatingWindow
 			else
 			{
 				targetItemIndex = index;
-				selectedItemInformationDisplay.Draw(targetItem);
+				selectedItemInformationDisplay.Draw(targetItem.item);
 
 				//Check we can buy item
 				List<Faction> players = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Player);
 
-				float price = targetItem.GetPrice();
+				float price = targetItem.calculatedPrice;
 				bool canBuy = false;
 
 				if (players.Count > 0)
@@ -144,7 +144,7 @@ public class ShopControlUI : FloatingWindow
 			return;
 		}
 
-		ItemBase target = shopData.itemsInShop[targetItemIndex];
+		ItemBase target = shopData.itemsInShop[targetItemIndex].item;
 
 		if (target.LinkedToItem())
 		{
@@ -157,7 +157,7 @@ public class ShopControlUI : FloatingWindow
 				//Any player factions exist
 				players[0].GetData(PlayerFaction.inventoryDataKey, out PlayerInventory playerInventory); 
 				
-				if (playerInventory.AttemptToBuy(target))
+				if (playerInventory.AttemptToBuy(target, shopData.itemsInShop[targetItemIndex].calculatedPrice))
 				{
 					//Remove item from shop
 					shopData.itemsInShop.RemoveAt(targetItemIndex);

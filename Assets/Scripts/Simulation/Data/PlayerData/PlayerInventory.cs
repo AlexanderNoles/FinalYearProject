@@ -37,14 +37,11 @@ public class PlayerInventory : InventoryBase
 		return itemBases[index];
 	}
 
-	public bool AttemptToBuy(ItemBase target)
+	public bool AttemptToBuy(ItemBase target, float price)
 	{
 		//Do we have space?
 		if (itemBases.Count < inventorySize)
 		{
-			//Get price of item
-			float price = target.GetPrice();
-
 			//Can we afford item?
 			if (price <= mainCurrency)
 			{
