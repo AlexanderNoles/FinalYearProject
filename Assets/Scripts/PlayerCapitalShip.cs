@@ -157,6 +157,11 @@ public class PlayerCapitalShip : MonoBehaviour
 		instance.transform.Rotate(Vector3.down * 90, Space.Self);
 	}
 
+	public static Vector3 GetForward()
+	{
+		return instance.transform.forward;
+	}
+
 	public static void StartJump(VisitableLocation target)
 	{
 		StartJump(new List<VisitableLocation>() { target });

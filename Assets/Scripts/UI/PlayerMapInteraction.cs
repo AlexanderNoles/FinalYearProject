@@ -14,6 +14,7 @@ public class PlayerMapInteraction : PostTickUpdate
 	public Transform rangeIndicator;
 	private Material rangeIndicatorMat;
 	private float cachedRange;
+	public Transform playerDirectionIndicator;
 
 	[Header("Location Information Disaply")]
 	public Canvas canvas;
@@ -285,6 +286,9 @@ public class PlayerMapInteraction : PostTickUpdate
 		Vector3 pos = -WorldManagement.worldCenterPosition.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
 		rangeIndicator.position = pos + Vector3.up * 0.05f;
 		Shader.SetGlobalVector("_WCMapPos", pos);
+
+		playerDirectionIndicator.position = pos;
+		playerDirectionIndicator.LookAt(pos - PlayerCapitalShip.GetForward());
 
 		if (UIManagement.MapIntroRunning())
 		{
