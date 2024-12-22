@@ -5,6 +5,7 @@
 	health: "<color=*statColour*>Health</color> represents the overall condition of your ship. If it reaches 0 you die."
 	healthRegen: "<color=*statColour*>Health Regen</color> represents the amount of <color=*statColour*>Health</color> healed each tick."
 	attackPower: "<color=*statColour*>Attack Power</color> controls how much damage you deal per shot."
+	moveSpeed: "<color=*statColour*>Move Speed</color> controls how fast your ship moves."
 }
 { item (debug)
 	//This is a test item
@@ -45,5 +46,15 @@
 	class: "0"
 	description: "Increases <color=*statColour*>Attack Power</color> dramaitcally."
 	extra: "*attackPower*"
+}
+{ item
+	//Move speed increase
+	moveSpeed: "20"
+	icon: "arcane"
+	name: "Advanced Arcane Theory"
+	price: "0.3"
+	class: "1"
+	description: "Increases <color=*statColour*>Move Speed</color>."
+	extra: "*moveSpeed*"
 }
 

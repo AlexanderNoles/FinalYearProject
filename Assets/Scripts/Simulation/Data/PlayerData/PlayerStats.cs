@@ -9,7 +9,8 @@ public class PlayerStats : DataBase
 		{Stats.maxHealth.ToString(), 100},
 		{Stats.healthRegen.ToString(), 1},
 		{Stats.jumpRange.ToString(), 10},
-		{Stats.attackPower.ToString(), 10}
+		{Stats.attackPower.ToString(), 10},
+		{Stats.moveSpeed.ToString(), 100}
 	};
 
 	public static float GetDefaultStatValue(string identifier)
@@ -107,7 +108,8 @@ public enum Stats
 	maxHealth,
 	healthRegen,
 	jumpRange,
-	attackPower
+	attackPower,
+	moveSpeed
 }
 
 public class StatContributor

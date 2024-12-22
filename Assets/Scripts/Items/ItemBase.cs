@@ -24,7 +24,7 @@ public class ItemBase : IDisplay
 			price *= estimatedEconomyState;
 		}
 
-		return price;
+		return Mathf.RoundToInt(price);
 	}
 
 	public bool LinkedToItem()

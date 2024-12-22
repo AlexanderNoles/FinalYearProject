@@ -236,14 +236,16 @@ public class PlayerCapitalShip : MonoBehaviour
 	private void Update()
 	{
 		//Ship Movement
-		if (jumpStage == JumpStage.Done)
+		if (jumpStage == JumpStage.Done && PlayerManagement.PlayerFactionExists())
 		{
+			float moveSpeedPercentage = Mathf.Max(0.0f, PlayerManagement.GetStats().GetStat(Stats.moveSpeed.ToString())) / 100.0f;
+
 			//Not jumping
 			bool mapActive = UIManagement.MapActive();
 
 			//Rotational Movement
 			const float rotationalModifier = 0.01f;
-			float rotationalChangeModifier = rotationalModifier * Time.deltaTime;
+			float rotationalChangeModifier = rotationalModifier * Time.deltaTime * moveSpeedPercentage;
 			if (InputManagement.GetKey(KeyCode.E) && !mapActive)
 			{
 				rotationalMovement += rotationalChangeModifier;
@@ -270,7 +272,7 @@ public class PlayerCapitalShip : MonoBehaviour
 
 			//Engines
 			const float engineAcceleration = 15;
-			float engineChangeModifier = engineAcceleration * Time.deltaTime;
+			float engineChangeModifier = engineAcceleration * moveSpeedPercentage * Time.deltaTime;
 			if (InputManagement.GetKey(KeyCode.W) && !mapActive)
 			{
 				normalEnginesIntensity += engineChangeModifier;
@@ -283,7 +285,7 @@ public class PlayerCapitalShip : MonoBehaviour
 			normalEnginesIntensity = Mathf.Clamp(normalEnginesIntensity, 0.0f, 5.0f);
 			UpdateEngineIntensityShaderAuto();
 
-			Vector3 velocity = transform.forward * normalEnginesIntensity;
+			Vector3 velocity = transform.forward * normalEnginesIntensity * moveSpeedPercentage;
 
 			rigidbodyTarget.velocity = velocity;
 			//

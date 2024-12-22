@@ -5,7 +5,8 @@ using UnityEngine;
 public class PlayerManagement : MonoBehaviour
 {
     private static PlayerManagement instance;
-	private PlayerFaction playerFaction;
+	private PlayerFaction playerFaction = null;
+    private PlayerStats playerStatsTarget = null;
 
     private void Awake()
     {
@@ -23,7 +24,24 @@ public class PlayerManagement : MonoBehaviour
 	{
 		instance.playerFaction = new PlayerFaction();
 		instance.playerFaction.Simulate();
+
+        instance.playerFaction.GetData(PlayerFaction.statDataKey, out instance.playerStatsTarget);
 	}
+
+    public static bool PlayerFactionExists()
+    {
+        return instance != null && GetTarget() != null;
+    }
+
+    public static PlayerFaction GetTarget()
+    {
+        return instance.playerFaction;
+    }
+
+    public static PlayerStats GetStats()
+    {
+        return instance.playerStatsTarget;
+    }
 
     public static void KillPlayer()
     {
