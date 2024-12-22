@@ -24,4 +24,13 @@ public class PlayerManagement : MonoBehaviour
 		instance.playerFaction = new PlayerFaction();
 		instance.playerFaction.Simulate();
 	}
+
+    public static void KillPlayer()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
 }

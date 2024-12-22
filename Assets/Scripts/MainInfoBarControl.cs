@@ -43,7 +43,7 @@ public class MainInfoBarControl : PostTickUpdate
 			faction.GetData(PlayerFaction.inventoryDataKey, out PlayerInventory playerInventory);
 
 			populationLabel.text = Mathf.FloorToInt(populationData.currentPopulationCount).ToString();
-			healthLabel.text = Mathf.FloorToInt(playerStats.GetStat(Stats.health.ToString())).ToString();
+			healthLabel.text = Mathf.FloorToInt(playerStats.GetStat(Stats.maxHealth.ToString())).ToString();
 			currencyLabel.text = Mathf.FloorToInt(playerInventory.mainCurrency).ToString();
 
 			if (!PlayerCapitalShip.IsJumping())

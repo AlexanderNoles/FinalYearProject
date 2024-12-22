@@ -1,12 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Text.RegularExpressions;
 
 public class ItemDatabase
 {
 	private const bool debugItemsEnabled = false;
 
-
+	public enum ItemClass
+	{
+		Divine,
+		Arcane,
+		Domination,
+		Void
+	}
 
 	//Item data storage
 	public class ItemData
@@ -18,11 +25,26 @@ public class ItemDatabase
 		public string description;
 		public string extraDescription;
 		public float basePrice;
+		public ItemClass itemClass;
 
 		//Typically keys in the file are matched to actual variables but there should be a backup in the form of a dict in case
 		//there is not a corresponding variable.
 
 		public Dictionary<string, string> nonPredefinedKeyToValue = new Dictionary<string, string>();
+	}
+
+	public static string GetKeyAsTitle(string inputKey)
+	{
+		if (inputKey.Length < 2)
+		{
+			throw new System.Exception("Input key is below expected length, is this the key? If so, is this key appropriately named?");
+		}
+
+		//Add strings before capital letters
+		//Then replace first character with capital
+		inputKey = Regex.Replace(inputKey, "[A-Z]", " $0");
+
+		return $"{char.ToUpper(inputKey[0])}{inputKey[1..]}";
 	}
 
 	public static Dictionary<int, ItemData> itemIDToItemData = new Dictionary<int, ItemData>();
@@ -93,9 +115,11 @@ public class ItemDatabase
 			{
 				inSection = false;
 
-				//Apply effects of section, currently only does item section here so aliases can reference other aliases
+				//Apply effects of section at its end, 
+				//currently only does item section here so aliases can reference other aliases defined in the same section
 				if (newItem != null)
 				{
+					//The below two lines could be combined but I find this to be more clear
 					itemIDToItemData.Add(currentItemIndex, newItem);
 					currentItemIndex++;
 
@@ -132,7 +156,7 @@ public class ItemDatabase
 							newItem = new ItemData();
 						}
 
-						string key = PrepKeyString(parts[0]);
+						string key = PrepKeyString(parts[0], false);
 						string textBody = PrepTextBody(parts[1], aliasDict);
 
 						//If key matches any item attribute key then we apply it to the current item being put into the database
@@ -166,6 +190,10 @@ public class ItemDatabase
 						else if (key.Contains("price"))
 						{
 							newItem.basePrice = float.Parse(textBody);
+						}
+						else if (key.Contains("class"))
+						{
+							newItem.itemClass = (ItemClass)int.Parse(textBody);
 						}
 						else
 						{

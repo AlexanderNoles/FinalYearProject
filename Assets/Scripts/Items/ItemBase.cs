@@ -6,6 +6,7 @@ public class ItemBase : IDisplay
 {
 	public int itemIndex = 0;
 	private ItemDatabase.ItemData cachedItemData = null;
+	private string statContributorDescriptions;
 	private List<StatContributor> statContributors = new List<StatContributor>();
 
 	public float GetPrice()
@@ -62,8 +63,20 @@ public class ItemBase : IDisplay
 			cachedItemData = null;
 			return;
 		}
-
 		cachedItemData = ItemDatabase.itemIDToItemData[itemIndex];
+
+		//Generate item additional extra description
+		statContributorDescriptions = "\n\n";
+
+		foreach (KeyValuePair<string, string> entry in cachedItemData.nonPredefinedKeyToValue)
+		{
+			if (float.TryParse(entry.Value, out float modifier))
+			{
+				string modifierSign = modifier >= 0.0f ? "+" : "";
+
+				statContributorDescriptions = $"{statContributorDescriptions}\n{modifierSign}{modifier} {ItemDatabase.GetKeyAsTitle(entry.Key)}";
+			}
+		}
 	}
 
 	public ItemBase(int itemDataIndex)
@@ -80,7 +93,8 @@ public class ItemBase : IDisplay
 
 	public string GetDescription()
 	{
-		return cachedItemData.description;
+		return $"<color=#949494>[{cachedItemData.itemClass.ToString()}]</color>\n\n" + 
+		cachedItemData.description;
 	}
 
 	public Sprite GetIcon()
@@ -95,7 +109,7 @@ public class ItemBase : IDisplay
 
 	public string GetExtraInformation()
 	{
-		return cachedItemData.extraDescription;
+		return cachedItemData.extraDescription + statContributorDescriptions;
 	}
 	//
 }

@@ -106,7 +106,7 @@ public class PlayerMapInteraction : PostTickUpdate
 		if (players.Count > 0)
 		{
 			players[0].GetData(PlayerFaction.statDataKey, out PlayerStats playerStats);
-			chunkRange = Mathf.FloorToInt(playerStats.GetStat(Stats.jumprange.ToString()));
+			chunkRange = Mathf.FloorToInt(playerStats.GetStat(Stats.jumpRange.ToString()));
 		}
 
 		const float buffer = 1;

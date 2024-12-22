@@ -76,6 +76,7 @@ public class PlayerInventory : InventoryBase
 		if (target != null)
 		{
 			item.ApplyStatContributors(target);
+			PlayerStatsPostItemAddVerify();
 		}
 
 		//Add item to inventory
@@ -83,6 +84,19 @@ public class PlayerInventory : InventoryBase
 
 		//Ask inventory ui to redraw, if the ui element is not active this function will do nothing
 		InventoryUIManagement.DrawSlot(itemBases.Count - 1);
+	}
+
+	private void PlayerStatsPostItemAddVerify()
+	{
+		if (target == null)
+		{
+			return;
+		}
+
+		if (target.GetStat(Stats.maxHealth.ToString()) <= 0.0f)
+		{
+			PlayerManagement.KillPlayer();
+		}
 	}
 
 	public override void RemoveItemFromInventory(ItemBase item)
