@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Shop
+public class Shop : DataBase
 {
 	public int capacity = 8;
 
@@ -34,7 +34,7 @@ public class Shop
 			for (int i = 0; i < capacity; i++)
 			{
 				ItemBase newItem = new ItemBase(ItemDatabase.GetRandomItemIndex());
-				itemsInShop.Add(new ShopEntry(newItem, newItem.GetPrice()));
+				itemsInShop.Add(new ShopEntry(newItem, newItem.GetPrice(parent)));
 			}
 
 			//Every 10 minutes if we don't include warp travel's effect on time

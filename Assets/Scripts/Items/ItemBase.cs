@@ -9,7 +9,7 @@ public class ItemBase : IDisplay
 	private string statContributorDescriptions;
 	private List<StatContributor> statContributors = new List<StatContributor>();
 
-	public float GetPrice()
+	public float GetPrice(FactionLink parentFaction)
 	{
 		float price = cachedItemData.basePrice;
 
@@ -17,6 +17,12 @@ public class ItemBase : IDisplay
 		price *= 1000.0f; //Currently static
 
 		//Should modify based on faction economic state here
+		if (parentFaction != null && parentFaction.Get().GetData(Faction.Tags.HasEconomy, out EconomyData data))
+		{
+			float estimatedEconomyState = data.EstimatedEconomyState();
+
+			price *= estimatedEconomyState;
+		}
 
 		return price;
 	}

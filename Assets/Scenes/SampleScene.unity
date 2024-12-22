@@ -12865,7 +12865,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b684983c5257684cb5bcf73ae866205, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  historyLength: 17
+  historyLength: 500
   drawMilitaryPresence: 1
   updateMap: 1
 --- !u!1 &1263882532
@@ -14276,7 +14276,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1495834211
 RectTransform:
   m_ObjectHideFlags: 0

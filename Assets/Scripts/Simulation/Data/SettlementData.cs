@@ -6,7 +6,7 @@ public class SettlementData : DataBase
 {
     private int nextID = 0;
 
-    public class Settlement
+    public class Settlement : DataBase
     {
         public int setID;
 
@@ -80,14 +80,18 @@ public class SettlementData : DataBase
         public List<TradeFleet> tradeFleets = new List<TradeFleet>();
 
 
-        public Settlement(RealSpacePostion pos)
+        public Settlement(RealSpacePostion pos, FactionLink parent)
         {
             actualSettlementPos = pos;
-
+			//Set parent
+			this.parent = parent;
 
             location = new SettlementLocation();
             location.actualSettlement = this;
 			location.shop = new Shop();
+
+			//Set shop to use same parent
+			location.shop.parent = this.parent;
         }
     }
 

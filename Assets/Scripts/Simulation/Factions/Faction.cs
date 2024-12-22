@@ -5,9 +5,13 @@ using UnityEngine;
 public class Faction
 {
     public int id = -1;
+    private FactionLink link;
 
     public void Simulate()
     {
+        //Create hierarchy link
+        link = new FactionLink(this);
+
         InitTags();
         InitData();
     }
@@ -113,6 +117,9 @@ public class Faction
         {
             return;
         }
+
+        //Set data parent so it can access it later
+        data.parent = link;
 
         dataModules.Add(dataIdentifier, data);
     }
