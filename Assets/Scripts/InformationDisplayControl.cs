@@ -20,12 +20,22 @@ public class InformationDisplayControl : MonoBehaviour
 	private bool showingExtendedDescription;
 	private bool noExtraInfo;
 
+	public Image iconImage;
+
 	public void Draw(IDisplay input)
 	{
 		//Flash
 		flash.Restart();
 		//
 
+		//icon
+		Sprite icon = input.GetIcon();
+
+		iconImage.sprite = icon;
+		iconImage.color = icon == null ? Color.black : Color.white;
+		//
+
+		//Title and text
 		string descriptionText = input.GetDescription();
 		string extraInformation = input.GetExtraInformation();
 

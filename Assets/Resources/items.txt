@@ -5,7 +5,7 @@
 	health: "<color=*statColour*>Health</color> represents the overall condition of your ship. If it reaches 0 you die."
 	healthRegen: "<color=*statColour*>Health Regen</color> represents the amount of <color=*statColour*>Health</color> healed each tick."
 	attackPower: "<color=*statColour*>Attack Power</color> controls how much damage you deal per shot."
-	moveSpeed: "<color=*statColour*>Move Speed</color> controls how fast your ship moves."
+	moveSpeed: "<color=*statColour*>Move Speed</color> controls how fast your ship moves. This includes engine thrust, turning and acceleration."
 }
 { item (debug)
 	//This is a test item
