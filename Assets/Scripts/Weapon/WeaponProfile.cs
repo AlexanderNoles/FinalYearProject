@@ -19,6 +19,20 @@ public class WeaponProfile
 		return 0.1f;
 	}
 
+	protected virtual bool SalvoEnabled()
+	{
+		return true;
+	}
+
+	public virtual void OnBattleStart()
+	{
+		//When weapons begin firing
+		if (!SalvoEnabled())
+		{
+			MarkLastAttackTime(Time.time);
+		}
+	}
+
 	//This is the amount of stored up attacks the weapon can store
 	//All of these will be shot at once on engage
 	//So players will need to think about who they attack first

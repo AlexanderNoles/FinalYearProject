@@ -37,16 +37,16 @@ public class BattleBehaviour : MonoBehaviour
 
 	protected void ToggleTarget(BattleBehaviour target)
 	{
+		//Can't attack ourself
+		if (Equals(target))
+		{
+			return;
+		}
+
         if (!currentTargets.Remove(target))
         {
-			//Can't attack ourself
-			if (Equals(target))
-			{
-				return;
-			}
-
             //If target is not removed (i.e., it was not in the list)
-			currentTargets.Add(target);
+			AddTargetInternal(target);
         }
     }
 
@@ -64,7 +64,21 @@ public class BattleBehaviour : MonoBehaviour
 			return;
 		}
 
-		currentTargets.Add(newTarget);
+		AddTargetInternal(newTarget);
+	}
+
+	private void AddTargetInternal(BattleBehaviour target)
+	{
+		if (currentTargets.Count == 0)
+		{
+			//No targets before this point
+			foreach (WeaponProfile weapon in weapons)
+			{
+				weapon.OnBattleStart();
+			}
+		}
+
+		currentTargets.Add(target);
 	}
 
 	protected void RemoveTarget(BattleBehaviour target)
