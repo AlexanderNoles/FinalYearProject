@@ -8,7 +8,7 @@ public class PlayerStats : DataBase
 	{
 		{Stats.maxHealth.ToString(), 100},
 		{Stats.healthRegen.ToString(), 1},
-		{Stats.jumpRange.ToString(), 30},
+		{Stats.jumpRange.ToString(), 10},
 		{Stats.attackPower.ToString(), 10},
 		{Stats.moveSpeed.ToString(), 100}
 	};

@@ -21,13 +21,13 @@ public class MapManagement : MonoBehaviour
 		{
 			float timePercentage = Mathf.Clamp01((Time.time - startTime) / length);
 			
-			float min = Mathf.Clamp01(Mathf.Pow(timePercentage, 2.0f));
-			float max = timePercentage * 3.0f;
+			float min = Mathf.Clamp01((timePercentage * 2.0f) - 1.0f);
+			float max = Mathf.Clamp01(timePercentage * 6.0f);
 
-			Vector3[] newLinePositions = new Vector3[pathResolution + 1];
-			for (int i = 0; i <= pathResolution; i++)
+			Vector3[] newLinePositions = new Vector3[pathResolution];
+			for (int i = 0; i <= pathResolution-1; i++)
 			{
-				newLinePositions[i] = path.GetPosition(min + ((i / (float)pathResolution) * Mathf.Clamp01(max - min)));
+				newLinePositions[i] = path.GetPosition(Mathf.Clamp01(min + ((i / (float)(pathResolution-1)) * Mathf.Clamp01(max - min))));
 			}
 
 			target.SetPositions(newLinePositions);
@@ -371,7 +371,7 @@ public class MapManagement : MonoBehaviour
 
                                             TroopTransferEffect newTTE = new TroopTransferEffect
                                             {
-                                                length = Random.Range(0.8f, 0.975f) * timeTillNextMapUpdate,
+                                                length = timeTillNextMapUpdate * Random.Range(0.1f, 0.2f),
                                                 path = path,
 												pathResolution = res,
                                                 startTime = Time.time,
