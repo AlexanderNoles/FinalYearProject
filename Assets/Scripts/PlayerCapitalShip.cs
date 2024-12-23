@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerCapitalShip : MonoBehaviour
 {
+	public static UnityEvent onPositionReset = new UnityEvent();
+
 	[HideInInspector]
 	public new Transform transform;
 
@@ -84,7 +87,7 @@ public class PlayerCapitalShip : MonoBehaviour
 	private float rotationalMovement;
 	private float normalEnginesIntensity;
 
-	private Vector3 posLastFrame;
+	private Vector3 lastRecordedPos;
 
 	public Rigidbody rigidbodyTarget;
 
@@ -114,7 +117,7 @@ public class PlayerCapitalShip : MonoBehaviour
 		jumping = false;
 
 		transform = base.transform;
-		posLastFrame = Vector3.zero;
+		lastRecordedPos = Vector3.zero;
 
 		portal.SetActive(false);
 		fireEffect.SetActive(false);
@@ -316,9 +319,20 @@ public class PlayerCapitalShip : MonoBehaviour
 
 		//Each frame disaplce the world center by amount moved
 		//Position should be reset to zero zero when we finish a jump
-		Vector3 moveDifference = transform.position - posLastFrame;
-		posLastFrame = transform.position;
-		WorldManagement.MoveWorldCenter(moveDifference * WorldManagement.invertedInEngineWorldScaleMultiplier);
+		Vector3 moveDifference = transform.position - lastRecordedPos;
+		moveDifference *= WorldManagement.invertedInEngineWorldScaleMultiplier;
+		if (moveDifference.magnitude > 0.0f)
+		{
+			//If difference is non-existent 
+			lastRecordedPos = transform.position;
+			WorldManagement.MoveWorldCenter(moveDifference);
+
+			if(transform.position.magnitude > 20.0f)
+			{
+				ResetPosition();
+			}
+		}
+
 		//
 
 		//JUMP ANIMATION
@@ -505,10 +519,19 @@ public class PlayerCapitalShip : MonoBehaviour
 		nextJumpAllowedTime = Time.time + 1.0f;
 		UpdateEngineIntensityShaderDirect(0.0f);
 		
+		ResetPosition();
+	}
+
+	private void ResetPosition()
+	{
 		//Zero position
 		transform.position = Vector3.zero;
+		lastRecordedPos = transform.position;
 
 		//Make sure the camera doesn't just lerp to the new positions so it looks seamless
 		CameraManagement.SetCameraPositionExternal(transform.position + CameraManagement.GetCameraDisplacementFromTarget(), true);
+
+		//Invoke event
+		onPositionReset.Invoke();
 	}
 }

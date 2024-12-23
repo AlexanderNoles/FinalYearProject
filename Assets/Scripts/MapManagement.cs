@@ -9,6 +9,33 @@ using System.Linq.Expressions;
 
 public class MapManagement : MonoBehaviour
 {
+	public class TroopTransferEffect
+	{
+		public LineRenderer target;
+		public PathHelper.SimplePath path;
+		public int pathResolution;
+		public float startTime;
+		public float length;
+
+		public float Update()
+		{
+			float timePercentage = Mathf.Clamp01((Time.time - startTime) / length);
+			
+			float min = Mathf.Clamp01(Mathf.Pow(timePercentage, 2.0f));
+			float max = timePercentage * 3.0f;
+
+			Vector3[] newLinePositions = new Vector3[pathResolution + 1];
+			for (int i = 0; i <= pathResolution; i++)
+			{
+				newLinePositions[i] = path.GetPosition(min + ((i / (float)pathResolution) * Mathf.Clamp01(max - min)));
+			}
+
+			target.SetPositions(newLinePositions);
+
+			return timePercentage;
+		}
+	}
+
     public MultiObjectPool mapElementsPools;
     private const int mapRingPool = 0;
     private const int shipIndicatorPool = 1;
@@ -21,11 +48,11 @@ public class MapManagement : MonoBehaviour
     private Vector3 mapBasePos;
 
     private float mapRefreshTime;
-    private float dateRefreshTime;
 
     private Dictionary<Transform, MeshRenderer> mapRingMeshRenderes;
 	private Dictionary<Transform, LineRenderer> cachedTransformToBorderRenderer = new Dictionary<Transform, LineRenderer>();
 	private Dictionary<Transform, SpriteRenderer> cachedTransformToNationIconRenderers = new Dictionary<Transform, SpriteRenderer>();
+	private List<TroopTransferEffect> ttEffects = new List<TroopTransferEffect>();
 
 	private void Start()
     {
@@ -57,7 +84,6 @@ public class MapManagement : MonoBehaviour
                     extraFrame = false;
                     Shader.SetGlobalFloat("_FlashTime", Time.time);
                     mapRefreshTime = 0.0f;
-                    dateRefreshTime = 0.0f;
                 }
 
 				//Can't use UIManagment's first frame of intro anim because we get set active a frame after the intro anim starts :(
@@ -151,6 +177,7 @@ public class MapManagement : MonoBehaviour
 
 				if (Time.time > mapRefreshTime && (SimulationSettings.UpdateMap() || mapRefreshTime == 0))
                 {
+					ttEffects.Clear();
 					float timeTillNextMapUpdate = (5.0f / SimulationManagement.GetSimulationSpeed());
 
 					mapRefreshTime = Time.time + timeTillNextMapUpdate;
@@ -161,13 +188,6 @@ public class MapManagement : MonoBehaviour
 					GameWorld gameworld = (GameWorld)SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld)[0];
 					gameworld.GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
 					gameworld.GetData(Faction.Tags.Historical, out HistoryData historyData);
-
-					//Draw battle indicators
-					//Disabled because I didn't like how it looked
-					//foreach (KeyValuePair<RealSpacePostion, Battle> battle in globalBattleData.battles)
-					//{
-					//	mapElementsPools.UpdateNextObjectPosition(6, -battle.Value.GetPosition().AsTruncatedVector3(UIManagement.mapRelativeScaleModifier) + Vector3.down * 0.1f);
-					//}
 
 					//Draw per faction data
 					foreach (Faction faction in factions)
@@ -268,17 +288,6 @@ public class MapManagement : MonoBehaviour
                             }
 						}
 
-						//if (SimulationSettings.DrawSettlements())
-						//{
-						//	if (faction.GetData(Faction.Tags.Settlements, out SettlementData data))
-						//	{
-						//		foreach (KeyValuePair<RealSpacePostion, SettlementData.Settlement> s in data.settlements)
-						//		{
-						//			mapElementsPools.UpdateNextObjectPosition(4, -s.Value.actualSettlementPos.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier));
-						//		}
-						//	}
-						//}
-
 						if (SimulationSettings.DrawMilitaryPresence())
 						{
 							PathHelper.SimplePathParameters pathParams = new PathHelper.SimplePathParameters();
@@ -332,7 +341,7 @@ public class MapManagement : MonoBehaviour
 										if (lineRenderer != null)
 										{
 #pragma warning disable CS0618 // Type or member is obsolete
-											lineRenderer.SetColors(Color.black, factionColour);
+											lineRenderer.SetColors(factionColour, factionColour);
 #pragma warning restore CS0618 // Type or member is obsolete
 
 											Vector3 startPos = -entry.Item1.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
@@ -354,17 +363,21 @@ public class MapManagement : MonoBehaviour
 											pathParams.forwardVector = difference.normalized;
 											pathParams.rightVector = Vector3.up * (difference.magnitude * 0.4f);
 
-											PathHelper.SimplePath simplePath = PathHelper.GenerateSimplePathStatic(startPos, endPos, pathParams);
-
-											Vector3[] newLinePositions = new Vector3[11];
-											for (int i = 0; i <= 10; i++)
-											{
-												newLinePositions[i] = simplePath.GetPosition(i / 10.0f);
-											}
+											PathHelper.SimplePath path = PathHelper.GenerateSimplePathStatic(startPos, endPos, pathParams);
+											int res = Mathf.CeilToInt(path.EstimateLength() / 2.5f);
 
 											lineRenderer.loop = false;
-											lineRenderer.positionCount = 11;
-											lineRenderer.SetPositions(newLinePositions);
+											lineRenderer.positionCount = res;
+
+                                            TroopTransferEffect newTTE = new TroopTransferEffect
+                                            {
+                                                length = Random.Range(0.8f, 0.975f) * timeTillNextMapUpdate,
+                                                path = path,
+												pathResolution = res,
+                                                startTime = Time.time,
+                                                target = lineRenderer
+                                            };
+                                            ttEffects.Add(newTTE);
 										}
 									}
 								}
@@ -377,10 +390,17 @@ public class MapManagement : MonoBehaviour
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(6);
 				}
 
-                if (Time.time > dateRefreshTime)
-                {
-                    dateRefreshTime = Time.time + (1.0f / SimulationManagement.GetSimulationSpeed());
-                }
+				for (int i = 0; i < ttEffects.Count;)
+				{
+					if(ttEffects[i].Update() >= 1.0f)
+					{
+						ttEffects.RemoveAt(i);
+					}
+					else
+					{
+						i++;
+					}
+				}
             }
         }
     }

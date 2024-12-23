@@ -66,27 +66,38 @@ public class BattleManagement : MonoBehaviour
 	{
 		//Register for on location changed event
 		PlayerLocationManagement.onLocationChanged.AddListener(OnLocationChanged);
+		
+		//Register for on location reset event
+		PlayerCapitalShip.onPositionReset.AddListener(CleanupAllAttacks);
 	}
 
 	private void OnDisable()
 	{
 		//Deregister from on location changed event
 		PlayerLocationManagement.onLocationChanged.RemoveListener(OnLocationChanged);
+
+		//Deregister from on location reset event
+		PlayerCapitalShip.onPositionReset.RemoveListener(CleanupAllAttacks);
 	}
 
 	private void OnLocationChanged()
+	{
+		CleanupAllAttacks();
+
+		//Remove all targets for every battle behaviour
+		foreach (KeyValuePair<Collider, BattleBehaviour> entry in colliderToBattleBehaviour)
+		{
+			entry.Value.ClearTargets();
+		}
+	}
+
+	private void CleanupAllAttacks()
 	{
 		//Cleanup all attacks
 		for (int i = 0; i < currentBasicBeamEffects.Count;)
 		{
 			attackEffectsPool.ReturnObject(basicBeamIndex, currentBasicBeamEffects[i].target);
 			currentBasicBeamEffects.RemoveAt(i);
-		}
-
-		//Remove all targets for every battle behaviour
-		foreach (KeyValuePair<Collider, BattleBehaviour> entry in colliderToBattleBehaviour)
-		{
-			entry.Value.ClearTargets();
 		}
 	}
 
