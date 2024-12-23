@@ -15,7 +15,7 @@ public class VisitableLocation : Location, IDisplay
 
 	}
 
-	public virtual void Draw()
+	public virtual void DrawUpdate()
 	{
 
 	}

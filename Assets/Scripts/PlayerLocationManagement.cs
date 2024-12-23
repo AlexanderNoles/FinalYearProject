@@ -237,9 +237,12 @@ public class PlayerLocationManagement : MonoBehaviour
 		drawnLocations = newDrawnLocations;
 		//Update position of all drawn locations based on offset from world center
 		//and the player ships world (in engine) position
+		//Then run the draw update method
 		foreach (DrawnLocation location in drawnLocations)
 		{
 			location.SetPosAsOffsetFrom(worldCenter, PlayerCapitalShip.GetPosition());
+
+			location.targetLocation.DrawUpdate();
 		}
 
 		//Set primary location id
