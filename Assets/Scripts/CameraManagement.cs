@@ -317,7 +317,7 @@ public class CameraManagement : MonoBehaviour
 		if (mainCamera.enabled)
 		{
 			SetBackingCameraRotation(transform.rotation); 
-			SurroundingsRenderingManagement.SetCameraOffset(transform.position * WorldManagement.worldScaleMultiplier);
+			SurroundingsRenderingManagement.SetCameraOffset(transform.position * WorldManagement.invertedInEngineWorldScaleMultiplier);
 		}
     }
 

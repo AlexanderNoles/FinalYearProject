@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class VisitableLocation : Location, IDisplay
 {
@@ -35,7 +36,7 @@ public class VisitableLocation : Location, IDisplay
 	{
 		RealSpacePostion pos = GetPosition();
 
-		return $"Coordinates: (X:{pos.x}, Y:{pos.z})";
+		return $"Coordinates: (X:{Math.Round(pos.x)}, Y:{Math.Round(pos.z)})";
 	}
 
 	public virtual Sprite GetIcon()

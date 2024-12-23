@@ -8,7 +8,7 @@ using UnityEngine.Events;
 public class PlayerLocationManagement : MonoBehaviour
 {
 	private static PlayerLocationManagement instance;
-	public static UnityEvent onLocationChanged;
+	public static UnityEvent onLocationChanged = new UnityEvent();
 
 	public static bool IsPlayerLocation(VisitableLocation location)
 	{
@@ -114,13 +114,18 @@ public class PlayerLocationManagement : MonoBehaviour
 			parent = new GameObject().transform;
 		}
 
+		public void Cleanup()
+		{
+			Destroy(parent.gameObject);
+		}
+
 		public void SetPosAsOffsetFrom(RealSpacePostion rsp, Vector3 additionalOffset)
 		{
 			//Calculate difference between rsp and target location rsp
 			RealSpacePostion difference = targetLocation.GetPosition().SubtractToClone(rsp);
 
 			//Set that as our offset plus an additional offset
-			parent.position = difference.AsVector3() + additionalOffset;
+			parent.position = (difference.AsVector3() * WorldManagement.inEngineWorldScaleMultiplier) + additionalOffset;
 		}
     }
 
@@ -134,8 +139,11 @@ public class PlayerLocationManagement : MonoBehaviour
 
 			backupLocation = new DrawnLocation();
 			warpLocation.SetID(1);
-			backupLocation.targetLocation = new VisitableLocation();
+			backupLocation.targetLocation = new WorldCenterLocation();
 		}
+
+		//Set inital world center position
+		WorldManagement.SetWorldCenterPosition(new RealSpacePostion(0, 0, 20000));
 
 		instance = this;
 		sessionNextID = 2;
@@ -154,7 +162,7 @@ public class PlayerLocationManagement : MonoBehaviour
 
 			for (int i = 0; i < drawnLocations.Count; i++)
 			{
-				if (drawnLocations[i].Equals(visitableLocation))
+				if (drawnLocations[i].targetLocation.Equals(visitableLocation))
 				{
 					newDrawnLocation = drawnLocations[i];
 
@@ -180,7 +188,7 @@ public class PlayerLocationManagement : MonoBehaviour
 			double distance = visitableLocation.GetPosition().Distance(WorldManagement.worldCenterPosition);
 
 			int index;
-			for (index = 0; index < drawnLocations.Count;)
+			for (index = 0; index < newDrawnLocations.Count;)
 			{
 				if (distance < correspondingDistances[index])
 				{
@@ -212,12 +220,15 @@ public class PlayerLocationManagement : MonoBehaviour
 		correspondingDistances.Clear();
 
 		//Perform operation
-		PerformOperationOnNearbyLocations(worldCenter, locationGetOperation);
+		const double drawDistance = 1000;
+		int chunkRange = (int)Math.Ceiling(drawDistance / WorldManagement.GetGridDensity());
+		PerformOperationOnNearbyLocations(worldCenter, locationGetOperation, chunkRange, 1, drawDistance);
 
 		//Remove any remaining locations in drawn locations
 		foreach (DrawnLocation location in drawnLocations)
 		{
 			location.targetLocation.Cleanup();
+			location.Cleanup();
 		}
 
 		//Replace drawn locations
@@ -240,7 +251,7 @@ public class PlayerLocationManagement : MonoBehaviour
 		}
 	}
 
-	public static void PerformOperationOnNearbyLocations(RealSpacePostion pos, Func<VisitableLocation, int> operation, int chunkRange = 1, int buffer = 1)
+	public static void PerformOperationOnNearbyLocations(RealSpacePostion pos, Func<VisitableLocation, int> operation, int chunkRange = 1, int buffer = 1, double distanceClamp = -1)
 	{
 		//Grab data needed to compute
 		List<Faction> allFactions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Faction);
@@ -260,6 +271,8 @@ public class PlayerLocationManagement : MonoBehaviour
 
 		int bufferedChunkRange = chunkRange + buffer;
 
+		List<VisitableLocation> foundLocations = new List<VisitableLocation>();
+
 		for (int x = -bufferedChunkRange; x <= bufferedChunkRange; x++)
 		{
 			for (int z = -bufferedChunkRange; z <= bufferedChunkRange; z++)
@@ -273,6 +286,8 @@ public class PlayerLocationManagement : MonoBehaviour
 						0, 
 						currentPlayerCellCenter.z + (density * z));
 
+					foundLocations.Clear();
+
 					//Iterate through all factions
 					//If they have a location (that we have decided is relevant to the player) in this chunk place it on the map
 					foreach (Faction faction in allFactions)
@@ -283,7 +298,7 @@ public class PlayerLocationManagement : MonoBehaviour
 							SettlementData settlementData = idToSetData[faction.id];
 							if (settlementData.settlements.ContainsKey(currentCellCenter))
 							{
-								operation.Invoke(settlementData.settlements[currentCellCenter].location);
+								foundLocations.Add(settlementData.settlements[currentCellCenter].location);
 							}
 						}
 						//
@@ -297,7 +312,7 @@ public class PlayerLocationManagement : MonoBehaviour
 							{
 								if (capitalData.position.Equals(currentCellCenter))
 								{
-									operation.Invoke(capitalData.location);
+									foundLocations.Add(capitalData.location);
 								}
 							}
 						}
@@ -310,8 +325,17 @@ public class PlayerLocationManagement : MonoBehaviour
 
 							if (globalBattleData.battles.ContainsKey(currentCellCenter))
 							{
-								operation.Invoke(globalBattleData.battles[currentCellCenter]);
+								foundLocations.Add(globalBattleData.battles[currentCellCenter]);
 							}
+						}
+					}
+
+					foreach (VisitableLocation location in foundLocations)
+					{
+						//No distance check or distance check passed
+						if (distanceClamp == -1 || location.GetPosition().SubtractToClone(pos).Magnitude() <= distanceClamp)
+						{
+							operation.Invoke(location);
 						}
 					}
 				}

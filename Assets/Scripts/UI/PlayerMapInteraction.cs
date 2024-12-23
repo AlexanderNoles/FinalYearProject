@@ -53,8 +53,19 @@ public class PlayerMapInteraction : PostTickUpdate
 	private Dictionary<Vector3, List<LOMCompound>> cellCenterToLocations = new Dictionary<Vector3, List<LOMCompound>>();
 	private Dictionary<Transform, SpriteRenderer> transformToLocationRenderer = new Dictionary<Transform, SpriteRenderer>();
 
+	private Func<VisitableLocation, int> getPositionsOperation;
+
 	private void Awake()
 	{
+		//Create operations
+		getPositionsOperation = delegate (VisitableLocation location) 
+		{
+			AddPosition(-location.GetPosition().AsTruncatedVector3(UIManagement.mapRelativeScaleModifier), location);
+
+			return 0;
+		};
+		//
+
 		canvasRect = canvas.transform as RectTransform;
 		rangeIndicatorMat = rangeIndicator.GetComponent<MeshRenderer>().material;
 	}
@@ -96,12 +107,7 @@ public class PlayerMapInteraction : PostTickUpdate
 			return;
 		}
 
-		List<Faction> allFactions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Faction);
-		Dictionary<int, SettlementData> idToSetData = SimulationManagement.GetDataForFactionsList<SettlementData>(allFactions, Faction.Tags.Settlements.ToString());
-		Dictionary<int, CapitalData> idToCapitalData = SimulationManagement.GetDataForFactionsList<CapitalData>(allFactions, Faction.Tags.Capital.ToString());
-
 		int chunkRange = 10;
-
 		List<Faction> players = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Player);
 
 		if (players.Count > 0)
@@ -116,83 +122,7 @@ public class PlayerMapInteraction : PostTickUpdate
 
 		rangeIndicatorMat.SetFloat("_Radius", calculatedRange);
 
-		VisitableLocation currentPlayerLocation = PlayerLocationManagement.GetPrimaryLocation();
-		RealSpacePostion playerPos = currentPlayerLocation.GetPosition();
-		RealSpacePostion currentPlayerCellCenter = WorldManagement.ClampPositionToGrid(playerPos);
-
-		double gridDensity = WorldManagement.GetGridDensity();
-		//Get the players offset from their cell center
-		//The range check works on a cell basis but jump distance should be measured from player's actual position
-		//So the x and z need to be offset so we can calculate correctly
-		float playerXOffsetFromCellCenter = (float)((currentPlayerCellCenter.x - playerPos.x) / gridDensity);
-		float playerZOffsetFromCellCenter = (float)((currentPlayerCellCenter.z - playerPos.z) / gridDensity);
-
-		int bufferedChunkRange = chunkRange + 1;
-
-		for (int x = -bufferedChunkRange; x <= bufferedChunkRange; x++)
-		{
-			for (int z = -bufferedChunkRange; z <= bufferedChunkRange; z++)
-			{
-				//Within circle
-				if (Mathf.Abs(x + playerXOffsetFromCellCenter) + Mathf.Abs(z + playerZOffsetFromCellCenter) <= bufferedChunkRange)
-				{
-					//Find offset from cell center
-					RealSpacePostion currentCellCenter = new RealSpacePostion(
-						currentPlayerCellCenter.x + (gridDensity * x), 
-						0, 
-						currentPlayerCellCenter.z + (gridDensity * z));
-
-					//Iterate through all factions
-					//If they have a location in this chunk place it on the map
-					foreach (Faction faction in allFactions)
-					{
-						//Settlements
-						if (idToSetData.ContainsKey(faction.id))
-						{
-							SettlementData settlementData = idToSetData[faction.id];
-							if (settlementData.settlements.ContainsKey(currentCellCenter))
-							{
-								SettlementData.Settlement settlement = settlementData.settlements[currentCellCenter];
-								Vector3 pos = -settlement.actualSettlementPos.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
-
-								AddPosition(pos, settlement.location);
-							}
-						}
-						//
-
-						//Capitals
-						if (idToCapitalData.ContainsKey(faction.id))
-						{
-							CapitalData capitalData = idToCapitalData[faction.id];
-
-							if (capitalData.position != null)
-							{
-								if (capitalData.position.Equals(currentCellCenter))
-								{
-									Vector3 pos = -capitalData.position.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
-
-									AddPosition(pos, capitalData.location);
-								}
-							}
-						}
-						//
-
-						//Global data//
-						if (faction is GameWorld)
-						{
-							faction.GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
-
-							if (globalBattleData.battles.ContainsKey(currentCellCenter))
-							{
-								GlobalBattleData.Battle battle = globalBattleData.battles[currentCellCenter];
-
-								AddPosition(-battle.GetPosition().AsTruncatedVector3(UIManagement.mapRelativeScaleModifier), battle);
-							}
-						}
-					}
-				}
-			}
-		}
+		PlayerLocationManagement.PerformOperationOnNearbyLocations(WorldManagement.worldCenterPosition, getPositionsOperation, chunkRange);
 	}
 
 	private void AddPosition(Vector3 worldPos, VisitableLocation location)
@@ -396,7 +326,7 @@ public class PlayerMapInteraction : PostTickUpdate
 
 						if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
 						{
-							PlayerCapitalShip.StartJump(targetLocation.GetLocationsPackaged());
+							PlayerCapitalShip.StartJump(targetLocation.primaryLocation.actualLocationData);
 
 							//Remove fuel and have player ship change the ui label over the course of the jump
 							PlayerCapitalShip.HaveFuelChangeOverJump(inventory.fuel, inventory.fuel - fuelCost);
