@@ -293,7 +293,7 @@ public class PlayerCapitalShip : MonoBehaviour
 				transform.rotation.eulerAngles.z
 				);
 
-			CameraManagement.AddRotationMainOnly(new Vector2(0, rotationalMovement));
+			//CameraManagement.AddRotationMainOnly(new Vector2(0, rotationalMovement));
 			//
 
 			//Engines
@@ -350,7 +350,7 @@ public class PlayerCapitalShip : MonoBehaviour
 
 					//Only add rotation to the main camera
 					//Don't want any rotation in map
-					CameraManagement.AddRotationMainOnly(new Vector2(0, difference));
+					//CameraManagement.AddRotationMainOnly(new Vector2(0, difference));
 
 					if (rotateT >= 1.0f)
 					{

@@ -42,7 +42,9 @@ public class PlayerLocationManagement : MonoBehaviour
 		return false;
 	}
 
-	public static DrawnLocation GetPrimaryLocationWrapper()
+	private const double normalMaxDistance = 150;
+
+	public static DrawnLocation GetPrimaryLocationWrapper(double maxDistance = normalMaxDistance)
 	{
 		if (PlayerCapitalShip.IsJumping() && PlayerCapitalShip.CurrentStage() > PlayerCapitalShip.JumpStage.JumpBuildup)
 		{
@@ -51,18 +53,18 @@ public class PlayerLocationManagement : MonoBehaviour
 		}
 
 		//No nearby locations or no player location instance
-		if (instance == null || instance.drawnLocations.Count == 0)
+		if (instance == null || instance.drawnLocations.Count == 0 || instance.correspondingDistances[0] > maxDistance * WorldManagement.invertedInEngineWorldScaleMultiplier)
 		{
 			return backupLocation;
 		}
-		
+
 		//
 		return instance.drawnLocations[0];
 	}
 
-	public static VisitableLocation GetPrimaryLocation()
+	public static VisitableLocation GetPrimaryLocation(double maxDistance = normalMaxDistance)
 	{
-		return GetPrimaryLocationWrapper().targetLocation;
+		return GetPrimaryLocationWrapper(maxDistance).targetLocation;
 	}
 
 	private static DrawnLocation warpLocation = null;
