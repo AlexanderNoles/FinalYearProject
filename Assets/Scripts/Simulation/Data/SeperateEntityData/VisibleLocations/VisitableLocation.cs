@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class VisitableLocation : Location, IDisplay
 {
-	public virtual void InitDraw()
+	public virtual void InitDraw(Transform parent)
 	{
 
 	}

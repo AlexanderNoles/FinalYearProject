@@ -1,14 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class PlayerCapitalShip : MonoBehaviour
 {
 	[HideInInspector]
 	public new Transform transform;
+
+	public static Vector3 GetPosition()
+	{
+		return instance.transform.position;
+	}
 
 	public AnimationCurve turnCurve;
 	public AnimationCurve jumpCurve;
@@ -20,6 +22,11 @@ public class PlayerCapitalShip : MonoBehaviour
 	public static bool IsJumping()
 	{
 		return jumping;
+	}
+
+	public static JumpStage CurrentStage()
+	{
+		return jumpStage;
 	}
 
 	private static JumpStage jumpStage;
@@ -69,7 +76,7 @@ public class PlayerCapitalShip : MonoBehaviour
 	private static float shipSpeedMultiplier = 1;
 	private static float thisJumpSpeed;
 
-	private enum JumpStage
+	public enum JumpStage
 	{
 		InitialTurn,
 		JumpBuildup,
@@ -80,6 +87,8 @@ public class PlayerCapitalShip : MonoBehaviour
 
 	private float rotationalMovement;
 	private float normalEnginesIntensity;
+
+	private Vector3 posLastFrame;
 
 	public Rigidbody rigidbodyTarget;
 
@@ -109,6 +118,7 @@ public class PlayerCapitalShip : MonoBehaviour
 		jumping = false;
 
 		transform = base.transform;
+		posLastFrame = Vector3.zero;
 
 		portal.SetActive(false);
 		fireEffect.SetActive(false);
@@ -291,8 +301,14 @@ public class PlayerCapitalShip : MonoBehaviour
 			//
 		}
 
-		//JUMP ANIMATION
+		//Each frame disaplce the world center by amount moved
+		//Position should be reset to zero zero when we finish a jump
+		Vector3 moveDifference = transform.position - posLastFrame;
+		posLastFrame = transform.position;
+		WorldManagement.MoveWorldCenter(moveDifference * 100.0f);
+		//
 
+		//JUMP ANIMATION
 		if (jumping)
 		{
 
@@ -344,8 +360,6 @@ public class PlayerCapitalShip : MonoBehaviour
 				}
 				else
 				{
-					PlayerLocationManagement.ForceUnloadCurrentLocation();
-
 					fireEffect.SetActive(true);
 					jumpPs.Play();
 					portal.SetActive(false);
@@ -385,9 +399,7 @@ public class PlayerCapitalShip : MonoBehaviour
 					}
 
 					trail.SetPosition(1, new Vector3(0, 0, Mathf.Lerp(0, -maxTrailLength, jumpT * 15.0f)));
-
 					WorldManagement.SetWorldCenterPosition(RealSpacePostion.Lerp(jumpStart, jumpTarget[0].GetPosition(), jumpCurve.Evaluate(jumpT)));
-					UpdatePCSPosition(WorldManagement.worldCenterPosition);
 
 					if (jumpT >= 1.0f)
 					{
@@ -461,6 +473,9 @@ public class PlayerCapitalShip : MonoBehaviour
 		}
 	
 		//
+
+		//Update global effects
+		UpdatePCSPosition(WorldManagement.worldCenterPosition);
 	}
 
 	private void FixedUpdate()
@@ -479,8 +494,9 @@ public class PlayerCapitalShip : MonoBehaviour
 		UpdateEngineIntensityShaderDirect(0.0f);
 
 		//Update current player location
-		PlayerLocationManagement.UpdateLocation(jumpTarget);
+		//PlayerLocationManagement.UpdateLocation(jumpTarget);
 
+		//! REFACTOR BELOW CODE
 		//Set in engine position relative to current look direction (i.e., direction we entered location from)
 		Vector3 newPosition = -transform.forward * jumpTarget[0].GetEntryOffset();
 

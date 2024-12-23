@@ -116,7 +116,7 @@ public class PlayerMapInteraction : PostTickUpdate
 
 		rangeIndicatorMat.SetFloat("_Radius", calculatedRange);
 
-		VisitableLocation currentPlayerLocation = PlayerLocationManagement.GetCurrentPrimaryLocation();
+		VisitableLocation currentPlayerLocation = PlayerLocationManagement.GetPrimaryLocation();
 		RealSpacePostion playerPos = currentPlayerLocation.GetPosition();
 		RealSpacePostion currentPlayerCellCenter = WorldManagement.ClampPositionToGrid(playerPos);
 

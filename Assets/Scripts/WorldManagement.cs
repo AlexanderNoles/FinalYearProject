@@ -7,6 +7,8 @@ using System;
 [IntializeAtRuntime]
 public class WorldManagement : MonoBehaviour
 {
+    public const float worldScaleMultiplier = 0.04f;
+
     private static List<CelestialBody> majorWorldParts = new List<CelestialBody>();
     private static bool calculatedNewBounds = false;
     private static double solarSystemRadius = 0;
@@ -289,11 +291,25 @@ public class RealSpacePostion
         return this;
     }
 
+    public RealSpacePostion SubtractToClone(RealSpacePostion value)
+    {
+        return new RealSpacePostion(
+            x - value.x,
+            y - value.y,
+            z - value.z
+        );
+    }
+
     //HELPER FUNCTIONS
     public double Magnitude()
     {
         double value = (x * x) + (y * y) + (z * z);
         return System.Math.Sqrt(value);
+    }
+
+    public double Distance(RealSpacePostion value)
+    {
+        return SubtractToClone(value).Magnitude();
     }
 
     public Vector3 AsVector3()

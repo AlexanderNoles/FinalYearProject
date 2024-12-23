@@ -52,7 +52,7 @@ public class LocationInformationUI : MonoBehaviour
 		}
 
 		//Get current location
-		VisitableLocation currentLocation = PlayerLocationManagement.GetCurrentPrimaryLocation();
+		VisitableLocation currentLocation = PlayerLocationManagement.GetPrimaryLocation();
 		cachedLocation = currentLocation;
 
 		if (currentLocation == null)

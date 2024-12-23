@@ -178,8 +178,6 @@ public class CameraManagement : MonoBehaviour
     private const float lerpLimit = 0.01f;
     private const float moveLimit = 250.0f;
 
-	public float surroundingsMoveMultiplier = 1.0f;
-
     private void Awake()
     {
         instance = this;
@@ -319,7 +317,7 @@ public class CameraManagement : MonoBehaviour
 		if (mainCamera.enabled)
 		{
 			SetBackingCameraRotation(transform.rotation); 
-			SurroundingsRenderingManagement.SetCameraOffset(transform.position * surroundingsMoveMultiplier);
+			SurroundingsRenderingManagement.SetCameraOffset(transform.position * WorldManagement.worldScaleMultiplier);
 		}
     }
 

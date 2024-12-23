@@ -14,11 +14,15 @@ public class SettlementData : DataBase
         {
 			public Shop shop;
             public Settlement actualSettlement;
-			private GeneratorManagement.Generation generation;
+			private GeneratorManagement.StructureGeneration generation;
 
-			public override void InitDraw()
+			public override void InitDraw(Transform parent)
 			{
-				generation = new GeneratorManagement.StructureGeneration().SpawnStructure(GeneratorManagement.STRUCTURES_INDEXES.SETTLEMENT, Vector3.zero);
+				generation = new GeneratorManagement.StructureGeneration();
+
+				generation.parent = parent;
+
+				generation.SpawnStructure(GeneratorManagement.STRUCTURES_INDEXES.SETTLEMENT, Vector3.zero);
 				generation.FinalizeGeneration();
 			}
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,179 +7,315 @@ using UnityEngine.Events;
 
 public class PlayerLocationManagement : MonoBehaviour
 {
-	private static bool locationChanged = false;
-	private static List<VisitableLocation> previousLocation;
-	private static List<VisitableLocation> location;
-	private static List<VisitableLocation> preparedWarpLocation = null;
+	private static PlayerLocationManagement instance;
+	public static UnityEvent onLocationChanged;
 
-	public static UnityEvent onLocationChanged = new UnityEvent();
-
-	public static VisitableLocation GetCurrentPrimaryLocation()
+	public static bool IsPlayerLocation(VisitableLocation location)
 	{
-		if (PlayerCapitalShip.IsJumping())
+		if (instance != null)
 		{
-			return preparedWarpLocation[0];
-		}
-
-		if (location.Count == 0)
-		{
-			return null;
-		}
-
-		return location[0];
-	}
-
-	public static List<VisitableLocation> GetCurrentLocation()
-	{
-		if (location == null)
-		{
-			if (PlayerCapitalShip.IsJumping())
+			foreach (DrawnLocation entry in instance.drawnLocations)
 			{
-				return preparedWarpLocation;
+				if (entry.targetLocation.Equals(location))
+				{
+					return true;
+				}
 			}
 		}
 
-		return GetCurrentLocationRaw();
-	}
-
-	public static List<VisitableLocation> GetCurrentLocationRaw()
-	{
-		return location;
+		return false;
 	}
 
 	public static bool IsPlayerLocation(RealSpacePostion pos)
 	{
-		foreach (VisitableLocation location in location)
+		if (instance != null)
 		{
-			if (location.GetPosition().Equals(pos))
+			foreach (DrawnLocation entry in instance.drawnLocations)
 			{
-				return true;
+				if (entry.targetLocation.GetPosition().Equals(pos))
+				{
+					return true;
+				}
 			}
 		}
 
 		return false;
 	}
 
-	public static bool IsPlayerLocation(List<VisitableLocation> locations)
+	public static DrawnLocation GetPrimaryLocationWrapper()
 	{
-		foreach (VisitableLocation location in locations)
+		if (PlayerCapitalShip.IsJumping() && PlayerCapitalShip.CurrentStage() > PlayerCapitalShip.JumpStage.JumpBuildup)
 		{
-			if (IsPlayerLocation(location)) 
+			//Player ship is inside warp
+			return warpLocation;
+		}
+
+		//No nearby locations or no player location instance
+		if (instance == null || instance.drawnLocations.Count == 0)
+		{
+			return backupLocation;
+		}
+		
+		//
+		return instance.drawnLocations[0];
+	}
+
+	public static VisitableLocation GetPrimaryLocation()
+	{
+		return GetPrimaryLocationWrapper().targetLocation;
+	}
+
+	private static DrawnLocation warpLocation = null;
+	private static DrawnLocation backupLocation = null;
+	private List<DrawnLocation> drawnLocations = new List<DrawnLocation>();
+	private List<DrawnLocation> newDrawnLocations = new List<DrawnLocation>();
+	private List<double> correspondingDistances = new List<double>();
+	private Func<VisitableLocation, int> locationGetOperation;
+
+	private int sessionNextID;
+	private int currentPrimaryLocationID;
+
+	public class DrawnLocation
+	{
+		public int locationID = -1;
+
+		public VisitableLocation targetLocation;
+		public Transform parent;
+
+        public override bool Equals(object obj)
+        {
+			if (obj == null || obj.GetType() != typeof(DrawnLocation))
 			{
-				return true;
+				return false;
 			}
-		}
 
-		return false;
-	}
+            return targetLocation.Equals(((DrawnLocation)obj).targetLocation);
+        }
 
-	public static bool IsPlayerLocation(VisitableLocation location)
-	{
-		if (PlayerLocationManagement.location.Count == 0)
+        public override int GetHashCode()
+        {
+			if (targetLocation == null)
+			{
+				return 0;
+			}
+
+            return targetLocation.GetHashCode();
+        }
+
+		public void SetID(int newID)
 		{
-			return false;
+			locationID = newID;
 		}
 
-		return PlayerLocationManagement.location.Contains(location);
-	}
+		public void InitParent()
+		{
+			//Create new parent object
+			//Could use an object pool for this but I don't think it really matters with such a small amount of nearby locations
+			parent = new GameObject().transform;
+		}
+
+		public void SetPosAsOffsetFrom(RealSpacePostion rsp, Vector3 additionalOffset)
+		{
+			//Calculate difference between rsp and target location rsp
+			RealSpacePostion difference = targetLocation.GetPosition().SubtractToClone(rsp);
+
+			//Set that as our offset plus an additional offset
+			parent.position = difference.AsVector3() + additionalOffset;
+		}
+    }
 
 	private void Awake()
 	{
-		location = new List<VisitableLocation>();
-		previousLocation = new List<VisitableLocation>();           
-		//This acts as a location to display when the ship is traveling throught the warp
-		preparedWarpLocation = new List<VisitableLocation>() { new WarpLocation() };
-
-		//Remove any leftover listeners
-		onLocationChanged.RemoveAllListeners();
-
-		locationChanged = true;
-
-		//Will try to load position here from save file
-
-		if (location.Count == 0)
+		if (warpLocation == null)
 		{
-			//No location was loaded
-			AddLocation(new ArbitraryLocation().SetLocation(new RealSpacePostion(0, 0, 20000)));
+			warpLocation = new DrawnLocation();
+			warpLocation.SetID(0);
+			warpLocation.targetLocation = new WarpLocation();
+
+			backupLocation = new DrawnLocation();
+			warpLocation.SetID(1);
+			backupLocation.targetLocation = new VisitableLocation();
 		}
 
-		//Run update once to get allow the system to run setup before any other updates run without duplicate code
-		LateUpdate();
-	}
+		instance = this;
+		sessionNextID = 2;
+		currentPrimaryLocationID = -1;
 
-	private static void AddLocation(VisitableLocation newLocation)
-	{
-		location.Add(newLocation);
-	}
-
-	public static void UpdateLocation(List<VisitableLocation> newLocation)
-	{
-		previousLocation = location;
-		ChangeLocation(newLocation);
-		locationChanged = true;
-	}
-
-	public static void ForceUnloadCurrentLocation()
-	{
-		if (location != null)
+		//Define operation that is used to get surrounding locations for drawing
+		//Scan all surrounding cells, if a location is within draw range:
+		//	IF we are currently drawing it, then remove it from DrawnLocation list and add it to the updated list
+		//	IF we are not currently drawing it, then add it to an init list to be drawn as well as the new updated list
+		//	Any locations remaining in the old list can then be cleaned up (un drawn)
+		locationGetOperation = delegate(VisitableLocation visitableLocation) 
 		{
-			foreach (VisitableLocation location in location)
+			//Are we currently drawing this location
+			DrawnLocation newDrawnLocation = new DrawnLocation();
+			bool currentlyDrawing = false;
+
+			for (int i = 0; i < drawnLocations.Count; i++)
 			{
-				location.Cleanup();
+				if (drawnLocations[i].Equals(visitableLocation))
+				{
+					newDrawnLocation = drawnLocations[i];
+
+					drawnLocations.RemoveAt(i);
+					currentlyDrawing = true;
+					break;
+				}
 			}
 
-			ChangeLocation(new List<VisitableLocation>());
-		}
+			if (!currentlyDrawing)
+			{
+				newDrawnLocation.InitParent();
+
+				newDrawnLocation.SetID(sessionNextID);
+				sessionNextID++;
+
+				visitableLocation.InitDraw(newDrawnLocation.parent);
+				newDrawnLocation.targetLocation = visitableLocation;
+			}
+
+			//Add location to new list based on it's distance
+			//This means the closest location will always be the start of the list
+			double distance = visitableLocation.GetPosition().Distance(WorldManagement.worldCenterPosition);
+
+			int index;
+			for (index = 0; index < drawnLocations.Count;)
+			{
+				if (distance < correspondingDistances[index])
+				{
+					break;
+				}
+				else
+				{
+					index++;
+				}	
+			}
+
+			newDrawnLocations.Insert(index, newDrawnLocation);
+			correspondingDistances.Insert(index, distance);
+			return 0;
+		};
 	}
-
-	//Automatically triggers the OnLocationChangeEvent
-	private static void ChangeLocation(List<VisitableLocation> newLocation)
-	{
-		location = newLocation;
-		onLocationChanged.Invoke();
-
-	}
-
+	
 	private void LateUpdate()
 	{
-		if (locationChanged)
+		if (!PlayerManagement.PlayerFactionExists())
 		{
-			if (previousLocation.Count != 0)
-			{
-				foreach(VisitableLocation location in previousLocation)
-				{
-					location.Cleanup();
-				}
-
-				previousLocation.Clear();
-			}
-
-			if (location != null)
-			{
-				foreach (VisitableLocation location in location)
-				{
-					location.InitDraw();
-				}
-
-				UpdateWorldPosition();
-			}
-
-			locationChanged = false;
+			return;
 		}
 
-		if (location.Count != 0)
+		RealSpacePostion worldCenter = WorldManagement.worldCenterPosition;
+
+		//Reset list as new object
+		newDrawnLocations = new List<DrawnLocation>();
+		correspondingDistances.Clear();
+
+		//Perform operation
+		PerformOperationOnNearbyLocations(worldCenter, locationGetOperation);
+
+		//Remove any remaining locations in drawn locations
+		foreach (DrawnLocation location in drawnLocations)
 		{
-			foreach (VisitableLocation location in location)
-			{
-				location.Draw();
-			}
+			location.targetLocation.Cleanup();
+		}
+
+		//Replace drawn locations
+		drawnLocations = newDrawnLocations;
+		//Update position of all drawn locations based on offset from world center
+		//and the player ships world (in engine) position
+		foreach (DrawnLocation location in drawnLocations)
+		{
+			location.SetPosAsOffsetFrom(worldCenter, PlayerCapitalShip.GetPosition());
+		}
+
+		//Set primary location id
+		int newPrimaryLocationID = GetPrimaryLocationWrapper().locationID;
+
+		//If primary location has changed, run onLocationChanged event
+		if (currentPrimaryLocationID != newPrimaryLocationID)
+		{
+			currentPrimaryLocationID = newPrimaryLocationID;
+			onLocationChanged.Invoke();
 		}
 	}
 
-	private void UpdateWorldPosition()
+	public static void PerformOperationOnNearbyLocations(RealSpacePostion pos, Func<VisitableLocation, int> operation, int chunkRange = 1, int buffer = 1)
 	{
-		RealSpacePostion centralPos = GetCurrentPrimaryLocation().GetPosition();
-		WorldManagement.SetWorldCenterPosition(centralPos);
-		PlayerCapitalShip.UpdatePCSPosition(WorldManagement.worldCenterPosition);
+		//Grab data needed to compute
+		List<Faction> allFactions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Faction);
+		Dictionary<int, SettlementData> idToSetData = SimulationManagement.GetDataForFactionsList<SettlementData>(allFactions, Faction.Tags.Settlements.ToString());
+		Dictionary<int, CapitalData> idToCapitalData = SimulationManagement.GetDataForFactionsList<CapitalData>(allFactions, Faction.Tags.Capital.ToString());
+
+		//Get postion to run check from
+		RealSpacePostion currentPlayerCellCenter = WorldManagement.ClampPositionToGrid(pos);
+		
+		double density = WorldManagement.GetGridDensity();
+
+		//Get the players offset from their cell center
+		//The range check works on a cell basis but distance should be measured from player's actual position
+		//So the x and z need to be offset so we can calculate correctly
+		float playerXOffsetFromCellCenter = (float)((currentPlayerCellCenter.x - pos.x) / density);
+		float playerZOffsetFromCellCenter = (float)((currentPlayerCellCenter.z - pos.z) / density);
+
+		int bufferedChunkRange = chunkRange + buffer;
+
+		for (int x = -bufferedChunkRange; x <= bufferedChunkRange; x++)
+		{
+			for (int z = -bufferedChunkRange; z <= bufferedChunkRange; z++)
+			{
+				//Within circle
+				if (Mathf.Abs(x + playerXOffsetFromCellCenter) + Mathf.Abs(z + playerZOffsetFromCellCenter) <= bufferedChunkRange)
+				{
+					//Find offset from cell center
+					RealSpacePostion currentCellCenter = new RealSpacePostion(
+						currentPlayerCellCenter.x + (density * x), 
+						0, 
+						currentPlayerCellCenter.z + (density * z));
+
+					//Iterate through all factions
+					//If they have a location (that we have decided is relevant to the player) in this chunk place it on the map
+					foreach (Faction faction in allFactions)
+					{
+						//Settlements
+						if (idToSetData.ContainsKey(faction.id))
+						{
+							SettlementData settlementData = idToSetData[faction.id];
+							if (settlementData.settlements.ContainsKey(currentCellCenter))
+							{
+								operation.Invoke(settlementData.settlements[currentCellCenter].location);
+							}
+						}
+						//
+
+						//Capitals
+						if (idToCapitalData.ContainsKey(faction.id))
+						{
+							CapitalData capitalData = idToCapitalData[faction.id];
+
+							if (capitalData.position != null)
+							{
+								if (capitalData.position.Equals(currentCellCenter))
+								{
+									operation.Invoke(capitalData.location);
+								}
+							}
+						}
+						//
+
+						//Global data//
+						if (faction is GameWorld)
+						{
+							faction.GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
+
+							if (globalBattleData.battles.ContainsKey(currentCellCenter))
+							{
+								operation.Invoke(globalBattleData.battles[currentCellCenter]);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }

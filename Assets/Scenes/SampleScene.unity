@@ -379,7 +379,6 @@ GameObject:
   m_Component:
   - component: {fileID: 14063470}
   - component: {fileID: 14063471}
-  - component: {fileID: 14063472}
   - component: {fileID: 14063473}
   m_Layer: 0
   m_Name: GeneratorManagement
@@ -415,30 +414,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5dc45ebfd7935944952d83c077bc94d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  primitivePool: {fileID: 14063472}
+  primitivePool: {fileID: 0}
   structuresPool: {fileID: 14063473}
---- !u!114 &14063472
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 14063469}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca3a3b334a5db2d48b0841b895098083, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  generateOnAwake: 1
-  pools:
-  - name: CUBES
-    mode: 0
-    baseObject: {fileID: 2354209562463337396, guid: 3a29a830706928748bb56813edc1d5ac,
-      type: 3}
-    baseNumberOfObjects: 25
-    generateAsNeeded: 1
-    currentUpdatedObjectPointer: 0
-    automaticallySetParent: 0
 --- !u!114 &14063473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -460,7 +437,7 @@ MonoBehaviour:
     baseNumberOfObjects: 2
     generateAsNeeded: 1
     currentUpdatedObjectPointer: 0
-    automaticallySetParent: 0
+    automaticallySetParent: 1
 --- !u!1 &14782865
 GameObject:
   m_ObjectHideFlags: 0
@@ -7463,7 +7440,6 @@ MonoBehaviour:
   cameraAxis: {fileID: 506661757}
   backingCameraAxis: {fileID: 1437228450}
   backingCamera: {fileID: 1414547019}
-  surroundingsMoveMultiplier: 0.04
 --- !u!114 &330585552
 MonoBehaviour:
   m_ObjectHideFlags: 0
