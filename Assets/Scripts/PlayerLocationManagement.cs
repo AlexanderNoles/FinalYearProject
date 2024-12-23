@@ -220,7 +220,7 @@ public class PlayerLocationManagement : MonoBehaviour
 		correspondingDistances.Clear();
 
 		//Perform operation
-		const double drawDistance = 1000;
+		double drawDistance = 10 * WorldManagement.inEngineWorldScaleMultiplier;
 		int chunkRange = (int)Math.Ceiling(drawDistance / WorldManagement.GetGridDensity());
 		PerformOperationOnNearbyLocations(worldCenter, locationGetOperation, chunkRange, 1, drawDistance);
 

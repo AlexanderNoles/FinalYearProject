@@ -19,6 +19,11 @@ public class WeaponProfile
 		return 0.1f;
 	}
 
+	public virtual float GetRange()
+	{
+		return 200.0f;
+	}
+
 	protected virtual bool SalvoEnabled()
 	{
 		return true;

@@ -414,7 +414,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5dc45ebfd7935944952d83c077bc94d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  primitivePool: {fileID: 0}
   structuresPool: {fileID: 14063473}
 --- !u!114 &14063473
 MonoBehaviour:
@@ -12776,7 +12775,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b684983c5257684cb5bcf73ae866205, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  historyLength: 17
+  historyLength: 500
   drawMilitaryPresence: 1
   updateMap: 1
 --- !u!1 &1273093546

@@ -93,17 +93,17 @@ public class BattleBehaviour : MonoBehaviour
 
 	private class AttackProfile 
 	{
+		public WeaponProfile parentProfile;
+
 		public int totalNumberOfAttacks;
 		public int numberOfAttacksSoFar;
 
-		public float damagePerAttack;
-
-		public AttackProfile(int total, float damage)
+		public AttackProfile(int total, WeaponProfile weapon)
 		{
 			totalNumberOfAttacks = total;
 			numberOfAttacksSoFar = 0;
 
-			damagePerAttack = damage;
+			parentProfile = weapon;
 		}
 	}
 
@@ -125,12 +125,7 @@ public class BattleBehaviour : MonoBehaviour
 
 			if (attackCount > 0)
 			{
-				//This does mean attack damage is processed on a per process basis, rather than per attack
-				//Practically this means very little, especially on high frame rates
-				attackProfiles.Add(new AttackProfile(attackCount, weaponProfile.GetDamage()));
-
-				//Mark weapon has having fired
-				weaponProfile.MarkLastAttackTime(Time.time);
+				attackProfiles.Add(new AttackProfile(attackCount, weaponProfile));
 			}
 		}
 
@@ -144,30 +139,40 @@ public class BattleBehaviour : MonoBehaviour
 			int index = (i + randomOffset) % count;
 			BattleBehaviour target = currentTargets[index];
 
+			Vector3 targetPosition = target.GetPosition();
+
 			//Preprocess
 			PreTargetProcess(target);
 
-			//Apply attacks to targets
+			//Apply attacks to target
 			//For each weapon we apply this targets share of the attacks rounded up
 			for (int a = 0; a < attackProfiles.Count; a++)
 			{
 				AttackProfile attack = attackProfiles[a];
 
-				//Number of attacks from this weapon for this target
-				//Rounded up so we always use all our attacks, even if some targets don't get hit
-				int attackCap = Mathf.CeilToInt(attack.totalNumberOfAttacks / (float)count);
-				while (attack.numberOfAttacksSoFar < attack.totalNumberOfAttacks && attackCap > 0)
+				//Check if within range
+				//If so then mark this weapon as used this frame
+				if (Vector3.Distance(GetPosition(), targetPosition) <= attack.parentProfile.GetRange())
 				{
-					//Apply damage
-					target.TakeDamage(attack.damagePerAttack);
+					attack.parentProfile.MarkLastAttackTime(Time.time);
 
-					//Draw Attack
-					DrawAttack(target.GetTargetablePosition(), weapons[a]);
+					//Number of attacks from this weapon for this target
+					//Rounded up so we always use all our attacks, even if some targets don't get hit
+					int attackCap = Mathf.CeilToInt(attack.totalNumberOfAttacks / (float)count);
+					while (attack.numberOfAttacksSoFar < attack.totalNumberOfAttacks && attackCap > 0)
+					{
+						//Apply damage
+						target.TakeDamage(attack.parentProfile.GetDamage());
 
-					//Reduce attack cap
-					attackCap--;
-					//Increment number of attacks so far
-					attack.numberOfAttacksSoFar++;
+						Vector3 shotTargetPosition = target.GetTargetablePosition();
+						//Draw Attack
+						DrawAttack(shotTargetPosition, GetFireFromPosition(shotTargetPosition), weapons[a]);
+
+						//Reduce attack cap
+						attackCap--;
+						//Increment number of attacks so far
+						attack.numberOfAttacksSoFar++;
+					}
 				}
 			}
 
@@ -186,10 +191,10 @@ public class BattleBehaviour : MonoBehaviour
 
 	}
 
-	protected virtual void DrawAttack(Vector3 targetPos, WeaponProfile weaponProfile)
+	protected virtual void DrawAttack(Vector3 targetPos, Vector3 firePos, WeaponProfile weaponProfile)
 	{
 		//Be default simply ask the battle management script to draw a line to the target positon from our fire position
-		BattleManagement.CreateBasicBeamEffect(GetFireFromPosition(targetPos), targetPos, 0.1f);
+		BattleManagement.CreateBasicBeamEffect(firePos, targetPos, 0.1f);
 	}
 
 	protected virtual Vector3 GetTargetablePosition()
@@ -202,6 +207,11 @@ public class BattleBehaviour : MonoBehaviour
 	}
 
 	protected virtual Vector3 GetFireFromPosition(Vector3 targetPos)
+	{
+		return transform.position;
+	}
+
+	protected virtual Vector3 GetPosition()
 	{
 		return transform.position;
 	}

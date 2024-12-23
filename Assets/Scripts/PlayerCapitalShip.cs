@@ -260,15 +260,24 @@ public class PlayerCapitalShip : MonoBehaviour
 			//Rotational Movement
 			const float rotationalModifier = 0.01f;
 			float rotationalChangeModifier = rotationalModifier * Time.deltaTime * moveSpeedPercentage;
+			float modifierThisFrame = 0.0f;
 			if (InputManagement.GetKey(KeyCode.E) && !mapActive)
 			{
-				rotationalMovement += rotationalChangeModifier;
+				modifierThisFrame = rotationalChangeModifier;
 			}
 			else if (InputManagement.GetKey(KeyCode.Q) && !mapActive)
 			{
-				rotationalMovement -= rotationalChangeModifier;
+				modifierThisFrame = -rotationalChangeModifier;
 			}
-			else
+
+			rotationalMovement += modifierThisFrame;
+
+
+			//If no input or inverse input to current rotational movement
+			if(modifierThisFrame == 0.0f ||
+					(modifierThisFrame < 0.0f && rotationalMovement > 0.0f) ||
+					(modifierThisFrame > 0.0f && rotationalMovement < 0.0f)
+				)
 			{
 				rotationalMovement = Mathf.Lerp(rotationalMovement, 0.0f, rotationalChangeModifier * 200.0f);
 			}
