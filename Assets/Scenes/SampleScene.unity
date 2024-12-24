@@ -8504,6 +8504,48 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mapElementsPools: {fileID: 1725541700}
+  troopTransferCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1.2309755
+      outSlope: 1.2309755
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.40434888
+      value: 0.49774358
+      inSlope: -0.0003359951
+      outSlope: -0.0003359951
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.67225677
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.61253655
+      value: 0.50053835
+      inSlope: 0.008618623
+      outSlope: 0.008618623
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.8622723
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1.2890549
+      outSlope: 1.2890549
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &477259751
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12775,7 +12817,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b684983c5257684cb5bcf73ae866205, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  historyLength: 17
+  historyLength: 500
   drawMilitaryPresence: 1
   updateMap: 1
 --- !u!1 &1273093546

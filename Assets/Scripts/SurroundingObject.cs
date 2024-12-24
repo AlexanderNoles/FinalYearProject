@@ -6,6 +6,7 @@ public class SurroundingObject : MonoBehaviour
 {
     public float scale = 1f;
 	protected float shellOffset;
+    protected float rawScale;
     private new Transform transform;
     public RealSpacePostion postion;
 
@@ -34,6 +35,11 @@ public class SurroundingObject : MonoBehaviour
 	{
 		shellOffset = newOffset;
 	}
+
+    public virtual void SetRawScale(float rawScale)
+    {
+        this.rawScale = rawScale;
+    }
 
     public virtual Transform GetInWorldParent() 
     {

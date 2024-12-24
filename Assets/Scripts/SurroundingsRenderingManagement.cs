@@ -98,12 +98,6 @@ public class SurroundingsRenderingManagement : MonoBehaviour
                 double magnitude = offset.Magnitude();
 
                 distanceOffsetAndIndex.Add((magnitude, offset, i));
-
-                ////Set rotation around center and scale based on those values
-                //float newScale = (float)(obj.scale / magnitude);
-                //obj.SetObjectVisualScale(newScale);
-
-                //obj.transform.localPosition = offset.Normalized().AsVector3() * 10;
             }
 
             int shellIndex = 1;
@@ -127,7 +121,10 @@ public class SurroundingsRenderingManagement : MonoBehaviour
 
                 target.transform.localPosition = distanceOffsetAndIndex[minimumIndex].Item2.Normalized().AsVector3() * shellOffset;
 
-                float newScale = (float)(target.scale / distanceOffsetAndIndex[minimumIndex].Item1) * shellOffset;
+                const float baseScaleToEngineModifier = 0.005f;
+                float baseScale = target.scale * baseScaleToEngineModifier * WorldManagement.inEngineWorldScaleMultiplier;
+                float newScale = (float)(baseScale / distanceOffsetAndIndex[minimumIndex].Item1) * shellOffset;
+                target.SetRawScale((float)(target.scale / distanceOffsetAndIndex[minimumIndex].Item1));
 				target.SetShellOffset(shellOffset);
 				target.SetObjectVisualScale(newScale);
 

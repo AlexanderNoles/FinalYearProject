@@ -17,12 +17,12 @@ public class MapManagement : MonoBehaviour
 		public float startTime;
 		public float length;
 
-		public float Update()
+		public float Update(AnimationCurve animationCurve)
 		{
 			float timePercentage = Mathf.Clamp01((Time.time - startTime) / length);
 			
-			float min = Mathf.Clamp01((timePercentage * 2.0f) - 1.0f);
-			float max = Mathf.Clamp01(timePercentage * 6.0f);
+			float min = 0;//Mathf.Clamp01((timePercentage * 2.0f) - 1.0f);
+			float max = animationCurve.Evaluate(Mathf.Clamp01(timePercentage * 2.0f));
 
 			Vector3[] newLinePositions = new Vector3[pathResolution];
 			for (int i = 0; i <= pathResolution-1; i++)
@@ -53,6 +53,8 @@ public class MapManagement : MonoBehaviour
 	private Dictionary<Transform, LineRenderer> cachedTransformToBorderRenderer = new Dictionary<Transform, LineRenderer>();
 	private Dictionary<Transform, SpriteRenderer> cachedTransformToNationIconRenderers = new Dictionary<Transform, SpriteRenderer>();
 	private List<TroopTransferEffect> ttEffects = new List<TroopTransferEffect>();
+
+	public AnimationCurve troopTransferCurve;
 
 	private void Start()
     {
@@ -392,7 +394,7 @@ public class MapManagement : MonoBehaviour
 
 				for (int i = 0; i < ttEffects.Count;)
 				{
-					if(ttEffects[i].Update() >= 1.0f)
+					if(ttEffects[i].Update(troopTransferCurve) >= 1.0f)
 					{
 						ttEffects.RemoveAt(i);
 					}
