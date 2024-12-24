@@ -38,7 +38,7 @@ public class MainInfoBarControl : PostTickUpdate
 		{
 			//We could cache these but they have a complexity of O(1) so it's probably fine to do it like this
 			//Plus in the future GetData might end the typical simulation tick instead of the simulation clamp, so we should be using GetData.
-			faction.GetData(PlayerFaction.statDataKey, out PlayerStats playerStats);
+			PlayerStats playerStats = PlayerManagement.GetStats();
 			faction.GetData(Faction.Tags.Population, out PopulationData populationData);
 			faction.GetData(PlayerFaction.inventoryDataKey, out PlayerInventory playerInventory);
 

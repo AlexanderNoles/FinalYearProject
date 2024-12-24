@@ -108,12 +108,10 @@ public class PlayerMapInteraction : PostTickUpdate
 		}
 
 		int chunkRange = 10;
-		List<Faction> players = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Player);
 
-		if (players.Count > 0)
+		if (PlayerManagement.PlayerFactionExists())
 		{
-			players[0].GetData(PlayerFaction.statDataKey, out PlayerStats playerStats);
-			chunkRange = Mathf.FloorToInt(playerStats.GetStat(Stats.jumpRange.ToString()));
+			chunkRange = Mathf.FloorToInt(PlayerManagement.GetStats().GetStat(Stats.jumpRange.ToString()));
 		}
 
 		const float buffer = 1;

@@ -252,6 +252,11 @@ public class SimulationManagement : MonoBehaviour
 		return Mathf.Clamp01(1.0f - (instance.historyTicksLeft / (float)instance.maxHistoryTicks));
 	}
 
+    public static bool RunningHistory()
+    {
+        return GetHistoryRunPercentage() < 1.0f;
+    }
+
 	private const bool batchHistory = false;
 
     //As per the inital design constriction this script always executes after every other (non unity) script.
@@ -692,7 +697,7 @@ public class SimulationManagerEditor : Editor
     {
         GUILayout.BeginHorizontal();
         GUI.skin.label.fontStyle = FontStyle.Normal;
-        GUILayout.Label("•  " + routine.ToString().Split("(")[1].Replace(")", ""));
+        GUILayout.Label("ï¿½  " + routine.ToString().Split("(")[1].Replace(")", ""));
 
         GUILayout.FlexibleSpace();
 

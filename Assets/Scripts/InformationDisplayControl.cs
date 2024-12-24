@@ -84,7 +84,7 @@ public class InformationDisplayControl : MonoBehaviour
 
 	private void Update()
 	{
-		if (!blocker.activeSelf && InputManagement.GetKeyDown(KeyCode.T) && !noExtraInfo)
+		if (!blocker.activeSelf && InputManagement.GetKeyDown(InputManagement.extraInformationKey) && !noExtraInfo)
 		{
 			if (showingExtendedDescription)
 			{

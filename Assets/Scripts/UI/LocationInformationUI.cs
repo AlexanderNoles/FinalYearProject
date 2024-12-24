@@ -127,7 +127,7 @@ public class LocationInformationUI : MonoBehaviour
 			return;
 		}
 
-		if (InputManagement.GetKeyDown(KeyCode.G) && cachedLocation.HasShop())
+		if (InputManagement.GetKeyDown(InputManagement.toggleShopKey) && cachedLocation.HasShop())
 		{
 			//Toggle shop
 			ToggleShopButton();
@@ -138,7 +138,7 @@ public class LocationInformationUI : MonoBehaviour
 		//Also it would be weird to buy fuel will about to jump
 		fuelButton.Enable(currentLocationCanFuel && !PlayerCapitalShip.IsJumping());
 
-		if (fuelButton.Enabled() && InputManagement.GetKeyDown(KeyCode.F) && currentLocationCanFuel)
+		if (fuelButton.Enabled() && InputManagement.GetKeyDown(InputManagement.refuelKey) && currentLocationCanFuel)
 		{
 			BuyFuel();
 		}

@@ -264,11 +264,11 @@ public class PlayerCapitalShip : MonoBehaviour
 			const float rotationalModifier = 0.01f;
 			float rotationalChangeModifier = rotationalModifier * Time.deltaTime * moveSpeedPercentage;
 			float modifierThisFrame = 0.0f;
-			if (InputManagement.GetKey(KeyCode.E) && !mapActive)
+			if (InputManagement.GetKey(InputManagement.rotateRightKey) && !mapActive)
 			{
 				modifierThisFrame = rotationalChangeModifier;
 			}
-			else if (InputManagement.GetKey(KeyCode.Q) && !mapActive)
+			else if (InputManagement.GetKey(InputManagement.rotateLeftKey) && !mapActive)
 			{
 				modifierThisFrame = -rotationalChangeModifier;
 			}
@@ -299,11 +299,11 @@ public class PlayerCapitalShip : MonoBehaviour
 			//Engines
 			const float engineAcceleration = 15;
 			float engineChangeModifier = engineAcceleration * moveSpeedPercentage * Time.deltaTime;
-			if (InputManagement.GetKey(KeyCode.W) && !mapActive)
+			if (InputManagement.GetKey(InputManagement.thrusterUpKey) && !mapActive)
 			{
 				normalEnginesIntensity += engineChangeModifier;
 			}
-			else if (InputManagement.GetKey(KeyCode.S) && !mapActive)
+			else if (InputManagement.GetKey(InputManagement.thrusterDownKey) && !mapActive)
 			{
 				normalEnginesIntensity = Mathf.Lerp(normalEnginesIntensity, 0.0f, engineChangeModifier * 0.2f);
 			}

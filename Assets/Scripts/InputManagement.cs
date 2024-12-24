@@ -5,6 +5,20 @@ using UnityEngine;
 
 public class InputManagement
 {
+    public static KeyCode extraInformationKey = KeyCode.T;
+    public static KeyCode rotateLeftKey = KeyCode.Q;
+    public static KeyCode rotateRightKey = KeyCode.E;
+    public static KeyCode thrusterUpKey = KeyCode.W;
+    public static KeyCode thrusterDownKey = KeyCode.S;
+    public static KeyCode toggleShopKey = KeyCode.G;
+    public static KeyCode refuelKey = KeyCode.F;
+    public static KeyCode toggleMapKey = KeyCode.M;
+    public static KeyCode toggleInventoryKey = KeyCode.Tab;
+    public static KeyCode toggleLocationInfoKey = KeyCode.R;
+
+
+
+
     public static bool InputEnabled = true;
     public static MouseButton cameraMove = MouseButton.Right;
 

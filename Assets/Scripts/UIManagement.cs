@@ -82,9 +82,9 @@ public class UIManagement : MonoBehaviour
 
     private void Update()
     {
-        if (map != null && SimulationManagement.GetHistoryRunPercentage() >= 1.0f)
+        if (map != null && !SimulationManagement.RunningHistory())
         {
-            if ((InputManagement.GetKeyDown(KeyCode.M) || mapButtonPressed || (onlyMapMode && !mapObject.activeSelf)) && MonitorBreak.Bebug.Console.GetConsoleState() != MonitorBreak.Bebug.Console.ConsoleState.FullScreen)
+            if ((InputManagement.GetKeyDown(InputManagement.toggleMapKey) || mapButtonPressed || (onlyMapMode && !mapObject.activeSelf)) && MonitorBreak.Bebug.Console.GetConsoleState() != MonitorBreak.Bebug.Console.ConsoleState.FullScreen)
             {
 				mapButtonPressed = false;
 
@@ -123,12 +123,12 @@ public class UIManagement : MonoBehaviour
             }
         }
 
-		if (InputManagement.GetKeyDown(KeyCode.Tab))
+		if (InputManagement.GetKeyDown(InputManagement.toggleInventoryKey))
 		{
 			ToggleInventory();
 		}
 
-		if (InputManagement.GetKeyDown(KeyCode.R))
+		if (InputManagement.GetKeyDown(InputManagement.toggleLocationInfoKey))
 		{
 			ToggleLocationInformation();
 		}

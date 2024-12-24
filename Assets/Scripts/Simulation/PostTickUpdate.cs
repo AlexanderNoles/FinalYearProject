@@ -13,7 +13,7 @@ public class PostTickUpdate : MonoBehaviour
 
 	protected virtual void Update()
 	{
-		if (SimulationManagement.currentTickID != lastTickUpdatedOn)
+		if (SimulationManagement.currentTickID != lastTickUpdatedOn && !SimulationManagement.RunningHistory())
 		{
 			lastTickUpdatedOn = SimulationManagement.currentTickID;
 			PostTick();
