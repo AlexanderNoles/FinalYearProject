@@ -72,6 +72,14 @@ public class HistoryUIManagement : MonoBehaviour
 			factionDataNotGrabbed--;
 		}
 
+		List<Faction> gameWorlds = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld);
+		HistoryData historyData = null;
+		Color historyColour = Color.white * 0.3f;
+		if (gameWorlds.Count > 0)
+		{
+			gameWorlds[0].GetData(Faction.Tags.Historical, out historyData);
+		}
+
 		//This happens if the above for loop fails because some outside force (the multithreaded history simulation)
 		//Effects the underlying data
 		if (factionDataNotGrabbed != 0)
@@ -87,27 +95,37 @@ public class HistoryUIManagement : MonoBehaviour
 			{
 				RealSpacePostion currentCell = WorldManagement.ClampPositionToGrid(new RealSpacePostion(x * gridDensity, 0, z * gridDensity));
 
+				if (historyData != null && historyData.previouslyOwnedTerritories.ContainsKey(currentCell))
+				{
+					AddPixel(currentCell, historyColour);
+					continue;
+				}
+
 				foreach ((TerritoryData, Color) entry in territoryDatas)
 				{
 					if (entry.Item1.territoryCenters.Contains(currentCell))
 					{
-						Transform pixelTrans = pixelPool.UpdateNextObjectPosition(0, Vector3.zero);
-						(pixelTrans as RectTransform).anchoredPosition = currentCell.AsTruncatedVector2(600.0f);
-
-						if (!transToImage.ContainsKey(pixelTrans))
-						{
-							transToImage.Add(pixelTrans, pixelTrans.GetComponent<Image>());
-						}
-
-						transToImage[pixelTrans].color = entry.Item2;
-
-						continue;
+						AddPixel(currentCell, entry.Item2);
+						break;
 					}
 				}
 			}
 		}
 
-
 		pixelPool.PruneObjectsNotUpdatedThisFrame(0);
+	}
+
+	private void AddPixel(RealSpacePostion postion, Color color)
+	{
+		Transform pixelTrans = pixelPool.UpdateNextObjectPosition(0, Vector3.zero);
+
+		(pixelTrans as RectTransform).anchoredPosition = postion.AsTruncatedVector2(600.0f);
+
+		if (!transToImage.ContainsKey(pixelTrans))
+		{
+			transToImage.Add(pixelTrans, pixelTrans.GetComponent<Image>());
+		}
+
+		transToImage[pixelTrans].color = color;
 	}
 }
