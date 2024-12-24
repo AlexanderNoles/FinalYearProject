@@ -329,6 +329,11 @@ public class RealSpacePostion
         return new Vector3((float)(x/modifier), (float)(y / modifier), (float)(z / modifier));
     }
 
+    public Vector2 AsTruncatedVector2(double modifier)
+    {
+        return new Vector2((float)(x/modifier), (float)(z/modifier));
+    }
+
 	public static RealSpacePostion Lerp(RealSpacePostion a, RealSpacePostion b, float t)
 	{
 		return new RealSpacePostion(
