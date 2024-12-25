@@ -292,15 +292,23 @@ public class PlayerMapInteraction : PostTickUpdate
 				floatingLocationInformationPopup.position = canvasRect.TransformPoint(mousePos);
 
 				//Calculate fuel cost
-				int fuelCost;
+				int fuelCost = 0;
+                double distance = PlayerCapitalShip.CalculateDistance(targetLocation.primaryLocation.actualLocationData.GetPosition());
 
-				//Fuel is calculated in this script because this form of travel uses fuel
-				//Some forms of travel won't so it's not done directly in the jump function
-				double distance = PlayerCapitalShip.CalculateDistance(targetLocation.primaryLocation.actualLocationData.GetPosition());
-				fuelCost = (int)Math.Floor(distance / 100);
-
-				//Disaply fuel cost
-				fuelCostLabel.text = fuelCost.ToString();
+                if (PlayerManagement.fuelEnabled) 
+				{
+                    //Fuel is calculated in this script because this form of travel uses fuel
+                    //Some forms of travel won't so it's not done directly in the jump function
+                    fuelCost = (int)Math.Floor(distance / 100);
+                    //Disaply fuel cost
+                    fuelCostLabel.text = fuelCost.ToString();
+                }
+				else
+				{
+					//+7 from inital jump animation time
+					int dayEstimate = (int)Math.Round((10 * (distance / PlayerCapitalShip.jumpBaseLineSpeed)) / 3.0f) + 7;
+					fuelCostLabel.text = $"~{dayEstimate} Days";
+				}
 
 				//Display number of locations compounded into this one
 				string compoundLabelText = string.Empty;
@@ -318,7 +326,7 @@ public class PlayerMapInteraction : PostTickUpdate
 				{
 					players[0].GetData(PlayerFaction.inventoryDataKey, out PlayerInventory inventory);
 
-					if (inventory.fuel >= fuelCost)
+					if (!PlayerManagement.fuelEnabled || inventory.fuel >= fuelCost)
 					{
 						fuelCostLabel.color = Color.green;
 
@@ -326,9 +334,12 @@ public class PlayerMapInteraction : PostTickUpdate
 						{
 							PlayerCapitalShip.StartJump(targetLocation.primaryLocation.actualLocationData);
 
-							//Remove fuel and have player ship change the ui label over the course of the jump
-							PlayerCapitalShip.HaveFuelChangeOverJump(inventory.fuel, inventory.fuel - fuelCost);
-							inventory.fuel -= fuelCost;
+							if (PlayerManagement.fuelEnabled) 
+							{
+                                //Remove fuel and have player ship change the ui label over the course of the jump
+                                PlayerCapitalShip.HaveFuelChangeOverJump(inventory.fuel, inventory.fuel - fuelCost);
+                                inventory.fuel -= fuelCost;
+                            }
 
 							//Set initial draw back to false so when the player arrives the inital draw is done again
 							//Otherwise locations won't show up till next post tick call

@@ -10602,6 +10602,7 @@ MonoBehaviour:
   healthLabel: {fileID: 1015870647}
   currencyLabel: {fileID: 328993479}
   fuelLabel: {fileID: 1330373233}
+  fuelUI: {fileID: 1982749305}
 --- !u!1 &832374337
 GameObject:
   m_ObjectHideFlags: 0
@@ -11080,6 +11081,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackEffectsPool: {fileID: 955776008}
+  explosionAnimCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!4 &955776007
 Transform:
   m_ObjectHideFlags: 0
@@ -11112,6 +11137,14 @@ MonoBehaviour:
   - name: BasicBeam
     mode: 0
     baseObject: {fileID: 65756671408140657, guid: 3198489d76a422d42a9682e7d16f92d1,
+      type: 3}
+    baseNumberOfObjects: 50
+    generateAsNeeded: 1
+    currentUpdatedObjectPointer: 0
+    automaticallySetParent: 0
+  - name: Explosion
+    mode: 0
+    baseObject: {fileID: 1393034074841773544, guid: bb2eee6bcb4e0fd41bd1efe88905ef56,
       type: 3}
     baseNumberOfObjects: 50
     generateAsNeeded: 1
@@ -12724,7 +12757,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b684983c5257684cb5bcf73ae866205, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  historyLength: 500
+  historyLength: 17
   drawMilitaryPresence: 1
   updateMap: 1
 --- !u!1 &1273093546
@@ -17381,7 +17414,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2069574158
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17512,7 +17545,7 @@ VFXRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2071338133}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -17551,7 +17584,7 @@ VisualEffect:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2071338133}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Asset: {fileID: 8926484042661614526, guid: 7b4342aa12ad7eb488e680441aa9fee1, type: 3}
   m_InitialEventName: OnPlay
   m_InitialEventNameOverriden: 0

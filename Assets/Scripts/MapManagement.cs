@@ -367,6 +367,7 @@ public class MapManagement : MonoBehaviour
 
 											PathHelper.SimplePath path = PathHelper.GenerateSimplePathStatic(startPos, endPos, pathParams);
 											int res = Mathf.CeilToInt(path.EstimateLength() / 2.5f);
+											res = Mathf.Max(4, res);
 
 											lineRenderer.loop = false;
 											lineRenderer.positionCount = res;

@@ -11,9 +11,12 @@ public class MainInfoBarControl : PostTickUpdate
 	public TextMeshProUGUI healthLabel;
 	public TextMeshProUGUI currencyLabel;
 	public TextMeshProUGUI fuelLabel;
+	public GameObject fuelUI;
 
 	private void Awake()
-	{
+    {
+        fuelUI.SetActive(PlayerManagement.fuelEnabled);
+
 		instance = this;
 		//Inital draw
 		ForceRedraw();
@@ -56,6 +59,11 @@ public class MainInfoBarControl : PostTickUpdate
 
 	public static void UpdateFuelLabel(float value)
 	{
+		if (!PlayerManagement.fuelEnabled) 
+		{
+			return;
+		}
+
 		instance.fuelLabel.text = Mathf.FloorToInt(value).ToString();
 	}
 }

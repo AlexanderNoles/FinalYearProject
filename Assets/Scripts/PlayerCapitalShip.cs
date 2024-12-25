@@ -64,7 +64,7 @@ public class PlayerCapitalShip : MonoBehaviour
 	private static float jumpBuildupBuffer;
 	private const float jumpBuildupMax = 10.0f;
 
-	private const float jumpBaseLineSpeed = 500.0f;
+	public const float jumpBaseLineSpeed = 500.0f;
 
 	[MonitorBreak.Bebug.ConsoleCMD("SHIPSPEED")]
 	public static void SetShipSpeedCMD(string newSpeed)

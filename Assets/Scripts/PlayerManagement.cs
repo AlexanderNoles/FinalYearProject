@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerManagement : MonoBehaviour
 {
+    public const bool fuelEnabled = false;
     private static PlayerManagement instance;
 	private PlayerFaction playerFaction = null;
     private PlayerStats playerStatsTarget = null;

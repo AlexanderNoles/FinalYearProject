@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -43,24 +44,61 @@ public class BattleManagement : MonoBehaviour
 
 	public MultiObjectPool attackEffectsPool;
 	private const int basicBeamIndex = 0;
+	private const int explosionIndex = 1;
 
-	private static BattleManagement instance;
+    private static BattleManagement instance;
 
-	public struct BasicBeamData
+	public struct BasicEffectData
 	{
 		public float endTime;
 		public float startTime;
 		public float length;
 
 		public Transform target;
+
+		public bool Done()
+		{
+			return Time.time > endTime;
+		}
+
+		public BasicEffectData(Transform target, float length) 
+		{
+			startTime = Time.time;
+			endTime = startTime + length;
+			this.length = length;
+
+			this.target = target;
+		}
 	}
 
-	private List<BasicBeamData> currentBasicBeamEffects = new List<BasicBeamData>();
+	private List<BasicEffectData> currentBasicBeamEffects = new List<BasicEffectData>();
+	private Func<BasicEffectData, float, int> basicBeamFunc;
+	private List<BasicEffectData> currentExplosionEffects = new List<BasicEffectData>();
+    private Func<BasicEffectData, float, int> explosionEffectFunc;
 
-	private void Awake()
+	public AnimationCurve explosionAnimCurve;
+
+    private void Awake()
 	{
 		instance = this;
-	}
+
+		basicBeamFunc = new Func<BasicEffectData, float, int>((BasicEffectData effectData, float percentage) =>
+		{
+            effectData.target.localScale =
+				new Vector3(effectData.target.localScale.x,
+				percentage * 0.1f,
+				percentage * 0.1f);
+
+            return 0;
+		});
+
+		explosionEffectFunc = new Func<BasicEffectData, float, int>((BasicEffectData effectData, float percentage) =>
+        {
+			effectData.target.localScale = Vector3.one * (20 * explosionAnimCurve.Evaluate(percentage));
+
+            return 0;
+        });
+    }
 
 	private void Start()
 	{
@@ -122,35 +160,48 @@ public class BattleManagement : MonoBehaviour
 		targetBeam.Rotate(0, -90, 0);
 		targetBeam.localScale = new Vector3(displacement.magnitude, 0.0f, 0.0f);
 
-		BasicBeamData basicBeamData = new BasicBeamData();
-		basicBeamData.startTime = Time.time;
-		basicBeamData.endTime = Time.time + length;
-		basicBeamData.length = length;
-		basicBeamData.target = targetBeam;
+		currentBasicBeamEffects.Add(new BasicEffectData(targetBeam, length));
+	}
 
-		currentBasicBeamEffects.Add(basicBeamData);
+	public static void CreateExplosion(Vector3 worldPos, float length) 
+	{
+        if (instance == null)
+        {
+            return;
+        }
+
+		instance.InitExplosion(worldPos, length);
+    }
+
+	private void InitExplosion(Vector3 pos, float length)
+	{
+		Transform targetExplosion = attackEffectsPool.SpawnObject(explosionIndex, pos).transform;
+
+		currentExplosionEffects.Add(new BasicEffectData(targetExplosion, length));
 	}
 
 	private void Update()
 	{
-		for (int i = 0; i < currentBasicBeamEffects.Count;)
+		RunEffect(basicBeamFunc, currentBasicBeamEffects, basicBeamIndex);
+		RunEffect(explosionEffectFunc, currentExplosionEffects, explosionIndex);
+    }
+
+	private void RunEffect(Func<BasicEffectData, float, int> effectFunc, List<BasicEffectData> effects, int returnIndex)
+	{
+		for (int i = 0; i < effects.Count;) 
 		{
-			if (currentBasicBeamEffects[i].endTime <= Time.time)
+			if (effects[i].Done())
 			{
-				attackEffectsPool.ReturnObject(basicBeamIndex, currentBasicBeamEffects[i].target);
-				currentBasicBeamEffects.RemoveAt(i);
+				attackEffectsPool.ReturnObject(returnIndex, effects[i].target);
+				effects.RemoveAt(i);
 			}
 			else
-			{
-				float percentage = Mathf.Clamp01((Time.time - currentBasicBeamEffects[i].startTime) / (currentBasicBeamEffects[i].length));
+            {
+                float percentage = Mathf.Clamp01((Time.time - effects[i].startTime) / (effects[i].length));
 
-				currentBasicBeamEffects[i].target.localScale =
-					new Vector3(currentBasicBeamEffects[i].target.localScale.x,
-					percentage * 0.1f,
-					percentage * 0.1f);
-
+                effectFunc.Invoke(effects[i], percentage);
 				i++;
-			}
+            }
 		}
 	}
 }

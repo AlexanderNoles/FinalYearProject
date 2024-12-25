@@ -195,7 +195,9 @@ public class BattleBehaviour : MonoBehaviour
 	{
 		//Be default simply ask the battle management script to draw a line to the target positon from our fire position
 		BattleManagement.CreateBasicBeamEffect(firePos, targetPos, 0.1f);
-	}
+		//Alongside a basic explosion
+		BattleManagement.CreateExplosion(targetPos, 0.6f);
+    }
 
 	protected virtual Vector3 GetTargetablePosition()
 	{
