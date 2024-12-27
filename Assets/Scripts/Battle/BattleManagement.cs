@@ -56,6 +56,11 @@ public class BattleManagement : MonoBehaviour
 
 		public Transform target;
 
+		public void Offset(Vector3 offset)
+		{
+			target.position += offset;
+		}
+
 		public bool Done()
 		{
 			return Time.time > endTime;
@@ -71,9 +76,10 @@ public class BattleManagement : MonoBehaviour
 		}
 	}
 
-	private List<BasicEffectData> currentBasicBeamEffects = new List<BasicEffectData>();
+    private List<BasicEffectData> currentBasicBeamEffects = new List<BasicEffectData>();
 	private Func<BasicEffectData, float, int> basicBeamFunc;
 	private List<BasicEffectData> currentExplosionEffects = new List<BasicEffectData>();
+	private Dictionary<Transform, Material> expTransformToMaterial = new Dictionary<Transform, Material>();
     private Func<BasicEffectData, float, int> explosionEffectFunc;
 
 	public AnimationCurve explosionAnimCurve;
@@ -94,7 +100,8 @@ public class BattleManagement : MonoBehaviour
 
 		explosionEffectFunc = new Func<BasicEffectData, float, int>((BasicEffectData effectData, float percentage) =>
         {
-			effectData.target.localScale = Vector3.one * (20 * explosionAnimCurve.Evaluate(percentage));
+			//Double percentage as half the effect should be spent with the fade out
+			effectData.target.localScale = Vector3.one * (20 * explosionAnimCurve.Evaluate(percentage * 2.0f));
 
             return 0;
         });
@@ -106,7 +113,7 @@ public class BattleManagement : MonoBehaviour
 		PlayerLocationManagement.onLocationChanged.AddListener(OnLocationChanged);
 		
 		//Register for on location reset event
-		PlayerCapitalShip.onPositionReset.AddListener(CleanupAllAttacks);
+		PlayerCapitalShip.onPositionReset.AddListener(OnPositionReset);
 	}
 
 	private void OnDisable()
@@ -115,7 +122,7 @@ public class BattleManagement : MonoBehaviour
 		PlayerLocationManagement.onLocationChanged.RemoveListener(OnLocationChanged);
 
 		//Deregister from on location reset event
-		PlayerCapitalShip.onPositionReset.RemoveListener(CleanupAllAttacks);
+		PlayerCapitalShip.onPositionReset.RemoveListener(OnPositionReset);
 	}
 
 	private void OnLocationChanged()
@@ -136,6 +143,22 @@ public class BattleManagement : MonoBehaviour
 		{
 			attackEffectsPool.ReturnObject(basicBeamIndex, currentBasicBeamEffects[i].target);
 			currentBasicBeamEffects.RemoveAt(i);
+		}
+	}
+
+	private void OnPositionReset()
+	{
+		Vector3 offset = -PlayerCapitalShip.GetPosBeforeReset();
+
+		OffsetAll(currentBasicBeamEffects, offset);
+		OffsetAll(currentExplosionEffects, offset);
+    }
+
+	private void OffsetAll(List<BasicEffectData> target, Vector3 offset)
+	{
+		foreach (BasicEffectData basicEffectData in target)
+		{
+			basicEffectData.Offset(offset);
 		}
 	}
 
@@ -177,7 +200,17 @@ public class BattleManagement : MonoBehaviour
 	{
 		Transform targetExplosion = attackEffectsPool.SpawnObject(explosionIndex, pos).transform;
 
-		currentExplosionEffects.Add(new BasicEffectData(targetExplosion, length));
+		if (!expTransformToMaterial.ContainsKey(targetExplosion))
+		{
+			expTransformToMaterial.Add(targetExplosion, targetExplosion.GetComponent<MeshRenderer>().material);
+		}
+
+		expTransformToMaterial[targetExplosion].SetFloat("_StartTime", Time.time);
+		expTransformToMaterial[targetExplosion].SetFloat("_Length", length);
+
+		BasicEffectData effectData = new BasicEffectData(targetExplosion, length);
+		effectData.endTime += length * 4; //Add additional length to the end time
+        currentExplosionEffects.Add(effectData);
 	}
 
 	private void Update()

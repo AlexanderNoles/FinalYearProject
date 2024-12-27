@@ -95,9 +95,16 @@ public class HistoryUIManagement : MonoBehaviour
 			{
 				RealSpacePostion currentCell = WorldManagement.ClampPositionToGrid(new RealSpacePostion(x * gridDensity, 0, z * gridDensity));
 
-				if (historyData != null && historyData.previouslyOwnedTerritories.ContainsKey(currentCell))
+				try
 				{
-					AddPixel(currentCell, historyColour);
+                    if (historyData != null && historyData.previouslyOwnedTerritories.ContainsKey(currentCell))
+                    {
+                        AddPixel(currentCell, historyColour);
+                        continue;
+                    }
+                }
+				catch (NullReferenceException)
+				{
 					continue;
 				}
 

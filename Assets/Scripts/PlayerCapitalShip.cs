@@ -88,6 +88,12 @@ public class PlayerCapitalShip : MonoBehaviour
 	private float normalEnginesIntensity;
 
 	private Vector3 lastRecordedPos;
+	private static Vector3 posBeforeReset;
+
+	public static Vector3 GetPosBeforeReset()
+	{
+		return posBeforeReset;
+	}
 
 	public Rigidbody rigidbodyTarget;
 
@@ -525,7 +531,9 @@ public class PlayerCapitalShip : MonoBehaviour
 	private void ResetPosition()
 	{
 		//Zero position
-		transform.position = Vector3.zero;
+		posBeforeReset = transform.position;
+
+        transform.position = Vector3.zero;
 		lastRecordedPos = transform.position;
 
 		//Make sure the camera doesn't just lerp to the new positions so it looks seamless
