@@ -4,18 +4,39 @@ using UnityEngine;
 
 public class PlayerBattleBehaviour : BattleBehaviour
 {
+	public static PlayerBattleBehaviour instance;
+
+	public static float GetSalvoPercentage()
+	{
+		return Mathf.Clamp01(instance.weapons[0].CaclculateNumberOfAttacks() / (float)instance.weapons[0].InitialSalvoSize());
+	}
+
+	public static float GetCurrentHealth()
+	{
+		if (instance == null)
+		{
+			return 0.0f;
+		}
+
+		return instance.currentHealth;
+	}
+
 	public List<Vector3> firePoints = new List<Vector3>();
 
 	private const float maxSelectDistance = 500;
+	private float lastRecordedSalvoPercentage;
 
 	protected override void Awake()
 	{
+		instance = this;
+		currentHealth = 100.0f;
 		base.Awake();
 
 		//DEBUG
 		//Add test weapon
 		weapons.Add(new WeaponProfile());
-	}
+		lastRecordedSalvoPercentage = -1;
+    }
 
 	protected override Vector3 GetFireFromPosition(Vector3 targetPos)
 	{
@@ -69,6 +90,26 @@ public class PlayerBattleBehaviour : BattleBehaviour
 
 	private void Update()
 	{
+		//Clamp current health to max health
+		//This is dirty but flexible
+		PlayerStats playerStats = PlayerManagement.GetStats();
+
+		float maxHealth = 100;
+		if (playerStats != null)
+		{
+			maxHealth = playerStats.GetStat(Stats.maxHealth.ToString());
+        }
+
+        currentHealth = Mathf.Min(currentHealth, maxHealth);
+        //
+
+        float salvoAmountThisFrame = GetSalvoPercentage();
+		if (salvoAmountThisFrame != lastRecordedSalvoPercentage)
+		{
+			lastRecordedSalvoPercentage = salvoAmountThisFrame;
+			MainInfoUIControl.UpdateSalvoBarInensity(lastRecordedSalvoPercentage);
+		}
+
 		//If player is not hovering over UI (or in the map) try to find any targets that are under mouse
 		if (UIHelper.ElementsUnderMouse().Count <= 0 && !UIManagement.MapActive())
 		{

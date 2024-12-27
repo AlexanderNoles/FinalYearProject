@@ -16,7 +16,9 @@ public class BattleBehaviour : MonoBehaviour
 	protected List<WeaponProfile> weapons = new List<WeaponProfile>();
 	protected List<BattleBehaviour> currentTargets = new List<BattleBehaviour>();
 
-	protected virtual void Awake()
+    protected float currentHealth;
+
+    protected virtual void Awake()
 	{
 		transform = base.transform;
 		bBehaviourID = Random.Range(-100000, 100000);
@@ -196,7 +198,8 @@ public class BattleBehaviour : MonoBehaviour
 		//Be default simply ask the battle management script to draw a line to the target positon from our fire position
 		BattleManagement.CreateBasicBeamEffect(firePos, targetPos, 0.1f);
 		//Alongside a basic explosion
-		BattleManagement.CreateExplosion(targetPos, 0.6f);
+		//(Disabled: 27/12/2024)
+		//BattleManagement.CreateExplosion(targetPos, 0.6f);
     }
 
 	protected virtual Vector3 GetTargetablePosition()

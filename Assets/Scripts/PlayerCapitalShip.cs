@@ -86,6 +86,7 @@ public class PlayerCapitalShip : MonoBehaviour
 
 	private float rotationalMovement;
 	private float normalEnginesIntensity;
+	private const float engineIntensityMax = 5.0f;
 
 	private Vector3 lastRecordedPos;
 	private static Vector3 posBeforeReset;
@@ -201,9 +202,7 @@ public class PlayerCapitalShip : MonoBehaviour
 		instance.rotationalMovement = 0;
 		//Zero current engine intensity
 		instance.normalEnginesIntensity = 0;
-		instance.UpdateEngineIntensityShaderAuto();
-
-
+		instance.UpdateEngineIntensityVisuallyAuto();
 
 		//Get start position
 		jumpStart = new RealSpacePostion(WorldManagement.worldCenterPosition);
@@ -241,14 +240,17 @@ public class PlayerCapitalShip : MonoBehaviour
 		return new RealSpacePostion(to).Subtract(instance.pcsRSP).Magnitude();
 	}
 
-	private void UpdateEngineIntensityShaderAuto()
+	private void UpdateEngineIntensityVisuallyAuto()
 	{
-		UpdateEngineIntensityShaderDirect(normalEnginesIntensity / 5.0f);
+		float percentage = normalEnginesIntensity / engineIntensityMax;
+
+        UpdateEngineIntensityVisuallyDirect(percentage, percentage);
 	}
 
-	private void UpdateEngineIntensityShaderDirect(float t)
+	private void UpdateEngineIntensityVisuallyDirect(float shaderT, float uiT)
 	{
-		Shader.SetGlobalFloat("_PCSEngineIntensity", t);
+		MainInfoUIControl.UpdateEngineBarInensity(uiT);
+		Shader.SetGlobalFloat("_PCSEngineIntensity", shaderT);
 	}
 
 	private void Update()
@@ -303,7 +305,7 @@ public class PlayerCapitalShip : MonoBehaviour
 			//
 
 			//Engines
-			const float engineAcceleration = 15;
+			const float engineAcceleration = 1.5f;
 			float engineChangeModifier = engineAcceleration * moveSpeedPercentage * Time.deltaTime;
 			if (InputManagement.GetKey(InputManagement.thrusterUpKey) && !mapActive)
 			{
@@ -311,11 +313,11 @@ public class PlayerCapitalShip : MonoBehaviour
 			}
 			else if (InputManagement.GetKey(InputManagement.thrusterDownKey) && !mapActive)
 			{
-				normalEnginesIntensity = Mathf.Lerp(normalEnginesIntensity, 0.0f, engineChangeModifier * 0.2f);
+				normalEnginesIntensity = Mathf.MoveTowards(normalEnginesIntensity, 0.0f, engineChangeModifier);
 			}
 
-			normalEnginesIntensity = Mathf.Clamp(normalEnginesIntensity, 0.0f, 5.0f);
-			UpdateEngineIntensityShaderAuto();
+			normalEnginesIntensity = Mathf.Clamp(normalEnginesIntensity, 0.0f, engineIntensityMax);
+			UpdateEngineIntensityVisuallyAuto();
 
 			Vector3 velocity = transform.forward * normalEnginesIntensity * moveSpeedPercentage;
 
@@ -388,7 +390,7 @@ public class PlayerCapitalShip : MonoBehaviour
 					piercer.localScale = new Vector3(horiScale, piercerLength * 2.0f, horiScale);
 
 					backingEngineBuildup.localScale = Vector3.one * ((2.0f + (Mathf.Sin(Time.time * 50.0f) * 0.1f)) * backingBuildupCurve.Evaluate((1.0f - percentage) * 1.2f));
-					UpdateEngineIntensityShaderDirect(percentage);
+					UpdateEngineIntensityVisuallyDirect(percentage, percentage);
 				}
 				else
 				{
@@ -523,7 +525,7 @@ public class PlayerCapitalShip : MonoBehaviour
 	{
 		jumping = false;
 		nextJumpAllowedTime = Time.time + 1.0f;
-		UpdateEngineIntensityShaderDirect(0.0f);
+		UpdateEngineIntensityVisuallyDirect(0.0f, 0.0f);
 		
 		ResetPosition();
 	}

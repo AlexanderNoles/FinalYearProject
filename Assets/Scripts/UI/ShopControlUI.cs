@@ -79,7 +79,7 @@ public class ShopControlUI : FloatingWindow
 		foreach ((float, Vector2) position in positions)
 		{
 			RectTransform newSlot = shopSlotsPool.UpdateNextObjectPosition(slotIndexInPool, Vector3.zero) as RectTransform;
-			newSlot.anchoredPosition = position.Item2;
+			newSlot.anchoredPosition = position.Item2;;
 
 			if (!cachedTransformToSlotUI.ContainsKey(newSlot))
 			{
