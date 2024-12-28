@@ -192,7 +192,7 @@ public class CameraManagement : MonoBehaviour
     {
         if (currentMode == Mode.Normal)
         {
-			Transform targetCamera = null;
+            Transform targetCamera = null;
 			Transform targetCamearAxis = null;
 			float lowerCameraLimit = -85f;
 
@@ -251,27 +251,31 @@ public class CameraManagement : MonoBehaviour
 				return;
 			}
 
-			#region Camera Control
+            #region Camera Control
 
-			//Rotate camera
-			Vector2 cameraInput = Vector2.zero;
-
-            if (InputManagement.GetMouseButton(InputManagement.cameraMove))
+            //Rotate camera
+            if (UIManagement.InNeutral() || MapManagement.MapActive())
             {
-                cameraInput = InputManagement.MouseInput();
+                //In neutral or map
+                Vector2 cameraInput = Vector2.zero;
+
+                if (InputManagement.GetMouseButton(InputManagement.cameraMove))
+                {
+                    cameraInput = InputManagement.MouseInput();
+                }
+
+                cameraRot.y += cameraInput.y;
+                cameraRot.x = Mathf.Clamp(cameraRot.x + cameraInput.x, lowerCameraLimit, 85);
+
+                targetCamearAxis.rotation = Quaternion.Euler(cameraRot.x, cameraRot.y, 0.0f);
+                targetCamera.LookAt(targetCamearAxis);
+
+                //Move camera out
+                float scrollInput = InputManagement.ScrollWheelInput();
+
+                currentCameraZoomTarget = Mathf.Clamp(currentCameraZoomTarget - scrollInput, 17.5f, 150);
+                targetCamera.localPosition = Vector3.Lerp(targetCamera.localPosition, Vector3.back * currentCameraZoomTarget, Time.deltaTime * 5.0f);
             }
-
-			cameraRot.y += cameraInput.y;
-			cameraRot.x = Mathf.Clamp(cameraRot.x + cameraInput.x, lowerCameraLimit, 85);
-
-			targetCamearAxis.rotation = Quaternion.Euler(cameraRot.x, cameraRot.y, 0.0f);
-			targetCamera.LookAt(targetCamearAxis);
-
-			//Move camera out
-			float scrollInput = InputManagement.ScrollWheelInput();
-
-            currentCameraZoomTarget = Mathf.Clamp(currentCameraZoomTarget - scrollInput, 17.5f, 150);
-			targetCamera.localPosition = Vector3.Lerp(targetCamera.localPosition, Vector3.back * currentCameraZoomTarget, Time.deltaTime * 5.0f);
 
             Vector3 newTargetPosition = GetTargetPosition() + offsetFromTarget;
 

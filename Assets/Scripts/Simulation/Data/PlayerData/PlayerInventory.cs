@@ -98,6 +98,8 @@ public class PlayerInventory : InventoryBase
 
 	public override void RemoveItemFromInventory(ItemBase item)
 	{
+		int indexOf = itemBases.IndexOf(item);
+
 		if (itemBases.Remove(item))
 		{
 			//If item was succesfully removed
@@ -106,6 +108,9 @@ public class PlayerInventory : InventoryBase
 				//Remove items contributions to stats
 				item.RemoveStatContributors(target);
 			}
+
+			//Ask inventory ui to redraw slot
+			InventoryUIManagement.DrawSlot(indexOf);
 		}
 	}
 }

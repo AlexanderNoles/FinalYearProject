@@ -5,6 +5,7 @@ using UnityEngine;
 public class UIState : MonoBehaviour
 {
     [Header("UI State Settings")]
+    public bool enabled = true;
     public bool autoSetup = true;
     public bool lockout = false;
     public bool toggleable = false;
@@ -45,7 +46,7 @@ public class UIState : MonoBehaviour
         return gameObject;
     }
 
-    protected void TryToSetActive()
+    public void TryToSetActive()
     {
         wantsActive = true;
     }

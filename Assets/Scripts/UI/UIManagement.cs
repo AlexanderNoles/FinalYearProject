@@ -32,6 +32,11 @@ public class UIManagement : MonoBehaviour
             return;
         }
 
+        if (!newState.enabled)
+        {
+            return;
+        }
+
         //Set active
         //Hide old state
         if (instance.activeState != null)
