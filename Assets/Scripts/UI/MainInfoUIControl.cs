@@ -13,6 +13,7 @@ public class MainInfoUIControl : PostTickUpdate
     public TextMeshProUGUI dateLabel;
 
     public Image engineBarImage;
+    public GameObject engineArcaneFlame;
     private float engineBarTarget = 0.0f;
 
     public Image salvoBarImage;
@@ -120,5 +121,10 @@ public class MainInfoUIControl : PostTickUpdate
         //Not implemented
         //Not needed as fuel has been disabled, if fuel is re-enabled and ui is needed, implement this function
         throw new System.NotImplementedException();
+    }
+
+    public static void SetEngineArcaneFlameActive(bool _bool)
+    {
+        instance.engineArcaneFlame.SetActive(_bool);
     }
 }

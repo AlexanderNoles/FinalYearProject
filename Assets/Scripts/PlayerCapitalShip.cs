@@ -371,6 +371,9 @@ public class PlayerCapitalShip : MonoBehaviour
 					{
 						portal.SetActive(true);
 
+						//Tell main info ui control we have started the jump proper
+						MainInfoUIControl.SetEngineArcaneFlameActive(true);
+
 						//Move to next stage
 						jumpStage++;
 					}
@@ -532,7 +535,8 @@ public class PlayerCapitalShip : MonoBehaviour
 	{
 		jumping = false;
 		nextJumpAllowedTime = Time.time + 1.0f;
-		UpdateEngineIntensityVisuallyDirect(0.0f, 0.0f);
+        MainInfoUIControl.SetEngineArcaneFlameActive(false);
+        UpdateEngineIntensityVisuallyDirect(0.0f, 0.0f);
 		
 		ResetPosition();
 	}
