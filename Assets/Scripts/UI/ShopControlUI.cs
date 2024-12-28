@@ -171,7 +171,7 @@ public class ShopControlUI : FloatingWindow
 
 					//Redraw main bar
 					//because currency and other stats may have updated
-					MainInfoBarControl.ForceRedraw();
+					MainInfoUIControl.ForceRedraw();
 				}
 			}
 		}

@@ -23,6 +23,9 @@ public class MainInfoUIControl : PostTickUpdate
     public TextMeshProUGUI currentHealthLabel;
     public TextMeshProUGUI maxHealthLabel;
 
+    [Header("Currency")]
+    public TextMeshProUGUI currencyLabel;
+
     private void Awake()
     {
         instance = this;
@@ -62,6 +65,16 @@ public class MainInfoUIControl : PostTickUpdate
     {
         dateLabel.text = SimulationManagement.GetDateString();
         DrawHealthAuto();
+
+        List<Faction> players = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Player);
+
+        if (players.Count > 0)
+        {
+            //Get player inventory
+            players[0].GetData(PlayerFaction.inventoryDataKey, out PlayerInventory inventory);
+
+            currencyLabel.text = inventory.mainCurrency.ToString();
+        }
     }
 
     private void DrawHealthAuto()
@@ -100,5 +113,11 @@ public class MainInfoUIControl : PostTickUpdate
         percentage = Mathf.Clamp01(percentage) * sideBarMax;
 
         instance.salvoBarTarget = percentage;
+    }
+
+    public static void UpdateFuelLabel(float newValue)
+    {
+        //Not implemented
+        //Not needed as fuel has been disabled, if fuel is re-enabled and ui is needed, implement this function
     }
 }

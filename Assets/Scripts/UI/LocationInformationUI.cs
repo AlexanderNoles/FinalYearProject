@@ -114,8 +114,8 @@ public class LocationInformationUI : MonoBehaviour
 				playerInventory.mainCurrency -= moneyToSpend;
 				playerInventory.fuel += moneyToSpend * cachedFuelPerMoneyUnit;
 
-				//Redraw main bar
-				MainInfoBarControl.ForceRedraw();
+				//Redraw main ui
+				MainInfoUIControl.ForceRedraw();
 			}
 		}
 	}

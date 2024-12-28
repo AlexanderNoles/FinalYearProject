@@ -429,7 +429,7 @@ public class PlayerCapitalShip : MonoBehaviour
 					if (fuelAtEndOfJump != -1)
 					{
 						//Fuel is changing during jump
-						MainInfoBarControl.UpdateFuelLabel(Mathf.Lerp(fuelAtBeginningOfJump, fuelAtEndOfJump, jumpT));
+						MainInfoUIControl.UpdateFuelLabel(Mathf.Lerp(fuelAtBeginningOfJump, fuelAtEndOfJump, jumpT));
 					}
 
 					trail.SetPosition(1, new Vector3(0, 0, Mathf.Lerp(0, -maxTrailLength, jumpT * 15.0f)));
