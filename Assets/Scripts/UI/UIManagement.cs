@@ -66,6 +66,10 @@ public class UIManagement : MonoBehaviour
     private void Awake()
     {
         instance = this;
+    }
+
+    private void Start()
+    {
         //First ui state in list
         AddUIState(neutral);
         LoadUIState(neutral);

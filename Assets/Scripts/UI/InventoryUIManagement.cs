@@ -139,11 +139,11 @@ public class InventoryUIManagement : UIState
 				//Then we do an initial draw on this slots
 				DrawSlot(i);
 			}
-		}
 
-		//Prune objects
-		miniSlotPool.PruneObjectsNotUpdatedThisFrame(0);
-        mainSlotPool.PruneObjectsNotUpdatedThisFrame(0);
+            //Prune objects
+            miniSlotPool.PruneObjectsNotUpdatedThisFrame(0);
+            mainSlotPool.PruneObjectsNotUpdatedThisFrame(0);
+        }
     }
 
 	public static void DrawSlot(int index)

@@ -83,7 +83,7 @@ public class MultiObjectPool : MonoBehaviour
         public bool generateAsNeeded = false;
 
         [HideInInspector]
-        public Stack<Transform> activeObjectsStack;
+        public Stack<Transform> activeObjectsStack = new Stack<Transform>();
 
         public struct UpdateObject
         {
@@ -109,7 +109,7 @@ public class MultiObjectPool : MonoBehaviour
         }
 
         [HideInInspector]
-        public List<UpdateObject> activeObjectsList;
+        public List<UpdateObject> activeObjectsList = new List<UpdateObject>();
         [HideInInspector]
         public int currentUpdatedObjectPointer;
 
@@ -245,6 +245,11 @@ public class MultiObjectPool : MonoBehaviour
 
         public void PruneObjectsNotUpdatedThisFrame()
         {
+            if (currentUpdatedObjectPointer <= 0)
+            {
+                return;
+            }
+
             //Hide all objects not updated this frame
             for (int i = currentUpdatedObjectPointer; i < activeObjectsList.Count; i++)
             {
