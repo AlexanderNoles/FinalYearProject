@@ -55,25 +55,25 @@ public class SurroundingsRenderingManagement : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (UIManagement.MapActive())
+        if (MapManagement.MapActive())
         {
-            if (UIManagement.MapIntroRunning())
+            if (MapManagement.MapIntroRunning())
 			{
-				if (UIManagement.FirstFrameMapIntroRunning())
+				if (MapManagement.FirstFrameMapIntroRunning())
 				{
 					skybox.SetActive(false);
 				}
 
-                float evaluatedIntroT = UIManagement.EvaluatedMapIntroT();
+                float evaluatedIntroT = MapManagement.EvaluatedMapIntroT();
 
 				//Animation temporarily disabled
 				Vector3 currentOffset = Vector3.down * Mathf.Lerp(0.0f, CameraManagement.cameraOffsetInMap, 1.0f - evaluatedIntroT);
 
 				foreach (SurroundingObject obj in controlledObjects)
                 {
-                    obj.transform.localPosition = -obj.postion.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier) + currentOffset;
+                    obj.transform.localPosition = -obj.postion.AsTruncatedVector3(MapManagement.mapRelativeScaleModifier) + currentOffset;
 					obj.SetShellOffset(-1);
-					obj.SetObjectVisualScale((obj.scale / UIManagement.mapRelativeScaleModifier));
+					obj.SetObjectVisualScale((obj.scale / MapManagement.mapRelativeScaleModifier));
 				}
             }
         }

@@ -5,8 +5,9 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 
-public class HistoryUIManagement : MonoBehaviour
+public class HistoryUIManagement : UIState
 {
+	public static HistoryUIManagement instance;
 	public MultiObjectPool pixelPool;
 	public GameObject mainUI;
 	public Image historyBar;
@@ -16,18 +17,34 @@ public class HistoryUIManagement : MonoBehaviour
 
 	private Dictionary<Transform, Image> transToImage = new Dictionary<Transform, Image>();
 
-	public void Activate()
-	{
-		mainUI.SetActive(true);
-		lastPercentage = -1.0f;
-	}
+    protected override GameObject GetTargetObject()
+    {
+        return mainUI;
+    }
 
-	public void Deactivate()
-	{
-		mainUI.SetActive(false);
-	}
+    protected override void OnSetActive(bool _bool)
+    {
+		if (_bool)
+		{
+			lastPercentage = -1.0f;
+		}
+    }
 
-	private void Update()
+    public static void SetHistoryUIActive()
+    {
+		if (instance != null)
+		{
+			UIManagement.LoadUIState(instance);
+		}
+    }
+
+    protected override void Awake()
+    {
+        instance = this;
+        base.Awake();
+    }
+
+    private void Update()
 	{
 		if (mainUI.activeSelf)
 		{
@@ -35,7 +52,7 @@ public class HistoryUIManagement : MonoBehaviour
 
 			if (historyBar.fillAmount >= 1.0f)
 			{
-				Deactivate();
+				UIManagement.ReturnToNeutral();
 			}
 
 			if (Mathf.Abs(historyBar.fillAmount - lastPercentage) > minimumChange)

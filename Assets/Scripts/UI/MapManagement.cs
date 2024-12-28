@@ -3,13 +3,59 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Linq;
-using static GlobalBattleData;
-using static SettlementData;
-using System.Linq.Expressions;
 
-public class MapManagement : MonoBehaviour
+public class MapManagement : UIState
 {
-	public class TroopTransferEffect
+	/// UI STATE IMPLEMENTATION
+	private static MapManagement instance;
+    public const float mapRelativeScaleModifier = 1000.0f;
+    public AnimationCurve mapIntroCurve;
+
+    public override float GetIntroSpeed()
+    {
+        return 1.5f;
+    }
+
+    public override KeyCode GetSetActiveKey()
+    {
+        return InputManagement.toggleMapKey;
+    }
+
+    public static bool MapIntroRunning()
+	{
+		return instance.IntroRunning();
+	}
+
+	public static bool FirstFrameMapIntroRunning()
+	{
+		return instance.FirstFrameOfIntro();
+	}
+
+	public static bool LastFrameOfMapIntro()
+	{
+		return instance.LastFrameOfIntro();
+	}
+
+	public static float EvaluatedMapIntroT()
+	{
+		return instance.mapIntroCurve.Evaluate(1.0f - instance.GetCurrentIntroT());
+	}
+
+	public static bool MapActive()
+	{
+		return instance.GetTargetObject().activeSelf;
+	}
+
+    protected override void OnSetActive(bool _bool)
+    {
+        base.OnSetActive(_bool);
+
+		CameraManagement.SetMainCameraActive(!_bool);
+        SurroundingsRenderingManagement.SetActivePlanetLighting(!_bool);
+    }
+
+    ///
+    public class TroopTransferEffect
 	{
 		public LineRenderer target;
 		public PathHelper.SimplePath path;
@@ -36,6 +82,7 @@ public class MapManagement : MonoBehaviour
 		}
 	}
 
+	[Header("Map Settings")]
     public MultiObjectPool mapElementsPools;
     private const int mapRingPool = 0;
     private const int shipIndicatorPool = 1;
@@ -56,7 +103,13 @@ public class MapManagement : MonoBehaviour
 
 	public AnimationCurve troopTransferCurve;
 
-	private void Start()
+    protected override void Awake()
+    {
+		instance = this;
+        base.Awake();
+    }
+
+    private void Start()
     {
         mapRingMeshRenderes = mapElementsPools.GetComponentsOnAllActiveObjects<MeshRenderer>(0);
     }
@@ -69,15 +122,15 @@ public class MapManagement : MonoBehaviour
 
     private void Update()
     {
-        if (UIManagement.MapActive())
+        if (MapActive())
         {
-			Vector3 playerPos = -PlayerCapitalShip.GetPCSPosition().AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
+			Vector3 playerPos = -PlayerCapitalShip.GetPCSPosition().AsTruncatedVector3(mapRelativeScaleModifier);
 			mapElementsPools.UpdateNextObjectPosition(shipIndicatorPool, playerPos);
 			mapElementsPools.PruneObjectsNotUpdatedThisFrame(shipIndicatorPool);
 
-			if (UIManagement.MapIntroRunning() || extraFrame)
+			if (MapIntroRunning() || extraFrame)
             {
-                if (!UIManagement.MapIntroRunning())
+                if (!MapIntroRunning())
                 {
 					//Extra frame after map intro runs
 
@@ -142,7 +195,7 @@ public class MapManagement : MonoBehaviour
 					}
                 }
 
-                Vector3 mapBasePosThisFrame = mapBasePos + (Vector3.up * Mathf.Lerp(-25, -0.1f, UIManagement.EvaluatedMapIntroT()));
+                Vector3 mapBasePosThisFrame = mapBasePos + (Vector3.up * Mathf.Lerp(-25, -0.1f, EvaluatedMapIntroT()));
                 mapElementsPools.UpdateNextObjectPosition(mapBasePool, mapBasePosThisFrame);
 
                 mapElementsPools.PruneObjectsNotUpdatedThisFrame(mapRingPool);
@@ -154,7 +207,7 @@ public class MapManagement : MonoBehaviour
 				if (PlayerCapitalShip.IsJumping())
 				{
 					//Update journey indicator
-					Vector3 playerTargetPos = -PlayerCapitalShip.GetTargetPosition().AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
+					Vector3 playerTargetPos = -PlayerCapitalShip.GetTargetPosition().AsTruncatedVector3(mapRelativeScaleModifier);
 
 					//Find displacement
 					Vector3 displacement = playerTargetPos - playerPos;
@@ -204,12 +257,12 @@ public class MapManagement : MonoBehaviour
                             {
 								if (debugMode)
 								{
-									Vector3 debugScale = new Vector3(1, 0, 1) * (float)(WorldManagement.GetGridDensity() / UIManagement.mapRelativeScaleModifier) * 0.8f;
+									Vector3 debugScale = new Vector3(1, 0, 1) * (float)(WorldManagement.GetGridDensity() / mapRelativeScaleModifier) * 0.8f;
 
 									for (int i = 0; i < territoryData.borders.Count; i++)
 									{
 										MonitorBreak.Bebug.Helper.DrawWirePlane(
-											-territoryData.borders.ElementAt(i).AsTruncatedVector3(UIManagement.mapRelativeScaleModifier),
+											-territoryData.borders.ElementAt(i).AsTruncatedVector3(mapRelativeScaleModifier),
 											debugScale,
 											Vector3.up,
 											factionColour,
@@ -224,7 +277,7 @@ public class MapManagement : MonoBehaviour
 										for (int k = 0; k < wdhjbnhjawbndhjabhjgdb; k++)
 										{
 											MonitorBreak.Bebug.Helper.DrawWirePlane(
-												-battle.Key.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier),
+												-battle.Key.AsTruncatedVector3(mapRelativeScaleModifier),
 												debugScale * (1.0f + (k * 0.1f)),
 												Vector3.up,
 												Color.yellow,
@@ -236,7 +289,7 @@ public class MapManagement : MonoBehaviour
 									foreach (KeyValuePair<RealSpacePostion, HistoryData.HistoryCell> historicalTerritory in historyData.previouslyOwnedTerritories)
 									{
 										MonitorBreak.Bebug.Helper.DrawWirePlane(
-											-historicalTerritory.Key.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier),
+											-historicalTerritory.Key.AsTruncatedVector3(mapRelativeScaleModifier),
 											debugScale,
 											Vector3.up,
 											new Color(0.1f, 0.1f, 0.1f, 1.0f),
@@ -302,7 +355,7 @@ public class MapManagement : MonoBehaviour
 									{
 										foreach (KeyValuePair<RealSpacePostion, List<ShipCollection>> entry in milData.cellCenterToFleets)
 										{
-											Vector3 pos = -entry.Key.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
+											Vector3 pos = -entry.Key.AsTruncatedVector3(mapRelativeScaleModifier);
 
 											Color color = Color.green;
 											if (battleData.ongoingBattles.ContainsKey(entry.Key))
@@ -346,7 +399,7 @@ public class MapManagement : MonoBehaviour
 											lineRenderer.SetColors(factionColour, factionColour);
 #pragma warning restore CS0618 // Type or member is obsolete
 
-											Vector3 startPos = -entry.Item1.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
+											Vector3 startPos = -entry.Item1.AsTruncatedVector3(mapRelativeScaleModifier);
 											RealSpacePostion endPosRS;
 
 											//Draw to actual battle pos
@@ -359,7 +412,7 @@ public class MapManagement : MonoBehaviour
 												endPosRS = entry.Item2;
                                             }
 
-                                            Vector3 endPos = -endPosRS.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
+                                            Vector3 endPos = -endPosRS.AsTruncatedVector3(mapRelativeScaleModifier);
 
 											Vector3 difference = endPos - startPos;
 											pathParams.forwardVector = difference.normalized;

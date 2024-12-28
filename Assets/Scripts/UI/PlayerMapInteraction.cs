@@ -60,7 +60,7 @@ public class PlayerMapInteraction : PostTickUpdate
 		//Create operations
 		getPositionsOperation = delegate (VisitableLocation location) 
 		{
-			AddPosition(-location.GetPosition().AsTruncatedVector3(UIManagement.mapRelativeScaleModifier), location);
+			AddPosition(-location.GetPosition().AsTruncatedVector3(MapManagement.mapRelativeScaleModifier), location);
 
 			return 0;
 		};
@@ -211,16 +211,16 @@ public class PlayerMapInteraction : PostTickUpdate
 
 		//If they click then start jump to that position
 
-		Vector3 pos = -WorldManagement.worldCenterPosition.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
+		Vector3 pos = -WorldManagement.worldCenterPosition.AsTruncatedVector3(MapManagement.mapRelativeScaleModifier);
 		rangeIndicator.position = pos + Vector3.up * 0.05f;
 		Shader.SetGlobalVector("_WCMapPos", pos);
 
 		playerDirectionIndicator.position = pos;
 		playerDirectionIndicator.LookAt(pos - PlayerCapitalShip.GetForward());
 
-		if (UIManagement.MapIntroRunning())
+		if (MapManagement.MapIntroRunning())
 		{
-			if (UIManagement.LastFrameMapIntroRunning())
+			if (MapManagement.LastFrameOfMapIntro())
 			{
 				rangeIndicator.gameObject.SetActive(true);
 			}

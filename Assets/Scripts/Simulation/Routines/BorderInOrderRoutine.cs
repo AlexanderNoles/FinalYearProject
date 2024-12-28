@@ -35,7 +35,7 @@ public class MapNode : INode
 {
     public TerritoryData parentData;
     public RealSpacePostion actualPos;
-    private readonly float modifier = UIManagement.mapRelativeScaleModifier;
+    private readonly float modifier = MapManagement.mapRelativeScaleModifier;
     public float neighbourCountLimit = -1;
 
     public List<INode> GetNeighbours()

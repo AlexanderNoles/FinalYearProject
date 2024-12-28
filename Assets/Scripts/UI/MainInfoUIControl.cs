@@ -119,5 +119,6 @@ public class MainInfoUIControl : PostTickUpdate
     {
         //Not implemented
         //Not needed as fuel has been disabled, if fuel is re-enabled and ui is needed, implement this function
+        throw new System.NotImplementedException();
     }
 }

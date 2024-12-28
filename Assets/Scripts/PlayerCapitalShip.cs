@@ -266,20 +266,23 @@ public class PlayerCapitalShip : MonoBehaviour
 			float moveSpeedPercentage = Mathf.Max(0.0f, PlayerManagement.GetStats().GetStat(Stats.moveSpeed.ToString())) / 100.0f;
 
 			//Not jumping
-			bool mapActive = UIManagement.MapActive();
+			bool inUINeutral = UIManagement.InNeutral();
 
 			//Rotational Movement
 			const float rotationalModifier = 0.01f;
 			float rotationalChangeModifier = rotationalModifier * Time.deltaTime * moveSpeedPercentage;
 			float modifierThisFrame = 0.0f;
-			if (InputManagement.GetKey(InputManagement.rotateRightKey) && !mapActive)
+			if (inUINeutral)
 			{
-				modifierThisFrame = rotationalChangeModifier;
-			}
-			else if (InputManagement.GetKey(InputManagement.rotateLeftKey) && !mapActive)
-			{
-				modifierThisFrame = -rotationalChangeModifier;
-			}
+                if (InputManagement.GetKey(InputManagement.rotateRightKey))
+                {
+                    modifierThisFrame = rotationalChangeModifier;
+                }
+                else if (InputManagement.GetKey(InputManagement.rotateLeftKey))
+                {
+                    modifierThisFrame = -rotationalChangeModifier;
+                }
+            }
 
 			rotationalMovement += modifierThisFrame;
 
@@ -307,14 +310,18 @@ public class PlayerCapitalShip : MonoBehaviour
 			//Engines
 			const float engineAcceleration = 1.5f;
 			float engineChangeModifier = engineAcceleration * moveSpeedPercentage * Time.deltaTime;
-			if (InputManagement.GetKey(InputManagement.thrusterUpKey) && !mapActive)
+
+			if (inUINeutral)
 			{
-				normalEnginesIntensity += engineChangeModifier;
-			}
-			else if (InputManagement.GetKey(InputManagement.thrusterDownKey) && !mapActive)
-			{
-				normalEnginesIntensity = Mathf.MoveTowards(normalEnginesIntensity, 0.0f, engineChangeModifier);
-			}
+                if (InputManagement.GetKey(InputManagement.thrusterUpKey))
+                {
+                    normalEnginesIntensity += engineChangeModifier;
+                }
+                else if (InputManagement.GetKey(InputManagement.thrusterDownKey))
+                {
+                    normalEnginesIntensity = Mathf.MoveTowards(normalEnginesIntensity, 0.0f, engineChangeModifier);
+                }
+            }
 
 			normalEnginesIntensity = Mathf.Clamp(normalEnginesIntensity, 0.0f, engineIntensityMax);
 			UpdateEngineIntensityVisuallyAuto();
@@ -335,7 +342,7 @@ public class PlayerCapitalShip : MonoBehaviour
 			lastRecordedPos = transform.position;
 			WorldManagement.MoveWorldCenter(moveDifference);
 
-			if(transform.position.magnitude > 20.0f)
+			if(transform.position.magnitude > 500.0f)
 			{
 				ResetPosition();
 			}
@@ -413,7 +420,7 @@ public class PlayerCapitalShip : MonoBehaviour
 						Vector3.zero
 					});
 
-					SimulationManagement.SimulationSpeed("10");
+					SimulationManagement.SimulationSpeed(10);
 					SimulationManagement.ForceTick();
 
 					jumpStage++;
@@ -438,7 +445,7 @@ public class PlayerCapitalShip : MonoBehaviour
 					if (jumpT >= 1.0f)
 					{
 						//We have arrived
-						SimulationManagement.SimulationSpeed("1");
+						SimulationManagement.SimulationSpeed(1);
 						jumpStage++;
 						endOfJumpCachedRingPositions.Clear();
 

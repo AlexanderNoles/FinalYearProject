@@ -403,6 +403,6 @@ public class TerritoryData : DataBase
 
 	private Vector3 GetMapPosition(RealSpacePostion input)
 	{
-		return -input.AsTruncatedVector3(UIManagement.mapRelativeScaleModifier);
+		return -input.AsTruncatedVector3(MapManagement.mapRelativeScaleModifier);
 	}
 }

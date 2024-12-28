@@ -301,10 +301,10 @@ public class SimulationManagement : MonoBehaviour
 			{
 				//Setup async history run
 				//First active History running ui
-				UIManagement.SetHistoryUIActive(true);
+				HistoryUIManagement.SetHistoryUIActive();
 
-				//Then we need to disable player input till the history burst is over
-				InputManagement.InputEnabled = false;
+                //Then we need to disable player input till the history burst is over
+                InputManagement.InputEnabled = false;
 
 				//Then we need to set a tick burst count
 				historyTicksLeft = tickCount;
@@ -594,44 +594,49 @@ public class SimulationManagement : MonoBehaviour
     }
 
 	[MonitorBreak.Bebug.ConsoleCMD("SIMSEED", "Get the current simulation's seed")]
-	public static void OutputSimSeedToConsole()
+	public static void OutputSimSeedToConsoleCMD()
 	{
 		MonitorBreak.Bebug.Console.Log(GetSimulationSeed());
 	}
 
 	[MonitorBreak.Bebug.ConsoleCMD("SIMTURBO")]
-    public static void TurboSimulation()
+    public static void TurboSimulationCMD()
     {
         simulatioSpeedModifier = 100.0f;
     }
 
     [MonitorBreak.Bebug.ConsoleCMD("SIMLIGHTSPEED")]
-    public static void LightspeedSimulation()
+    public static void LightspeedSimulationCMD()
     {
         simulatioSpeedModifier = -1; 
 	}
 
 	[MonitorBreak.Bebug.ConsoleCMD("SIMABSURDSPEED")]
-	public static void AbsurdspeedSimulation()
+	public static void AbsurdspeedSimulationCMD()
 	{
 		simulatioSpeedModifier = -1;
 		typicallyTickBatchCount = 30;
 	}
 
-	[MonitorBreak.Bebug.ConsoleCMD("SIMSPEED")]
-    public static void SimulationSpeed(string newValue)
+    public static void SimulationSpeed(int newValue)
+    {
+        simulatioSpeedModifier = newValue;
+    }
+
+    [MonitorBreak.Bebug.ConsoleCMD("SIMSPEED")]
+    public static void SimulationSpeedCMD(string newValue)
     {
         simulatioSpeedModifier = Int32.Parse(newValue);
     }
 
 	[MonitorBreak.Bebug.ConsoleCMD("SIMBATCH")]
-	public static void SimulationBatch(string newValue)
+	public static void SimulationBatchCMD(string newValue)
 	{
 		typicallyTickBatchCount = Int32.Parse(newValue);
 	}
 
 	[MonitorBreak.Bebug.ConsoleCMD("SIMBURST")]
-	public static void SimulationBurst(string tickCount)
+	public static void SimulationBurstCMD(string tickCount)
 	{
 		int count = Int32.Parse(tickCount);
 

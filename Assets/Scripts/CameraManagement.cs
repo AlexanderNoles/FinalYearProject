@@ -117,7 +117,7 @@ public class CameraManagement : MonoBehaviour
 
 	public static void AddRotationMainOnly(Vector2 input)
 	{
-		if (UIManagement.MapActive())
+		if (instance.mainCamera.enabled)
 		{
 			instance.cachedCameraRot += input;
 		}
@@ -216,11 +216,11 @@ public class CameraManagement : MonoBehaviour
 				targetCamera = transform;
 				targetCamearAxis = cameraAxis;
 			}
-			else if (UIManagement.MapActive())
+			else if (MapManagement.MapActive())
 			{
 				lowerCameraLimit = 5;
 
-				if (UIManagement.FirstFrameMapIntroRunning())
+				if (MapManagement.FirstFrameMapIntroRunning())
 				{
 					//cache variables to reapply later
 					cachedZoomTarget = currentCameraZoomTarget;

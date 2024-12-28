@@ -12,6 +12,7 @@ public class InputManagement
     public static KeyCode thrusterDownKey = KeyCode.S;
     public static KeyCode toggleShopKey = KeyCode.G;
     public static KeyCode refuelKey = KeyCode.F;
+    public static KeyCode returnToNeutral = KeyCode.Escape;
     public static KeyCode toggleMapKey = KeyCode.M;
     public static KeyCode toggleInventoryKey = KeyCode.Tab;
     public static KeyCode toggleLocationInfoKey = KeyCode.R;

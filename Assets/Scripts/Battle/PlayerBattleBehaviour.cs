@@ -110,8 +110,8 @@ public class PlayerBattleBehaviour : BattleBehaviour
 			MainInfoUIControl.UpdateSalvoBarInensity(lastRecordedSalvoPercentage);
 		}
 
-		//If player is not hovering over UI (or in the map) try to find any targets that are under mouse
-		if (UIHelper.ElementsUnderMouse().Count <= 0 && !UIManagement.MapActive())
+		//If player is not hovering over UI (or in a ui state) try to find any targets that are under mouse
+		if (UIHelper.ElementsUnderMouse().Count <= 0 && UIManagement.InNeutral())
 		{
 			//Get mouse view ray
 			Ray mouseViewRay = CameraManagement.GetMainCamera().ScreenPointToRay(Input.mousePosition);
