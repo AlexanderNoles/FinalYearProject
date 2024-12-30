@@ -24,6 +24,7 @@ public class Faction
 		GameWorld, //This is the game world faction
 		Player, //This is the player's faction
 		Unkillable, //This faction cannot be destroyed by the MetaRoutine
+        Dead, //Is this faction dead? (Does it need to be removed from the simulation) 
 		Insignificant, //Is this faction insignificant?
         //
         Territory, //Does this faction contain some territory?
@@ -87,9 +88,6 @@ public class Faction
         //Add only basic faction data by default
         dataModules = new Dictionary<string, DataBase>();
 
-        //Meta data used by every faction
-        //This generally holds info on how the MetaRoutine should deal with this faction
-        AddData(Tags.Faction, new FactionData());
         //Factions should always be able to have relationships (it's what makes them interesting!)
         //It also makes it very easy to remove relationships when a faction is fully removed (as that's a MetaRoutine Responsibility)!
         AddData(relationshipDataKey, new RelationshipData());

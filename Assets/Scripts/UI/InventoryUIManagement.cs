@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InventoryUIManagement : UIState
 {
@@ -17,6 +18,7 @@ public class InventoryUIManagement : UIState
     //
 
     private List<SlotUI> inventorySlots = new List<SlotUI>();
+	private bool centerDictDrawn = false;
 
     //UI Elements
     [Header("Target")]
@@ -36,6 +38,11 @@ public class InventoryUIManagement : UIState
     {
         base.OnSetActive(_bool);
 
+		if (_bool && !centerDictDrawn)
+		{
+			DrawDictionary();
+		}
+
 		//If ui state is active do draw on main inventory page slots
 		//otherwise do draw on mini inventory
 		Draw(!_bool);
@@ -48,13 +55,17 @@ public class InventoryUIManagement : UIState
     [Header("Inventory Screen References")]
 	public RectTransform mainSlotArea;
     public MultiObjectPool mainSlotPool;
+    public MultiObjectPool dictionarySlotPool;
+
 
     //This is the area covered by a inventory slot UI component, this includes padding
     //This can be calculated by simply getting the base slot object scale (150), dividing by 2 (75) and adding padding (+15) if need be
     private const int inventorySlotArea = 90;
 	//60 / 2 = 30, 30 + 15 = 45
 	private const int miniInventorySlotArea = 45;
-    //
+	//
+	private const float dictionarySlotSize = 75;
+	//
 
     protected override void Awake()
     {
@@ -89,12 +100,6 @@ public class InventoryUIManagement : UIState
 			{
                 //Do inital draw on mini inventory
                 Draw(true);
-
-                //For testing give player some random items
-                for (int i = 0; i < targetData.targetInventory.GetInventoryCapacity(); i++)
-                {
-                    targetData.targetInventory.AddItemToInventory(new ItemBase(ItemDatabase.GetRandomItemIndex()));
-                }
             }
         }
     }
@@ -145,6 +150,33 @@ public class InventoryUIManagement : UIState
             mainSlotPool.PruneObjectsNotUpdatedThisFrame(0);
         }
     }
+
+	public void DrawDictionary()
+	{
+		centerDictDrawn = true;
+
+		int allItemsCount = ItemDatabase.GetItemCount();
+		//Slot area is always a constant amount of units wide
+		float fullDivision = 550.0f / dictionarySlotSize;
+        int entriesPerRow = Mathf.FloorToInt(fullDivision);
+		float buffer = ((fullDivision - entriesPerRow) * dictionarySlotSize);
+
+        for (int i = 0; i < allItemsCount; i++)
+		{
+			int row = Mathf.FloorToInt(i / (float)entriesPerRow);
+
+			//As offset from the top left corner
+			Vector2 position = new Vector2();
+			position.x = ((i - (row * entriesPerRow)) * dictionarySlotSize) + buffer;
+			position.y = -(row * dictionarySlotSize);
+
+			Transform target = dictionarySlotPool.UpdateNextObjectPosition(0, Vector3.zero);
+			(target as RectTransform).anchoredPosition3D = position;
+
+			//Get target image component
+			target.GetChild(0).GetComponent<Image>().sprite = ItemDatabase.GetItem(i).icon;
+		}
+	}
 
 	public static void DrawSlot(int index)
 	{

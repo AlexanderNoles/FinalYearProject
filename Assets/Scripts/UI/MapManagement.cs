@@ -52,6 +52,35 @@ public class MapManagement : UIState
 
 		CameraManagement.SetMainCameraActive(!_bool);
         SurroundingsRenderingManagement.SetActivePlanetLighting(!_bool);
+
+		if (_bool)
+        {
+            extraFrame = true;
+			pastFirstFrameOfMapAnim = false;
+            //Disable any map elements that might still be showing
+            //The parent object will have been set inactive so they won't actually render
+            //But they would now cause we have turned the object active again
+            for (int i = 3; i <= 8; i++)
+            {
+                if (i == 4)
+                {
+                    continue;
+                }
+
+                mapElementsPools.HideAllObjects(i);
+            }
+
+            mapObjectsAndParents = new List<(Transform, Transform)>();
+
+            List<SurroundingObject> surroundingObjects = SurroundingsRenderingManagement.GetControlledObjects();
+
+            foreach (SurroundingObject surroundingObject in surroundingObjects)
+            {
+                mapObjectsAndParents.Add((surroundingObject.transform, surroundingObject.GetInWorldParent()));
+            };
+
+            mapBasePos = Vector3.zero;
+        }
     }
 
     ///
@@ -114,12 +143,6 @@ public class MapManagement : UIState
         mapRingMeshRenderes = mapElementsPools.GetComponentsOnAllActiveObjects<MeshRenderer>(0);
     }
 
-    private void OnEnable()
-    {
-        pastFirstFrameOfMapAnim = false;
-        extraFrame = true;
-    }
-
     private void Update()
     {
         if (MapActive())
@@ -139,34 +162,6 @@ public class MapManagement : UIState
                     extraFrame = false;
                     Shader.SetGlobalFloat("_FlashTime", Time.time);
                     mapRefreshTime = 0.0f;
-                }
-
-				//Can't use UIManagment's first frame of intro anim because we get set active a frame after the intro anim starts :(
-                if (!pastFirstFrameOfMapAnim)
-                {
-					//Disable any map elements that might still be showing
-					//The parent object will have been set inactive so they won't actually render
-					//But they would now cause we have turned the object active again
-					for (int i = 3; i <= 8; i++)
-					{
-						if (i == 4)
-						{
-							continue;
-						}
-
-						mapElementsPools.PruneObjectsNotUpdatedThisFrame(i);
-					}
-
-					mapObjectsAndParents = new List<(Transform, Transform)>();
-
-                    List<SurroundingObject> surroundingObjects = SurroundingsRenderingManagement.GetControlledObjects();
-
-                    foreach (SurroundingObject surroundingObject in surroundingObjects)
-                    {
-                        mapObjectsAndParents.Add((surroundingObject.transform, surroundingObject.GetInWorldParent()));
-                    };
-
-                    mapBasePos = Vector3.zero;
                 }
 
                 foreach ((Transform, Transform) entry in mapObjectsAndParents)
@@ -336,8 +331,8 @@ public class MapManagement : UIState
 											cachedTransformToNationIconRenderers.Add(centralIcon, centralIcon.GetComponent<SpriteRenderer>());
 										}
 
-										cachedTransformToNationIconRenderers[centralIcon].sprite = emblemData.icon;
-										cachedTransformToNationIconRenderers[centralIcon].color = emblemData.mainColour;
+										cachedTransformToNationIconRenderers[centralIcon].sprite = emblemData.mainIcon;
+										cachedTransformToNationIconRenderers[centralIcon].color = emblemData.highlightColour;
 									}
 								}
                             }

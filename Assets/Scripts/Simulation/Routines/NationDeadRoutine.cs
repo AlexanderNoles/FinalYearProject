@@ -19,9 +19,11 @@ public class NationDeadRoutine : RoutineBase
 			{
 				if (territoryData.territoryCenters.Count == 0)
 				{
-					nation.GetData(Faction.Tags.Faction, out FactionData factionData);
-					//Set death flag
-					factionData.deathFlag = true;
+					//Add death flag
+					if (!nation.HasTag(Faction.Tags.Dead))
+					{
+						nation.AddTag(Faction.Tags.Dead);
+					}
 				}
 			}
 		}

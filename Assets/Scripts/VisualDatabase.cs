@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class VisualDatabase : MonoBehaviour
 {
@@ -8,23 +9,21 @@ public class VisualDatabase : MonoBehaviour
 	public static readonly string badColourString = "#c4372dff";
 	public static readonly string statisticColour = "#d1b536";
 
-
-
-
-	[Header("Other Factions")]
     private static VisualDatabase instance;
 
     private static int currentColourIndex = 0;
+    [Header("Emblem Data")]
+    [Header("Colour")]
     public List<Color> factionColours = new List<Color>();
 
-    private static int currentIconIndex = 0;
+    [Header("Icons")]
+    public string iconsPath = "Assets/Textures/ui/Icons/NationIconSheet.png";
     public List<Sprite> factionIcons = new List<Sprite>();
 
     private void Awake()
     {
         instance = this;
         currentColourIndex = Random.Range(0, factionColours.Count);
-        currentIconIndex = Random.Range(0, factionIcons.Count);
     }
 
     public static Color GetNextFactionColour()
@@ -34,10 +33,26 @@ public class VisualDatabase : MonoBehaviour
         return instance.factionColours[currentColourIndex];
     }
 
-    public static Sprite GetNextFactionSprite()
+    public static (Sprite, Sprite) GetFactionIcons()
     {
-        currentIconIndex = (currentIconIndex + 1) % instance.factionIcons.Count;
+        int mainIconIndex = SimulationManagement.random.Next(0, instance.factionIcons.Count);
+        int backingIconIndex = SimulationManagement.random.Next(0, instance.factionIcons.Count);
 
-        return instance.factionIcons[currentIconIndex];
+        return (instance.factionIcons[mainIconIndex], instance.factionIcons[backingIconIndex]);
+    }
+
+    [ContextMenu("Load Icon Images")]
+    public void LoadIconImages()
+    {
+        factionIcons.Clear();
+        Object[] data = AssetDatabase.LoadAllAssetsAtPath(iconsPath);
+
+        foreach (Object obj in data)
+        {
+            if (obj is Sprite)
+            {
+                factionIcons.Add(obj as Sprite);
+            }
+        }
     }
 }

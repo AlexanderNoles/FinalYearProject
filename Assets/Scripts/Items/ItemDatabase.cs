@@ -50,6 +50,11 @@ public class ItemDatabase
 	public static Dictionary<int, ItemData> itemIDToItemData = new Dictionary<int, ItemData>();
 	private static int currentItemIndex = 0;
 
+	public static int GetItemCount()
+	{
+		return currentItemIndex;
+	}
+
 	public static ItemData GetRandomItem()
 	{
 		//No items
@@ -64,6 +69,11 @@ public class ItemDatabase
 	public static int GetRandomItemIndex()
 	{
 		return Random.Range(0, currentItemIndex);
+	}
+
+	public static ItemData GetItem(int index)
+	{
+		return itemIDToItemData[index];
 	}
 
 	//

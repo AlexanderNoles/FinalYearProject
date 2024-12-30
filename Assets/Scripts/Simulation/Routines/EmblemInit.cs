@@ -28,9 +28,13 @@ public class EmblemInit : InitRoutineBase
 
                 //Get the next colour from the colour rotation
                 emblemData.mainColour = VisualDatabase.GetNextFactionColour();
+                emblemData.highlightColour = emblemData.mainColour * 2.0f;
+                emblemData.shadowColour = emblemData.mainColour * 0.25f;
 
-                //Get the next icon from the icon rotation
-                emblemData.icon = VisualDatabase.GetNextFactionSprite();
+                //Get icons
+                (Sprite, Sprite) icons = VisualDatabase.GetFactionIcons();
+                emblemData.mainIcon = icons.Item1;
+                emblemData.backingIcon = icons.Item2;
             }
         }
     }

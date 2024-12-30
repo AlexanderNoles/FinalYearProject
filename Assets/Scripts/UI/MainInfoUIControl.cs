@@ -27,6 +27,10 @@ public class MainInfoUIControl : PostTickUpdate
     [Header("Currency")]
     public TextMeshProUGUI currencyLabel;
 
+    [Header("Emblem")]
+    public EmblemRenderer emblemRenderer;
+    private bool emblemDrawn = false;
+
     private void Awake()
     {
         instance = this;
@@ -75,6 +79,14 @@ public class MainInfoUIControl : PostTickUpdate
             players[0].GetData(PlayerFaction.inventoryDataKey, out PlayerInventory inventory);
 
             currencyLabel.text = inventory.mainCurrency.ToString();
+
+            if (!emblemDrawn)
+            {
+                //Only need to draw emblem once, not every post tick
+                players[0].GetData(Faction.Tags.Emblem, out EmblemData emblemData);
+
+                emblemDrawn = emblemRenderer.Draw(emblemData);
+            }
         }
     }
 

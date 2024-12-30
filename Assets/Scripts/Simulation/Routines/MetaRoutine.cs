@@ -9,30 +9,21 @@ public class MetaRoutine : RoutineBase
     public override void Run()
     {
         List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Faction);
+        List<Faction> deadFactions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Dead);
 
         List<int> idsOfRemovedFactions = new List<int>();
 
-        for(int i = 0; i < factions.Count;)
+        for(int i = 0; i < deadFactions.Count;)
         {
-            Faction faction = factions[i];
+            Faction faction = deadFactions[i];
 
-            if (faction.GetData(Faction.Tags.Faction, out FactionData factionData))
+            if (faction.HasTag(Faction.Tags.Dead) && !faction.HasTag(Faction.Tags.Unkillable))
             {
-                if (factionData.deathFlag)
-                {
-					if (faction.HasTag(Faction.Tags.Unkillable))
-					{
-						//This faction cannot die, for example if it is the game world
-						factionData.deathFlag = false;
-					}
-					else
-					{
-						//Remove this faction from the simulation
-						SimulationManagement.RemoveFactionFully(faction);
-						idsOfRemovedFactions.Add(faction.id);
-						continue; //Perform nothing else for this faction as it is now dead (including incrementing the index)
-					}
-                }
+                //Remove this faction from the simulation
+                SimulationManagement.RemoveFactionFully(faction);
+                idsOfRemovedFactions.Add(faction.id);
+                //Perform nothing else for this faction as it is now dead (including incrementing the index)
+                continue; 
             }
 
             i++;

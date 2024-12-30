@@ -23,6 +23,7 @@ public class PlayerFaction : Faction
 		AddTag(Tags.Player);
 		AddTag(Tags.Unkillable);
 		AddTag(Tags.Population);
+		AddTag(Tags.Emblem);
 	}
 
 	public override void InitData()
@@ -31,16 +32,12 @@ public class PlayerFaction : Faction
 		//Need to init data modules manually
 		dataModules = new Dictionary<string, DataBase>();
 
-		//Still add the faction data so fully general routines can access this faction
-		//It still carries the unkillable tag so no data (as of 04/12/2024) within the faction data is currently used
-		AddData(Tags.Faction, new FactionData());
-
 		AddData(Tags.Population, new PopulationData());
+		AddData(Tags.Emblem, new EmblemData());
 
 		//This holds all the basic ship data
 		//(a.k.a data that isn't covered by a more specific module)
 		AddData(shipDataKey, new PlayerShipData());
-
 
 		PlayerStats stats = new PlayerStats();
 		stats.ResetStatsToDefault();
