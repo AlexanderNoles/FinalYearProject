@@ -139,6 +139,11 @@ public class CameraManagement : MonoBehaviour
 		return instance.mainCamera;
 	}
 
+    public static Vector3 GetMainCameraPosition()
+    {
+        return instance.transform.position;
+    }
+
 	public static Camera GetBackingCamera()
 	{
 		return instance.actualBackingCamera;
@@ -198,6 +203,8 @@ public class CameraManagement : MonoBehaviour
 
 			if (mainCamera.enabled)
 			{
+                lowerCameraLimit = 0;
+
 				if (actualBackingCameraData.renderPostProcessing)
 				{
 					backingCameraAxis.position = Vector3.zero;

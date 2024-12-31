@@ -24,6 +24,7 @@ public class ItemDatabase
 		public string name;
 		public string description;
 		public string extraDescription;
+		public string itemTypeDeclaration;
 		public float basePrice;
 		public ItemClass itemClass;
 
@@ -48,7 +49,8 @@ public class ItemDatabase
 	}
 
 	public static Dictionary<int, ItemData> itemIDToItemData = new Dictionary<int, ItemData>();
-	private static int currentItemIndex = 0;
+	private static string currentItemTypeDeclaration;
+    private static int currentItemIndex = 0;
 
 	public static int GetItemCount()
 	{
@@ -82,8 +84,9 @@ public class ItemDatabase
 	public static void LoadItemsFromFile()
 	{
 		currentItemIndex = 0;
-		itemIDToItemData.Clear();
-		Dictionary<string, string> aliasDict = new Dictionary<string, string>();
+		itemIDToItemData.Clear(); 
+		currentItemTypeDeclaration = "";
+        Dictionary<string, string> aliasDict = new Dictionary<string, string>();
 
 		//Load file from resources
 		string mainFile = Resources.Load("items").ToString();
@@ -129,6 +132,8 @@ public class ItemDatabase
 				//currently only does item section here so aliases can reference other aliases defined in the same section
 				if (newItem != null)
 				{
+					newItem.itemTypeDeclaration = currentItemTypeDeclaration;
+
 					//The below two lines could be combined but I find this to be more clear
 					itemIDToItemData.Add(currentItemIndex, newItem);
 					currentItemIndex++;
@@ -212,6 +217,11 @@ public class ItemDatabase
 					}
 				}
 			}
+			else if (line.Contains("###"))
+			{
+				//Set current item type declaration
+				currentItemTypeDeclaration = PrepKeyString(line.Replace("#", ""), false);
+            }
 		}
 	}
 

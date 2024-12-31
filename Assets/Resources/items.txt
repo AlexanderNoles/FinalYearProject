@@ -7,6 +7,7 @@
 	attackPower: "<color=*statColour*>Attack Power</color> controls how much damage you deal per shot."
 	moveSpeed: "<color=*statColour*>Move Speed</color> controls how fast your ship moves. This includes engine thrust, turning and acceleration."
 }
+### Debug ###
 { item (debug)
 	//This is a test item
 	maxHealth: "100"
@@ -26,6 +27,8 @@
 	description: "Wowee wowee, <color=*goodColour*>I love my creature!</color>"
 	extra: "This is for alias testing: *health* wowee"
 }
+
+### Basic ###
 { item
 	//Dangerous Generator
 	maxHealth: "-25"

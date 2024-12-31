@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -155,26 +156,59 @@ public class InventoryUIManagement : UIState
 	{
 		centerDictDrawn = true;
 
+		string itemTypeString = "";
 		int allItemsCount = ItemDatabase.GetItemCount();
 		//Slot area is always a constant amount of units wide
 		float fullDivision = 550.0f / dictionarySlotSize;
         int entriesPerRow = Mathf.FloorToInt(fullDivision);
 		float buffer = ((fullDivision - entriesPerRow) * dictionarySlotSize);
 
+		int rows = 0;
+		int indexInRow = 0;
+
         for (int i = 0; i < allItemsCount; i++)
 		{
-			int row = Mathf.FloorToInt(i / (float)entriesPerRow);
+			ItemDatabase.ItemData item = ItemDatabase.GetItem(i);
+            if (!item.itemTypeDeclaration.Equals(itemTypeString))
+			{
+				itemTypeString = item.itemTypeDeclaration;
+                //Add an additional additional row if past the first
+                if (rows > 0)
+                {
+                    rows++;
+                }
+
+				//Add label in this position
+				Transform label = dictionarySlotPool.UpdateNextObjectPosition(1, Vector3.zero);
+				(label as RectTransform).anchoredPosition3D = new Vector2(buffer, -(rows * dictionarySlotSize));
+
+                label.GetChild(0).GetComponent<TextMeshProUGUI>().text = itemTypeString;
+
+                //Offset down by one
+                rows++;
+				//Reset indexInRow
+				indexInRow = 0;
+			}
+
+			if (indexInRow >= entriesPerRow)
+			{
+				indexInRow = 0;
+				rows++;
+			}
 
 			//As offset from the top left corner
 			Vector2 position = new Vector2();
-			position.x = ((i - (row * entriesPerRow)) * dictionarySlotSize) + buffer;
-			position.y = -(row * dictionarySlotSize);
+			position.x = (indexInRow * dictionarySlotSize) + buffer;
+			position.y = -(rows * dictionarySlotSize);
 
 			Transform target = dictionarySlotPool.UpdateNextObjectPosition(0, Vector3.zero);
 			(target as RectTransform).anchoredPosition3D = position;
 
 			//Get target image component
-			target.GetChild(0).GetComponent<Image>().sprite = ItemDatabase.GetItem(i).icon;
+			target.GetChild(0).GetComponent<Image>().sprite = item.icon;
+
+			//Increment index in row
+			indexInRow++;
 		}
 	}
 

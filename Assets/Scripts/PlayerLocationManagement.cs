@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -113,7 +114,7 @@ public class PlayerLocationManagement : MonoBehaviour
 		{
 			//Create new parent object
 			//Could use an object pool for this but I don't think it really matters with such a small amount of nearby locations
-			parent = new GameObject().transform;
+			parent = new GameObject("DrawnLocation").transform;
 		}
 
 		public void Cleanup()
@@ -129,7 +130,17 @@ public class PlayerLocationManagement : MonoBehaviour
 			//Set that as our offset plus an additional offset
 			parent.position = (difference.AsVector3() * WorldManagement.inEngineWorldScaleMultiplier) + additionalOffset;
 		}
+
+		public Vector3 GetWorldPosition()
+		{
+			return parent.position;
+		}
     }
+
+	public MultiObjectPool uiPool;
+	public RectTransform uiPoolTargetRect;
+	private const int drawnLocationTargetIndex = 0;
+	private Dictionary<RectTransform, TextMeshProUGUI> transformToLabel = new Dictionary<RectTransform, TextMeshProUGUI>();
 
 	private void Awake()
 	{
@@ -238,15 +249,44 @@ public class PlayerLocationManagement : MonoBehaviour
 		//Update position of all drawn locations based on offset from world center
 		//and the player ships world (in engine) position
 		//Then run the draw update method
-		foreach (DrawnLocation location in drawnLocations)
+		Camera mainCamera = CameraManagement.GetMainCamera();
+		Vector2 targetRectSizeDelta = uiPoolTargetRect.sizeDelta;
+		Vector2 halfTRSD = targetRectSizeDelta * 0.5f;
+
+        foreach (DrawnLocation location in drawnLocations)
 		{
 			location.SetPosAsOffsetFrom(worldCenter, PlayerCapitalShip.GetPosition());
-
 			location.targetLocation.DrawUpdate();
-		}
 
-		//Set primary location id
-		int newPrimaryLocationID = GetPrimaryLocationWrapper().locationID;
+			//Set position of ui indicator
+			Vector3 worldPos = location.GetWorldPosition();
+			Vector3 viewPortPos = mainCamera.WorldToViewportPoint(worldPos);
+
+			if (viewPortPos.z > 0.0f)
+            {
+                RectTransform uiIndicator = uiPool.UpdateNextObjectPosition(drawnLocationTargetIndex, Vector3.zero).transform as RectTransform;
+
+                uiIndicator.anchoredPosition3D = new Vector2(viewPortPos.x * targetRectSizeDelta.x, viewPortPos.y * targetRectSizeDelta.y) - halfTRSD;
+				uiIndicator.localScale = Mathf.Clamp((100.0f / Vector3.Distance(worldPos, CameraManagement.GetMainCameraPosition())), 0.25f, 1.0f) * 3.0f * Vector3.one;
+
+				if (!transformToLabel.ContainsKey(uiIndicator))
+				{
+					transformToLabel.Add(uiIndicator, uiIndicator.GetChild(1).GetComponent<TextMeshProUGUI>());
+				}
+
+				TextMeshProUGUI targetLabel = transformToLabel[uiIndicator];
+				string locationTitle = location.targetLocation.GetTitle();
+				if (!targetLabel.text.Equals(locationTitle))
+				{
+					targetLabel.text = locationTitle;
+				}
+            }
+        }
+
+		uiPool.PruneObjectsNotUpdatedThisFrame(drawnLocationTargetIndex);
+
+        //Set primary location id
+        int newPrimaryLocationID = GetPrimaryLocationWrapper().locationID;
 
 		//If primary location has changed, run onLocationChanged event
 		if (currentPrimaryLocationID != newPrimaryLocationID)
