@@ -324,7 +324,7 @@ public class PlayerMapInteraction : PostTickUpdate
 				List<Faction> players = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Player);
 				if (players.Count > 0)
 				{
-					players[0].GetData(PlayerFaction.inventoryDataKey, out PlayerInventory inventory);
+					players[0].GetData(Player.inventoryDataKey, out PlayerInventory inventory);
 
 					if (!PlayerManagement.fuelEnabled || inventory.fuel >= fuelCost)
 					{

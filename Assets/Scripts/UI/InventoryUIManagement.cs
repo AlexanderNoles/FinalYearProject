@@ -11,7 +11,7 @@ public class InventoryUIManagement : UIState
 	//Target of this UI
 	private class InventoryTarget
 	{
-		public PlayerFaction targetFaction;
+		public Player targetFaction;
 		public InventoryBase targetInventory;
 	}
 
@@ -86,10 +86,10 @@ public class InventoryUIManagement : UIState
             if (playerOwnedFactions.Count > 0)
             {
                 //Get inventory data
-                if (playerOwnedFactions[0].GetData(PlayerFaction.inventoryDataKey, out InventoryBase data))
+                if (playerOwnedFactions[0].GetData(Player.inventoryDataKey, out InventoryBase data))
                 {
                     targetData = new InventoryTarget();
-                    targetData.targetFaction = playerOwnedFactions[0] as PlayerFaction;
+                    targetData.targetFaction = playerOwnedFactions[0] as Player;
                     targetData.targetInventory = data;
 
 					//Allow this ui state to be activated

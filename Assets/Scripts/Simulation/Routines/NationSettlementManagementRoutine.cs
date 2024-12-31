@@ -14,7 +14,7 @@ public class NationSettlementManagementRoutine : RoutineBase
 		foreach (Faction nation in nations)
 		{
 			//Get neccesary data
-			nation.GetData(Faction.relationshipDataKey, out RelationshipData relationshipData);
+			nation.GetData(Faction.relationshipDataKey, out FeelingsData relationshipData);
 			nation.GetData(Faction.Tags.HasMilitary, out MilitaryData militaryData);
 			nation.GetData(Faction.Tags.Population, out PopulationData popData);
 			nation.GetData(Faction.Tags.Settlements, out SettlementData settData);
@@ -88,7 +88,7 @@ public class NationSettlementManagementRoutine : RoutineBase
 
 							//Are we on good terms with that faction?
 							if (relationshipData == null ||
-								(relationshipData.idToRelationship.ContainsKey(targetNation.id) && relationshipData.idToRelationship[targetNation.id].favourability > 0.3f))
+								(relationshipData.idToFeelings.ContainsKey(targetNation.id) && relationshipData.idToFeelings[targetNation.id].favourability > 0.3f))
 							{
 								//If we are get a random settlement from that faction
 								//! If we want we can make it calcualte distance to that settlement and all that

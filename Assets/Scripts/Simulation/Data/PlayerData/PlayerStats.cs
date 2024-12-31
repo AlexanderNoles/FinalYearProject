@@ -88,7 +88,7 @@ public class PlayerStats : DataBase
 
 		foreach (Faction player in playerFactions)
 		{
-			if (player.GetData(PlayerFaction.statDataKey, out PlayerStats data))
+			if (player.GetData(Player.statDataKey, out PlayerStats data))
 			{
 				foreach (KeyValuePair<string, List<StatContributor>> entry in data.statToValue)
 				{

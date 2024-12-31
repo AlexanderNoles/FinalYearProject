@@ -41,11 +41,11 @@ public class MetaRoutine : RoutineBase
             //Which RemoveFactionFully takes them out of
             foreach (Faction faction in factions)
             {
-                if (faction.GetData(Faction.relationshipDataKey, out RelationshipData relationshipData))
+                if (faction.GetData(Faction.relationshipDataKey, out FeelingsData relationshipData))
                 {
 					foreach (int id in idsOfRemovedFactions)
 					{
-						relationshipData.idToRelationship.Remove(id);
+						relationshipData.idToFeelings.Remove(id);
 					}
                 }
             }

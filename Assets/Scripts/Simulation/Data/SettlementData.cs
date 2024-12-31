@@ -84,7 +84,7 @@ public class SettlementData : DataBase
         public List<TradeFleet> tradeFleets = new List<TradeFleet>();
 
 
-        public Settlement(RealSpacePostion pos, FactionLink parent)
+        public Settlement(RealSpacePostion pos, EntityLink parent)
         {
             actualSettlementPos = pos;
 			//Set parent

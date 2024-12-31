@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
+using EntityAndDataDescriptor;
 
 [SimulationManagement.ActiveSimulationRoutine(-100)]
 public class BattleResolutionRoutine : RoutineBase
@@ -12,10 +13,14 @@ public class BattleResolutionRoutine : RoutineBase
 	{
 		const float battleLengthMultiplier = 100.0f;
 
+		//Each tick the battle system runs over every created battle (stored in the global battle data)
+		//and processes it
+
 		//Get gameworld and universal battle data and histroy data
-		GameWorld gameworld = (GameWorld)SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld)[0];
-		gameworld.GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
-		gameworld.GetData(Faction.Tags.Historical, out HistoryData historyData);
+		GameWorld gameworld = GameWorld.main;
+		//Get specific game world data
+		gameworld.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattleData);
+		gameworld.GetData(DataTags.Historical, out HistoryData historyData);
 
 		//Get all at war factions
 		List<Faction> allFactions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Faction);
@@ -26,11 +31,11 @@ public class BattleResolutionRoutine : RoutineBase
 		//Pre compute opposition
 		foreach (Faction faction in allFactions)
 		{
-			if (faction.GetData(Faction.relationshipDataKey, out RelationshipData data))
+			if (faction.GetData(Faction.relationshipDataKey, out FeelingsData data))
 			{
 				List<int> newOpposition = new List<int>();
 
-				foreach (KeyValuePair<int, RelationshipData.Relationship> relationship in data.idToRelationship)
+				foreach (KeyValuePair<int, FeelingsData.Relationship> relationship in data.idToFeelings)
 				{
 					//Change this to some other kinda of check so we can get rid of inConflict (we want to keep things dynamic and setting this flag hampers that)
 					if (relationship.Value.inConflict)

@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using EntityAndDataDescriptor;
 
 public class PlayerManagement : MonoBehaviour
 {
     public const bool fuelEnabled = false;
     private static PlayerManagement instance;
-	private PlayerFaction playerFaction = null;
+	private Player playerFaction = null;
     private PlayerStats playerStatsTarget = null;
 
     private void Awake()
@@ -23,10 +24,10 @@ public class PlayerManagement : MonoBehaviour
 
 	public static void InitPlayerFaction()
 	{
-		instance.playerFaction = new PlayerFaction();
+		instance.playerFaction = new Player();
 		instance.playerFaction.Simulate();
 
-        instance.playerFaction.GetData(PlayerFaction.statDataKey, out instance.playerStatsTarget);
+        instance.playerFaction.GetData(DataTags.Stats, out instance.playerStatsTarget);
 	}
 
     public static bool PlayerFactionExists()
@@ -34,7 +35,7 @@ public class PlayerManagement : MonoBehaviour
         return instance != null && GetTarget() != null;
     }
 
-    public static PlayerFaction GetTarget()
+    public static Player GetTarget()
     {
         return instance.playerFaction;
     }

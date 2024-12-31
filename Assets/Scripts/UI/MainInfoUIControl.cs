@@ -76,7 +76,7 @@ public class MainInfoUIControl : PostTickUpdate
         if (players.Count > 0)
         {
             //Get player inventory
-            players[0].GetData(PlayerFaction.inventoryDataKey, out PlayerInventory inventory);
+            players[0].GetData(Player.inventoryDataKey, out PlayerInventory inventory);
 
             currencyLabel.text = inventory.mainCurrency.ToString();
 

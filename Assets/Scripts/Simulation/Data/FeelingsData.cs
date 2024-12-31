@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RelationshipData : DataBase
+public class FeelingsData : DataBase
 {
     public class Relationship
     {
-		//This is what this faction thinks about the other faction
+		//This is what this entity thinks about the target entity
 		//Are they in conflict?
 		//This can be set by a variety of things, perhaps could be a float instead that indicates how much they are in conflict with them?
 		public bool inConflict;
@@ -25,9 +25,6 @@ public class RelationshipData : DataBase
         }
     }
 
-    public Dictionary<int, Relationship> idToRelationship = new Dictionary<int, Relationship>();
-    public float baseFavourability = 0.5f; //What other factions inherently think of this one (For a murderous swarm for example this should be zero)
-
-	//How many ticks till we can start another war
-	public int warLockoutCount = 0;
+    public Dictionary<int, Relationship> idToFeelings = new Dictionary<int, Relationship>();
+    public float baseFavourability = 0.5f; //What other entities inherently think of this one (For a murderous swarm for example this should be zero)
 }

@@ -126,7 +126,7 @@ public class ShopControlUI : FloatingWindow
 
 				if (players.Count > 0)
 				{
-					players[0].GetData(PlayerFaction.inventoryDataKey, out PlayerInventory playerInventory);
+					players[0].GetData(Player.inventoryDataKey, out PlayerInventory playerInventory);
 
 					canBuy = playerInventory.mainCurrency >= price;
 				}
@@ -155,7 +155,7 @@ public class ShopControlUI : FloatingWindow
 			if (players.Count > 0)
 			{
 				//Any player factions exist
-				players[0].GetData(PlayerFaction.inventoryDataKey, out PlayerInventory playerInventory); 
+				players[0].GetData(Player.inventoryDataKey, out PlayerInventory playerInventory); 
 				
 				if (playerInventory.AttemptToBuy(target, shopData.itemsInShop[targetItemIndex].calculatedPrice))
 				{

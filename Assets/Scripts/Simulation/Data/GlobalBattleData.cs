@@ -105,9 +105,9 @@ public class GlobalBattleData : DataBase
 			}
 
 			//Otherwise if winner is hostile to defender than we remove this cell from the defender
-			if (SimulationManagement.GetFactionByID(winnerID).GetData(Faction.relationshipDataKey, out RelationshipData relData))
+			if (SimulationManagement.GetFactionByID(winnerID).GetData(Faction.relationshipDataKey, out FeelingsData relData))
 			{
-				if (relData.idToRelationship.ContainsKey(defender) && relData.idToRelationship[defender].inConflict)
+				if (relData.idToFeelings.ContainsKey(defender) && relData.idToFeelings[defender].inConflict)
 				{
 					Faction lossFaction = SimulationManagement.GetFactionByID(defender);
 

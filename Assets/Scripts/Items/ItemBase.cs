@@ -9,7 +9,7 @@ public class ItemBase : IDisplay
 	private string statContributorDescriptions;
 	private List<StatContributor> statContributors = new List<StatContributor>();
 
-	public float GetPrice(FactionLink parentFaction)
+	public float GetPrice(EntityLink parentFaction)
 	{
 		float price = cachedItemData.basePrice;
 

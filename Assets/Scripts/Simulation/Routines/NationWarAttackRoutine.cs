@@ -29,7 +29,7 @@ public class NationWarAttackRoutine : RoutineBase
 				continue;
 			}
 
-			nation.GetData(Faction.relationshipDataKey, out RelationshipData relData);
+			nation.GetData(Faction.relationshipDataKey, out FeelingsData relData);
 			nation.GetData(Faction.battleDataKey, out BattleData batData);
 			nation.GetData(Faction.Tags.HasMilitary, out MilitaryData milData);
 

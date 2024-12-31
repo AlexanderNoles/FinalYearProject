@@ -1,22 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using EntityAndDataDescriptor;
+using System.Linq;
 
 [SimulationManagement.ActiveSimulationRoutine(200)]
 public class MilitaryPerTickReset : RoutineBase
 {
 	public override void Run()
 	{
-		//Get all factions with a military
-		List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.HasMilitary);
+		//Get all military data
+		List<DataBase> militaryDatas = SimulationManagement.GetDataViaTag(DataTags.Military);
 
-		foreach (Faction faction in factions)
+		foreach (MilitaryData militaryData in militaryDatas.Cast<MilitaryData>())
 		{
-			if (faction.GetData(Faction.Tags.HasMilitary, out MilitaryData militaryData))
-			{
-				militaryData.markedTransfers.Clear();
-				militaryData.totalDamageBuildup = 0.0f;
-			}
-		}
+            militaryData.markedTransfers.Clear();
+            militaryData.totalDamageBuildup = 0.0f;
+        }
 	}
 }

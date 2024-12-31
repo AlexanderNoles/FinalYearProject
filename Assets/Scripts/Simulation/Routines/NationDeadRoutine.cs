@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using EntityAndDataDescriptor;
 
 [SimulationManagement.ActiveSimulationRoutine(-500, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Normal)]
 public class NationDeadRoutine : RoutineBase
@@ -9,20 +10,19 @@ public class NationDeadRoutine : RoutineBase
 	{
 		//Get all nations
 		//If they have no territory they are dead
-
-		List<Faction> nations = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Nation);
+		List<SimulationEntity> nations = SimulationManagement.GetEntitiesViaTag(EntityTypeTags.Nation);
 
 		for (int i = 0; i < nations.Count; i++)
 		{
-			Faction nation = nations[i];
-			if (nation.GetData(Faction.Tags.Territory, out TerritoryData territoryData))
+            SimulationEntity nation = nations[i];
+			if (nation.GetData(DataTags.Territory, out TerritoryData territoryData))
 			{
 				if (territoryData.territoryCenters.Count == 0)
 				{
 					//Add death flag
-					if (!nation.HasTag(Faction.Tags.Dead))
+					if (!nation.HasTag(EntityStateTags.Dead))
 					{
-						nation.AddTag(Faction.Tags.Dead);
+						nation.AddTag(EntityStateTags.Dead);
 					}
 				}
 			}

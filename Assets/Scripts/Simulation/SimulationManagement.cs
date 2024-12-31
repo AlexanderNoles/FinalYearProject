@@ -111,107 +111,154 @@ public class SimulationManagement : MonoBehaviour
         }
     }
 
-    private Dictionary<int, Faction> idToFaction = new Dictionary<int, Faction>();
-    private Dictionary<Faction.Tags, List<Faction>> factions = new Dictionary<Faction.Tags, List<Faction>>();
-    private Dictionary<Faction.Tags, List<Faction>> updatedTags = new Dictionary<Faction.Tags, List<Faction>>();
+    //Entity Removal
 
-    public static Faction GetFactionByID(int id)
+    public static void RemoveEntityFromSimulation(SimulationEntity entity)
     {
-        if (instance.idToFaction.ContainsKey(id))
+        HashSet<Enum> entityTags = entity.GetEntityTags();
+
+        foreach (Enum tag in entityTags)
         {
-            return instance.idToFaction[id];
+            DeRegisterEntityHasTag(tag, entity);
+        }
+
+        List<Enum> dataTags = entity.GetDataTags();
+
+        foreach (Enum tag in dataTags)
+        {
+            entity.RemoveData(tag);
+        }
+
+        instance.idToEntity.Remove(entity.id);
+    }
+
+    private Dictionary<int, SimulationEntity> idToEntity = new Dictionary<int, SimulationEntity>();
+
+    #region Entity ID Filtering
+    public static SimulationEntity GetEntityByID(int id)
+    {
+        if (instance.idToEntity.ContainsKey(id))
+        {
+            return instance.idToEntity[id];
         }
 
         return null;
     }
 
-	public static int GetFactionCount()
+	public static int GetEntityCount()
 	{
-		return instance.idToFaction.Count;
+		return instance.idToEntity.Count;
 	}
 
-	public static bool FactionWithIDExists(int id)
+	public static bool EntityWithIDExists(int id)
 	{
-		return instance.idToFaction.ContainsKey(id);
+		return instance.idToEntity.ContainsKey(id);
 	}
 
-	public static void AddFactionToIDDict(Faction faction)
+	public static void RegisterEntityToIDDict(SimulationEntity entity)
 	{
-		instance.idToFaction.Add(faction.id, faction);
+		instance.idToEntity.Add(entity.id, entity);
 	}
+    #endregion
 
-    public static void AddFactionOfTag(Faction.Tags tag, Faction faction)
+    private Dictionary<Enum, List<SimulationEntity>> tagToEntities = new Dictionary<Enum, List<SimulationEntity>>();
+
+    #region Entity Tag Filtering
+
+    public static void RegisterEntityHasTag(Enum tag, SimulationEntity entity)
     {
-        if (!instance.factions.ContainsKey(tag))
+        if (!instance.tagToEntities.ContainsKey(tag))
         {
             //Init sub list if it doesn't exist
-            instance.factions.Add(tag, new List<Faction>());
+            instance.tagToEntities.Add(tag, new List<SimulationEntity>());
         }
 
-        if (!instance.factions[tag].Contains(faction))
+        if (!instance.tagToEntities[tag].Contains(entity))
         {
-            //Add faction to tag if it has not already been added
-            instance.factions[tag].Add(faction);
-
-            //Add to updated tags so init functions can run
-            if (!instance.updatedTags.ContainsKey(tag))
-            {
-                instance.updatedTags.Add(tag, new List<Faction>());
-            }
-
-            if (!instance.updatedTags[tag].Contains(faction))
-            {
-                instance.updatedTags[tag].Add(faction);
-            }
+            //Add entity to tag if it has not already been added
+            instance.tagToEntities[tag].Add(entity);
         }
     }
 
-    public static void RemoveFactionOfTag(Faction.Tags tag, Faction faction)
+    public static void DeRegisterEntityHasTag(Enum tag, SimulationEntity entity)
     {
-        if (instance.factions.ContainsKey(tag))
+        if (instance.tagToEntities.ContainsKey(tag))
         {
-            //Remove faction if faction tag exists and faction belongs to that tag
-            instance.factions[tag].Remove(faction);
+            //Remove entity from tag entry if that tag is registered and the entity is registered with it
+            instance.tagToEntities[tag].Remove(entity);
         }
     }
 
-    public static void RemoveFactionFully(Faction faction)
+    public static List<SimulationEntity> GetEntitiesViaTag(Enum tag)
     {
-        foreach (Faction.Tags tag in Enum.GetValues(typeof(Faction.Tags)))
+        if (instance != null && instance.tagToEntities.ContainsKey(tag))
         {
-            RemoveFactionOfTag(tag, faction);
-        }
-
-        instance.idToFaction.Remove(faction.id);
-    }
-
-    public static List<Faction> GetAllFactionsWithTag(Faction.Tags tag)
-    {
-        if (instance != null && instance.factions.ContainsKey(tag))
-        {
-            return instance.factions[tag];
+            return instance.tagToEntities[tag];
         }
 
         //Return empty list by default
-        return new List<Faction>();
+        return new List<SimulationEntity>();
+    }
+    #endregion
+
+    private Dictionary<Enum, List<DataBase>> tagToData = new Dictionary<Enum, List<DataBase>>();
+    private Dictionary<Enum, List<DataBase>> newDataModulesByTag = new Dictionary<Enum, List<DataBase>>();
+
+    #region Data Tag Filtering
+    public static void RegisterDataModule(Enum tag, DataBase module)
+    {
+        if (!instance.tagToData.ContainsKey(tag))
+        {
+            instance.tagToData.Add(tag, new List<DataBase>());
+        }
+
+        if (!instance.tagToData[tag].Contains(module))
+        {
+            instance.tagToData[tag].Add(module);
+
+            //Add to new data modules by tag so init routines can run on this new data
+            if (!instance.newDataModulesByTag.ContainsKey(tag))
+            {
+                instance.newDataModulesByTag.Add(tag, new List<DataBase>());
+            }
+
+            instance.newDataModulesByTag[tag].Add(module);
+        }
     }
 
-	public static Dictionary<int, T> GetDataForFactionsList<T> (List<Faction> factions, string identifier) where T : DataBase
-	{
-		Dictionary<int, T> idToData = new Dictionary<int, T>();
+    public static void DeRegisterDataModule(Enum tag, DataBase module)
+    {
+        if (instance.tagToData.ContainsKey(tag))
+        {
+            instance.tagToData[tag].Remove(module);
+        }
+    }
 
-		foreach (Faction faction in factions)
-		{
-			if (faction.GetData(identifier, out T data))
-			{
-				idToData.Add(faction.id, data);
-			}
-		}
+    public static List<DataBase> GetDataViaTag(Enum tag)
+    {
+        if (instance != null && instance.tagToData.ContainsKey(tag))
+        {
+            return instance.tagToData[tag];
+        }
 
-		return idToData;
-	}
+        //Return empty list by default
+        return new List<DataBase>();
+    }
 
-	public static bool CellIsLazy(RealSpacePostion cellCenter)
+    public static List<DataBase> GetToInitData(Enum tag)
+    {
+        if (instance != null && instance.newDataModulesByTag.ContainsKey(tag))
+        {
+            return instance.newDataModulesByTag[tag];
+        }
+
+        //Return empty list by default
+        return new List<DataBase>();
+    }
+    #endregion
+
+
+    public static bool CellIsLazy(RealSpacePostion cellCenter)
 	{
 		//A cell is lazy if the player does not exist there
 		//Typically most things in the simulation are lazy as the simulation's processing does not
@@ -527,23 +574,24 @@ public class SimulationManagement : MonoBehaviour
     //Simulation Tick
     private void SimulationTick(bool isInstant)
     {
-        //Run this before other routines so we can update a faction on the same tick it is initialized
-        //This does mean new factions created this tick will have to wait till next tick to be initilized
-        //No good generic check exists that can tell if a faction has been initlized for a given tag or not (though non-generic ones do exist (e.g., a non-initlized Nation will always occupy no spaces))
-        //This means routines that create new Factions should be always run after routines that would alter those factions data, or we will run into unexpected behaviour
-        if (updatedTags.Count > 0)
+        //Run this before other routines so we can update data on the same tick it is initialized
+        //This does mean new entities created this tick will have to wait till next tick to have their data initilized
+        //No good generic check exists that can tell if data has been initlized for a given tag or not (though non-generic ones do exist (e.g., a non-initlized Nation will always occupy no spaces))
+        //This means routines that create new Entites should be always run after routines that would alter those entites data, or we will run into unexpected behaviour
+        //(or more likely the changes that tick will be overwritten and execution time will be spent errouneously)
+        if (newDataModulesByTag.Count > 0)
         {
-            HashSet<Faction.Tags> tags = updatedTags.Keys.ToHashSet();
+            HashSet<Enum> updatedTags = newDataModulesByTag.Keys.ToHashSet();
 
             foreach (InitRoutineBase routine in initRoutines)
             {
-                if (routine.TagsUpdatedCheck(tags))
+                if (routine.IsDataToInit(updatedTags))
                 {
                     routine.Run();
                 }
             }
 
-            updatedTags.Clear();
+            newDataModulesByTag.Clear();
         }
 
         //We run each rountine on each faction rather than each faction on every routine so later routines can react to other factions previous routines

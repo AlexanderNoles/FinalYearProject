@@ -102,7 +102,7 @@ public class LocationInformationUI : MonoBehaviour
 
 		if(players.Count > 0)
 		{
-			players[0].GetData(PlayerFaction.inventoryDataKey, out PlayerInventory playerInventory);
+			players[0].GetData(Player.inventoryDataKey, out PlayerInventory playerInventory);
 
 			const float maxFuelBuyRate = 50;
 			float moneyToSpend = Mathf.Min(maxFuelBuyRate, playerInventory.mainCurrency);
