@@ -1,3 +1,4 @@
+using EntityAndDataDescriptor;
 using MonitorBreak.Bebug;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,57 +15,59 @@ public class GlobalBattleData : DataBase
 		public int firstAttacker = -1;
 		public int defender = -1;
 
-		private List<int> involvedFactions = new List<int>();
-		private List<float> involvedFactionsProgress = new List<float>();
+		private List<int> involvedEntities = new List<int>();
+		private List<float> involvedEntitiesProgress = new List<float>();
 
-		public List<int> GetInvolvedFactions()
+		public Dictionary<int, List<int>> opositionMatrix = new Dictionary<int, List<int>>();
+
+		public List<int> GetInvolvedEntities()
 		{
-			return involvedFactions;
+			return involvedEntities;
 		}
 
-		public void AddInvolvedFaction(int id)
+		public void AddInvolvedEntity(int id)
 		{
-			involvedFactions.Add(id);
-			involvedFactionsProgress.Add(0.0f);
+			involvedEntities.Add(id);
+			involvedEntitiesProgress.Add(0.0f);
 		}
 
-		public void RemoveInvolvedFaction(int id)
+		public void RemoveInvolvedEntity(int id)
 		{
-			int indexOf = involvedFactions.IndexOf(id);
+			int indexOf = involvedEntities.IndexOf(id);
 
 			if (indexOf == -1)
 			{
 				return;
 			}
 
-			involvedFactions.RemoveAt(indexOf);
-			involvedFactionsProgress.RemoveAt(indexOf);
+			involvedEntities.RemoveAt(indexOf);
+			involvedEntitiesProgress.RemoveAt(indexOf);
 		}
 
 		public void AddToWinProgress(int index, float amount)
 		{
-			involvedFactionsProgress[index] += amount;
+			involvedEntitiesProgress[index] += amount;
 		}
 
 		public float GetWinProgress(int index)
 		{
-			return involvedFactionsProgress[index];
+			return involvedEntitiesProgress[index];
 		}
 
 		public bool BattleWon(out int winnerID)
 		{
 			winnerID = -1;
 
-			if (involvedFactions.Count <= 0 || backgroundProgression >= 1.0f)
+			if (involvedEntities.Count <= 0 || backgroundProgression >= 1.0f)
 			{
 				return true;
 			}
 
-			for (int i = 0; i < involvedFactions.Count; i++)
+			for (int i = 0; i < involvedEntities.Count; i++)
 			{
-				if (involvedFactionsProgress[i] > 1.2f)
+				if (involvedEntitiesProgress[i] > 1.2f)
 				{
-					winnerID = involvedFactions[i];
+					winnerID = involvedEntities[i];
 					return true;
 				}
 			}
@@ -74,20 +77,20 @@ public class GlobalBattleData : DataBase
 
 		public void End(RealSpacePostion pos)
 		{
-			foreach (int id in involvedFactions)
+			foreach (int id in involvedEntities)
 			{
-				Faction current = SimulationManagement.GetFactionByID(id);
+				SimulationEntity current = SimulationManagement.GetEntityByID(id);
 
-				if (current.GetData(Faction.battleDataKey, out BattleData data))
+				if (current.GetData(DataTags.Battle, out BattleData data))
 				{
 					if (!data.ongoingBattles.Remove(pos))
 					{
-						Debug.LogWarning("Faction was unaware of battle it was in!");
+						Debug.LogWarning("Entity was unaware of battle it was in!");
 					}
 				}
 			}
 
-			involvedFactions.Clear();
+			involvedEntities.Clear();
 		}
 
 		public void ResolveTerritory(RealSpacePostion pos, HistoryData historyData, int winnerID, bool isLazy = true)
@@ -105,19 +108,21 @@ public class GlobalBattleData : DataBase
 			}
 
 			//Otherwise if winner is hostile to defender than we remove this cell from the defender
-			if (SimulationManagement.GetFactionByID(winnerID).GetData(Faction.relationshipDataKey, out FeelingsData relData))
+			if (SimulationManagement.GetEntityByID(winnerID).GetData(DataTags.Feelings, out FeelingsData relData))
 			{
 				if (relData.idToFeelings.ContainsKey(defender) && relData.idToFeelings[defender].inConflict)
 				{
-					Faction lossFaction = SimulationManagement.GetFactionByID(defender);
+					SimulationEntity lostEntity = SimulationManagement.GetEntityByID(defender);
 
-					if (lossFaction.GetData(Faction.Tags.Territory, out TerritoryData lossData))
+					if (lostEntity.GetData(DataTags.Territory, out TerritoryData lossData))
 					{
 						lossData.RemoveTerritory(pos);
 
 						float modifier = 1.0f;
 
-						if (lossFaction.GetData(Faction.Tags.CanFightWars, out WarData warData))
+						//If this entity is at war with the winner add some additional
+						//war exhaustion for losing a territory
+						if (lostEntity.GetData(DataTags.War, out WarData warData))
 						{
 							if (warData.atWarWith.Contains(winnerID))
 							{
@@ -127,10 +132,11 @@ public class GlobalBattleData : DataBase
 						}
 
 						//Apply territory cap loss
+						//This is too ensure entites don't just get stuck in eternal wars
+						//where they keep claiming
 						lossData.territoryClaimUpperLimit -= 2f * modifier;
 
-
-						//Need to add the ability to transfer this to history data of some kind
+						//Transfer previously owned faction to history data
 						if (historyData != null)
 						{
 							if (!historyData.previouslyOwnedTerritories.ContainsKey(pos))
@@ -145,7 +151,7 @@ public class GlobalBattleData : DataBase
 					}
 
 					//Destroy any settlement in this area
-					if (lossFaction.GetData(Faction.Tags.Settlements, out SettlementData setData))
+					if (lostEntity.GetData(DataTags.Settlement, out SettlementData setData))
 					{
 						setData.settlements.Remove(pos);
 					}
@@ -187,11 +193,11 @@ public class GlobalBattleData : DataBase
 		}
 
 		Battle battle = battles[key];
-		List<int> involvedFactions = battle.GetInvolvedFactions();
+		List<int> involvedFactions = battle.GetInvolvedEntities();
 
 		if (!involvedFactions.Contains(originID))
 		{
-			battle.AddInvolvedFaction(originID);
+			battle.AddInvolvedEntity(originID);
 
 			if (battle.firstAttacker == -1)
 			{
@@ -200,8 +206,8 @@ public class GlobalBattleData : DataBase
 			}
 
 			//Add new battle reference
-			Faction attacker = SimulationManagement.GetFactionByID(originID);
-			if (attacker.GetData(Faction.battleDataKey, out BattleData attackBData))
+			SimulationEntity attacker = SimulationManagement.GetEntityByID(originID);
+			if (attacker.GetData(DataTags.Battle, out BattleData attackBData))
 			{
 				if (!attackBData.ongoingBattles.ContainsKey(key))
 				{
@@ -210,14 +216,14 @@ public class GlobalBattleData : DataBase
 				}
 				else
 				{
-					throw new System.Exception("major error: faction does not know it is in a battle it is in!");
+					throw new System.Exception("major error: entity does not know it is in a battle it is in!");
 				}
 			}
 
 			//Defending faction
 			if (!involvedFactions.Contains(targetID))
 			{
-				battle.AddInvolvedFaction(targetID);
+				battle.AddInvolvedEntity(targetID);
 
 				if (battle.defender == -1)
 				{
@@ -226,9 +232,9 @@ public class GlobalBattleData : DataBase
 				}
 
 				//Get target ongoing battle data and add this battle as a new entry
-				Faction defender = SimulationManagement.GetFactionByID(targetID);
+				SimulationEntity defender = SimulationManagement.GetEntityByID(targetID);
 
-				if (defender.GetData(Faction.battleDataKey, out BattleData defendBData))
+				if (defender.GetData(DataTags.Battle, out BattleData defendBData))
 				{
 					if (!defendBData.ongoingBattles.ContainsKey(key))
 					{

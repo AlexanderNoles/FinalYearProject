@@ -2,23 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MonitorBreak.Bebug;
+using EntityAndDataDescriptor;
+using System.Linq;
 
 [SimulationManagement.ActiveSimulationRoutine(25)]
 public class PopulationGrowthRoutine : RoutineBase
 {
     public override void Run()
     {
-        List<Faction> populatedFactions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Population);
+        List<DataBase> populationDatas = SimulationManagement.GetDataViaTag(DataTags.Population);
 
-        foreach (Faction faction in populatedFactions)
+        foreach (PopulationData populationData in populationDatas.Cast<PopulationData>())
         {
-            if (faction.GetData(Faction.Tags.Population, out PopulationData data))
+            //Grow the population
+            if (populationData.currentPopulationCount < populationData.populationNaturalGrowthLimt)
             {
-                //Grow the population
-                if (data.currentPopulationCount < data.populationNaturalGrowthLimt)
-                {
-                    data.currentPopulationCount = Mathf.Clamp((data.currentPopulationCount + data.populationNaturalGrowthSpeed) - data.populationNaturalDeathSpeed, 0, data.populationNaturalGrowthLimt);
-                }
+                populationData.currentPopulationCount = 
+                    Mathf.Clamp(
+                        (populationData.currentPopulationCount + populationData.populationNaturalGrowthSpeed) - populationData.populationNaturalDeathSpeed, 
+                        0,
+                        populationData.populationNaturalGrowthLimt);
             }
         }
     }

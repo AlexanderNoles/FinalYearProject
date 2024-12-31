@@ -15,45 +15,54 @@ public class BattleResolutionRoutine : RoutineBase
 
 		//Each tick the battle system runs over every created battle (stored in the global battle data)
 		//and processes it
+		//If the battle is being updated by the game loop (this location is lazy) then we only update the battles
+		//relationship matrix
 
-		//Get gameworld and universal battle data and histroy data
+		//Get gameworld and universal battle data and history data
 		GameWorld gameworld = GameWorld.main;
 		//Get specific game world data
 		gameworld.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattleData);
 		gameworld.GetData(DataTags.Historical, out HistoryData historyData);
 
-		//Get all at war factions
-		List<Faction> allFactions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Faction);
-		Dictionary<int, MilitaryData> idToMilitaryData = SimulationManagement.GetDataForFactionsList<MilitaryData>(allFactions, Faction.Tags.HasMilitary.ToString());
-		Dictionary<int, BattleData> idToBattleData = SimulationManagement.GetDataForFactionsList<BattleData>(allFactions, Faction.battleDataKey);
-		Dictionary<int, List<int>> idToOppositionIDs = new Dictionary<int, List<int>>();
+        //Get all feelings data
+        Dictionary<int, FeelingsData> idToFeelingsData = SimulationManagement.GetEntityIDToData<FeelingsData>(DataTags.Feelings);
 
-		//Pre compute opposition
-		foreach (Faction faction in allFactions)
-		{
-			if (faction.GetData(Faction.relationshipDataKey, out FeelingsData data))
-			{
-				List<int> newOpposition = new List<int>();
-
-				foreach (KeyValuePair<int, FeelingsData.Relationship> relationship in data.idToFeelings)
-				{
-					//Change this to some other kinda of check so we can get rid of inConflict (we want to keep things dynamic and setting this flag hampers that)
-					if (relationship.Value.inConflict)
-					{
-						//In conflict
-						newOpposition.Add(relationship.Key);
-					}
-				}
-
-				idToOppositionIDs.Add(faction.id, newOpposition);
-			}
-		}
+        //Get all military data
+        Dictionary<int, MilitaryData> idToMilitaryData = SimulationManagement.GetEntityIDToData<MilitaryData>(DataTags.Military);
 
 		for (int b = 0; b < globalBattleData.battles.Count; b++)
 		{
 			KeyValuePair<RealSpacePostion, GlobalBattleData.Battle> battleKVP = globalBattleData.battles.ElementAt(b);
+            GlobalBattleData.Battle battle = battleKVP.Value;
+            List<int> involvedEntities = battle.GetInvolvedEntities();
 
-			//Battles are visitable locations so we can just pass the battle
+			//Compute opposition matrix for this battle
+			battle.opositionMatrix.Clear();
+			//For every entity in the battle
+            foreach (int id in involvedEntities)
+			{
+				battle.opositionMatrix.Add(id, new List<int>());
+
+				if (idToFeelingsData.ContainsKey(id))
+				{
+					FeelingsData feelingsData = idToFeelingsData[id];
+					//For every entity in the battle
+					foreach (int otherID in involvedEntities)
+					{
+						if (otherID != id && feelingsData.idToFeelings.ContainsKey(id))
+						{
+							//If not this entity and in conflict with this entity...
+							if (feelingsData.idToFeelings[otherID].inConflict)
+							{
+								//...add to opposition matrix
+								battle.opositionMatrix[id].Add(otherID);
+							}
+						}
+					}
+				}
+			}
+
+			//Battles are visitable locations so we can just pass the battle's position
 			if (!SimulationManagement.PositionIsLazy(battleKVP.Value.GetPosition()))
 			{
 				//This battle is being proccessed by the typical game loop
@@ -61,12 +70,9 @@ public class BattleResolutionRoutine : RoutineBase
 				continue;
 			}
 
-			GlobalBattleData.Battle battle = battleKVP.Value;
+			int involvedEntitiesCount = involvedEntities.Count;
 
-			List<int> involvedFactions = battle.GetInvolvedFactions();
-			int involvedFactionsCount = involvedFactions.Count;
-
-			//First we need to khow many ships are in this battle for each faction 
+			//First we need to know many units are in this battle for each entity 
 			//ID
 			//Ships
 			//Ship count
@@ -74,9 +80,9 @@ public class BattleResolutionRoutine : RoutineBase
 
 			List<(int, List<ShipCollection>, int)> shipCollections = new List<(int, List<ShipCollection>, int)>();
 
-			for (int i = 0; i < involvedFactionsCount; i++)
+			for (int i = 0; i < involvedEntitiesCount; i++)
 			{
-				int id = involvedFactions[i];
+				int id = involvedEntities[i];
 				MilitaryData militaryData = idToMilitaryData[id];
 
 				if (militaryData.cellCenterToFleets.ContainsKey(battleKVP.Key))
@@ -93,7 +99,7 @@ public class BattleResolutionRoutine : RoutineBase
 
 						if (totalShipCount > 0)
 						{
-							//If this faction has any ships in this chunk
+							//If this entity has any ships in this chunk
 							shipCollections.Add((id, shipsInCell, totalShipCount));
 						}
 					}
@@ -114,14 +120,14 @@ public class BattleResolutionRoutine : RoutineBase
 				{
 					for (int c = a + 1; c < shipCollections.Count && battleOver; c++)
 					{
-						if (idToOppositionIDs[shipCollections[a].Item1].Contains(shipCollections[c].Item1))
+						if (battle.opositionMatrix[shipCollections[a].Item1].Contains(shipCollections[c].Item1))
 						{
 							battleOver = false;
 						}
 					}
 				}
 
-				//Calculate how much damage each faction in chunk should take
+				//Calculate how much damage each entity in chunk should take
 				//Or if the battle is over we should use the number of ships to add to win progress
 				Dictionary<int, float> idToDamageToTake = new Dictionary<int, float>();
 				float amountToAddToWinProgress = 0.0f;
@@ -136,7 +142,7 @@ public class BattleResolutionRoutine : RoutineBase
 
 						amountToAddToWinProgress = Mathf.Max(totalShips / (10f * battleLengthMultiplier), 0.001f);
 						//Apply win progress
-						battle.AddToWinProgress(involvedFactions.IndexOf(id), amountToAddToWinProgress);
+						battle.AddToWinProgress(involvedEntities.IndexOf(id), amountToAddToWinProgress);
 					}
 					else
 					{
@@ -157,12 +163,12 @@ public class BattleResolutionRoutine : RoutineBase
 						}
 
 						//Add damage that needs to be taken by other factions
-						List<int> opposition = idToOppositionIDs[id];
+						List<int> opposition = battle.opositionMatrix[id];
 						float damagePerEnemy = totalDamage / opposition.Count;
 
 						foreach (int enemyID in opposition)
 						{
-							if (!involvedFactions.Contains(enemyID))
+							if (!involvedEntities.Contains(enemyID))
 							{
 								continue;
 							}
@@ -179,8 +185,8 @@ public class BattleResolutionRoutine : RoutineBase
 
 				if (!battleOver)
 				{
-					//Apply damage to all involved factions
-					foreach (int id in involvedFactions)
+					//Apply damage to all involved entities
+					foreach (int id in involvedEntities)
 					{
 						if (idToDamageToTake.ContainsKey(id))
 						{
@@ -217,9 +223,8 @@ public class BattleResolutionRoutine : RoutineBase
 				}
 			}
 			
-
 			//Check if battle is won
-			//not in the above if(!battleOver) scope so if an outside force removes a faction battles don't freeze in place
+			//not in the above if(!battleOver) scope so if an outside force removes a entity battles don't freeze in place
 			if (battle.BattleWon(out int winnerID))
 			{
 				battle.ResolveTerritory(battleKVP.Key, historyData, winnerID);

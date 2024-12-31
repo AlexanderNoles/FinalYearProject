@@ -1,30 +1,28 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using EntityAndDataDescriptor;
 using UnityEngine;
 
 [SimulationManagement.ActiveSimulationRoutine(110, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Init)]
 public class PoliticalInitRoutine : InitRoutineBase
 {
-	public override bool TagsUpdatedCheck(HashSet<Faction.Tags> tags)
-	{
-		return tags.Contains(Faction.Tags.Politics);
-	}
+    public override bool IsDataToInit(HashSet<Enum> tags)
+    {
+        return tags.Contains(DataTags.Political);
+    }
 
 	public override void Run()
 	{
-		//Get all politically involved factions
-		List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Politics);
+		//Get all political data modules
+		List<DataBase> politicalDatas = SimulationManagement.GetToInitData(DataTags.Political);
 
-		foreach (Faction faction in factions)
+		foreach (PoliticalData politicalData in politicalDatas.Cast<PoliticalData>())
 		{
-            if (faction.GetData(Faction.Tags.Politics, out PoliticalData data))
-            {
-				if (data.authorityAxis == 0 && data.economicAxis == 0)
-				{
-					data.economicAxis = SimulationManagement.random.Next(-100, 101) / 100.0f;
-					data.authorityAxis = SimulationManagement.random.Next(-100, 101) / 100.0f;
-				}
-            }
+            //Give randomized political leaning
+            politicalData.economicAxis = SimulationManagement.random.Next(-100, 101) / 100.0f;
+            politicalData.authorityAxis = SimulationManagement.random.Next(-100, 101) / 100.0f;
         }
 	}
 }

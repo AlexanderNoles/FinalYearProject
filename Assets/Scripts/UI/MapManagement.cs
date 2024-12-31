@@ -267,7 +267,7 @@ public class MapManagement : UIState
 
 									foreach (KeyValuePair<RealSpacePostion, GlobalBattleData.Battle> battle in globalBattleData.battles)
 									{
-										int wdhjbnhjawbndhjabhjgdb = battle.Value.GetInvolvedFactions().Count;
+										int wdhjbnhjawbndhjabhjgdb = battle.Value.GetInvolvedEntities().Count;
 
 										for (int k = 0; k < wdhjbnhjawbndhjabhjgdb; k++)
 										{

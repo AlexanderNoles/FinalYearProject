@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using EntityAndDataDescriptor;
 using UnityEngine;
 
 [SimulationManagement.ActiveSimulationRoutine(-5000, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Normal)]
@@ -13,10 +14,10 @@ public class RandomEventTickRoutine : RoutineBase
 		{
 			//Every 5 years
 
-			float newFactionChance = 25 + (Mathf.Max(4 - SimulationManagement.GetFactionCount(), 0) * 26);
-			if (SimulationManagement.random.Next(0, 101) < newFactionChance)
+			float newEntityChance = 25 + (Mathf.Max(4 - SimulationManagement.GetEntityCount(), 0) * 26);
+			if (SimulationManagement.random.Next(0, 101) < newEntityChance)
 			{
-				//Spawn random faction
+				//Spawn random entity
 				//Right now we just make a nation
 				new Nation().Simulate();
 			}
@@ -25,14 +26,16 @@ public class RandomEventTickRoutine : RoutineBase
 		if (currentTickRandomValue % SimulationManagement.MonthToTickNumberCount(1) == 0)
 		{
 			//Every month
-			List<Faction> nations = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Nation);
+			List<SimulationEntity> nations = SimulationManagement.GetEntitiesViaTag(EntityTypeTags.Nation);
 
 			//For every nation we have some chance to spawn offshoots
-			foreach (Faction nation in nations)
+			foreach (SimulationEntity nation in nations)
 			{
 				if (SimulationManagement.random.Next(0, 101) < 1)
 				{
 					//Spawn some pirates
+					//Disabled as pirates currently do nothing
+					//This means they would simply sit on the world map clogging up space
 					//new PirateCrew().Simulate();
 				}
 			}

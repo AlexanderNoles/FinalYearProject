@@ -47,7 +47,7 @@ public class NationTroopManagementRoutine : RoutineBase
 				//Then transfer free fleets to those 
 				foreach (KeyValuePair<RealSpacePostion, BattleData.BattleReference> entry in battleData.ongoingBattles)
 				{
-					List<int> involvedFactions = globalBattleData.battles[entry.Key].GetInvolvedFactions();
+					List<int> involvedFactions = globalBattleData.battles[entry.Key].GetInvolvedEntities();
 
 					//Calculate opposing force
 					int oppositionCount = 0;

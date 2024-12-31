@@ -1,66 +1,68 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using EntityAndDataDescriptor;
 using UnityEngine;
 
-//Lowest priority routine
 [SimulationManagement.ActiveSimulationRoutine(-3000)]
 public class MetaRoutine : RoutineBase
 {
     public override void Run()
     {
-        List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Faction);
-        List<Faction> deadFactions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Dead);
+        List<SimulationEntity> deadEntities = SimulationManagement.GetEntitiesViaTag(EntityStateTags.Dead);
+        List<int> idsOfRemovedEntities = new List<int>();
 
-        List<int> idsOfRemovedFactions = new List<int>();
-
-        for(int i = 0; i < deadFactions.Count;)
+        for (int i = 0; i < deadEntities.Count;)
         {
-            Faction faction = deadFactions[i];
+            SimulationEntity deadEntity = deadEntities[0];
 
-            if (faction.HasTag(Faction.Tags.Dead) && !faction.HasTag(Faction.Tags.Unkillable))
+            if (!deadEntity.HasTag(EntityStateTags.Unkillable))
             {
-                //Remove this faction from the simulation
-                SimulationManagement.RemoveFactionFully(faction);
-                idsOfRemovedFactions.Add(faction.id);
-                //Perform nothing else for this faction as it is now dead (including incrementing the index)
-                continue; 
+                //Remove this entity from the simulation
+                SimulationManagement.RemoveEntityFromSimulation(deadEntity);
+                idsOfRemovedEntities.Add(deadEntity.id);
+                //Perform nothing else for this entity as it is now dead (including incrementing the index)
+                continue;
             }
-
-            i++;
+            else
+            {
+                deadEntity.RemoveTag(EntityStateTags.Dead);
+                //Remove dead state from this entity or it will continue to try and be killed each tick
+                //Because this removes it from the list we can't increment the index
+                continue;
+            }
         }
 
-        if (idsOfRemovedFactions.Count > 0)
-        {
-            //Do cleanup
-			//This cleanup is only done for generic things that all factions should have
-			//Specific systems implement evaluation functions that typically do other things alongside removal
+        List<DataBase> allFeelingsData = SimulationManagement.GetDataViaTag(DataTags.Feelings);
 
-            //Factions are now removed from the factions list
-            //So we can just iterate through that
-            //They are removed automatically because GetAllFactionsWithTag really just returns a pointer to the actual list
-            //Which RemoveFactionFully takes them out of
-            foreach (Faction faction in factions)
+        //This should arguably be conjoined with the evaluation routine code
+        //So cleanup can be implemented in a modularised fashion
+        //Perhaps a new specific type of routine?
+        if (idsOfRemovedEntities.Count > 0)
+        {
+            //Removed entities this tick
+
+            //Do cleanup
+            //This cleanup violates the modular principles in some sense
+            //But the nature of feelings data requires this data to be removed (otherwise it would just sit there taking up space)
+            foreach (FeelingsData feelingsData in allFeelingsData.Cast<FeelingsData>())
             {
-                if (faction.GetData(Faction.relationshipDataKey, out FeelingsData relationshipData))
+                foreach (int id in idsOfRemovedEntities)
                 {
-					foreach (int id in idsOfRemovedFactions)
-					{
-						relationshipData.idToFeelings.Remove(id);
-					}
+                    feelingsData.idToFeelings.Remove(id);
                 }
             }
 
-			//Check current battle data and remove them from that
-			//Get global data
-			SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld)[0].GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
+            GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattleData);
 
-			foreach (KeyValuePair<RealSpacePostion, GlobalBattleData.Battle> battleEntry in globalBattleData.battles)
-			{
-				foreach (int id in idsOfRemovedFactions)
-				{
-					battleEntry.Value.RemoveInvolvedFaction(id);
-				}
-			}
-		}
+            //Remove from battles if they were partaking
+            foreach (KeyValuePair<RealSpacePostion, GlobalBattleData.Battle> battleEntry in globalBattleData.battles)
+            {
+                foreach (int id in idsOfRemovedEntities)
+                {
+                    battleEntry.Value.RemoveInvolvedEntity(id);
+                }
+            }
+        }
     }
 }

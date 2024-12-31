@@ -255,6 +255,19 @@ public class SimulationManagement : MonoBehaviour
         //Return empty list by default
         return new List<DataBase>();
     }
+
+    public static Dictionary<int, T> GetEntityIDToData<T>(Enum tag) where T : DataBase
+    {
+        Dictionary<int, T> toReturn = new Dictionary<int, T>();
+        List<DataBase> dataTarget = GetDataViaTag(tag);
+
+        foreach (DataBase dataModule in dataTarget)
+        {
+            toReturn.Add(dataModule.parent.Get().id, (T)dataModule);
+        }
+
+        return toReturn;
+    }
     #endregion
 
 
