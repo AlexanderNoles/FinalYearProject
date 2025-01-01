@@ -30,7 +30,8 @@ public class PopulationBasedTerritoryExpansion : RoutineBase
                 //When at war growth rate is dramatically reduced
                 //This prevents wars from continuing forever by just having nations expand as they are destroyed
                 //Realistic too!
-                reducedGrowth = warData.atWarWith.Count > 0;
+                //Updated to only be in effect if the global stratergy is aggresive
+                reducedGrowth = warData.atWarWith.Count > 0 && warData.globalStratergy == WarData.GlobalStratergy.Aggresive;
 			}
 
 			if (reducedGrowth)

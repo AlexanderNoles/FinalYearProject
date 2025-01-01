@@ -174,9 +174,9 @@ public class SettlementManagementRoutine : RoutineBase
                         {
                             float productionSpeed = MathHelper.ValueTanhFalloff(invertedSettlementIndex, 1, 10);
 
-                            if (!hasWarData || warData.atWarWith.Count == 0)
+                            if (!hasWarData || warData.atWarWith.Count == 0 || warData.globalStratergy == WarData.GlobalStratergy.Defensive)
                             {
-								//Reduce military production speed outside of war time
+								//Reduce military production speed outside of war time, or if stratergy is currently defensive
                                 productionSpeed *= 0.1f;
                             }
 

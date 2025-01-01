@@ -12,4 +12,13 @@ public class WarData : DataBase
 	public float warExhaustionGrowthMultiplier = 0.05f;
 
 	public List<int> atWarWith = new List<int>();
+
+	public enum GlobalStratergy
+	{
+		Aggresive,
+		Defensive
+	}
+
+	public GlobalStratergy globalStratergy = GlobalStratergy.Aggresive;
+	public float defensivePropensity = 3.0f;
 }

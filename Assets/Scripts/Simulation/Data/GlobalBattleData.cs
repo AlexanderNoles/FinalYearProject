@@ -123,6 +123,7 @@ public class GlobalBattleData : DataBase
 						float modifier = 1.0f;
 
 						//If this entity is at war with the winner add some additional
+						//or the winner is at war with this entity
 						//war exhaustion for losing a territory
 						if (lostEntity.GetData(DataTags.War, out WarData warData))
 						{
@@ -153,7 +154,6 @@ public class GlobalBattleData : DataBase
                         //This is too ensure entites don't just get stuck in eternal wars
                         //where they keep claiming
                         lossData.territoryClaimUpperLimit -= 2f * modifier;
-						Console.Log(modifier);
 
 						//Transfer previously owned faction to history data
 						if (historyData != null)
