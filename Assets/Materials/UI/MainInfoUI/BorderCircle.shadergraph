@@ -8,6 +8,9 @@
         },
         {
             "m_Id": "42d45347d8434c21aba8afad53a1d150"
+        },
+        {
+            "m_Id": "400c7e87739a4930abb8f61eebc1c19a"
         }
     ],
     "m_Keywords": [],
@@ -38,11 +41,28 @@
         },
         {
             "m_Id": "3542482ce1e04811be5df3f5e412a25a"
+        },
+        {
+            "m_Id": "24607d27cf8040aa99c32ac057aee2c3"
         }
     ],
     "m_GroupDatas": [],
     "m_StickyNoteDatas": [],
     "m_Edges": [
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "24607d27cf8040aa99c32ac057aee2c3"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "3542482ce1e04811be5df3f5e412a25a"
+                },
+                "m_SlotId": -73631594
+            }
+        },
         {
             "m_OutputSlot": {
                 "m_Node": {
@@ -173,6 +193,42 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "24607d27cf8040aa99c32ac057aee2c3",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": 1042.6087646484375,
+            "y": 715.6522216796875,
+            "width": 0.0,
+            "height": 0.0
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "3eb6693e2e424edfb5fe58e665409394"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "400c7e87739a4930abb8f61eebc1c19a"
+    }
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.ColorRGBMaterialSlot",
     "m_ObjectId": "2629e12ffff046f99ac68a4eda0bb8be",
     "m_Id": 0,
@@ -203,6 +259,21 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "2b528c08b3b84a8eaf1c70066b18394e",
+    "m_Id": -73631594,
+    "m_DisplayName": "Radius",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "_Radius",
+    "m_StageCapability": 3,
+    "m_Value": 0.019999999552965165,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.SubGraphNode",
     "m_ObjectId": "3542482ce1e04811be5df3f5e412a25a",
     "m_Group": {
@@ -221,6 +292,9 @@
     },
     "m_Slots": [
         {
+            "m_Id": "2b528c08b3b84a8eaf1c70066b18394e"
+        },
+        {
             "m_Id": "d3ea1fbf66ac4ebaa9414b678b0c37bc"
         }
     ],
@@ -233,8 +307,12 @@
         "m_SerializableColors": []
     },
     "m_SerializedSubGraph": "{\n    \"subGraph\": {\n        \"fileID\": -5475051401550479605,\n        \"guid\": \"ffd99f9f6945c854288d51aa5f4714bc\",\n        \"type\": 3\n    }\n}",
-    "m_PropertyGuids": [],
-    "m_PropertyIds": [],
+    "m_PropertyGuids": [
+        "47560012-1e89-49c7-ba21-28e7b7472512"
+    ],
+    "m_PropertyIds": [
+        -73631594
+    ],
     "m_Dropdowns": [],
     "m_DropdownSelectedEntries": []
 }
@@ -251,6 +329,21 @@
     "m_StageCapability": 2,
     "m_Value": 1.0,
     "m_DefaultValue": 1.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "3eb6693e2e424edfb5fe58e665409394",
+    "m_Id": 0,
+    "m_DisplayName": "Radius",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
     "m_Labels": []
 }
 
@@ -276,6 +369,34 @@
     },
     "m_Labels": [],
     "m_Space": 0
+}
+
+{
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "400c7e87739a4930abb8f61eebc1c19a",
+    "m_Guid": {
+        "m_GuidSerialized": "c700956f-d55a-450f-a09f-4a421157094d"
+    },
+    "m_Name": "Radius",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "Radius",
+    "m_DefaultReferenceName": "_Radius",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 0.019999999552965165,
+    "m_FloatType": 0,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
+    }
 }
 
 {
@@ -375,6 +496,9 @@
         },
         {
             "m_Id": "42d45347d8434c21aba8afad53a1d150"
+        },
+        {
+            "m_Id": "400c7e87739a4930abb8f61eebc1c19a"
         }
     ]
 }

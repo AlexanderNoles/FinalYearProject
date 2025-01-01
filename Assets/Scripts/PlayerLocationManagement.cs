@@ -141,7 +141,7 @@ public class PlayerLocationManagement : MonoBehaviour
 	public MultiObjectPool uiPool;
 	public RectTransform uiPoolTargetRect;
 	private const int drawnLocationTargetIndex = 0;
-	private Dictionary<RectTransform, TextMeshProUGUI> transformToLabel = new Dictionary<RectTransform, TextMeshProUGUI>();
+	private Dictionary<RectTransform, LocationTrackingUI> transformToLocationTracker = new Dictionary<RectTransform, LocationTrackingUI>();
 
 	private void Awake()
 	{
@@ -234,7 +234,7 @@ public class PlayerLocationManagement : MonoBehaviour
 		correspondingDistances.Clear();
 
 		//Perform operation
-		double drawDistance = 10 * WorldManagement.inEngineWorldScaleMultiplier;
+		double drawDistance = 100 * WorldManagement.inEngineWorldScaleMultiplier;
 		int chunkRange = (int)Math.Ceiling(drawDistance / WorldManagement.GetGridDensity());
 		PerformOperationOnNearbyLocations(worldCenter, locationGetOperation, chunkRange, 1, drawDistance);
 
@@ -268,23 +268,31 @@ public class PlayerLocationManagement : MonoBehaviour
                 RectTransform uiIndicator = uiPool.UpdateNextObjectPosition(drawnLocationTargetIndex, Vector3.zero).transform as RectTransform;
 
                 uiIndicator.anchoredPosition3D = new Vector2(viewPortPos.x * targetRectSizeDelta.x, viewPortPos.y * targetRectSizeDelta.y) - halfTRSD;
-				uiIndicator.localScale = Mathf.Clamp((100.0f / Vector3.Distance(worldPos, CameraManagement.GetMainCameraPosition())), 0.25f, 1.0f) * 3.0f * Vector3.one;
+				//uiIndicator.localScale = Mathf.Clamp((100.0f / Vector3.Distance(worldPos, CameraManagement.GetMainCameraPosition())), 0.25f, 1.0f) * 3.0f * Vector3.one;
 
-				if (!transformToLabel.ContainsKey(uiIndicator))
+				if (!transformToLocationTracker.ContainsKey(uiIndicator))
 				{
-					transformToLabel.Add(uiIndicator, uiIndicator.GetChild(1).GetComponent<TextMeshProUGUI>());
+                    transformToLocationTracker.Add(uiIndicator, uiIndicator.GetComponent<LocationTrackingUI>());
 				}
 
-				TextMeshProUGUI targetLabel = transformToLabel[uiIndicator];
+				LocationTrackingUI targetUI = transformToLocationTracker[uiIndicator];
 				string locationTitle = location.targetLocation.GetTitle();
-				if (!targetLabel.text.Equals(locationTitle))
+				if (!targetUI.label.text.Equals(locationTitle))
 				{
-					targetLabel.text = locationTitle;
+                    targetUI.label.text = locationTitle;
 				}
+
+				//Calculate distance from worldCenter
+				double distance = WorldManagement.OffsetFromWorldCenter(location.targetLocation.GetPosition(), Vector3.zero).Magnitude();
+				string distanceText = Math.Round(distance).ToString() + " u";
+				if (!targetUI.distanceLabel.text.Equals(distanceText))
+				{
+					targetUI.distanceLabel.text = distanceText;
+                }
             }
         }
 
-		uiPool.PruneObjectsNotUpdatedThisFrame(drawnLocationTargetIndex);
+		uiPool.PruneObjectsNotUpdatedThisFrame(drawnLocationTargetIndex, true);
 
         //Set primary location id
         int newPrimaryLocationID = GetPrimaryLocationWrapper().locationID;

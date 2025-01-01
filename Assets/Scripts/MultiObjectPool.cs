@@ -243,9 +243,9 @@ public class MultiObjectPool : MonoBehaviour
 			currentUpdatedObjectPointer = 0;
 		}
 
-        public void PruneObjectsNotUpdatedThisFrame()
+        public void PruneObjectsNotUpdatedThisFrame(bool force)
         {
-            if (currentUpdatedObjectPointer <= 0)
+            if (currentUpdatedObjectPointer <= 0 && !force)
             {
                 return;
             }
@@ -355,9 +355,9 @@ public class MultiObjectPool : MonoBehaviour
         return pools[poolIndex].UpdateNextObjectPosition(position);
     }
 
-    public void PruneObjectsNotUpdatedThisFrame(int poolIndex)
+    public void PruneObjectsNotUpdatedThisFrame(int poolIndex, bool force = false)
     {
-        pools[poolIndex].PruneObjectsNotUpdatedThisFrame();
+        pools[poolIndex].PruneObjectsNotUpdatedThisFrame(force);
     }
 
 	public void HideAllObjects(int poolIndex)
