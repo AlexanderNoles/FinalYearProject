@@ -10,7 +10,6 @@ public class TerritoryData : DataBase
     public RealSpacePostion origin = null;
     public HashSet<RealSpacePostion> territoryCenters = new HashSet<RealSpacePostion>();
     public HashSet<RealSpacePostion> borders = new HashSet<RealSpacePostion>();
-    public List<Vector3> borderInOrder = new List<Vector3>();
 	public float growthRate;
 	public float territoryClaimUpperLimit;
 

@@ -108,7 +108,9 @@ public class GlobalBattleData : DataBase
 			}
 
 			//Otherwise if winner is hostile to defender than we remove this cell from the defender
-			if (SimulationManagement.GetEntityByID(winnerID).GetData(DataTags.Feelings, out FeelingsData relData))
+			SimulationEntity wonEntity = SimulationManagement.GetEntityByID(winnerID);
+
+            if (wonEntity.GetData(DataTags.Feelings, out FeelingsData relData))
 			{
 				if (relData.idToFeelings.ContainsKey(defender) && relData.idToFeelings[defender].inConflict)
 				{
@@ -116,7 +118,7 @@ public class GlobalBattleData : DataBase
 
 					if (lostEntity.GetData(DataTags.Territory, out TerritoryData lossData))
 					{
-						lossData.RemoveTerritory(pos);
+                        lossData.RemoveTerritory(pos);
 
 						float modifier = 1.0f;
 
@@ -124,17 +126,34 @@ public class GlobalBattleData : DataBase
 						//war exhaustion for losing a territory
 						if (lostEntity.GetData(DataTags.War, out WarData warData))
 						{
+							bool applyWarExhaustion = false;
+
+							//If at war with winner
 							if (warData.atWarWith.Contains(winnerID))
 							{
-								modifier = warData.warExhaustion;
-								warData.warExhaustion += 10.0f * warData.warExhaustionGrowthMultiplier;
+								applyWarExhaustion = true;
 							}
+							//Or winner is at war with us
+							else if (wonEntity.GetData(DataTags.War, out WarData wonWarData) && wonWarData.atWarWith.Contains(defender))
+							{
+								applyWarExhaustion = true;
+
+								//Make this faction now at war with winner
+								warData.atWarWith.Add(winnerID);
+							}
+
+							if (applyWarExhaustion)
+                            {
+                                modifier = warData.warExhaustion;
+                                warData.warExhaustion += 10.0f * warData.warExhaustionGrowthMultiplier;
+                            }
 						}
 
-						//Apply territory cap loss
-						//This is too ensure entites don't just get stuck in eternal wars
-						//where they keep claiming
-						lossData.territoryClaimUpperLimit -= 2f * modifier;
+                        //Apply territory cap loss
+                        //This is too ensure entites don't just get stuck in eternal wars
+                        //where they keep claiming
+                        lossData.territoryClaimUpperLimit -= 2f * modifier;
+						Console.Log(modifier);
 
 						//Transfer previously owned faction to history data
 						if (historyData != null)

@@ -97,28 +97,23 @@ public class LocationInformationUI : MonoBehaviour
 
 	public void BuyFuel()
 	{
-		//Get player inventory
-		List<Faction> players = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Player);
+        //Get player inventory
+        PlayerInventory playerInventory = PlayerManagement.GetInventory();
 
-		if(players.Count > 0)
-		{
-			players[0].GetData(Player.inventoryDataKey, out PlayerInventory playerInventory);
+        const float maxFuelBuyRate = 50;
+        float moneyToSpend = Mathf.Min(maxFuelBuyRate, playerInventory.mainCurrency);
 
-			const float maxFuelBuyRate = 50;
-			float moneyToSpend = Mathf.Min(maxFuelBuyRate, playerInventory.mainCurrency);
+        if (moneyToSpend > 0)
+        {
+            //Can afford any fuel
+            //Subtract money
+            playerInventory.mainCurrency -= moneyToSpend;
+            playerInventory.fuel += moneyToSpend * cachedFuelPerMoneyUnit;
 
-			if (moneyToSpend > 0)
-			{
-				//Can afford any fuel
-				//Subtract money
-				playerInventory.mainCurrency -= moneyToSpend;
-				playerInventory.fuel += moneyToSpend * cachedFuelPerMoneyUnit;
-
-				//Redraw main ui
-				MainInfoUIControl.ForceRedraw();
-			}
-		}
-	}
+            //Redraw main ui
+            MainInfoUIControl.ForceRedraw();
+        }
+    }
 
 	private void Update()
 	{

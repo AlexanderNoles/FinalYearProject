@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using EntityAndDataDescriptor;
+using MonitorBreak.Bebug;
 using UnityEngine;
 
-[SimulationManagement.ActiveSimulationRoutine(0)]
+[SimulationManagement.ActiveSimulationRoutine(27)]
 public class EconomicPowerReductionRoutine : RoutineBase
 {
     public override void Run()
@@ -23,7 +24,7 @@ public class EconomicPowerReductionRoutine : RoutineBase
 
             int randomCeilingRaise = 0;
 
-            if (economy.TryGetLinkedData(DataTags.Military, out WarData warData))
+            if (economy.TryGetLinkedData(DataTags.War, out WarData warData))
             {
                 randomCeilingRaise = Mathf.FloorToInt(warData.warExhaustion * 0.1f);
             }

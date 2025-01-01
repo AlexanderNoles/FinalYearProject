@@ -3,7 +3,7 @@ using System.Linq;
 using EntityAndDataDescriptor;
 using UnityEngine;
 
-[SimulationManagement.ActiveSimulationRoutine(0)]
+[SimulationManagement.ActiveSimulationRoutine(9)]
 public class MilitaryCapacityFromPopulationRoutine : RoutineBase
 {
     public override void Run()

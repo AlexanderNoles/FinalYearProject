@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Linq;
+using EntityAndDataDescriptor;
 
 public class MapManagement : UIState
 {
@@ -116,7 +117,6 @@ public class MapManagement : UIState
     private const int mapRingPool = 0;
     private const int shipIndicatorPool = 1;
     private const int mapBasePool = 2;
-	private const bool debugMode = false;
 
     private List<(Transform, Transform)> mapObjectsAndParents;
     private bool pastFirstFrameOfMapAnim = false;
@@ -227,214 +227,147 @@ public class MapManagement : UIState
 
 				if (Time.time > mapRefreshTime && (SimulationSettings.UpdateMap() || mapRefreshTime == 0))
                 {
-					ttEffects.Clear();
+                    GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattleData);
+                    GameWorld.main.GetData(DataTags.Historical, out GlobalBattleData historyData);
+                    //Get all emblem datas so they can be accessed later on
+                    Dictionary<int, EmblemData> entityIDtoEmblemDatas = SimulationManagement.GetEntityIDToData<EmblemData>(DataTags.Emblem);
+
+                    ttEffects.Clear();
 					float timeTillNextMapUpdate = (5.0f / SimulationManagement.GetSimulationSpeed());
 
 					mapRefreshTime = Time.time + timeTillNextMapUpdate;
-                    //We also want to steup the current territory borders here cause the intro animation is now done
-                    //We need to get all the factions with the territory tag and then spawn territory squares based on that
-                    List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Territory);
+					//We want to draw the current territory borders now cause the intro animation is done
+					//We need to get all the territory data modules and then draw lines based on them
+					List<DataBase> territories = SimulationManagement.GetDataViaTag(DataTags.Territory);
 
-					GameWorld gameworld = (GameWorld)SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld)[0];
-					gameworld.GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
-					gameworld.GetData(Faction.Tags.Historical, out HistoryData historyData);
-
-					//Draw per faction data
-					foreach (Faction faction in factions)
+					//Draw per territory data
+					foreach (TerritoryData territoryData in territories.Cast<TerritoryData>())
 					{
-						Color factionColour = faction.GetColour();
+						int id = territoryData.parent.Get().id;
+						bool hasEmblemData = entityIDtoEmblemDatas.ContainsKey(id);
 
-						if (faction.GetData(Faction.Tags.Territory, out TerritoryData territoryData))
+                        int count = territoryData.borders.Count;
+
+						//Traverse along the border of the territory
+						//Find all continous edges
+                        List<List<Vector3>> borderLines = territoryData.CalculateMapBorderPositions(out Vector3 iconPos, out Vector3 iconScale);
+
+                        foreach (List<Vector3> line in borderLines)
                         {
-                            int count = territoryData.borders.Count;
+                            Transform borderRendererTransform = mapElementsPools.UpdateNextObjectPosition(3, Vector3.zero);
 
-                            if (count > 0)
+                            if (!cachedTransformToBorderRenderer.ContainsKey(borderRendererTransform))
                             {
-								if (debugMode)
-								{
-									Vector3 debugScale = new Vector3(1, 0, 1) * (float)(WorldManagement.GetGridDensity() / mapRelativeScaleModifier) * 0.8f;
-
-									for (int i = 0; i < territoryData.borders.Count; i++)
-									{
-										MonitorBreak.Bebug.Helper.DrawWirePlane(
-											-territoryData.borders.ElementAt(i).AsTruncatedVector3(mapRelativeScaleModifier),
-											debugScale,
-											Vector3.up,
-											factionColour,
-											timeTillNextMapUpdate,
-											true);
-									}
-
-									foreach (KeyValuePair<RealSpacePostion, GlobalBattleData.Battle> battle in globalBattleData.battles)
-									{
-										int wdhjbnhjawbndhjabhjgdb = battle.Value.GetInvolvedEntities().Count;
-
-										for (int k = 0; k < wdhjbnhjawbndhjabhjgdb; k++)
-										{
-											MonitorBreak.Bebug.Helper.DrawWirePlane(
-												-battle.Key.AsTruncatedVector3(mapRelativeScaleModifier),
-												debugScale * (1.0f + (k * 0.1f)),
-												Vector3.up,
-												Color.yellow,
-												timeTillNextMapUpdate,
-												true);
-										}
-									}
-
-									foreach (KeyValuePair<RealSpacePostion, HistoryData.HistoryCell> historicalTerritory in historyData.previouslyOwnedTerritories)
-									{
-										MonitorBreak.Bebug.Helper.DrawWirePlane(
-											-historicalTerritory.Key.AsTruncatedVector3(mapRelativeScaleModifier),
-											debugScale,
-											Vector3.up,
-											new Color(0.1f, 0.1f, 0.1f, 1.0f),
-											timeTillNextMapUpdate,
-											true);
-									}
-								}
-								else
-								{
-									//New method
-									List<List<Vector3>> borderLines = territoryData.CalculateMapBorderPositions(out Vector3 iconPos, out Vector3 iconScale);
-
-									foreach (List<Vector3> line in borderLines)
-									{
-										Transform borderRendererTransform = mapElementsPools.UpdateNextObjectPosition(3, Vector3.zero);
-
-										if (!cachedTransformToBorderRenderer.ContainsKey(borderRendererTransform))
-										{
-											cachedTransformToBorderRenderer.Add(borderRendererTransform, borderRendererTransform.GetComponent<LineRenderer>());
-										}
-
-										LineRenderer lineRenderer = cachedTransformToBorderRenderer[borderRendererTransform];
-
-										if (lineRenderer != null)
-										{
-#pragma warning disable CS0618 // Type or member is obsolete
-											lineRenderer.SetColors(factionColour, factionColour);
-#pragma warning restore CS0618 // Type or member is obsolete
-
-											lineRenderer.positionCount = line.Count;
-											lineRenderer.SetPositions(line.ToArray());
-
-											lineRenderer.loop = true;
-										}
-									}
-
-									if (faction.GetData(Faction.Tags.Emblem, out EmblemData emblemData))
-									{
-										Transform centralIcon = mapElementsPools.UpdateNextObjectPosition(5, iconPos - (Vector3.up * 0.25f));
-										centralIcon.localScale = iconScale;
-
-										if (!cachedTransformToNationIconRenderers.ContainsKey(centralIcon))
-										{
-											cachedTransformToNationIconRenderers.Add(centralIcon, centralIcon.GetComponent<SpriteRenderer>());
-										}
-
-										cachedTransformToNationIconRenderers[centralIcon].sprite = emblemData.mainIcon;
-										cachedTransformToNationIconRenderers[centralIcon].color = emblemData.highlightColour;
-									}
-								}
+                                cachedTransformToBorderRenderer.Add(borderRendererTransform, borderRendererTransform.GetComponent<LineRenderer>());
                             }
-						}
 
-						if (SimulationSettings.DrawMilitaryPresence())
-						{
-							PathHelper.SimplePathParameters pathParams = new PathHelper.SimplePathParameters();
+                            LineRenderer lineRenderer = cachedTransformToBorderRenderer[borderRendererTransform];
 
-							if (faction.GetData(Faction.Tags.HasMilitary, out MilitaryData milData))
-							{
-								if (debugMode)
+                            if (lineRenderer != null)
+                            {
+								Color color = Color.white;
+								if (hasEmblemData)
 								{
-									if (faction.GetData(Faction.battleDataKey, out BattleData battleData))
-									{
-										foreach (KeyValuePair<RealSpacePostion, List<ShipCollection>> entry in milData.cellCenterToFleets)
-										{
-											Vector3 pos = -entry.Key.AsTruncatedVector3(mapRelativeScaleModifier);
-
-											Color color = Color.green;
-											if (battleData.ongoingBattles.ContainsKey(entry.Key))
-											{
-												color = Color.red;
-											}
-
-											Vector3 minorOffset = Random.onUnitSphere;
-											minorOffset.y = 0;
-											minorOffset.Normalize();
-											minorOffset *= 0.1f;
-
-											int shipCount = 0;
-
-											foreach (ShipCollection collection in entry.Value)
-											{
-												shipCount += collection.GetShips().Count;
-											}
-
-											Debug.DrawRay(pos + minorOffset, Vector3.up * shipCount * 2, factionColour, timeTillNextMapUpdate);
-											Debug.DrawRay(pos + minorOffset, Vector3.up * shipCount, color, timeTillNextMapUpdate);
-										}
-									}
+									color = entityIDtoEmblemDatas[id].mainColour;
 								}
-								else
-								{
-									foreach ((RealSpacePostion, RealSpacePostion) entry in milData.markedTransfers)
-									{
-										Transform borderRendererTransform = mapElementsPools.UpdateNextObjectPosition(3, Vector3.zero);
 
-										if (!cachedTransformToBorderRenderer.ContainsKey(borderRendererTransform))
-										{
-											cachedTransformToBorderRenderer.Add(borderRendererTransform, borderRendererTransform.GetComponent<LineRenderer>());
-										}
-
-										LineRenderer lineRenderer = cachedTransformToBorderRenderer[borderRendererTransform];
-
-										if (lineRenderer != null)
-										{
 #pragma warning disable CS0618 // Type or member is obsolete
-											lineRenderer.SetColors(factionColour, factionColour);
+                                lineRenderer.SetColors(color, color);
 #pragma warning restore CS0618 // Type or member is obsolete
 
-											Vector3 startPos = -entry.Item1.AsTruncatedVector3(mapRelativeScaleModifier);
-											RealSpacePostion endPosRS;
+                                lineRenderer.positionCount = line.Count;
+                                lineRenderer.SetPositions(line.ToArray());
 
-											//Draw to actual battle pos
-											if (globalBattleData.battles.ContainsKey(entry.Item2))
-											{
-												 endPosRS = globalBattleData.battles[entry.Item2].GetPosition();
-											}
-                                            else
-                                            {
-												endPosRS = entry.Item2;
-                                            }
+                                lineRenderer.loop = true;
+                            }
+                        }
 
-                                            Vector3 endPos = -endPosRS.AsTruncatedVector3(mapRelativeScaleModifier);
+                        if (hasEmblemData)
+                        {
+                            Transform centralIcon = mapElementsPools.UpdateNextObjectPosition(5, iconPos - (Vector3.up * 0.25f));
+                            centralIcon.localScale = iconScale;
 
-											Vector3 difference = endPos - startPos;
-											pathParams.forwardVector = difference.normalized;
-											pathParams.rightVector = Vector3.up * (difference.magnitude * 0.4f);
+                            if (!cachedTransformToNationIconRenderers.ContainsKey(centralIcon))
+                            {
+                                cachedTransformToNationIconRenderers.Add(centralIcon, centralIcon.GetComponent<SpriteRenderer>());
+                            }
 
-											PathHelper.SimplePath path = PathHelper.GenerateSimplePathStatic(startPos, endPos, pathParams);
-											int res = Mathf.CeilToInt(path.EstimateLength() / 2.5f);
-											res = Mathf.Max(4, res);
+                            cachedTransformToNationIconRenderers[centralIcon].sprite = entityIDtoEmblemDatas[id].mainIcon;
+                            cachedTransformToNationIconRenderers[centralIcon].color = entityIDtoEmblemDatas[id].highlightColour;
+                        }
+                    }
 
-											lineRenderer.loop = false;
-											lineRenderer.positionCount = res;
+                    //Get all military data for marked transfer drawing
+                    PathHelper.SimplePathParameters pathParams = new PathHelper.SimplePathParameters();
+                    List<DataBase> militaryDatas = SimulationManagement.GetDataViaTag(DataTags.Military);
 
-                                            TroopTransferEffect newTTE = new TroopTransferEffect
-                                            {
-                                                length = timeTillNextMapUpdate * Random.Range(0.1f, 0.2f),
-                                                path = path,
-												pathResolution = res,
-                                                startTime = Time.time,
-                                                target = lineRenderer
-                                            };
-                                            ttEffects.Add(newTTE);
-										}
-									}
-								}
-							}
-						}
-					}
+					foreach (MilitaryData militaryData in militaryDatas)
+					{
+                        int id = militaryData.parent.Get().id;
+                        bool hasEmblemData = entityIDtoEmblemDatas.ContainsKey(id);
+
+                        Color color = Color.white;
+                        if (hasEmblemData)
+                        {
+                            color = entityIDtoEmblemDatas[id].mainColour;
+                        }
+
+
+                        foreach ((RealSpacePostion, RealSpacePostion) entry in militaryData.markedTransfers)
+                        {
+                            Transform borderRendererTransform = mapElementsPools.UpdateNextObjectPosition(3, Vector3.zero);
+
+                            if (!cachedTransformToBorderRenderer.ContainsKey(borderRendererTransform))
+                            {
+                                cachedTransformToBorderRenderer.Add(borderRendererTransform, borderRendererTransform.GetComponent<LineRenderer>());
+                            }
+
+                            LineRenderer lineRenderer = cachedTransformToBorderRenderer[borderRendererTransform];
+
+                            if (lineRenderer != null)
+                            {
+#pragma warning disable CS0618 // Type or member is obsolete
+                                lineRenderer.SetColors(color, color);
+#pragma warning restore CS0618 // Type or member is obsolete
+
+                                Vector3 startPos = -entry.Item1.AsTruncatedVector3(mapRelativeScaleModifier);
+                                RealSpacePostion endPosRS;
+
+                                //Draw to actual battle pos
+                                if (globalBattleData.battles.ContainsKey(entry.Item2))
+                                {
+                                    endPosRS = globalBattleData.battles[entry.Item2].GetPosition();
+                                }
+                                else
+                                {
+                                    endPosRS = entry.Item2;
+                                }
+
+                                Vector3 endPos = -endPosRS.AsTruncatedVector3(mapRelativeScaleModifier);
+
+                                Vector3 difference = endPos - startPos;
+                                pathParams.forwardVector = difference.normalized;
+                                pathParams.rightVector = Vector3.up * (difference.magnitude * 0.4f);
+
+                                PathHelper.SimplePath path = PathHelper.GenerateSimplePathStatic(startPos, endPos, pathParams);
+                                int res = Mathf.CeilToInt(path.EstimateLength() / 2.5f);
+                                res = Mathf.Max(4, res);
+
+                                lineRenderer.loop = false;
+                                lineRenderer.positionCount = res;
+
+                                TroopTransferEffect newTTE = new TroopTransferEffect
+                                {
+                                    length = timeTillNextMapUpdate * Random.Range(0.1f, 0.2f),
+                                    path = path,
+                                    pathResolution = res,
+                                    startTime = Time.time,
+                                    target = lineRenderer
+                                };
+                                ttEffects.Add(newTTE);
+                            }
+                        }
+                    }
 
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(3);
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(5);

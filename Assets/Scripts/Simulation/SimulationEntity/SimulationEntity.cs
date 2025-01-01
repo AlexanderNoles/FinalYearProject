@@ -20,6 +20,8 @@ public class SimulationEntity
         id = currentNextID;
         currentNextID++;
 
+        SimulationManagement.RegisterEntityToIDDict(this);
+
         link = new EntityLink(this);
 
         //Tags and Data are fundamental systems to describe simulation elements

@@ -119,17 +119,10 @@ public class ShopControlUI : FloatingWindow
 				selectedItemInformationDisplay.Draw(targetItem.item);
 
 				//Check we can buy item
-				List<Faction> players = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Player);
+				PlayerInventory playerInventory = PlayerManagement.GetInventory();
 
 				float price = targetItem.calculatedPrice;
-				bool canBuy = false;
-
-				if (players.Count > 0)
-				{
-					players[0].GetData(Player.inventoryDataKey, out PlayerInventory playerInventory);
-
-					canBuy = playerInventory.mainCurrency >= price;
-				}
+				bool canBuy = playerInventory.mainCurrency >= price;
 
 				buyButton.Enable(canBuy);
 				priceLabel.text = $"PRICE: {price}";
@@ -150,31 +143,25 @@ public class ShopControlUI : FloatingWindow
 		{
 			//Get player inventory
 			//Attempt to buy
-			List<Faction> players = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Player);
+			PlayerInventory playerInventory = PlayerManagement.GetInventory();
 
-			if (players.Count > 0)
-			{
-				//Any player factions exist
-				players[0].GetData(Player.inventoryDataKey, out PlayerInventory playerInventory); 
-				
-				if (playerInventory.AttemptToBuy(target, shopData.itemsInShop[targetItemIndex].calculatedPrice))
-				{
-					//Remove item from shop
-					shopData.itemsInShop.RemoveAt(targetItemIndex);
+            if (playerInventory.AttemptToBuy(target, shopData.itemsInShop[targetItemIndex].calculatedPrice))
+            {
+                //Remove item from shop
+                shopData.itemsInShop.RemoveAt(targetItemIndex);
 
-					//Hide ability to buy
-					selectedItemInformationDisplay.DisplayBlocker();
-					targetItemIndex = -1;
+                //Hide ability to buy
+                selectedItemInformationDisplay.DisplayBlocker();
+                targetItemIndex = -1;
 
-					//Redraw
-					Draw(false);
+                //Redraw
+                Draw(false);
 
-					//Redraw main bar
-					//because currency and other stats may have updated
-					MainInfoUIControl.ForceRedraw();
-				}
-			}
-		}
+                //Redraw main bar
+                //because currency and other stats may have updated
+                MainInfoUIControl.ForceRedraw();
+            }
+        }
 	}
 
 	public void Hide()

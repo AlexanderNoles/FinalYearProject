@@ -321,39 +321,35 @@ public class PlayerMapInteraction : PostTickUpdate
 				compoundLabel.text = compoundLabelText;
 
 				//Get inventory
-				List<Faction> players = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Player);
-				if (players.Count > 0)
-				{
-					players[0].GetData(Player.inventoryDataKey, out PlayerInventory inventory);
+				PlayerInventory playerInventory = PlayerManagement.GetInventory();
 
-					if (!PlayerManagement.fuelEnabled || inventory.fuel >= fuelCost)
-					{
-						fuelCostLabel.color = Color.green;
+                if (!PlayerManagement.fuelEnabled || playerInventory.fuel >= fuelCost)
+                {
+                    fuelCostLabel.color = Color.green;
 
-						if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
-						{
-							PlayerCapitalShip.StartJump(targetLocation.primaryLocation.actualLocationData);
+                    if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
+                    {
+                        PlayerCapitalShip.StartJump(targetLocation.primaryLocation.actualLocationData);
 
-							if (PlayerManagement.fuelEnabled) 
-							{
-                                //Remove fuel and have player ship change the ui label over the course of the jump
-                                PlayerCapitalShip.HaveFuelChangeOverJump(inventory.fuel, inventory.fuel - fuelCost);
-                                inventory.fuel -= fuelCost;
-                            }
+                        if (PlayerManagement.fuelEnabled)
+                        {
+                            //Remove fuel and have player ship change the ui label over the course of the jump
+                            PlayerCapitalShip.HaveFuelChangeOverJump(playerInventory.fuel, playerInventory.fuel - fuelCost);
+                            playerInventory.fuel -= fuelCost;
+                        }
 
-							//Set initial draw back to false so when the player arrives the inital draw is done again
-							//Otherwise locations won't show up till next post tick call
-							doneInitialDraw = false;
+                        //Set initial draw back to false so when the player arrives the inital draw is done again
+                        //Otherwise locations won't show up till next post tick call
+                        doneInitialDraw = false;
 
-							mapPools.HideAllObjects(4);
-						}
-					}
-					else
-					{
-						fuelCostLabel.color = Color.red;
-					}
-				}
-			}
+                        mapPools.HideAllObjects(4);
+                    }
+                }
+                else
+                {
+                    fuelCostLabel.color = Color.red;
+                }
+            }
 		}
 	}
 
