@@ -255,7 +255,7 @@ public class PlayerCapitalShip : MonoBehaviour
 
 	private void Update()
 	{
-		if (!PlayerManagement.PlayerFactionExists())
+		if (!PlayerManagement.PlayerEntityExists())
 		{
 			return;
 		}

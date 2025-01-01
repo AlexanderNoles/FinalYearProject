@@ -109,7 +109,7 @@ public class PlayerMapInteraction : PostTickUpdate
 
 		int chunkRange = 10;
 
-		if (PlayerManagement.PlayerFactionExists())
+		if (PlayerManagement.PlayerEntityExists())
 		{
 			chunkRange = Mathf.FloorToInt(PlayerManagement.GetStats().GetStat(Stats.jumpRange.ToString()));
 		}

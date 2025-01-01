@@ -80,21 +80,15 @@ public class InventoryUIManagement : UIState
 		//This is run every frame till we find the data we need
 		if (targetData == null)
 		{
-            //Get inventory
-            List<Faction> playerOwnedFactions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Player);
+			//Get inventory
+			if (PlayerManagement.PlayerEntityExists())
+			{
+                targetData = new InventoryTarget();
+                targetData.targetFaction = PlayerManagement.GetTarget();
+                targetData.targetInventory = PlayerManagement.GetInventory();
 
-            if (playerOwnedFactions.Count > 0)
-            {
-                //Get inventory data
-                if (playerOwnedFactions[0].GetData(Player.inventoryDataKey, out InventoryBase data))
-                {
-                    targetData = new InventoryTarget();
-                    targetData.targetFaction = playerOwnedFactions[0] as Player;
-                    targetData.targetInventory = data;
-
-					//Allow this ui state to be activated
-					enabled = true;
-                }
+                //Allow this ui state to be activated
+                enabled = true;
             }
 
 			if (targetData != null)

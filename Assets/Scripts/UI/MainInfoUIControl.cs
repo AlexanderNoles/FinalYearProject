@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using EntityAndDataDescriptor;
 
 public class MainInfoUIControl : PostTickUpdate
 {
@@ -71,19 +72,15 @@ public class MainInfoUIControl : PostTickUpdate
         dateLabel.text = SimulationManagement.GetDateString();
         DrawHealthAuto();
 
-        List<Faction> players = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Player);
-
-        if (players.Count > 0)
+        if (PlayerManagement.PlayerEntityExists())
         {
             //Get player inventory
-            players[0].GetData(Player.inventoryDataKey, out PlayerInventory inventory);
-
-            currencyLabel.text = inventory.mainCurrency.ToString();
+            currencyLabel.text = PlayerManagement.GetInventory().mainCurrency.ToString();
 
             if (!emblemDrawn)
             {
                 //Only need to draw emblem once, not every post tick
-                players[0].GetData(Faction.Tags.Emblem, out EmblemData emblemData);
+                PlayerManagement.GetTarget().GetData(DataTags.Emblem, out EmblemData emblemData);
 
                 emblemDrawn = emblemRenderer.Draw(emblemData);
             }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using EntityAndDataDescriptor;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -221,7 +222,7 @@ public class PlayerLocationManagement : MonoBehaviour
 	
 	private void LateUpdate()
 	{
-		if (!PlayerManagement.PlayerFactionExists())
+		if (!PlayerManagement.PlayerEntityExists())
 		{
 			return;
 		}
@@ -299,9 +300,9 @@ public class PlayerLocationManagement : MonoBehaviour
 	public static void PerformOperationOnNearbyLocations(RealSpacePostion pos, Func<VisitableLocation, int> operation, int chunkRange = 1, int buffer = 1, double distanceClamp = -1)
 	{
 		//Grab data needed to compute
-		List<Faction> allFactions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Faction);
-		Dictionary<int, SettlementData> idToSetData = SimulationManagement.GetDataForFactionsList<SettlementData>(allFactions, Faction.Tags.Settlements.ToString());
-		Dictionary<int, CapitalData> idToCapitalData = SimulationManagement.GetDataForFactionsList<CapitalData>(allFactions, Faction.Tags.Capital.ToString());
+		List<SettlementData> setData = SimulationManagement.GetDataViaTag(DataTags.Settlement).Cast<SettlementData>().ToList();
+		List<CapitalData> capitalData = SimulationManagement.GetDataViaTag(DataTags.Capital).Cast<CapitalData>().ToList();
+		GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattle);
 
 		//Get postion to run check from
 		RealSpacePostion currentPlayerCellCenter = WorldManagement.ClampPositionToGrid(pos);
@@ -333,47 +334,32 @@ public class PlayerLocationManagement : MonoBehaviour
 
 					foundLocations.Clear();
 
-					//Iterate through all factions
+					//Iterate through all captured data
 					//If they have a location (that we have decided is relevant to the player) in this chunk place it on the map
-					foreach (Faction faction in allFactions)
+					foreach (SettlementData set in setData)
 					{
-						//Settlements
-						if (idToSetData.ContainsKey(faction.id))
-						{
-							SettlementData settlementData = idToSetData[faction.id];
-							if (settlementData.settlements.ContainsKey(currentCellCenter))
-							{
-								foundLocations.Add(settlementData.settlements[currentCellCenter].location);
-							}
-						}
-						//
+                        if (set.settlements.ContainsKey(currentCellCenter))
+                        {
+                            foundLocations.Add(set.settlements[currentCellCenter].location);
+                        }
+                    }
 
-						//Capitals
-						if (idToCapitalData.ContainsKey(faction.id))
-						{
-							CapitalData capitalData = idToCapitalData[faction.id];
+					foreach (CapitalData cap in capitalData)
+					{
+                        if (cap.position != null)
+                        {
+                            if (cap.position.Equals(currentCellCenter))
+                            {
+                                foundLocations.Add(cap.location);
+                            }
+                        }
+                    }
 
-							if (capitalData.position != null)
-							{
-								if (capitalData.position.Equals(currentCellCenter))
-								{
-									foundLocations.Add(capitalData.location);
-								}
-							}
-						}
-						//
-
-						//Global data//
-						if (faction is GameWorld)
-						{
-							faction.GetData(Faction.Tags.GameWorld, out GlobalBattleData globalBattleData);
-
-							if (globalBattleData.battles.ContainsKey(currentCellCenter))
-							{
-								foundLocations.Add(globalBattleData.battles[currentCellCenter]);
-							}
-						}
-					}
+                    if (globalBattle.battles.ContainsKey(currentCellCenter))
+                    {
+                        foundLocations.Add(globalBattle.battles[currentCellCenter]);
+                    }
+					//
 
 					foreach (VisitableLocation location in foundLocations)
 					{

@@ -37,6 +37,7 @@ public class BattleResolutionRoutine : RoutineBase
             List<int> involvedEntities = battle.GetInvolvedEntities();
 
 			//Compute opposition matrix for this battle
+			//Computed even if battle is not lazy as outside systems may want to use it
 			battle.opositionMatrix.Clear();
 			//For every entity in the battle
             foreach (int id in involvedEntities)

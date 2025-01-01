@@ -7,6 +7,7 @@ public class MilitaryData : DataBase
 {
 	public float totalDamageBuildup = 0;
 
+	public float maxMilitaryCapacity;
 	public int currentFleetCount;
 	public Dictionary<RealSpacePostion, List<ShipCollection>> cellCenterToFleets = new Dictionary<RealSpacePostion, List<ShipCollection>>();
 	public List<(RealSpacePostion, RealSpacePostion)> markedTransfers = new List<(RealSpacePostion, RealSpacePostion)>();
@@ -15,8 +16,6 @@ public class MilitaryData : DataBase
 	{
 		markedTransfers.Add((from, to));
 	}
-
-
 
 	public void AddFleet(RealSpacePostion pos, Fleet fleet)
 	{

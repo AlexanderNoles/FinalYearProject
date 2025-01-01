@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using EntityAndDataDescriptor;
 using UnityEngine;
 
 public class ItemBase : IDisplay
@@ -16,8 +17,8 @@ public class ItemBase : IDisplay
 		//Modify price by current global economic conditions
 		price *= 1000.0f; //Currently static
 
-		//Should modify based on faction economic state here
-		if (parentFaction != null && parentFaction.Get().GetData(Faction.Tags.HasEconomy, out EconomyData data))
+		//Modify based on entity economic state
+		if (parentFaction != null && parentFaction.Get().GetData(DataTags.Economic, out EconomyData data))
 		{
 			float estimatedEconomyState = data.EstimatedEconomyState();
 

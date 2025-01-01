@@ -7,8 +7,9 @@ public class PlayerManagement : MonoBehaviour
 {
     public const bool fuelEnabled = false;
     private static PlayerManagement instance;
-	private Player playerFaction = null;
+	private Player playerEntity = null;
     private PlayerStats playerStatsTarget = null;
+    private PlayerInventory playerInventoryTarget = null;
 
     private void Awake()
     {
@@ -24,26 +25,33 @@ public class PlayerManagement : MonoBehaviour
 
 	public static void InitPlayerFaction()
 	{
-		instance.playerFaction = new Player();
-		instance.playerFaction.Simulate();
+		instance.playerEntity = new Player();
+		instance.playerEntity.Simulate();
 
-        instance.playerFaction.GetData(DataTags.Stats, out instance.playerStatsTarget);
+        instance.playerEntity.GetData(DataTags.Stats, out instance.playerStatsTarget);
+        instance.playerEntity.GetData(DataTags.Inventory, out instance.playerInventoryTarget);
 	}
 
-    public static bool PlayerFactionExists()
+    public static bool PlayerEntityExists()
     {
         return instance != null && GetTarget() != null;
     }
 
     public static Player GetTarget()
     {
-        return instance.playerFaction;
+        return instance.playerEntity;
     }
 
     public static PlayerStats GetStats()
     {
         return instance.playerStatsTarget;
     }
+
+    public static PlayerInventory GetInventory()
+    {
+        return instance.playerInventoryTarget;
+    }
+
 
     public static void KillPlayer()
     {

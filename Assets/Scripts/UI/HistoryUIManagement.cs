@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using EntityAndDataDescriptor;
+using static UnityEngine.EventSystems.EventTrigger;
+using System.Linq;
 
 public class HistoryUIManagement : UIState
 {
@@ -71,38 +74,17 @@ public class HistoryUIManagement : UIState
 		//Get all current territories
 		//Iterate over every position on map
 		//Update map pixels to match
-		List<Faction> factions = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.Territory);
-		List<(TerritoryData, Color)> territoryDatas = new List<(TerritoryData, Color)>();
 
-		int factionDataNotGrabbed = factions.Count;
+		//Get targets
+		List<DataBase> targets = SimulationManagement.GetDataViaTag(DataTags.Territory);
+		//Get their emblem data
+		List<EmblemData> correspondingEmblemData = SimulationManagement.TryGetDataIntoClone<EmblemData>(DataTags.Emblem, targets);
 
-		foreach (Faction faction in factions)
-		{
-			if (faction.GetData(Faction.Tags.Territory, out TerritoryData newTerrData))
-			{
-				if (faction.GetData(Faction.Tags.Emblem, out EmblemData emblemData))
-				{
-					territoryDatas.Add((newTerrData, emblemData.mainColour));
-				}
-			}
+		//Clone targets into a usable list
+		List<TerritoryData> clonedTargets = targets.Cast<TerritoryData>().ToList();
 
-			factionDataNotGrabbed--;
-		}
-
-		List<Faction> gameWorlds = SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld);
-		HistoryData historyData = null;
+		GameWorld.main.GetData(DataTags.Historical, out HistoryData historyData);
 		Color historyColour = Color.white * 0.3f;
-		if (gameWorlds.Count > 0)
-		{
-			gameWorlds[0].GetData(Faction.Tags.Historical, out historyData);
-		}
-
-		//This happens if the above for loop fails because some outside force (the multithreaded history simulation)
-		//Effects the underlying data
-		if (factionDataNotGrabbed != 0)
-		{
-			return;
-		}
 		
 		double gridDensity = WorldManagement.GetGridDensity();
 		int range = (int)Math.Round(WorldManagement.GetSolarSystemRadius() / gridDensity);
@@ -125,14 +107,14 @@ public class HistoryUIManagement : UIState
 					continue;
 				}
 
-				foreach ((TerritoryData, Color) entry in territoryDatas)
+                for (int i = 0; i < clonedTargets.Count; i++)
 				{
-					if (entry.Item1.territoryCenters.Contains(currentCell))
-					{
-						AddPixel(currentCell, entry.Item2);
-						break;
-					}
-				}
+                    if (clonedTargets[i].territoryCenters.Contains(currentCell))
+                    {
+                        AddPixel(currentCell, correspondingEmblemData[i].mainColour);
+                        break;
+                    }
+                }
 			}
 		}
 

@@ -1,3 +1,4 @@
+using EntityAndDataDescriptor;
 using Pathfinding;
 using System;
 using System.Collections;
@@ -24,7 +25,7 @@ public class TerritoryData : DataBase
 
 		//Check if this territory is a previously owned territory
 		//If so remove it from history data
-		if (SimulationManagement.GetAllFactionsWithTag(Faction.Tags.GameWorld)[0].GetData(Faction.Tags.Historical, out HistoryData historyData))
+		if (GameWorld.main.GetData(DataTags.Historical, out HistoryData historyData))
 		{
 			if (historyData.previouslyOwnedTerritories.ContainsKey(center))
 			{

@@ -268,6 +268,18 @@ public class SimulationManagement : MonoBehaviour
 
         return toReturn;
     }
+
+    public static List<T> TryGetDataIntoClone<T>(Enum tag, List<DataBase> targets) where T : DataBase
+    {
+        List<T> toReturn = new List<T>();
+
+        foreach (DataBase dataBase in targets)
+        {
+            toReturn.Add(dataBase.GetLinkedData<T>(tag));
+        }
+
+        return toReturn;
+    }
     #endregion
 
 
