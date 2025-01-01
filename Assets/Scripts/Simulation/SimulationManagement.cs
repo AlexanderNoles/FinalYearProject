@@ -316,6 +316,7 @@ public class SimulationManagement : MonoBehaviour
 	}
 
 	public GameObject simulationRoutinesStorage;
+    public int historyLength = 17;
 	private int historyTicksLeft;
 	private int maxHistoryTicks;
 
@@ -330,6 +331,7 @@ public class SimulationManagement : MonoBehaviour
     }
 
 	private const bool batchHistory = false;
+    private const bool runHistory = true;
 
     //As per the inital design constriction this script always executes after every other (non unity) script.
     //This does not mean it is the final code executed in the frame, we have no control over the execution order outside of scripts
@@ -365,9 +367,9 @@ public class SimulationManagement : MonoBehaviour
 	private void Start()
 	{        
 		//It is important this is run in Start so OnEnable can run on objects before this goes off
-		if (SimulationSettings.ShouldRunHistory())
+		if (runHistory)
         {
-			int tickCount = YearsToTickNumberCount(SimulationSettings.HistoryLength());
+			int tickCount = YearsToTickNumberCount(historyLength);
 
 			if (!batchHistory)
 			{
@@ -581,7 +583,7 @@ public class SimulationManagement : MonoBehaviour
 
     public static void EndSimulationTick()
     {
-		if (SimulationSettings.ShouldRunHistory() && instance.historyTicksLeft > 0)
+		if (runHistory && instance.historyTicksLeft > 0)
 		{
 			return;
 		}
@@ -647,7 +649,7 @@ public class SimulationManagement : MonoBehaviour
 			
 			&&
 
-			!(SimulationSettings.ShouldRunHistory() && historyTicksLeft > 0)
+			!(runHistory && historyTicksLeft > 0)
 			)
 
 			||
