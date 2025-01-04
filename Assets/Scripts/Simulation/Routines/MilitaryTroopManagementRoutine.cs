@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using EntityAndDataDescriptor;
 
-[SimulationManagement.ActiveSimulationRoutine(SimulationManagement.defendRoutineStandardPrio, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Normal)]
+[SimulationManagement.SimulationRoutine(SimulationManagement.defendRoutineStandardPrio, SimulationManagement.SimulationRoutine.RoutineTypes.Normal)]
 public class MilitaryTroopManagementRoutine : RoutineBase
 {
 	public override void Run()

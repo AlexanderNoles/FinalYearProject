@@ -5,7 +5,7 @@ using UnityEngine;
 using EntityAndDataDescriptor;
 using System.Linq;
 
-[SimulationManagement.ActiveSimulationRoutine(95, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Init)]
+[SimulationManagement.SimulationRoutine(95, SimulationManagement.SimulationRoutine.RoutineTypes.Init)]
 public class TerritoryInit : InitRoutineBase
 {
     public override bool IsDataToInit(HashSet<Enum> tags)

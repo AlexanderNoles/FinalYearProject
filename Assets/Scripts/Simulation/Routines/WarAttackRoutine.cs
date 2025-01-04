@@ -5,7 +5,7 @@ using UnityEngine;
 using MonitorBreak.Bebug;
 using EntityAndDataDescriptor;
 
-[SimulationManagement.ActiveSimulationRoutine(SimulationManagement.attackRoutineStandardPrio)]
+[SimulationManagement.SimulationRoutine(SimulationManagement.attackRoutineStandardPrio)]
 public class WarAttackRoutine : RoutineBase
 {
 	public override void Run()
@@ -66,12 +66,8 @@ public class WarAttackRoutine : RoutineBase
                     }
                     else
                     {
-                        for (int a = 0; a < attacksForThisWar; a++)
+                        foreach (RealSpacePostion attackCell in terData.borders)
                         {
-                            //Create new attack
-                            //Currently just pick a position from the enemy at random
-                            RealSpacePostion attackCell = terData.borders.ElementAt(SimulationManagement.random.Next(0, terData.borders.Count));
-
                             //Transfer fleets to new attack if they are free
                             //Function should automatically check if we already have ships there and adjust the budget accordingly
                             int amountTransferred = milData.TransferFreeUnits(fleetBudgerPerAttack, attackCell, batData);
@@ -97,6 +93,13 @@ public class WarAttackRoutine : RoutineBase
                                 globalBattleData.StartOrJoinBattle(attackCell, actualPos, milData.parent.Get().id, enemy.id);
                                 //Lower remaining attack budget
                                 attackBudget--;
+                            }
+
+                            attacksForThisWar--;
+
+                            if (attacksForThisWar <= 0)
+                            {
+                                break;
                             }
                         }
                     }

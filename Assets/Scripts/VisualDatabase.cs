@@ -41,6 +41,7 @@ public class VisualDatabase : MonoBehaviour
         return (instance.factionIcons[mainIconIndex], instance.factionIcons[backingIconIndex]);
     }
 
+#if UNITY_EDITOR
     [ContextMenu("Load Icon Images")]
     public void LoadIconImages()
     {
@@ -55,4 +56,5 @@ public class VisualDatabase : MonoBehaviour
             }
         }
     }
+#endif
 }

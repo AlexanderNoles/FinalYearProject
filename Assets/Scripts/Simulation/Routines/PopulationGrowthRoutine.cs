@@ -5,7 +5,7 @@ using MonitorBreak.Bebug;
 using EntityAndDataDescriptor;
 using System.Linq;
 
-[SimulationManagement.ActiveSimulationRoutine(25)]
+[SimulationManagement.SimulationRoutine(25)]
 public class PopulationGrowthRoutine : RoutineBase
 {
     public override void Run()

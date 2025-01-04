@@ -4,7 +4,7 @@ using UnityEngine;
 using EntityAndDataDescriptor;
 using System.Linq;
 
-[SimulationManagement.ActiveSimulationRoutine(200)]
+[SimulationManagement.SimulationRoutine(200)]
 public class MilitaryPerTickReset : RoutineBase
 {
 	public override void Run()

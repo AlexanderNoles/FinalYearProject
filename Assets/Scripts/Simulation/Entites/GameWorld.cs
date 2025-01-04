@@ -28,6 +28,12 @@ public class GameWorld : SimulationEntity
 		base.InitData();
 		//Don't add relationship data for this faction, cause it is the gameworld
 		AddData(DataTags.GlobalBattle, new GlobalBattleData());
-		AddData(DataTags.Historical, new HistoryData());
+		HistoryData historyData = new HistoryData();
+		//Add origin period
+		HistoryData.Period originPeriod = new HistoryData.Period();
+		originPeriod.name = "Origin Period";
+		historyData.AddPeriod(originPeriod);
+		//
+		AddData(DataTags.Historical, historyData);
 	}
 }

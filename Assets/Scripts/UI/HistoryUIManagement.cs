@@ -13,7 +13,12 @@ public class HistoryUIManagement : UIState
 	public static HistoryUIManagement instance;
 	public MultiObjectPool pixelPool;
 	public GameObject mainUI;
-	public Image historyBar;
+	public RectTransform historyBarEmpty;
+	public GameObject historyBarOriginal;
+	private Image barTarget = null;
+	private float barOffset = 0.0f;
+	private HistoryData historyTarget = null;
+	private int cachedPeriodID;
 	private float lastPercentage = -1.0f;
 	private const float minimumChange = 0.01f;
 	public TextMeshProUGUI label;
@@ -47,20 +52,25 @@ public class HistoryUIManagement : UIState
         base.Awake();
     }
 
+    private void Start()
+    {
+		GameWorld.main.GetData(DataTags.Historical, out historyTarget);
+		cachedPeriodID = historyTarget.GetCurrentPeriod().periodID;
+
+		CreateNewHistoryBar(historyTarget.GetCurrentPeriod().color);
+    }
+
     private void Update()
 	{
 		if (mainUI.activeSelf)
 		{
-			historyBar.fillAmount = SimulationManagement.GetHistoryRunPercentage();
+			float value = SimulationManagement.GetHistoryRunPercentage();
 
-			if (historyBar.fillAmount >= 1.0f)
-			{
-				UIManagement.ReturnToNeutral();
-			}
+            UpdateProgressBar(value);
 
-			if (Mathf.Abs(historyBar.fillAmount - lastPercentage) > minimumChange)
+			if (Mathf.Abs(value - lastPercentage) > minimumChange)
 			{
-				lastPercentage = historyBar.fillAmount;
+				lastPercentage = value;
 
 				label.text = $"Running History...\n({SimulationManagement.GetDateString()})";
 
@@ -68,6 +78,63 @@ public class HistoryUIManagement : UIState
 			}
 		}
 	}
+
+	private const float barSeperator = 0.005f;
+
+	private void CreateNewHistoryBar(Color color)
+	{
+		bool hidPreviousBar = false;
+		if (barTarget != null)
+		{
+			float cachedFillAmount = barTarget.fillAmount;
+
+			//Offset old bar back slightly to create a little border between bars
+            barTarget.fillAmount -= barSeperator;
+			barTarget.fillAmount = Mathf.Clamp01(barTarget.fillAmount);
+
+			hidPreviousBar = barTarget.fillAmount <= 0.0035f;
+
+			if (!hidPreviousBar)
+            {
+                //Cache offset so bar starts from new point
+                barOffset = cachedFillAmount + barOffset;
+            }
+        }
+
+		//If we zerod the previous bar it is now removed and we can just reuse that one
+		//This means that some periods won't be represetned (but they took up so little time they really shouldn't be)
+		if (!hidPreviousBar)
+		{
+            //Get new bar target
+            barTarget = Instantiate(historyBarOriginal, historyBarEmpty).GetComponent<Image>();
+
+            //Rotate bar so if starts from new point
+            barTarget.transform.rotation = Quaternion.Euler(0.0f, 0.0f, -barOffset * 360.0f);
+        }
+
+		//Set new bar color
+		barTarget.color = color;
+	}
+
+	private void UpdateProgressBar(float value)
+	{
+        if (value >= 1.0f)
+        {
+            UIManagement.ReturnToNeutral();
+        }
+		else
+        {
+			if (historyTarget.GetCurrentPeriod().periodID != cachedPeriodID)
+			{
+                HistoryData.Period newTarget = historyTarget.GetCurrentPeriod();
+                cachedPeriodID = newTarget.periodID;
+
+                CreateNewHistoryBar(newTarget.color);
+            }
+
+            barTarget.fillAmount = Mathf.Clamp(value - barOffset, 0.0f, 1.0f - barSeperator);
+        }
+    }
 
 	private void UpdateTerritoryMap()
 	{

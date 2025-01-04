@@ -4,7 +4,7 @@ using System.Linq;
 using EntityAndDataDescriptor;
 using UnityEngine;
 
-[SimulationManagement.ActiveSimulationRoutine(-50)]
+[SimulationManagement.SimulationRoutine(-50)]
 public class WarEffectRoutine : RoutineBase
 {
 	public override void Run()

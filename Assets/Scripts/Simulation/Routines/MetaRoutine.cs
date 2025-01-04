@@ -4,7 +4,7 @@ using System.Linq;
 using EntityAndDataDescriptor;
 using UnityEngine;
 
-[SimulationManagement.ActiveSimulationRoutine(-3000)]
+[SimulationManagement.SimulationRoutine(-3000)]
 public class MetaRoutine : RoutineBase
 {
     public override void Run()

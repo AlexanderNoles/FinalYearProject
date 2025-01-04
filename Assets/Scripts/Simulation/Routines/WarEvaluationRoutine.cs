@@ -4,7 +4,7 @@ using System.Linq;
 using EntityAndDataDescriptor;
 using UnityEngine;
 
-[SimulationManagement.ActiveSimulationRoutine(SimulationManagement.evaluationRoutineStandardPrio)]
+[SimulationManagement.SimulationRoutine(SimulationManagement.evaluationRoutineStandardPrio)]
 public class WarEvaluationRoutine : RoutineBase
 {
 	public override void Run()

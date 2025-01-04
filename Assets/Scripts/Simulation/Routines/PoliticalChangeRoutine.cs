@@ -4,7 +4,7 @@ using System.Linq;
 using EntityAndDataDescriptor;
 using UnityEngine;
 
-[SimulationManagement.ActiveSimulationRoutine(-110)]
+[SimulationManagement.SimulationRoutine(-110)]
 public class PoliticalChangeRoutine : RoutineBase
 {
 	public override void Run()

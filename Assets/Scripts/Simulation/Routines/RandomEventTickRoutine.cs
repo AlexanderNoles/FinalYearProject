@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using EntityAndDataDescriptor;
 using UnityEngine;
 
-[SimulationManagement.ActiveSimulationRoutine(-5000, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Normal)]
+[SimulationManagement.SimulationRoutine(-5000, SimulationManagement.SimulationRoutine.RoutineTypes.Normal)]
 public class RandomEventTickRoutine : RoutineBase
 {
 	public override void Run()

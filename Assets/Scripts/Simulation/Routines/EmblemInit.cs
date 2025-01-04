@@ -5,7 +5,7 @@ using UnityEngine;
 using EntityAndDataDescriptor;
 using System.Linq;
 
-[SimulationManagement.ActiveSimulationRoutine(0, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Init)]
+[SimulationManagement.SimulationRoutine(0, SimulationManagement.SimulationRoutine.RoutineTypes.Init)]
 public class EmblemInit : InitRoutineBase
 {
     public override bool IsDataToInit(HashSet<Enum> tags)

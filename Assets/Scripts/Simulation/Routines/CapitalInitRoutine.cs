@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EntityAndDataDescriptor;
 
-[SimulationManagement.ActiveSimulationRoutine(90, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Init)]
+[SimulationManagement.SimulationRoutine(90, SimulationManagement.SimulationRoutine.RoutineTypes.Init)]
 public class CapitalInitRoutine : InitRoutineBase
 {
     public override bool IsDataToInit(HashSet<Enum> tags)

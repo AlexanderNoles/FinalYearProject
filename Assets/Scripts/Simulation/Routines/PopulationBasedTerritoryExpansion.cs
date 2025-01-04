@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using EntityAndDataDescriptor;
 
-[SimulationManagement.ActiveSimulationRoutine(20)]
+[SimulationManagement.SimulationRoutine(20)]
 public class PopulationBasedTerritoryExpansion : RoutineBase
 {
     public override void Run()

@@ -5,7 +5,7 @@ using EntityAndDataDescriptor;
 using MonitorBreak.Bebug;
 using UnityEngine;
 
-[SimulationManagement.ActiveSimulationRoutine(27)]
+[SimulationManagement.SimulationRoutine(27)]
 public class EconomicPowerReductionRoutine : RoutineBase
 {
     public override void Run()

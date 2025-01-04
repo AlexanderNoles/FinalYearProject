@@ -6,7 +6,7 @@ using System.Linq;
 using UnityEngine;
 using EntityAndDataDescriptor;
 
-[SimulationManagement.ActiveSimulationRoutine(-100)]
+[SimulationManagement.SimulationRoutine(-100)]
 public class BattleResolutionRoutine : RoutineBase
 {
 	public override void Run()
@@ -63,8 +63,8 @@ public class BattleResolutionRoutine : RoutineBase
 				}
 			}
 
-			//Battles are visitable locations so we can just pass the battle's position
-			if (!SimulationManagement.PositionIsLazy(battleKVP.Value.GetPosition()))
+			//Battles are visitable locations so we can just pass the battle itself
+			if (!SimulationManagement.LocationIsLazy(battleKVP.Value))
 			{
 				//This battle is being proccessed by the typical game loop
 				//not by the simulation

@@ -12,39 +12,37 @@ public class PlayerLocationManagement : MonoBehaviour
 	private static PlayerLocationManagement instance;
 	public static UnityEvent onLocationChanged = new UnityEvent();
 
+	public static bool IsDrawnLocation(VisitableLocation location)
+	{
+		if (instance != null)
+		{
+			foreach (DrawnLocation drawn in instance.drawnLocations)
+			{
+				if (drawn.Equals(location))
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	public static bool IsPlayerLocation(VisitableLocation location)
 	{
-		if (instance != null)
-		{
-			foreach (DrawnLocation entry in instance.drawnLocations)
-			{
-				if (entry.targetLocation.Equals(location))
-				{
-					return true;
-				}
-			}
-		}
-
-		return false;
+		return IsPlayerLocation(location.GetPosition());
 	}
 
+	//Check if position is within the distance to be considered a player location
 	public static bool IsPlayerLocation(RealSpacePostion pos)
 	{
-		if (instance != null)
-		{
-			foreach (DrawnLocation entry in instance.drawnLocations)
-			{
-				if (entry.targetLocation.GetPosition().Equals(pos))
-				{
-					return true;
-				}
-			}
-		}
+		//If the distance between this and the world center is greater
+		//is greater than allowed value
 
-		return false;
+		return WorldManagement.OffsetFromWorldCenter(pos, Vector3.zero).Magnitude() * WorldManagement.inEngineWorldScaleMultiplier < normalMaxDistance;
 	}
 
-	private const double normalMaxDistance = 150;
+	public const double normalMaxDistance = 150;
 
 	public static DrawnLocation GetPrimaryLocationWrapper(double maxDistance = normalMaxDistance)
 	{

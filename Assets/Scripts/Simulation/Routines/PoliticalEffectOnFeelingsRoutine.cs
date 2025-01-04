@@ -5,7 +5,7 @@ using MonitorBreak.Bebug;
 using EntityAndDataDescriptor;
 using System.Linq;
 
-[SimulationManagement.ActiveSimulationRoutine(10)]
+[SimulationManagement.SimulationRoutine(10)]
 public class PoliticalEffectOnFeelingsRoutine : RoutineBase
 {
 	public override void Run()

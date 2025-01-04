@@ -4,7 +4,7 @@ using System.Linq;
 using EntityAndDataDescriptor;
 using UnityEngine;
 
-[SimulationManagement.ActiveSimulationRoutine(35)]
+[SimulationManagement.SimulationRoutine(35)]
 public class PopulationSettlementGrowthRoutine : RoutineBase
 {
     public override void Run()

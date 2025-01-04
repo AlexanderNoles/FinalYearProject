@@ -282,38 +282,14 @@ public class SimulationManagement : MonoBehaviour
     }
     #endregion
 
+    public static bool LocationIsLazy(VisitableLocation location)
+    {
+        //A location is considered lazy only if it is not being drawn
+        //If a location is being drawn it is updated by the main runtime loop and so it is 'active'
+        //i.e., not being calculated by the simulation
 
-    public static bool CellIsLazy(RealSpacePostion cellCenter)
-	{
-		//A cell is lazy if the player does not exist there
-		//Typically most things in the simulation are lazy as the simulation's processing does not
-		//directly take into account the player
-		//This does not mean the player cannot interact with lazy systems just that the lazy systems can process without
-		//taking into account player input
-		//Some systems are optionally/mostly lazy but becoming active when a player "arrives".
-		//The key example is the current battle system (28/11/2024) that is lazy until a player arrives in a battle
-		//that battle is then no longer controlled by the simulation and instead by the normal game loop.
-
-
-		return !PlayerLocationManagement.IsPlayerLocation(cellCenter) && !PlayerCapitalShip.IsTargetPosition(cellCenter);
-	}
-
-	public static bool LocationIsLazy(VisitableLocation location)
-	{
-		//See above function "CellIsLazy"
-
-		//Additionally (as of 17/12/2024) the location lazy check now takes into account the place the player is traveling to
-		//as travel times mean if we don't the player could arrive and the location could have changed dramatically.
-
-		return !PlayerLocationManagement.IsPlayerLocation(location) && !PlayerCapitalShip.IsTargetPosition(location.GetPosition());
-	}
-
-	public static bool PositionIsLazy(RealSpacePostion position)
-	{
-		//See above two functions, this is used for battles as they will map to a given position, possible a settlement position
-
-		return !PlayerLocationManagement.IsPlayerLocation(position) && !PlayerCapitalShip.IsTargetPosition(position);
-	}
+        return !PlayerLocationManagement.IsDrawnLocation(location);
+    }
 
 	public GameObject simulationRoutinesStorage;
     public int historyLength = 17;
@@ -357,7 +333,7 @@ public class SimulationManagement : MonoBehaviour
             new Nation().Simulate();
         }
 
-		//Add game world faction
+		//Add game world
 		new GameWorld().Simulate();
 
 		//Add all routine instances
@@ -404,7 +380,7 @@ public class SimulationManagement : MonoBehaviour
     }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-    public class ActiveSimulationRoutine : Attribute 
+    public class SimulationRoutine : Attribute 
     {
         public int priority;
 
@@ -424,7 +400,7 @@ public class SimulationManagement : MonoBehaviour
         /// </summary>
         /// <param name="priority">Routines Priority, higher priority means it is run first each tick. In range -10000 to 10000</param>
         /// <param name="initRoutine">Should this routine only be run once (on the first tick the faction is created)?</param>
-        public ActiveSimulationRoutine(int priority, RoutineTypes routineType = RoutineTypes.Normal, string identifier = "")
+        public SimulationRoutine(int priority, RoutineTypes routineType = RoutineTypes.Normal, string identifier = "")
         {
             this.priority = Mathf.Clamp(priority, -10000, 10000);
             this.routineType = routineType;
@@ -458,13 +434,13 @@ public class SimulationManagement : MonoBehaviour
             List<RoutineBase> debugRoutines = new List<RoutineBase>();
             Dictionary<string, RoutineBase> absentRoutines = new Dictionary<string, RoutineBase>();
             List<InitRoutineBase> initRoutines = new List<InitRoutineBase>();
-            List<(ActiveSimulationRoutine, Type)> rountineClasses = new List<(ActiveSimulationRoutine, Type)>();
+            List<(SimulationRoutine, Type)> rountineClasses = new List<(SimulationRoutine, Type)>();
 
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 foreach (Type type in assembly.GetTypes().Where(x => typeof(MonoBehaviour).IsAssignableFrom(x) && x != typeof(MonoBehaviour)))
                 {
-                    ActiveSimulationRoutine routine = (ActiveSimulationRoutine)type.GetCustomAttribute(typeof(ActiveSimulationRoutine), false);
+                    SimulationRoutine routine = (SimulationRoutine)type.GetCustomAttribute(typeof(SimulationRoutine), false);
                     if (routine != null)
                     {
                         //Add to routine classes based on priority
@@ -491,19 +467,19 @@ public class SimulationManagement : MonoBehaviour
                 }
             }
 
-            foreach ((ActiveSimulationRoutine, Type) type in rountineClasses)
+            foreach ((SimulationRoutine, Type) type in rountineClasses)
             {
                 //Because the types where sorted based on priority they are displayed in priority order on the target gameobject
                 Component newRoutine = parent.AddComponent(type.Item2);
-                if (type.Item1.routineType == ActiveSimulationRoutine.RoutineTypes.Init)
+                if (type.Item1.routineType == SimulationRoutine.RoutineTypes.Init)
                 {
                     initRoutines.Add(newRoutine as InitRoutineBase);
                 }
-                else if (type.Item1.routineType == ActiveSimulationRoutine.RoutineTypes.Debug)
+                else if (type.Item1.routineType == SimulationRoutine.RoutineTypes.Debug)
                 {
                     debugRoutines.Add(newRoutine as RoutineBase);
                 }
-                else if (type.Item1.routineType == ActiveSimulationRoutine.RoutineTypes.Absent)
+                else if (type.Item1.routineType == SimulationRoutine.RoutineTypes.Absent)
                 {
                     if (absentRoutines.ContainsKey(type.Item1.identifier))
                     {
@@ -543,36 +519,29 @@ public class SimulationManagement : MonoBehaviour
 
 			instance.tickTask = Task.Run(() =>
 			{
-				try
-				{
-					for (int i = 0; i < count; i++)
-					{
-						currentTickID++;
+                for (int i = 0; i < count; i++)
+                {
+                    currentTickID++;
 
-						IncrementDay();
+                    IncrementDay();
 
-						instance.SimulationTick(isInstant);
+                    instance.SimulationTick(isInstant);
 
-						if (instance.historyTicksLeft > 0)
-						{
-							instance.historyTicksLeft--;
+                    if (instance.historyTicksLeft > 0)
+                    {
+                        instance.historyTicksLeft--;
 
-							if (instance.historyTicksLeft <= 0)
-							{
-								//Re-enable player input
-								InputManagement.InputEnabled = true;
+                        if (instance.historyTicksLeft <= 0)
+                        {
+                            //Re-enable player input
+                            InputManagement.InputEnabled = true;
 
-								//Init player faction
-								PlayerManagement.InitPlayerFaction();
-							}
-						}
-					}
-				}
-				catch (Exception e)
-				{
-					MonitorBreak.Bebug.Console.Log(e);
-				}
-			});
+                            //Init player faction
+                            PlayerManagement.InitPlayerFaction();
+                        }
+                    }
+                }
+            });
 
 			if (isInstant)
 			{
@@ -783,7 +752,7 @@ public class SimulationManagerEditor : Editor
 
         GUI.skin.label.fontStyle = FontStyle.Italic;
         GUILayout.Label(
-            (routine.GetType().GetCustomAttribute(typeof(SimulationManagement.ActiveSimulationRoutine)) as SimulationManagement.ActiveSimulationRoutine).priority.ToString()
+            (routine.GetType().GetCustomAttribute(typeof(SimulationManagement.SimulationRoutine)) as SimulationManagement.SimulationRoutine).priority.ToString()
             );
         GUILayout.EndHorizontal();
     }

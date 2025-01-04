@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[SimulationManagement.ActiveSimulationRoutine(29)]
+[SimulationManagement.SimulationRoutine(29)]
 public class SettlementManagementRoutine : RoutineBase
 {
     public override void Run()

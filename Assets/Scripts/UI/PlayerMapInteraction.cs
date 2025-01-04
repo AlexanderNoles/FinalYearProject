@@ -126,7 +126,7 @@ public class PlayerMapInteraction : PostTickUpdate
 	private void AddPosition(Vector3 worldPos, VisitableLocation location)
 	{
 		//Don't want to be able to jump to a super close position
-		const double minimumValidDistance = 50;
+		const double minimumValidDistance = PlayerLocationManagement.normalMaxDistance;
 		if (WorldManagement.OffsetFromWorldCenter(location.GetPosition(), Vector3.zero).Magnitude() < minimumValidDistance)
 		{
 			return;

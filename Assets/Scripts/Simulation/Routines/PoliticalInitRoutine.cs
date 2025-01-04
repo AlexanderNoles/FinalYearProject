@@ -5,7 +5,7 @@ using System.Linq;
 using EntityAndDataDescriptor;
 using UnityEngine;
 
-[SimulationManagement.ActiveSimulationRoutine(110, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Init)]
+[SimulationManagement.SimulationRoutine(110, SimulationManagement.SimulationRoutine.RoutineTypes.Init)]
 public class PoliticalInitRoutine : InitRoutineBase
 {
     public override bool IsDataToInit(HashSet<Enum> tags)

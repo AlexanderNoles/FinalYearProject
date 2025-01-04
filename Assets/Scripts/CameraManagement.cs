@@ -280,7 +280,7 @@ public class CameraManagement : MonoBehaviour
                 //Move camera out
                 float scrollInput = InputManagement.ScrollWheelInput();
 
-                currentCameraZoomTarget = Mathf.Clamp(currentCameraZoomTarget - scrollInput, 17.5f, 150);
+                currentCameraZoomTarget = Mathf.Clamp(currentCameraZoomTarget - scrollInput, 17.5f, 130);
                 targetCamera.localPosition = Vector3.Lerp(targetCamera.localPosition, Vector3.back * currentCameraZoomTarget, Time.deltaTime * 5.0f);
             }
 

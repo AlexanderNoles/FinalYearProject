@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using EntityAndDataDescriptor;
 
-[SimulationManagement.ActiveSimulationRoutine(-500, SimulationManagement.ActiveSimulationRoutine.RoutineTypes.Normal)]
+[SimulationManagement.SimulationRoutine(-500, SimulationManagement.SimulationRoutine.RoutineTypes.Normal)]
 public class NationDeadRoutine : RoutineBase
 {
 	public override void Run()
