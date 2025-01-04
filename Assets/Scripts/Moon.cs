@@ -4,16 +4,7 @@ using UnityEngine;
 
 public class Moon : CelestialBody
 {
-	private Transform parent;
-
-	private void Start()
-	{
-		//Set parent
-		parent = transform.parent;
-
-		//remove parent
-		transform.parent = SurroundingsRenderingManagement.mainTransform;
-	}
+	public Transform parent;
 
 	public override Transform GetInWorldParent()
 	{

@@ -6,6 +6,13 @@ public class Sun : CelestialBody
 {
 	public Light dirLight;
 
+    protected override void Awake()
+    {
+        base.Awake();
+		//Auto init the sun
+		Init();
+    }
+
     public override Transform GetInWorldParent()
     {
         return transform;

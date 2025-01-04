@@ -266,6 +266,9 @@ public class CameraManagement : MonoBehaviour
                 //In neutral or map
                 Vector2 cameraInput = Vector2.zero;
 
+                //Only allow input to rotation in neutral
+                //Map simply applites set start rot
+
                 if (InputManagement.GetMouseButton(InputManagement.cameraMove))
                 {
                     cameraInput = InputManagement.MouseInput();

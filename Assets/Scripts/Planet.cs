@@ -6,11 +6,6 @@ public class Planet : CelestialBody
 {
     public static List<RealSpacePostion> availablePlanetPositions = new List<RealSpacePostion>();
 
-    protected override void OnEnable()
-    {
-        base.OnEnable();
-    }
-
     private void Start()
     {
         //Add position to planet list

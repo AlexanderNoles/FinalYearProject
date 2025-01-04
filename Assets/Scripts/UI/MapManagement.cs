@@ -226,7 +226,9 @@ public class MapManagement : UIState
 				mapElementsPools.PruneObjectsNotUpdatedThisFrame(7);
 				mapElementsPools.PruneObjectsNotUpdatedThisFrame(8);
 
-				if (Time.time > mapRefreshTime && (autoUpdateMap || mapRefreshTime == 0))
+                const bool drawInformationOnMap = false;
+
+				if (drawInformationOnMap && (Time.time > mapRefreshTime && (autoUpdateMap || mapRefreshTime == 0)))
                 {
                     GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattleData);
                     GameWorld.main.GetData(DataTags.Historical, out GlobalBattleData historyData);

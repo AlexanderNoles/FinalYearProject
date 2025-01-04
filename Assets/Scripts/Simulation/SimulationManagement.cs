@@ -309,6 +309,9 @@ public class SimulationManagement : MonoBehaviour
 	private const bool batchHistory = false;
     private const bool runHistory = true;
 
+    [Header("External References")]
+    public PlanetsGenerator planetsGenerator;
+
     //As per the inital design constriction this script always executes after every other (non unity) script.
     //This does not mean it is the final code executed in the frame, we have no control over the execution order outside of scripts
     private void Awake()
@@ -323,6 +326,8 @@ public class SimulationManagement : MonoBehaviour
 
         simulationSeed = UnityEngine.Random.Range(-10000, 10000);
         random = new System.Random(simulationSeed);
+
+        planetsGenerator.GeneratePlanets(random);
 
         instance = this;
 

@@ -9,6 +9,14 @@ public class PlayerMapInteraction : PostTickUpdate
 {
 	public MultiObjectPool mapPools;
 
+	private static bool viewRangeOverride = false;
+
+	[MonitorBreak.Bebug.ConsoleCMD("TrueSight")]
+	public static void ToggleViewRangeOverride()
+	{
+		viewRangeOverride = !viewRangeOverride;
+	}
+
 	[Header("Effects")]
 	public Transform targetIcon;
 	public Transform rangeIndicator;
@@ -118,7 +126,7 @@ public class PlayerMapInteraction : PostTickUpdate
 		float calculatedRange = (chunkRange * density) + buffer;
 		cachedRange = calculatedRange;
 
-		rangeIndicatorMat.SetFloat("_Radius", calculatedRange);
+		rangeIndicatorMat.SetFloat("_Radius", viewRangeOverride ? 10000.0f : calculatedRange);
 
 		PlayerLocationManagement.PerformOperationOnNearbyLocations(WorldManagement.worldCenterPosition, getPositionsOperation, chunkRange);
 	}
@@ -236,7 +244,7 @@ public class PlayerMapInteraction : PostTickUpdate
 				doneInitialDraw = true;
 				DrawAvaliableLocations();
 			}
-			Shader.SetGlobalFloat("_ShipRange", cachedRange);
+			Shader.SetGlobalFloat("_ShipRange", viewRangeOverride ? 10000.0f : cachedRange);
 		}
 
 		if (PlayerCapitalShip.IsJumping() || UIHelper.ElementsUnderMouse().Count > 0)
