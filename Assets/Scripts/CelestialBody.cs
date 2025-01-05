@@ -29,10 +29,4 @@ public class CelestialBody : SurroundingObject
         base.OnDisable();
         WorldManagement.RemoveMajorWorldPart(this);
     }
-
-    public override void SetObjectVisualScale(float scale)
-    {
-        transform.localScale = Vector3.one * (scale * 3);
-        targetMat.SetFloat("_Radius", scale);
-    }
 }

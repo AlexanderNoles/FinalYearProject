@@ -24,13 +24,13 @@ public class SurroundingsRenderingManagement : MonoBehaviour
 
     private void Awake()
     {
-        SetActivePlanetLighting(true);
+        SetNotInMap(true);
 		mainTransform = transform;
     }
 
-    public static void SetActivePlanetLighting(bool active)
+    public static void SetNotInMap(bool active)
     {
-        Shader.SetGlobalFloat("_LightingEnabled", active ? 1 : 0);
+        Shader.SetGlobalFloat("_InMap", active ? -1 : 1);
     }
 
     public static void RegisterSurroundingObject(SurroundingObject newObj)

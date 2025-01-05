@@ -7,7 +7,7 @@ using System;
 [IntializeAtRuntime]
 public class WorldManagement : MonoBehaviour
 {
-    public const float inEngineWorldScaleMultiplier = 25f;
+    public const float inEngineWorldScaleMultiplier = 200f;
     public static readonly float invertedInEngineWorldScaleMultiplier = 1.0f / inEngineWorldScaleMultiplier;
 
     private static List<CelestialBody> majorWorldParts = new List<CelestialBody>();

@@ -66,7 +66,7 @@ public class PlayerCapitalShip : MonoBehaviour
 
 	public const float jumpBaseLineSpeed = 500.0f;
 
-	[MonitorBreak.Bebug.ConsoleCMD("SHIPSPEED")]
+	[MonitorBreak.Bebug.ConsoleCMD("SHIPJUMPSPEED")]
 	public static void SetShipSpeedCMD(string newSpeed)
 	{
 		shipSpeedMultiplier = int.Parse(newSpeed);

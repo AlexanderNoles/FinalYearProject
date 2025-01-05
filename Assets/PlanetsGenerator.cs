@@ -16,8 +16,9 @@ public class PlanetsGenerator : MonoBehaviour
         //3 to 5 planets, exclusive upper bound
         int planetNumber = random.Next(3, 6);
 
-        const int lowerSizeBound = 85;
-        const int upperSizeBound = 300;
+        const int overallPlanetSizeModifier = 1;
+        const int lowerSizeBound = 350 * overallPlanetSizeModifier;
+        const int upperSizeBound = 900 * overallPlanetSizeModifier;
         const int sizeDifference = upperSizeBound - lowerSizeBound;
 
         const int lowerPositionalBound = 1;
@@ -55,7 +56,7 @@ public class PlanetsGenerator : MonoBehaviour
             for (int m = 0; m < numberOfMoons; m++)
             {
                 Vector3 moonPos = worldPos;
-                moonPos += GetPositionFromAngle((angleOffset + (angleOffsetPer * m)) % 360.0f) * (m+1);
+                moonPos += GetPositionFromAngle((angleOffset + (angleOffsetPer * m)) % 360.0f) * ((m+1) * 2.0f);
 
                 Moon newMoon = Instantiate(baseMoonPrefab, moonPos, Quaternion.identity, transform).GetComponent<Moon>();
                 newMoon.scale = (random.Next(30, 45) / 100.0f) * newPlanet.scale;

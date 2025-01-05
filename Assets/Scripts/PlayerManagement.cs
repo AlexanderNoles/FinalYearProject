@@ -52,7 +52,6 @@ public class PlayerManagement : MonoBehaviour
         return instance.playerInventoryTarget;
     }
 
-
     public static void KillPlayer()
     {
 #if UNITY_EDITOR
@@ -60,5 +59,14 @@ public class PlayerManagement : MonoBehaviour
 #else
         Application.Quit();
 #endif
+    }
+
+    [MonitorBreak.Bebug.ConsoleCMD("shipspeed")]
+    public static void IncreaseSpeed(string value)
+    {
+        PlayerStats stats = instance.playerStatsTarget;
+
+        instance.playerStatsTarget.statToValue[Stats.moveSpeed.ToString()].Clear();
+        instance.playerStatsTarget.statToValue[Stats.moveSpeed.ToString()].Add(new StatContributor(float.Parse(value), "debug"));
     }
 }

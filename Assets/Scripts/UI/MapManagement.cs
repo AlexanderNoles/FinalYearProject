@@ -52,7 +52,7 @@ public class MapManagement : UIState
         base.OnSetActive(_bool);
 
 		CameraManagement.SetMainCameraActive(!_bool);
-        SurroundingsRenderingManagement.SetActivePlanetLighting(!_bool);
+        SurroundingsRenderingManagement.SetNotInMap(!_bool);
 
 		if (_bool)
         {
