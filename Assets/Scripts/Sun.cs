@@ -21,6 +21,7 @@ public class Sun : CelestialBody
 	public override void SetObjectVisualScale(float scale)
 	{
 		base.SetObjectVisualScale(scale);
+		targetMat.SetFloat("_Radius", scale);
 
 		if (shellOffset == -1)
 		{

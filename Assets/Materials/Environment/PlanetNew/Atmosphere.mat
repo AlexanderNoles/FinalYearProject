@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Planet
-  m_Shader: {fileID: 4800000, guid: 2d18bfc1b8da25447815e3fa96b86f3c, type: 3}
+  m_Name: Atmosphere
+  m_Shader: {fileID: 4800000, guid: 439549390be78e146af506c0e91842ec, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -84,6 +84,7 @@ Material:
     - _AlphaClip: 0
     - _AlphaToMask: 0
     - _AtmosphereRadius: 0.3
+    - _AtmospheretRelativeRadius: 0.3
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
@@ -92,6 +93,7 @@ Material:
     - _CloudRelativeRadius: 0.28
     - _Cull: 2
     - _Cutoff: 0.5
+    - _DensityFalloff: 1
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -100,7 +102,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _InMap: 0
+    - _InMap: -1
     - _LandDisplacement: 1
     - _LandFloor: 0
     - _LandMaskModifier: 0
@@ -110,12 +112,13 @@ Material:
     - _OceanSmoothness: 5
     - _Parallax: 0.005
     - _PlanetRelativeRadius: 0.25
+    - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SpecularIntensity: 0.1
+    - _SpecularIntensity: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _SunLightShift: 0
@@ -130,7 +133,9 @@ Material:
     - _LandColor: {r: 0.6493114, g: 0.8018868, b: 0.4501157, a: 1}
     - _OceanColor: {r: 0.13389996, g: 0.4993341, b: 0.5566038, a: 1}
     - _OceanFloorColor: {r: 0.5283019, g: 0.4813433, b: 0.3264507, a: 1}
-    - _RealSpacePosition: {r: 5, g: 0, b: 0, a: 0}
+    - _RPS: {r: 6.44, g: 0, b: 0, a: 0}
+    - _RealSpacePosition: {r: 6.44, g: 0, b: 0, a: 0}
+    - _ScatteringCoefficents: {r: 0.1066, g: 0.3244416, b: 0.6830136, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &5520709705080375674

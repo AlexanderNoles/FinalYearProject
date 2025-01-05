@@ -5,7 +5,7 @@ using UnityEngine;
 public class SurroundingObject : MonoBehaviour
 {
     public float scale = 1f;
-	protected float shellOffset;
+	public float shellOffset;
     protected float rawScale;
     private new Transform transform;
     public RealSpacePostion postion;

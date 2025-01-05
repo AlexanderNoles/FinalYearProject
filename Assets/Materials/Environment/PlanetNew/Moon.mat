@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Planet
+  m_Name: Moon
   m_Shader: {fileID: 4800000, guid: 2d18bfc1b8da25447815e3fa96b86f3c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -83,7 +83,6 @@ Material:
     m_Floats:
     - _AlphaClip: 0
     - _AlphaToMask: 0
-    - _AtmosphereRadius: 0.3
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
@@ -102,11 +101,9 @@ Material:
     - _GlossyReflections: 0
     - _InMap: 0
     - _LandDisplacement: 1
-    - _LandFloor: 0
-    - _LandMaskModifier: 0
+    - _LandFloor: 0.47
     - _Metallic: 0
     - _OcclusionStrength: 1
-    - _OceanFlat: 1
     - _OceanSmoothness: 5
     - _Parallax: 0.005
     - _PlanetRelativeRadius: 0.25
@@ -115,7 +112,7 @@ Material:
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SpecularIntensity: 0.1
+    - _SpecularIntensity: 0
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _SunLightShift: 0
@@ -127,10 +124,10 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _LandColor: {r: 0.6493114, g: 0.8018868, b: 0.4501157, a: 1}
-    - _OceanColor: {r: 0.13389996, g: 0.4993341, b: 0.5566038, a: 1}
+    - _LandColor: {r: 0.5377358, g: 0.5377358, b: 0.5377358, a: 1}
+    - _OceanColor: {r: 0.6226415, g: 0.6226415, b: 0.6226415, a: 1}
     - _OceanFloorColor: {r: 0.5283019, g: 0.4813433, b: 0.3264507, a: 1}
-    - _RealSpacePosition: {r: 5, g: 0, b: 0, a: 0}
+    - _RealSpacePosition: {r: 5.52, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &5520709705080375674

@@ -124,6 +124,7 @@ public class SurroundingsRenderingManagement : MonoBehaviour
                 const float baseScaleToEngineModifier = 0.005f;
                 float baseScale = target.scale * baseScaleToEngineModifier * WorldManagement.inEngineWorldScaleMultiplier;
                 float newScale = (float)(baseScale / distanceOffsetAndIndex[minimumIndex].Item1) * shellOffset;
+
                 target.SetRawScale((float)(target.scale / distanceOffsetAndIndex[minimumIndex].Item1));
 				target.SetShellOffset(shellOffset);
 				target.SetObjectVisualScale(newScale);

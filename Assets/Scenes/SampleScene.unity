@@ -12208,6 +12208,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scale: 3000
+  shellOffset: 0
   postion:
     x: 0
     y: 0
@@ -14797,7 +14798,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.1
+  near clip plane: 0.01
   far clip plane: 100000
   field of view: 60
   orthographic: 0

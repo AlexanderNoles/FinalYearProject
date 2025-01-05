@@ -2,7 +2,9 @@ Shader "Unlit/Planet"
 {
     Properties
     {
+        _LandMaskModifier ("Land Mask Modifier", float) = 0
         _PlanetRelativeRadius ("Relative Radius", float) = .5
+        _AtmosphereRadius ("Atmosphere Radius", float) = .4
         _LandFloor("Land Floor", float) = 0
         _LandDisplacement ("Land Displacement", float) = 2
         _LandColor ("Land Colour", Color) = (0, 1, 0)
@@ -11,11 +13,14 @@ Shader "Unlit/Planet"
         _SunLightSmoothness ("Sun Light Smoothness", float) = 1.0
         _SunLightShift ("Sun Light Shift", float) = 0
         _OceanSmoothness("Ocean Smoothness", float) = 0
+        _SpecularIntensity("Ocean Specular Intensity", float) = 0
+        _OceanFlat("Ocean Flat", float) = 1
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags {"RenderType"="Opaque"}
         Cull Off
+        ZWrite On
         LOD 100
 
         Pass
@@ -49,12 +54,16 @@ Shader "Unlit/Planet"
 
             sampler2D _CameraDepthTexture;
             uniform float _InMap; 
+            float _LandMaskModifier;
             float _OceanSmoothness;
+            float _SpecularIntensity;
             float _PlanetRelativeRadius;
+            float _AtmosphereRadius;
             float _SunLightSmoothness;
             float _SunLightShift;
             float _LandDisplacement;
             float _LandFloor;
+            float _OceanFlat;
             float3 _LandColor;
             float3 _OceanColor;
             float3 _RealSpacePosition;
@@ -126,9 +135,16 @@ Shader "Unlit/Planet"
                 return stackedNoise;
             }
 
+            float GetDistance(float3 p, float radius)
+            {
+                float distance = length(p) - radius;
+
+                return distance;
+            }
+
             float GetDistance(float3 p)
             {
-                //Distance from a sphere at the origin or radius .5
+                //Distance from a sphere at the origin of radius
                 float distance = length(p) - _PlanetRelativeRadius;
 
                 return distance;
@@ -141,7 +157,7 @@ Shader "Unlit/Planet"
             }
 
             //Calculate depth along viewing ray
-            float Raymarch(float3 rayOrigin, float3 rayDirection, float maxDistance) 
+            float SurfaceRaymarch(float3 rayOrigin, float3 rayDirection, float maxDistance) 
             {
                 float distanceFromOrigin = 0;
                 float distanceFromSurface = 0;
@@ -151,6 +167,29 @@ Shader "Unlit/Planet"
                 {
                     float3 currentRayPoint = rayOrigin + (distanceFromOrigin * rayDirection);
                     distanceFromSurface = SurfaceDistance(currentRayPoint);
+
+                    distanceFromOrigin += distanceFromSurface;
+
+                    //if we have hit a surface or we have gone beyond draw distance
+                    if (distanceFromSurface <= SURF_DIST || distanceFromOrigin > maxDistance)
+                    {
+                        break;
+                    }
+                }
+
+                return distanceFromOrigin;
+            }
+
+            float FlatRaymarch(float3 rayOrigin, float3 rayDirection, float maxDistance, float radius)
+            {
+                float distanceFromOrigin = 0;
+                float distanceFromSurface = 0;
+
+                //Calculate distance from surface at each point
+                for (int i = 0; i < MAX_STEPS; i++)
+                {
+                    float3 currentRayPoint = rayOrigin + (distanceFromOrigin * rayDirection);
+                    distanceFromSurface = GetDistance(currentRayPoint, radius);
 
                     distanceFromOrigin += distanceFromSurface;
 
@@ -178,27 +217,37 @@ Shader "Unlit/Planet"
                 return normalize(normal);
             }
 
+            float3 CalculateLightDirection()
+            {
+                return _InMap * _RealSpacePosition;
+            }
+
+            float SunLightIntensity()
+            {
+                return (3.0 / length(CalculateLightDirection()));
+            }
+
             ////// MAIN COLOUR FUNCTION //////
             float3 CalculateBasicLighting(float3 normal)
             {
-                float3 sunDir = _InMap * _RealSpacePosition;
+                float3 sunDir = CalculateLightDirection(); 
 
-                float3 basicLighting = saturate((dot(normal, sunDir) / _SunLightSmoothness) - (_SunLightSmoothness - _SunLightShift));
-                basicLighting = clamp(basicLighting, 0.05, 1);
+                float3 basicLighting = saturate((dot(normal, normalize(sunDir)) / _SunLightSmoothness) - (_SunLightSmoothness - _SunLightShift));
+                basicLighting = clamp(basicLighting * SunLightIntensity(), 0.01, 100);
 
                 return basicLighting;
             }
 
             float CalculateSpecularHighlights(float3 viewDir, float3 normal, float power)
             {
-                float3 lightDir = _InMap * _RealSpacePosition;
+                float3 lightDir = CalculateLightDirection();
 
-                return pow(clamp(dot(-lightDir, reflect(viewDir, normal)), 0, 1), power);
+                return pow(clamp(dot(-normalize(lightDir), reflect(viewDir, normal)), 0, 1), power) * (_SpecularIntensity * SunLightIntensity());
             }
 
             float3 CalculatePlanetColour(float3 pos, float3 normal, float3 viewDir)
             {
-                float terrainHeight = SurfaceNoiseApplied(pos);
+                float terrainHeight = SurfaceNoiseApplied(pos) - (_LandMaskModifier / 100);
                 float landMask = terrainHeight < 0;
 
                 float usefulTerrainHeight = 70 * abs(terrainHeight);
@@ -216,10 +265,10 @@ Shader "Unlit/Planet"
 
                 oceanColour = lerp(shoreline, deepOceanColour, saturate((usefulTerrainHeight > shoreLimit) * 1000));
 
-                float3 oceanNormal = normalize(pos);
+                float3 oceanNormal = lerp(normal, normalize(pos), _OceanFlat);
 
                 float3 finalColour = lerp(
-                    oceanColour * CalculateBasicLighting(oceanNormal), 
+                    oceanColour * CalculateBasicLighting(oceanNormal) + CalculateSpecularHighlights(viewDir, oceanNormal, _OceanSmoothness), 
                     landColour * CalculateBasicLighting(normal), 
                     landMask);
 
@@ -228,7 +277,7 @@ Shader "Unlit/Planet"
 
             ///////////////////////////////////
 
-            fixed4 frag (v2f i) : SV_Target
+            fixed4 frag (v2f i, out float depth : SV_Depth) : SV_Target
             {
                 float4 cameraParams = _ProjectionParams;
 
@@ -243,7 +292,7 @@ Shader "Unlit/Planet"
                 float maxDistance = 1000;
 
                 //Raymarch baby!
-                float distanceToScene = Raymarch(rayOrigin, rayDirection, maxDistance);
+                float distanceToScene = SurfaceRaymarch(rayOrigin, rayDirection, maxDistance);
 
                 //Calculated object space point of final ray pos
                 float3 p = rayOrigin + rayDirection * distanceToScene;
@@ -252,12 +301,15 @@ Shader "Unlit/Planet"
                 //Get the depth of this position for filtering
                 float pointDepth = clipPos.z / clipPos.w;
 
+                //Set output depth
+                depth = pointDepth;
+
                 //Get the current depth
-                float2 screenSpaceUV = i.screenSpace.xy / i.screenSpace.w;
-                float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenSpaceUV);
+                // float2 screenSpaceUV = i.screenSpace.xy / i.screenSpace.w;
+                // float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenSpaceUV);
 
                 fixed4 col = 0;
-                if (distanceToScene < maxDistance && pointDepth > depth)
+                if (distanceToScene < maxDistance)
                 {
                     float3 calculatedColor = float3(1, 0, 0);
 
@@ -267,8 +319,7 @@ Shader "Unlit/Planet"
                     calculatedColor = CalculatePlanetColour(p, normal, -rayDirection);
 
                     //Apply colour
-                    //calculatedColor *= outline;
-                    col = float4(calculatedColor, 0.5);
+                    col = float4(calculatedColor, 1);
                 }
                 else
                 {

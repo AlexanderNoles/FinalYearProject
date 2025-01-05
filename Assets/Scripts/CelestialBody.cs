@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CelestialBody : SurroundingObject
 {
-    private Material targetMat;
+    protected Material targetMat;
 
     public void Init()
     {

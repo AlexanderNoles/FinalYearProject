@@ -11,10 +11,15 @@ public class PlanetsGenerator : MonoBehaviour
     [Header("Settings")]
     public AnimationCurve sizeCurve;
 
-    public void GeneratePlanets(System.Random random)
+    public void GeneratePlanets(System.Random random, bool debug = false)
     {
         //3 to 5 planets, exclusive upper bound
         int planetNumber = random.Next(3, 6);
+
+        if (debug)
+        {
+            planetNumber = 15;
+        }
 
         const int overallPlanetSizeModifier = 1;
         const int lowerSizeBound = 350 * overallPlanetSizeModifier;
@@ -29,13 +34,25 @@ public class PlanetsGenerator : MonoBehaviour
         float percentageVariance = 1.0f / planetNumber;
         percentageVariance *= 0.45f;
 
+        if (debug)
+        {
+            percentageVariance = 0;
+        }
+
         for (int i = 1; i <= planetNumber; i++)
         {
             //Calculate current angle
-            currentAngle = currentAngle + 180.0f;
-            currentAngle = GenerateAngle(Mathf.RoundToInt(currentAngle - 15), Mathf.RoundToInt(currentAngle + 15), random);
+            if (debug)
+            {
+                currentAngle = 0;
+            }
+            else
+            {
+                currentAngle = currentAngle + 180.0f;
+                currentAngle = GenerateAngle(Mathf.RoundToInt(currentAngle - 15), Mathf.RoundToInt(currentAngle + 15), random);
 
-            currentAngle = Mathf.Abs(currentAngle) % 360.0f;
+                currentAngle = Mathf.Abs(currentAngle) % 360.0f;
+            }
 
             Vector3 worldPos = GetPositionFromAngle(currentAngle);
 
@@ -44,10 +61,14 @@ public class PlanetsGenerator : MonoBehaviour
             worldPos *= lowerPositionalBound + (percentage * positionalDifference);
 
             Planet newPlanet = Instantiate(basePlanetPrefab, worldPos, Quaternion.identity, transform).GetComponent<Planet>();
-            newPlanet.scale = lowerSizeBound + (sizeCurve.Evaluate((i - 1.0f) / planetNumber) * sizeDifference);
+            float relativeSize = sizeCurve.Evaluate((i - 1.0f) / planetNumber);
+            newPlanet.scale = lowerSizeBound + (relativeSize * sizeDifference);
             newPlanet.sun = sun;
 
+            newPlanet.ActivateRing(random.Next(0, 101) > 75);
+
             newPlanet.Init();
+            newPlanet.UpdatePlanetShader(random, relativeSize, percentage);
 
             int numberOfMoons = random.Next(0, 4);
             int angleOffset = random.Next(0, 360);

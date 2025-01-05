@@ -334,7 +334,7 @@ public class CameraManagement : MonoBehaviour
             //# Calculate the camera's offset from the world center position #
             //The player is always (as of 05/01/2025) the world center, the player is the camera's target
             //So the ooffset from target and the offset from the world center are the same
-			SurroundingsRenderingManagement.SetCameraOffset(offsetFromTarget * WorldManagement.invertedInEngineWorldScaleMultiplier);
+			SurroundingsRenderingManagement.SetCameraOffset(mainCamera.transform.localPosition * WorldManagement.invertedInEngineWorldScaleMultiplier);
 		}
     }
 
