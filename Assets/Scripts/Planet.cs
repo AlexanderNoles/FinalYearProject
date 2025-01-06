@@ -31,9 +31,16 @@ public class Planet : CelestialBody
     public void ActivateRing(bool _bool)
     {
         ring.SetActive(_bool);
+
+        if (_bool)
+        {
+            //Set ring look direction
+            ring.transform.LookAt(ring.transform.position + transform.position.normalized);
+            ring.transform.rotation *= Quaternion.Euler(0, 0, -15);
+        }
     }
 
-    public void UpdatePlanetShader(System.Random random, float relativeSizeT, float heatMagnitudeT)
+    public void UpdatePlanetShader(System.Random random, float relativeSizeT, float heatMagnitudeT, bool hasAtmosphere)
     {
         //Chose planet colours based on relative size and heat
         Color baseGroundColour = possibleGroundColours.Evaluate(random.Next(0, 10000) / 10000.0f);
@@ -55,15 +62,15 @@ public class Planet : CelestialBody
             Color baseOceanColour = possibleOceanColours.Evaluate(random.Next(0, 10000) / 10000.0f);
             targetMat.SetColor("_OceanColor", baseOceanColour);
 
-            targetMat.SetFloat("_SpecularIntensity", 1.0f);
+            targetMat.SetFloat("_SpecularIntensity", 0.15f);
             targetMat.SetFloat("_OceanFlat", 1.0f);
         }
 
-        if (random.Next(0, 101) < 50 && heatMagnitudeT > 0.2 && heatMagnitudeT < 0.4)
+        if (hasAtmosphere)
         {
             atmosphere.gameObject.SetActive(true);
             //Atmosphere is handlded by a seperate object as it is transparent
-            atmosphere.material.SetVector("_RPS", transform.position);
+            atmosphere.material.SetVector("_RealSpacePosition", transform.position);
 
             //Calculate our scattering coefficents
             float scatterR = Mathf.Pow(400 / lightWavelengths.x, 4) * scatteringStrength;

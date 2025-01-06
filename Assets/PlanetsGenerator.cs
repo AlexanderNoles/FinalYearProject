@@ -44,7 +44,7 @@ public class PlanetsGenerator : MonoBehaviour
             //Calculate current angle
             if (debug)
             {
-                currentAngle = 0;
+                currentAngle = 360 * (i / (float)planetNumber);
             }
             else
             {
@@ -65,10 +65,12 @@ public class PlanetsGenerator : MonoBehaviour
             newPlanet.scale = lowerSizeBound + (relativeSize * sizeDifference);
             newPlanet.sun = sun;
 
-            newPlanet.ActivateRing(random.Next(0, 101) > 75);
-
             newPlanet.Init();
-            newPlanet.UpdatePlanetShader(random, relativeSize, percentage);
+            bool hasRing = random.Next(0, 101) > 75;
+            //If we have a ring can't have atmosphere as shader's conflict
+            bool hasAtmosphere = ((percentage > 0.2 && percentage < 0.4) || debug) && !hasRing;
+            newPlanet.UpdatePlanetShader(random, relativeSize, percentage, hasAtmosphere);
+            newPlanet.ActivateRing(hasRing);
 
             int numberOfMoons = random.Next(0, 4);
             int angleOffset = random.Next(0, 360);
@@ -77,7 +79,9 @@ public class PlanetsGenerator : MonoBehaviour
             for (int m = 0; m < numberOfMoons; m++)
             {
                 Vector3 moonPos = worldPos;
-                moonPos += GetPositionFromAngle((angleOffset + (angleOffsetPer * m)) % 360.0f) * ((m+1) * 2.0f);
+                //If close offset by m + 2
+                moonPos += GetPositionFromAngle((angleOffset + (angleOffsetPer * m)) % 360.0f) * 
+                    (m + 2.0f);
 
                 Moon newMoon = Instantiate(baseMoonPrefab, moonPos, Quaternion.identity, transform).GetComponent<Moon>();
                 newMoon.scale = (random.Next(30, 45) / 100.0f) * newPlanet.scale;

@@ -223,10 +223,10 @@ public class MapManagement : UIState
 					mapElementsPools.UpdateNextObjectPosition(8, playerTargetPos);
 				}
 
-				mapElementsPools.PruneObjectsNotUpdatedThisFrame(7);
-				mapElementsPools.PruneObjectsNotUpdatedThisFrame(8);
+				mapElementsPools.PruneObjectsNotUpdatedThisFrame(7, true);
+				mapElementsPools.PruneObjectsNotUpdatedThisFrame(8, true);
 
-                const bool drawInformationOnMap = false;
+                const bool drawInformationOnMap = true;
 
 				if (drawInformationOnMap && (Time.time > mapRefreshTime && (autoUpdateMap || mapRefreshTime == 0)))
                 {

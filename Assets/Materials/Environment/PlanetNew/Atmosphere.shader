@@ -166,7 +166,7 @@ Shader "Unlit/Atmosphere"
             {
                 float3 inScatterPoint = rayOrigin;
                 float stepSize = distance / (SCATTERING_POINTS - 1);
-                float3 sunDirection = -normalize(CalculateLightDirection());
+                float3 sunDirection = normalize(CalculateLightDirection());
                 float3 inScatteredLight = 0;
 
                 for (int i = 0; i < SCATTERING_POINTS; i++)
