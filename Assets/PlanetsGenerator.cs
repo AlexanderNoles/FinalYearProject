@@ -13,8 +13,8 @@ public class PlanetsGenerator : MonoBehaviour
 
     public void GeneratePlanets(System.Random random, bool debug = false)
     {
-        //3 to 5 planets, exclusive upper bound
-        int planetNumber = random.Next(3, 6);
+		//3 to 5 planets, exclusive upper bound
+		int planetNumber = random.Next(3, 6);
 
         if (debug)
         {
