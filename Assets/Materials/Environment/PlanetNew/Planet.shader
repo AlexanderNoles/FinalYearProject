@@ -75,7 +75,7 @@ Shader "Unlit/Planet"
                 o.screenSpace = ComputeScreenPos(o.vertex);
                 //Get camera position and convert it to obejct space
                 //This means the raymarched object will match the gameobject's position
-                //Need to convery camera space to 4d coordinates or matrix multiplication will not apply correctly!
+                //Need to convert camera space to 4d coordinates or matrix multiplication will not apply correctly!
                 o.rayOrigin = mul(unity_WorldToObject, float4(_WorldSpaceCameraPos, 1.0f));
                 o.hitPos = v.vertex;
                 return o;

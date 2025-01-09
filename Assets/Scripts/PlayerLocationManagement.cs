@@ -257,37 +257,41 @@ public class PlayerLocationManagement : MonoBehaviour
 			location.SetPosAsOffsetFrom(worldCenter, PlayerCapitalShip.GetPosition());
 			location.targetLocation.DrawUpdate();
 
-			//Set position of ui indicator
-			Vector3 worldPos = location.GetWorldPosition();
-			Vector3 viewPortPos = mainCamera.WorldToViewportPoint(worldPos);
+			//Disable ui while in warp
+			if (!PlayerCapitalShip.InJumpTravelStage())
+			{
+				//Set position of ui indicator
+				Vector3 worldPos = location.GetWorldPosition();
+				Vector3 viewPortPos = mainCamera.WorldToViewportPoint(worldPos);
 
-			if (viewPortPos.z > 0.0f)
-            {
-                RectTransform uiIndicator = uiPool.UpdateNextObjectPosition(drawnLocationTargetIndex, Vector3.zero).transform as RectTransform;
-
-                uiIndicator.anchoredPosition3D = new Vector2(viewPortPos.x * targetRectSizeDelta.x, viewPortPos.y * targetRectSizeDelta.y) - halfTRSD;
-				//uiIndicator.localScale = Mathf.Clamp((100.0f / Vector3.Distance(worldPos, CameraManagement.GetMainCameraPosition())), 0.25f, 1.0f) * 3.0f * Vector3.one;
-
-				if (!transformToLocationTracker.ContainsKey(uiIndicator))
+				if (viewPortPos.z > 0.0f)
 				{
-                    transformToLocationTracker.Add(uiIndicator, uiIndicator.GetComponent<LocationTrackingUI>());
+					RectTransform uiIndicator = uiPool.UpdateNextObjectPosition(drawnLocationTargetIndex, Vector3.zero).transform as RectTransform;
+
+					uiIndicator.anchoredPosition3D = new Vector2(viewPortPos.x * targetRectSizeDelta.x, viewPortPos.y * targetRectSizeDelta.y) - halfTRSD;
+					//uiIndicator.localScale = Mathf.Clamp((100.0f / Vector3.Distance(worldPos, CameraManagement.GetMainCameraPosition())), 0.25f, 1.0f) * 3.0f * Vector3.one;
+
+					if (!transformToLocationTracker.ContainsKey(uiIndicator))
+					{
+						transformToLocationTracker.Add(uiIndicator, uiIndicator.GetComponent<LocationTrackingUI>());
+					}
+
+					LocationTrackingUI targetUI = transformToLocationTracker[uiIndicator];
+					string locationTitle = location.targetLocation.GetTitle();
+					if (!targetUI.label.text.Equals(locationTitle))
+					{
+						targetUI.label.text = locationTitle;
+					}
+
+					//Calculate distance from worldCenter
+					double distance = WorldManagement.OffsetFromWorldCenter(location.targetLocation.GetPosition(), Vector3.zero).Magnitude();
+					string distanceText = Math.Round(distance).ToString() + " u";
+					if (!targetUI.distanceLabel.text.Equals(distanceText))
+					{
+						targetUI.distanceLabel.text = distanceText;
+					}
 				}
-
-				LocationTrackingUI targetUI = transformToLocationTracker[uiIndicator];
-				string locationTitle = location.targetLocation.GetTitle();
-				if (!targetUI.label.text.Equals(locationTitle))
-				{
-                    targetUI.label.text = locationTitle;
-				}
-
-				//Calculate distance from worldCenter
-				double distance = WorldManagement.OffsetFromWorldCenter(location.targetLocation.GetPosition(), Vector3.zero).Magnitude();
-				string distanceText = Math.Round(distance).ToString() + " u";
-				if (!targetUI.distanceLabel.text.Equals(distanceText))
-				{
-					targetUI.distanceLabel.text = distanceText;
-                }
-            }
+			}
         }
 
 		uiPool.PruneObjectsNotUpdatedThisFrame(drawnLocationTargetIndex, true);
