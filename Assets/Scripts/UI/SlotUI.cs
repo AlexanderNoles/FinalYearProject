@@ -8,16 +8,14 @@ public class SlotUI : MonoBehaviour
 {
 	public Image slotIcon;
 	public Button button;
-	private ItemBase target;
 
-	public void Draw(ItemBase newTarget, UnityAction onButtonClick)
+	public void Draw(IDisplay newTarget, UnityAction onButtonClick)
 	{
-		target = newTarget;
-
-		if (target == null)
+		if (newTarget == null)
 		{
-			//Display empty inventory slot
+			//Display empty slot
 			slotIcon.gameObject.SetActive(false);
+			button.enabled = false;
 		}
 		else
 		{
@@ -28,6 +26,14 @@ public class SlotUI : MonoBehaviour
 
 			button.onClick.RemoveAllListeners();
 			button.onClick.AddListener(onButtonClick);
+		}
+	}
+
+	public void ForceOnClick()
+	{
+		if (button.enabled)
+		{
+			button.onClick.Invoke();
 		}
 	}
 }

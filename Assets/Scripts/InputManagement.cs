@@ -13,7 +13,8 @@ public class InputManagement
     public static KeyCode toggleShopKey = KeyCode.G;
     public static KeyCode refuelKey = KeyCode.F;
     public static KeyCode returnToNeutral = KeyCode.Escape;
-    public static KeyCode toggleMapKey = KeyCode.M;
+    public static KeyCode togglePauseMenu = KeyCode.Escape;
+	public static KeyCode toggleMapKey = KeyCode.M;
     public static KeyCode toggleInventoryKey = KeyCode.Tab;
     public static KeyCode toggleLocationInfoKey = KeyCode.R;
 
@@ -46,6 +47,11 @@ public class InputManagement
 
         return toReturn;
     }
+
+	internal static Vector2 GetMousePosition()
+	{
+		return Input.mousePosition;
+	}
 
     public enum MouseButton
     {

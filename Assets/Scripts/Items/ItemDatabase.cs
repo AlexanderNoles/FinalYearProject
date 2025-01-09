@@ -179,16 +179,7 @@ public class ItemDatabase
 						if (key.Contains("icon"))
 						{
 							//Load sprite from resources
-							Sprite newIcon = Resources.Load<Sprite>($"icons/{textBody}");
-
-							if (newIcon != null)
-							{
-								newItem.icon = newIcon;
-							}
-							else
-							{
-								Debug.LogWarning($"Icon path is invalid: {textBody}");
-							}
+							VisualDatabase.LoadIconFromResources(textBody, out newItem.icon);
 						}
 						else if (key.Contains("name"))
 						{

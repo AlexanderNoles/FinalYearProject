@@ -10,6 +10,7 @@ public class PlayerManagement : MonoBehaviour
 	private Player playerEntity = null;
     private PlayerStats playerStatsTarget = null;
     private PlayerInventory playerInventoryTarget = null;
+	private PlayerInteractions playerInteractionsTarget = null;
 
     private void Awake()
     {
@@ -30,6 +31,7 @@ public class PlayerManagement : MonoBehaviour
 
         instance.playerEntity.GetData(DataTags.Stats, out instance.playerStatsTarget);
         instance.playerEntity.GetData(DataTags.Inventory, out instance.playerInventoryTarget);
+		instance.playerEntity.GetData(DataTags.Interactions, out instance.playerInteractionsTarget);
 	}
 
     public static bool PlayerEntityExists()
@@ -52,7 +54,12 @@ public class PlayerManagement : MonoBehaviour
         return instance.playerInventoryTarget;
     }
 
-    public static void KillPlayer()
+	public static PlayerInteractions GetInteractions()
+	{
+		return instance.playerInteractionsTarget;
+	}
+
+	public static void KillPlayer()
     {
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;

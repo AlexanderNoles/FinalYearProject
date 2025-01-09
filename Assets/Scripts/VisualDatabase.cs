@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEditorInternal.Profiling.Memory.Experimental;
 
 public class VisualDatabase : MonoBehaviour
 {
@@ -40,6 +41,14 @@ public class VisualDatabase : MonoBehaviour
 
         return (instance.factionIcons[mainIconIndex], instance.factionIcons[backingIconIndex]);
     }
+	
+	public static bool LoadIconFromResources(string name, out Sprite iconSprite)
+	{
+		//Load sprite from resources
+		iconSprite = Resources.Load<Sprite>($"icons/{name}");
+
+		return iconSprite != null;
+	}
 
 #if UNITY_EDITOR
     [ContextMenu("Load Icon Images")]

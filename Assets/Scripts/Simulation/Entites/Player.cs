@@ -27,5 +27,12 @@ public class Player : SimulationEntity
 		PlayerInventory inventory = new PlayerInventory();
 		inventory.SetStatsTarget(stats);
 		AddData(DataTags.Inventory, inventory);
+
+		PlayerInteractions interactions = new PlayerInteractions();
+		//Add basic interactions that all players have
+		interactions.playersInteractions.Add(new InformationInteraction().Init());
+		interactions.playersInteractions.Add(new AttackInteraction().Init());
+		//
+		AddData(DataTags.Interactions, interactions);
 	}
 }

@@ -394,7 +394,7 @@ public class PlayerCapitalShip : MonoBehaviour
 						arcaneRings[i].localScale = Vector3.one * (ringT + (0.1f * Mathf.Sin(Time.time * 250)));
 					}
 
-					float piercerLength = 500.0f;
+					float piercerLength = 50000.0f;
 					piercer.localPosition = new Vector3(0, 0, piercerLength);
 					float horiScale = Mathf.Max(Mathf.Lerp(-1f, 1f, percentage), 0.0f);
 					piercer.localScale = new Vector3(horiScale, piercerLength * 2.0f, horiScale);

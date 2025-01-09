@@ -9,6 +9,7 @@ public class UIState : MonoBehaviour
     public bool autoSetup = true;
     public bool lockout = false;
     public bool toggleable = false;
+	public bool pause = false;
     protected float introT;
     protected bool oneFrameBuffer = false;
     protected bool wantsActive = false;

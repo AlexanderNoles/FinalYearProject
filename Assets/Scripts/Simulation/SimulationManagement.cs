@@ -295,6 +295,7 @@ public class SimulationManagement : MonoBehaviour
     public int historyLength = 17;
 	private int historyTicksLeft;
 	private int maxHistoryTicks;
+	private bool historyJustEnded = false;
 
 	public static float GetHistoryRunPercentage()
 	{
@@ -538,11 +539,7 @@ public class SimulationManagement : MonoBehaviour
 
                         if (instance.historyTicksLeft <= 0)
                         {
-                            //Re-enable player input
-                            InputManagement.InputEnabled = true;
-
-                            //Init player faction
-                            PlayerManagement.InitPlayerFaction();
+							instance.historyJustEnded = true;
                         }
                     }
                 }
@@ -631,6 +628,19 @@ public class SimulationManagement : MonoBehaviour
 			forceTick
 			)
         {
+			//Init player faction
+			if (historyJustEnded)
+			{
+				historyJustEnded = false;
+
+				//Re-enable player input
+				InputManagement.InputEnabled = true;
+
+				//Init player faction
+				PlayerManagement.InitPlayerFaction();
+			}
+
+
 			forceTick = false;
 
             if (simulatioSpeedModifier > 0)

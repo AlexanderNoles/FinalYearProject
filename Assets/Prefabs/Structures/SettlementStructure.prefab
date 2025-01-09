@@ -63,7 +63,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b16208d1a27691543bea7f1a7a27ed34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 5931483769712804950}
+  canBeInteractedWith: 1
+  targetCollider: {fileID: 5931483769712804950}
   transform: {fileID: 0}
   targetBox:
     m_Center: {x: 0, y: 0, z: 0}

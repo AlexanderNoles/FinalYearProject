@@ -1,3 +1,4 @@
+using MonitorBreak;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -19,22 +20,22 @@ public class UIManagement : MonoBehaviour
         instance.uiStates.Add(newState);
     }
 
-    public static void LoadUIState(UIState newState)
+    public static bool LoadUIState(UIState newState)
     {
         if (instance.activeState != null && instance.activeState.Equals(newState))
         {
-            return;
+            return false;
         }
 
         if (!InNeutral() && !instance.neutral.Equals(newState))
         {
             //If not in neutral and not trying to return to neutral
-            return;
+            return false;
         }
 
         if (!newState.enabled)
         {
-            return;
+            return false;
         }
 
         //Set active
@@ -49,6 +50,17 @@ public class UIManagement : MonoBehaviour
         instance.activeState.SetActive(true);
         instance.activeState.InitIntro();
         instance.activeState.ResetWantForActivation();
+
+		if (instance.activeState.pause)
+		{
+			TimeManagement.AddTimeScale(0.0f, 100, instance);
+		}
+		else
+		{
+			TimeManagement.RemoveTimeScale(instance);
+		}
+
+		return true;
     }
 
     public UIState neutral;
@@ -110,8 +122,10 @@ public class UIManagement : MonoBehaviour
             //Then try to set that state active
             if (state.WantsToBeActive() || InputManagement.GetKeyDown(state.GetSetActiveKey()))
             {
-                LoadUIState(state);
-                break;
+				if (LoadUIState(state))
+				{
+					break;
+				}
             }
         }
 	}

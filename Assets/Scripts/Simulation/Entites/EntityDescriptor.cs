@@ -32,6 +32,7 @@ namespace EntityAndDataDescriptor
         Emblem, 
         Stats,
         Inventory,
+		Interactions,
         Military,
         Political,
         Economic, 

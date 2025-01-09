@@ -2,10 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattleBehaviour : MonoBehaviour
+public class BattleBehaviour : InteractableBase
 {
-	public Collider target;
-
 	//This id should only really be used for testing
 	//All bBehaviour lookups should be done through colliders
 	private int bBehaviourID;
@@ -24,17 +22,16 @@ public class BattleBehaviour : MonoBehaviour
 		bBehaviourID = Random.Range(-100000, 100000);
 	}
 
-	protected virtual void OnEnable()
+	protected override void OnEnable()
 	{
-		if (target != null)
-		{
-			BattleManagement.RegisterBattleBehaviour(target, this);
-		}
+		base.OnEnable();
+		BattleManagement.RegisterBattleBehaviour(targetCollider, this);
 	}
 
-	protected virtual void OnDisable()
+	protected override void OnDisable()
 	{
-		BattleManagement.DeRegisterBattleBehaviour(target);
+		base.OnDisable();
+		BattleManagement.DeRegisterBattleBehaviour(targetCollider);
 	}
 
 	protected void ToggleTarget(BattleBehaviour target)
