@@ -82,6 +82,10 @@ public class MapManagement : UIState
 
             mapBasePos = Vector3.zero;
         }
+		else
+		{
+			cantFindLocation.SetActive(false);
+		}
     }
 
     ///
@@ -113,6 +117,8 @@ public class MapManagement : UIState
 	}
 
 	[Header("Map Settings")]
+	public GameObject cantFindLocation;
+	public FadeOnEnable fadeInEffect;
     public MultiObjectPool mapElementsPools;
     private const int mapRingPool = 0;
     private const int shipIndicatorPool = 1;
@@ -148,6 +154,26 @@ public class MapManagement : UIState
     {
         if (MapActive())
         {
+			if (PlayerCapitalShip.InJumpTravelStage())
+			{
+				if (!cantFindLocation.activeSelf)
+				{
+					//Restart fade effect so it still plays even if we are in the map
+					//Don't use a second effect for just can't find location ui
+					//as they would overlap and look messy
+					//It's also kinda wasteful
+					fadeInEffect.Restart();
+					cantFindLocation.SetActive(true);
+				}
+
+				return;
+			}
+			else if (cantFindLocation.activeSelf)
+			{
+				fadeInEffect.Restart();
+				cantFindLocation.SetActive(false);
+			}
+
 			Vector3 playerPos = -PlayerCapitalShip.GetPCSPosition().AsTruncatedVector3(mapRelativeScaleModifier);
 			mapElementsPools.UpdateNextObjectPosition(shipIndicatorPool, playerPos);
 			mapElementsPools.PruneObjectsNotUpdatedThisFrame(shipIndicatorPool);

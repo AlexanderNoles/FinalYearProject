@@ -12,6 +12,7 @@ public class SurroundingsRenderingManagement : MonoBehaviour
 		cameraOffset = input;
 	}
 
+	public GameObject allSurroundings;
     public GameObject skybox;
 
     private static List<SurroundingObject> controlledObjects = new List<SurroundingObject>();
@@ -55,13 +56,17 @@ public class SurroundingsRenderingManagement : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (MapManagement.MapActive())
+		if (MapManagement.MapActive())
         {
             if (MapManagement.MapIntroRunning())
 			{
 				if (MapManagement.FirstFrameMapIntroRunning())
 				{
 					skybox.SetActive(false);
+					if (!allSurroundings.activeSelf)
+					{
+						allSurroundings.SetActive(true);
+					}
 				}
 
                 float evaluatedIntroT = MapManagement.EvaluatedMapIntroT();
@@ -79,7 +84,19 @@ public class SurroundingsRenderingManagement : MonoBehaviour
         }
         else
         {
-			if (skybox.activeSelf == false)
+			//If in jump travel then disable all surroundings rendering
+			if (PlayerCapitalShip.InJumpTravelStage())
+			{
+				allSurroundings.SetActive(false);
+				return;
+			}
+			else if (!allSurroundings.activeSelf)
+			{
+				allSurroundings.SetActive(true);
+			}
+			//
+
+			if (!skybox.activeSelf)
 			{
 				skybox.SetActive(true);
 			}

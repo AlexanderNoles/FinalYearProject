@@ -20,6 +20,12 @@ public class UIManagement : MonoBehaviour
         instance.uiStates.Add(newState);
     }
 
+	public static void RefreshUIState()
+	{
+		instance.activeState.SetActive(false);
+		SetupUIStateInternal();
+	}
+
     public static bool LoadUIState(UIState newState)
     {
         if (instance.activeState != null && instance.activeState.Equals(newState))
@@ -45,11 +51,18 @@ public class UIManagement : MonoBehaviour
             instance.activeState.SetActive(false);
         }
 
-        //Set new state active
-        instance.activeState = newState;
-        instance.activeState.SetActive(true);
-        instance.activeState.InitIntro();
-        instance.activeState.ResetWantForActivation();
+		//Set new state active
+		instance.activeState = newState;
+		SetupUIStateInternal();
+
+		return true;
+    }
+
+	private static void SetupUIStateInternal()
+	{
+		instance.activeState.SetActive(true);
+		instance.activeState.InitIntro();
+		instance.activeState.ResetWantForActivation();
 
 		if (instance.activeState.pause)
 		{
@@ -59,9 +72,7 @@ public class UIManagement : MonoBehaviour
 		{
 			TimeManagement.RemoveTimeScale(instance);
 		}
-
-		return true;
-    }
+	}
 
     public UIState neutral;
 

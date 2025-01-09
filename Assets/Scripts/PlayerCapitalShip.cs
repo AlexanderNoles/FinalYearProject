@@ -27,6 +27,11 @@ public class PlayerCapitalShip : MonoBehaviour
 		return jumping;
 	}
 
+	public static bool InJumpTravelStage()
+	{
+		return jumping && CurrentStage() > JumpStage.JumpBuildup;
+	}
+
 	public static JumpStage CurrentStage()
 	{
 		return jumpStage;
