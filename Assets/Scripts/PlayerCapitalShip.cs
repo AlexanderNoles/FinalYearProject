@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Presets;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -104,16 +105,20 @@ public class PlayerCapitalShip : MonoBehaviour
 	public Rigidbody rigidbodyTarget;
 
 	[Header("Effects")]
+	public Transform modelTransform;
+	private const float modelOffsetAfterJump = 1000;
+	public AnimationCurve postJumpModelSlideInCurve;
 	public ParticleSystem jumpPs;
 	public Transform arcaneRingsParent;
 	private List<Transform> arcaneRings = new List<Transform>();
-	private List<Vector3> endOfJumpCachedRingPositions = new List<Vector3>();
 	public LineRenderer trail;
 	private const float maxTrailLength = 100.0f;
 	public GameObject fireEffect;
 	public GameObject portal;
 	public MeshRenderer pulseRenderer;
+	public MeshRenderer largePulseRenderer;
 	private Material pulseMat;
+	private Material largePulseMat;
 	private float pulseT;
 	public Transform piercer;
 
@@ -122,6 +127,7 @@ public class PlayerCapitalShip : MonoBehaviour
 	public GameObject engineLine;
 
 	public GameObject outerEffect;
+	private Material outerMaterial;
 
 	private void Awake()
 	{
@@ -138,6 +144,11 @@ public class PlayerCapitalShip : MonoBehaviour
 
 		pulseMat = pulseRenderer.material;
 		pulseMat.SetFloat("_T", 0.0f);
+
+		largePulseMat = largePulseRenderer.material;
+		largePulseMat.SetFloat("_T", 0.0f);
+
+		outerMaterial = outerEffect.GetComponent<MeshRenderer>().material;
 
 		//Set inital jump stage
 		jumpStage = JumpStage.Done;
@@ -415,6 +426,8 @@ public class PlayerCapitalShip : MonoBehaviour
 
 					engineLine.SetActive(true);
 					outerEffect.SetActive(true);
+					outerMaterial.SetFloat("_NearClamp", 15.0f);
+					outerMaterial.SetFloat("_FarClamp", 15.0f);
 
 					piercer.localScale = Vector3.zero;
 
@@ -455,7 +468,6 @@ public class PlayerCapitalShip : MonoBehaviour
 						//We have arrived
 						SimulationManagement.SimulationSpeed(1);
 						jumpStage++;
-						endOfJumpCachedRingPositions.Clear();
 
 						postJumpT = 0.0f;
 
@@ -467,21 +479,25 @@ public class PlayerCapitalShip : MonoBehaviour
 						engineLine.SetActive(false);
 						outerEffect.SetActive(false);
 
-						pulseT = 1.0f;
-
 						//currently just ending jump here
 						EndJump();
+						modelTransform.localPosition = Vector3.back * modelOffsetAfterJump;
 					}
+
+					outerMaterial.SetFloat("_NearClamp", Mathf.Lerp(15, -15, Mathf.Clamp01(jumpT * 10.0f)));
+					float farT = Mathf.Clamp01((jumpT - 0.9f) * 10.0f);
+					outerMaterial.SetFloat("_FarClamp", Mathf.Lerp(15, -15, farT));
 
 					for (int i = 0; i < arcaneRings.Count; i++)
 					{
-						Vector3 targetPosition = Vector3.back * (4.0f + ((((i + 1) * (jumpT + 1.0f) * 3.0f) + (0.1f * Mathf.Sin(Time.time * 500.0f))) * 5.0f));
+						Vector3 targetPosition = Mathf.Min(Mathf.Pow(jumpT, 2.0f) * 500.0f, 10.0f) * Vector3.back;
 
 						arcaneRings[i].localPosition = Vector3.Lerp(arcaneRings[i].localPosition, targetPosition, 10.0f * Time.deltaTime);
 
-						if (jumpT >= 1.0f)
+						if (jumpT > 0.9f)
 						{
-							endOfJumpCachedRingPositions.Add(arcaneRings[i].localPosition);
+							float clampedT = Mathf.Clamp01((jumpT - 0.9f) / 0.1f);
+							arcaneRings[i].localScale = Vector3.Lerp(arcaneRings[i].localScale, Vector3.zero, clampedT);
 						}
 					}
 				}
@@ -491,14 +507,11 @@ public class PlayerCapitalShip : MonoBehaviour
 		if (jumpStage == JumpStage.PostJump)
 		{
 			postJumpT += Time.deltaTime;
+			modelTransform.localPosition = Vector3.back * Mathf.Lerp(modelOffsetAfterJump, 0, postJumpModelSlideInCurve.Evaluate(postJumpT));
+
+			largePulseMat.SetFloat("_T", postJumpT);
 
 			trail.SetPosition(0, new Vector3(0, 0, Mathf.Lerp(0, -maxTrailLength, postJumpT)));
-
-			for (int i = 0; i < arcaneRings.Count; i++)
-			{
-				arcaneRings[i].localPosition = Vector3.Lerp(endOfJumpCachedRingPositions[i], Vector3.forward * 500.0f, postJumpT);
-				arcaneRings[i].localScale = Vector3.Lerp(arcaneRings[i].localScale, new Vector3(1, 0, 1) * 1000.0f, Time.deltaTime * 2.0f);
-			}
 
 			GeneratorManagement.SetOffset(transform.forward * 500 * (1.0f - Mathf.Clamp01(postJumpT * 5f)));
 
@@ -506,11 +519,7 @@ public class PlayerCapitalShip : MonoBehaviour
 			{
 				jumpStage++;
 				trail.gameObject.SetActive(false);
-
-				foreach (Transform ring in arcaneRings)
-				{
-					ring.localScale = Vector3.zero;
-				}
+				pulseT = 1.0f;
 			}
 		}
 

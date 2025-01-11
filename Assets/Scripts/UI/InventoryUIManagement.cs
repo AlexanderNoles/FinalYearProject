@@ -110,7 +110,7 @@ public class InventoryUIManagement : UIState
 			int inventoryCapacity = targetData.targetInventory.GetInventoryCapacity();
 
 			int slotScale = mini ? miniInventorySlotArea : inventorySlotArea;
-			int flipLimit = mini ? 0 : 6;
+			int flipLimit = mini ? 0 : 24;
 
             List <(float, Vector2)> outputPositions = UIHelper.CalculateSpreadPositions(inventoryCapacity, slotScale, flipLimit);
 

@@ -25,6 +25,9 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
+    - _Clamp: -14
+    - _FarClamp: -15
+    - _NearClamp: 15
     - _Speed: 50
     m_Colors:
     - _FractalOffset: {r: 1, g: 1, b: 0, a: 1}

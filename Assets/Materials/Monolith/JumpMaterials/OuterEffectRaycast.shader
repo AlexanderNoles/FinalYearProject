@@ -4,6 +4,8 @@ Shader"Unlit/OuterEffectRaycast"
     {
 		_FractalOffset ("Fractal Offset", Vector) = (0, 0, 0)
 		_Speed ("Displacement Speed", float) = 0
+		_NearClamp ("Near Clamp", float) = 0
+		_FarClamp ("Far Clamp", float) = 0
     }
     SubShader
     {
@@ -40,6 +42,8 @@ Shader"Unlit/OuterEffectRaycast"
 
 			float3 _FractalOffset;
 			float _Speed;
+			float _NearClamp;
+			float _FarClamp;
 
             v2f vert (appdata v)
             {
@@ -62,7 +66,17 @@ Shader"Unlit/OuterEffectRaycast"
 
 			float DistanceFractal(float3 p)
 			{
-	p += _FractalOffset;
+	if (p.z < _NearClamp)
+	{
+		return max(abs(p.z - _NearClamp), 0.1);
+	}
+	
+	if (p.z > _FarClamp)
+	{
+		return max(abs(p.z - _FarClamp), 0.1);
+	}
+	
+		p += _FractalOffset;
 	p.z += _Time * _Speed;
 				float scale = 1.0;
 	
@@ -124,7 +138,7 @@ float3 GetNormal(float3 p)
 					}
 				}
 			
-				return distanceFromOrigin;
+				return abs(distanceFromOrigin);
 			}
 
             fixed4 frag (v2f i) : SV_Target
@@ -148,7 +162,7 @@ float3 GetNormal(float3 p)
 				//float3 normal = GetNormal(p);
 				//float lighting = dot(normal, normalize(float3(0.56, 0.2, -1))) *;
 	
-				float lighting = pow(outputDist, 15);
+				float lighting = pow(max(outputDist, 0.0), 15);
 	
 				return float4(lighting, lighting, lighting, 1);
 			}
