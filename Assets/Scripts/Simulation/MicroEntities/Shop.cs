@@ -38,7 +38,7 @@ public class Shop : DataBase
 			}
 
 			//Every 10 minutes if we don't include warp travel's effect on time
-			nextShopUpdate += 200;
+			nextShopUpdate = SimulationManagement.currentTickID + 200;
 		}
 	}
 }

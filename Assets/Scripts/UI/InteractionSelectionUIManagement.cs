@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InteractionSelectionUIManagement : MonoBehaviour
 {
 	private PlayerInteractions targetData = null;
+	public RectTransform selectedImage;
 	public List<SlotUI> interactionSlots = new List<SlotUI>();
 
 	private void Update()
@@ -17,6 +19,19 @@ public class InteractionSelectionUIManagement : MonoBehaviour
 
 				//Do inital draw
 				Draw();
+			}
+		}
+
+		//Number key inputs
+		int input = InputManagement.GetAlphaNumberDown();
+
+		if (input != -1)
+		{
+			int index = input - 1;
+
+			if (index < interactionSlots.Count)
+			{
+				interactionSlots[index].ForceOnClick();
 			}
 		}
 	}
@@ -44,7 +59,7 @@ public class InteractionSelectionUIManagement : MonoBehaviour
 
 	private void DrawSlot(int index, Interaction target)
 	{
-		interactionSlots[index].Draw(target, () => { SetCurrentInteractionButtonCallback(target); });
+		interactionSlots[index].Draw(target, () => { SetCurrentInteractionButtonCallback(target, interactionSlots[index].GetComponent<RectTransform>()); });
 
 		if (index == 0)
 		{
@@ -53,8 +68,9 @@ public class InteractionSelectionUIManagement : MonoBehaviour
 		}
 	}
 
-	public void SetCurrentInteractionButtonCallback(Interaction target)
+	public void SetCurrentInteractionButtonCallback(Interaction target, RectTransform uiRect)
 	{
 		PlayerInteractionManagement.SetCurrentInteraction(target);
+		selectedImage.anchoredPosition3D = uiRect.anchoredPosition3D;
 	}
 }

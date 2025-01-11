@@ -43,10 +43,13 @@ public class PlayerInventory : InventoryBase
 		if (itemBases.Count < inventorySize)
 		{
 			//Can we afford item?
-			if (price <= mainCurrency)
+			if (CanAfford(price))
 			{
 				//Subtract price
 				mainCurrency -= price;
+
+				//Redraw info ui
+				MainInfoUIControl.ForceRedraw();
 
 				//Add item to inventory
 				AddItemToInventory(target);
@@ -56,7 +59,12 @@ public class PlayerInventory : InventoryBase
 		}
 
 		return false;
-    }
+    } 
+
+	public bool CanAfford(float price)
+	{
+		return price <= mainCurrency;
+	}
 
 	public override void AddItemToInventory(ItemBase item)
 	{

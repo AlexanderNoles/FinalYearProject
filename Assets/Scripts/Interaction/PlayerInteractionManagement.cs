@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerInteractionManagement : MonoBehaviour
 {
+	public const float maxSelectDistance = 500;
 	private static Dictionary<Collider, InteractableControl> interactables = new Dictionary<Collider, InteractableControl>();
 
 	public static void AddInteractable(Collider target, InteractableControl interactable)
@@ -35,7 +36,6 @@ public class PlayerInteractionManagement : MonoBehaviour
 			return;
 		}
 
-		const float maxSelectDistance = 1000;
 		//Each frame check if we are over an interactable object
 		//if so be check if that one can be interacted with
 		//If player is not hovering over UI (or in a ui state) try to find any targets that are under mouse

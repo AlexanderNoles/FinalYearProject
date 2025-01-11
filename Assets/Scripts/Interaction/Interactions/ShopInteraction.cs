@@ -16,7 +16,8 @@ public class ShopInteraction : Interaction
 		if (targetLocation != null)
 		{
 			//Activate shop ui and have it display and act on shop information
-			targetLocation.GetShop();
+			//Need to pass the Visitable Location itself so the shop can auto close if the location is too far away!
+			ShopUIControl.ToggleShopUI(targetLocation, interactable.transform);
 		}
 	}
 

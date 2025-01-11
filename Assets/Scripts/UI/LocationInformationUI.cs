@@ -12,7 +12,7 @@ public class LocationInformationUI : MonoBehaviour
 	[Header("Shop")]
 	public StandardButton shopButton;
 	private Shop shopData;
-	public ShopControlUI shopControl;
+	public ShopUIControl shopControl;
 	private FloatingWindow shopWindow;
 
 	[Header("Fuel")]
@@ -36,21 +36,10 @@ public class LocationInformationUI : MonoBehaviour
 	private void OnDisable()
 	{
 		PlayerLocationManagement.onLocationChanged.RemoveListener(Draw);
-
-		if (shopControl.IsDisplayedData(shopData))
-		{
-			shopControl.Hide();
-		}
 	}
 
 	public void Draw()
 	{
-		if (cachedLocation != null && shopControl.IsDisplayedData(shopData))
-		{
-			//Don't want to be able to access shop when we have left location
-			shopControl.Hide();
-		}
-
 		//Get current location
 		VisitableLocation currentLocation = PlayerLocationManagement.GetPrimaryLocation();
 		cachedLocation = currentLocation;
@@ -89,12 +78,6 @@ public class LocationInformationUI : MonoBehaviour
 		}
 	}
 
-	public void ToggleShopButton()
-	{
-		shopControl.ToggleOrGrab(shopData);
-		shopWindow.MoveToFront();
-	}
-
 	public void BuyFuel()
 	{
         //Get player inventory
@@ -120,12 +103,6 @@ public class LocationInformationUI : MonoBehaviour
 		if (blocker.activeSelf)
 		{
 			return;
-		}
-
-		if (InputManagement.GetKeyDown(InputManagement.toggleShopKey) && cachedLocation.HasShop())
-		{
-			//Toggle shop
-			ToggleShopButton();
 		}
 
 		//If jumping don't allow refuel
