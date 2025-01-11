@@ -5,6 +5,21 @@ using System;
 
 public class VisitableLocation : Location, IDisplay
 {
+	private static Dictionary<Transform, LocationContext> transformToContextLink = new Dictionary<Transform, LocationContext>();
+
+	protected void ApplyContext(Transform target)
+	{
+		if (!transformToContextLink.ContainsKey(target))
+		{
+			if (target.TryGetComponent(out LocationContext component))
+			{
+				transformToContextLink[target] = component;
+			}
+		}
+
+		transformToContextLink[target].SetContext(this);
+	}
+
 	public virtual void InitDraw(Transform parent)
 	{
 

@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class AttackInteraction : Interaction
 {
-	public override bool Validate(IInteractable interactable)
+	public override bool Validate(InteractableBase interactable)
 	{
-		return ValidationHelper.AttackValidation(interactable);
+		return InteractionValidationHelper.AttackValidation(interactable);
 	}
 
-	public override void Process(IInteractable interactable)
+	public override void Process(InteractableBase interactable)
 	{
 		PlayerBattleBehaviour.ToggleTargetExternal(interactable as BattleBehaviour);
 	}

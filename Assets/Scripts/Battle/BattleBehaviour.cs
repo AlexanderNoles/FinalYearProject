@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BattleBehaviour : InteractableBase
 {
+	public Collider targetCollider;
 	//This id should only really be used for testing
 	//All bBehaviour lookups should be done through colliders
 	private int bBehaviourID;
@@ -22,15 +23,13 @@ public class BattleBehaviour : InteractableBase
 		bBehaviourID = Random.Range(-100000, 100000);
 	}
 
-	protected override void OnEnable()
+	protected void OnEnable()
 	{
-		base.OnEnable();
 		BattleManagement.RegisterBattleBehaviour(targetCollider, this);
 	}
 
-	protected override void OnDisable()
+	protected void OnDisable()
 	{
-		base.OnDisable();
 		BattleManagement.DeRegisterBattleBehaviour(targetCollider);
 	}
 

@@ -30,8 +30,8 @@ public class Player : SimulationEntity
 
 		PlayerInteractions interactions = new PlayerInteractions();
 		//Add basic interactions that all players have
-		interactions.playersInteractions.Add(new InformationInteraction().Init());
 		interactions.playersInteractions.Add(new AttackInteraction().Init());
+		interactions.playersInteractions.Add(new ShopInteraction().Init());
 		//
 		AddData(DataTags.Interactions, interactions);
 	}

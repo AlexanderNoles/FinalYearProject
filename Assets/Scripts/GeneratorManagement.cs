@@ -37,8 +37,7 @@ public class GeneratorManagement : MonoBehaviour
 
 	public class Generation 
 	{
-		//We use linked lists so generators can easily be combined
-		public LinkedList<(int, Transform)> targets = new LinkedList<(int, Transform)>();
+		public List<(int, Transform)> targets = new List<(int, Transform)>();
 		public Transform parent;
 
 		public void AutoCleanup()
@@ -68,7 +67,7 @@ public class GeneratorManagement : MonoBehaviour
 			newTarget.parent = parent;
 			newTarget.localPosition = localPos;
 
-			targets.AddLast(((int)index, newTarget));
+			targets.Add(((int)index, newTarget));
 
 			return this;
 		}

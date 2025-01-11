@@ -10,14 +10,6 @@ public class CameraManagement : MonoBehaviour
     private static CameraManagement instance;
     private static List<(int, Transform)> targets = new List<(int, Transform)>();
 
-    public enum Mode
-    {
-        Normal,
-        Debug
-    }
-
-    public static Mode currentMode = Mode.Normal;
-
     public static void AddCameraTarget(int priority, Transform target)
     {
         int priorityBeforeOperation = -1;
@@ -195,138 +187,115 @@ public class CameraManagement : MonoBehaviour
 
     private void Update()
     {
-        if (currentMode == Mode.Normal)
-        {
-            Transform targetCamera = null;
-			Transform targetCamearAxis = null;
-			float lowerCameraLimit = -85f;
+		Transform targetCamera = null;
+		Transform targetCamearAxis = null;
+		float lowerCameraLimit = -85f;
 
-			if (mainCamera.enabled)
+		if (mainCamera.enabled)
+		{
+			lowerCameraLimit = 0;
+
+			if (actualBackingCameraData.renderPostProcessing)
 			{
-                lowerCameraLimit = 0;
+				backingCameraAxis.position = Vector3.zero;
+				backingCameraAxis.rotation = Quaternion.identity;
 
-				if (actualBackingCameraData.renderPostProcessing)
-				{
-					backingCameraAxis.position = Vector3.zero;
-					backingCameraAxis.rotation = Quaternion.identity;
+				backingCamera.localPosition = Vector3.zero;
+				actualBackingCameraData.renderPostProcessing = false;
+				actualBackingCameraData.SetRenderer(1);
 
-					backingCamera.localPosition = Vector3.zero;
-					actualBackingCameraData.renderPostProcessing = false;
-					actualBackingCameraData.SetRenderer(1);
-
-					//Reset to previous camera parameters
-					cameraRot = cachedCameraRot;
-					offsetFromTarget = cachedOffsetFromTarget;
-					currentCameraZoomTarget = cachedZoomTarget;
-				}
-
-				targetCamera = transform;
-				targetCamearAxis = cameraAxis;
-			}
-			else if (MapManagement.MapActive())
-			{
-				lowerCameraLimit = 5;
-
-				if (MapManagement.FirstFrameMapIntroRunning())
-				{
-					//cache variables to reapply later
-					cachedZoomTarget = currentCameraZoomTarget;
-					cachedCameraRot = cameraRot;
-					cachedOffsetFromTarget = offsetFromTarget;
-
-					//Set initial zoom level
-					currentCameraZoomTarget = 50;
-
-					//Set rotation target
-					cameraRot = new Vector2(45, 0);
-					//Set specifc position so camera plays rotate animation on map opening
-					backingCamera.localPosition = Vector3.back * currentCameraZoomTarget;
-
-					//Set offset from center to zero
-					offsetFromTarget = Vector3.zero;
-
-					actualBackingCameraData.renderPostProcessing = true;
-					actualBackingCameraData.SetRenderer(0);
-				}
-
-				targetCamera = backingCamera;
-				targetCamearAxis = backingCameraAxis;
+				//Reset to previous camera parameters
+				cameraRot = cachedCameraRot;
+				offsetFromTarget = cachedOffsetFromTarget;
+				currentCameraZoomTarget = cachedZoomTarget;
 			}
 
-			if (targetCamera == null || targetCamearAxis == null)
-			{
-				return;
-			}
-
-            #region Camera Control
-
-            //Rotate camera
-            if (UIManagement.InNeutral() || MapManagement.MapActive())
-            {
-                //In neutral or map
-                Vector2 cameraInput = Vector2.zero;
-
-                //Only allow input to rotation in neutral
-                //Map simply applites set start rot
-
-                if (InputManagement.GetMouseButton(InputManagement.cameraMove))
-                {
-                    cameraInput = InputManagement.MouseInput();
-                }
-
-                cameraRot.y += cameraInput.y;
-                cameraRot.x = Mathf.Clamp(cameraRot.x + cameraInput.x, lowerCameraLimit, 85);
-
-                targetCamearAxis.rotation = Quaternion.Euler(cameraRot.x, cameraRot.y, 0.0f);
-                targetCamera.LookAt(targetCamearAxis);
-
-                //Move camera out
-                float scrollInput = InputManagement.ScrollWheelInput();
-
-                currentCameraZoomTarget = Mathf.Clamp(currentCameraZoomTarget - scrollInput, 17.5f, 130);
-                targetCamera.localPosition = Vector3.Lerp(targetCamera.localPosition, Vector3.back * currentCameraZoomTarget, Time.deltaTime * 5.0f);
-            }
-
-            Vector3 newTargetPosition = GetTargetPosition() + offsetFromTarget;
-
-            float lerpT;
-			//Lerp is disabled because the effect looks weird with ship movement
-			//Also it feels unnecesary
-			const bool lerpEnabled = false;
-            if (Vector3.Distance(newTargetPosition, targetCamearAxis.position) > lerpLimit && lerpEnabled) 
-            {
-                lerpT = Time.deltaTime * 9.0f;
-            }
-            else
-            {
-                //Snap to destination when within lerp limit
-                lerpT = 1.0f;
-            }
-
-			targetCamearAxis.position = Vector3.Lerp(targetCamearAxis.position, newTargetPosition, lerpT);
-
-			#endregion
+			targetCamera = transform;
+			targetCamearAxis = cameraAxis;
 		}
-		else if (currentMode == Mode.Debug)
-        {
-            transform.localPosition = Vector3.zero;
+		else if (MapManagement.MapActive())
+		{
+			lowerCameraLimit = 5;
 
-            //Camera rotation
-            Vector2 cameraInput = InputManagement.MouseInput();
+			if (MapManagement.FirstFrameMapIntroRunning())
+			{
+				//cache variables to reapply later
+				cachedZoomTarget = currentCameraZoomTarget;
+				cachedCameraRot = cameraRot;
+				cachedOffsetFromTarget = offsetFromTarget;
 
-            cameraRot.y += cameraInput.y;
-            cameraRot.x = Mathf.Clamp(cameraRot.x + cameraInput.x, -85, 85);
+				//Set initial zoom level
+				currentCameraZoomTarget = 50;
 
-            transform.rotation = Quaternion.Euler(cameraRot.x, cameraRot.y, 0.0f);
+				//Set rotation target
+				cameraRot = new Vector2(45, 0);
+				//Set specifc position so camera plays rotate animation on map opening
+				backingCamera.localPosition = Vector3.back * currentCameraZoomTarget;
 
-            //Move movent
-            Vector3 cameraForward = transform.forward;
-            Vector3 cameraRight = transform.right;
-            Vector3 wasdInput = InputManagement.WASDInput();
-            Vector3 relativeWasdInput = ((wasdInput.z * cameraRight) + (wasdInput.x * cameraForward)).normalized;
+				//Set offset from center to zero
+				offsetFromTarget = Vector3.zero;
 
-            cameraAxis.position += relativeWasdInput * Time.deltaTime * (InputManagement.GetKey(KeyCode.LeftShift) ? 10000 : 50);
-        }
+				actualBackingCameraData.renderPostProcessing = true;
+				actualBackingCameraData.SetRenderer(0);
+			}
+
+			targetCamera = backingCamera;
+			targetCamearAxis = backingCameraAxis;
+		}
+
+		if (targetCamera == null || targetCamearAxis == null)
+		{
+			return;
+		}
+
+		#region Camera Control
+
+		//Rotate camera
+		if (UIManagement.InNeutral() || MapManagement.MapActive())
+		{
+			//In neutral or map
+			Vector2 cameraInput = Vector2.zero;
+
+			//Only allow input to rotation in neutral
+			//Map simply applites set start rot
+
+			if (InputManagement.GetMouseButton(InputManagement.cameraMove))
+			{
+				cameraInput = InputManagement.MouseInput();
+			}
+
+			cameraRot.y += cameraInput.y;
+			cameraRot.x = Mathf.Clamp(cameraRot.x + cameraInput.x, lowerCameraLimit, 85);
+
+			targetCamearAxis.rotation = Quaternion.Euler(cameraRot.x, cameraRot.y, 0.0f);
+			targetCamera.LookAt(targetCamearAxis);
+
+			//Move camera out
+			float scrollInput = InputManagement.ScrollWheelInput();
+
+			currentCameraZoomTarget = Mathf.Clamp(currentCameraZoomTarget - scrollInput, 17.5f, 130);
+			targetCamera.localPosition = Vector3.Lerp(targetCamera.localPosition, Vector3.back * currentCameraZoomTarget, Time.deltaTime * 5.0f);
+		}
+
+		Vector3 newTargetPosition = GetTargetPosition() + offsetFromTarget;
+
+		float lerpT;
+		//Lerp is disabled because the effect looks weird with ship movement
+		//Also it feels unnecesary
+		const bool lerpEnabled = false;
+		if (Vector3.Distance(newTargetPosition, targetCamearAxis.position) > lerpLimit && lerpEnabled)
+		{
+			lerpT = Time.deltaTime * 9.0f;
+		}
+		else
+		{
+			//Snap to destination when within lerp limit
+			lerpT = 1.0f;
+		}
+
+		targetCamearAxis.position = Vector3.Lerp(targetCamearAxis.position, newTargetPosition, lerpT);
+
+		#endregion
 
 		if (mainCamera.enabled)
 		{
@@ -336,17 +305,5 @@ public class CameraManagement : MonoBehaviour
             //So the ooffset from target and the offset from the world center are the same
 			SurroundingsRenderingManagement.SetCameraOffset(mainCamera.transform.localPosition * WorldManagement.invertedInEngineWorldScaleMultiplier);
 		}
-    }
-
-    [ConsoleCMD("DCamera")]
-    public static void ActivateDebugCamera()
-    {
-        currentMode = Mode.Debug;
-    }
-
-    [ConsoleCMD("NCamera")]
-    public static void ActivateNormalCamera()
-    {
-        currentMode = Mode.Normal;
     }
 }

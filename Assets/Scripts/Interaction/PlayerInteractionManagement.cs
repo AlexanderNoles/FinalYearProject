@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PlayerInteractionManagement : MonoBehaviour
 {
-	private static Dictionary<Collider, IInteractable> interactables = new Dictionary<Collider, IInteractable>();
+	private static Dictionary<Collider, InteractableControl> interactables = new Dictionary<Collider, InteractableControl>();
 
-	public static void AddInteractable(Collider target, IInteractable interactable)
+	public static void AddInteractable(Collider target, InteractableControl interactable)
 	{
 		interactables.Add(target, interactable);
 	}
@@ -36,7 +36,7 @@ public class PlayerInteractionManagement : MonoBehaviour
 		}
 
 		const float maxSelectDistance = 1000;
-		//Each frame check if we are over an interactable objects
+		//Each frame check if we are over an interactable object
 		//if so be check if that one can be interacted with
 		//If player is not hovering over UI (or in a ui state) try to find any targets that are under mouse
 		if (UIHelper.ElementsUnderMouse().Count <= 0 && UIManagement.InNeutral())
@@ -46,12 +46,13 @@ public class PlayerInteractionManagement : MonoBehaviour
 
 			RaycastHit[] hits = Physics.RaycastAll(mouseViewRay, maxSelectDistance);
 
-			IInteractable newTarget = null;
+			//Get target control
+			InteractableControl newTarget = null;
 			float currentLowestRange = float.MaxValue;
 
 			foreach (RaycastHit hit in hits)
 			{
-				if (interactables.TryGetValue(hit.collider, out IInteractable target))
+				if (interactables.TryGetValue(hit.collider, out InteractableControl target))
 				{
 					if (hit.distance < currentLowestRange)
 					{
@@ -63,13 +64,30 @@ public class PlayerInteractionManagement : MonoBehaviour
 
 			if (newTarget != null)
 			{
-				//On mouse over
-				bool validationResult = currentInteraction.Validate(newTarget);
+				bool anyValid = false;
+				List<InteractableBase> controlled = newTarget.GetControlled();
 
-				if (validationResult && InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
+				foreach (InteractableBase target in controlled)
 				{
-					//On Interact button pressed
-					currentInteraction.Process(newTarget);
+					bool validationResult = currentInteraction.Validate(target);
+
+					if (validationResult)
+					{
+						//On mouse over
+						if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
+						{
+							//On Interact button pressed
+							currentInteraction.Process(target);
+						}
+
+						anyValid = true;
+						break;
+					}
+				}
+
+				if (!anyValid)
+				{
+					//Display can't interact ui here
 				}
 			}
 		}

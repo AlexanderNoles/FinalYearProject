@@ -23,6 +23,9 @@ public class SettlementData : DataBase
 				generation.parent = parent;
 
 				generation.SpawnStructure(GeneratorManagement.STRUCTURES_INDEXES.SETTLEMENT, Vector3.zero);
+				//Apply simulation context to object
+				ApplyContext(generation.targets[^1].Item2);
+
 				generation.FinalizeGeneration();
 			}
 

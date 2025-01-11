@@ -6,12 +6,12 @@ public class Interaction : IDisplay
 {
 	protected Sprite sprite;
 
-	public virtual bool Validate(IInteractable interactable)
+	public virtual bool Validate(InteractableBase interactable)
 	{
 		return true;
 	}
 
-	public virtual void Process(IInteractable interactable)
+	public virtual void Process(InteractableBase interactable)
 	{
 		//Do nothing by default
 	}
@@ -49,11 +49,28 @@ public class Interaction : IDisplay
 		return "";
 	}
 
-	public static class ValidationHelper
+	protected static class InteractionValidationHelper
 	{
-		public static bool AttackValidation(IInteractable interactable)
+		public static bool AttackValidation(InteractableBase interactable)
 		{
 			return !PlayerBattleBehaviour.instance.Equals(interactable) && interactable is BattleBehaviour;
+		}
+
+		public static bool ShopValidation(InteractableBase interactable)
+		{
+			if (interactable is ContextLinkedInteractable)
+			{
+				//Linked to simulation context
+
+				LocationContext targetContext = (interactable as ContextLinkedInteractable).simulationContext;
+
+				if (targetContext != null)
+				{
+					return targetContext.target.HasShop();
+				}
+			}
+
+			return false;
 		}
 	}
 }
