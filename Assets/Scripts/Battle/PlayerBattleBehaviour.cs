@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class PlayerBattleBehaviour : BattleBehaviour
 {
-	public static PlayerBattleBehaviour instance;
+	private static PlayerBattleBehaviour instance;
+
+	public static bool IsPlayerBB(BattleBehaviour bb)
+	{
+		return instance != null && instance.Equals(bb);
+	}
 
 	public static void ToggleTargetExternal(BattleBehaviour target)
 	{
@@ -117,5 +122,26 @@ public class PlayerBattleBehaviour : BattleBehaviour
 
 		//Process all current targets
 		ProcessTargets();
+	}
+
+	protected override void OnAddTarget(BattleBehaviour newTarget)
+	{
+		//Notify targets UI
+		CurrentTargetsUI.AddTarget(newTarget);
+	}
+
+	protected override void OnRemoveTarget(BattleBehaviour target)
+	{
+		//Notify targets UI
+		CurrentTargetsUI.RemoveTarget(target);
+	}
+
+	protected override void OnClearTargets(List<BattleBehaviour> targetsBefore)
+	{
+		//Just run on remove target for all of them
+		foreach (BattleBehaviour bb in targetsBefore)
+		{
+			OnRemoveTarget(bb);
+		}
 	}
 }

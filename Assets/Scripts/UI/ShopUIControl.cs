@@ -55,7 +55,7 @@ public class ShopUIControl : MonoBehaviour
 	{
 		if (target != null)
 		{
-			if (Vector3.Distance(targetsTransform.position, CameraManagement.GetMainCameraPosition()) > PlayerInteractionManagement.maxSelectDistance)
+			if (Vector3.Distance(targetsTransform.position, CameraManagement.GetMainCameraPosition()) > Interaction.Ranges.standard)
 			{
 				CloseShopUI();
 			}

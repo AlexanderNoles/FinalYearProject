@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class Interaction : IDisplay
 {
+	public static class Ranges
+	{
+		public const float standard = 500;
+		public const float infinity = Mathf.Infinity;
+	}
+
+
 	protected Sprite sprite;
 
 	public virtual bool Validate(InteractableBase interactable)
@@ -14,6 +21,11 @@ public class Interaction : IDisplay
 	public virtual void Process(InteractableBase interactable)
 	{
 		//Do nothing by default
+	}
+
+	public virtual float GetRange()
+	{
+		return Ranges.standard;
 	}
 
 	public virtual Interaction Init()
@@ -53,7 +65,7 @@ public class Interaction : IDisplay
 	{
 		public static bool AttackValidation(InteractableBase interactable)
 		{
-			return !PlayerBattleBehaviour.instance.Equals(interactable) && interactable is BattleBehaviour;
+			return interactable is BattleBehaviour &&!PlayerBattleBehaviour.IsPlayerBB(interactable as BattleBehaviour);
 		}
 
 		public static bool ShopValidation(InteractableBase interactable)

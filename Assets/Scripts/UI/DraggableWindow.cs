@@ -2,13 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class DraggableWindow : MonoBehaviour, IDragHandler, IBeginDragHandler
 {
 	public RectTransform target;
 	private Vector2 lastPos;
-	private const float scaleFactor = 1.0f / 0.6f; //0.6f is the scale factor of the canvas
+	private float scaleFactor;
 	public Vector2 additionalInitialOffset;
+	public CanvasScaler targetCanvasScaler;
+
+	private void Awake()
+	{
+		scaleFactor = 1f / targetCanvasScaler.scaleFactor;
+	}
 
 	public void InitialOffset()
 	{

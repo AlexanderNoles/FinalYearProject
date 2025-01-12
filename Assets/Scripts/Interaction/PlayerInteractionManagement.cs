@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerInteractionManagement : MonoBehaviour
 {
-	public const float maxSelectDistance = 500;
 	private static Dictionary<Collider, InteractableControl> interactables = new Dictionary<Collider, InteractableControl>();
 
 	public static void AddInteractable(Collider target, InteractableControl interactable)
@@ -44,7 +43,7 @@ public class PlayerInteractionManagement : MonoBehaviour
 			//Get mouse view ray
 			Ray mouseViewRay = CameraManagement.GetMainCamera().ScreenPointToRay(InputManagement.GetMousePosition());
 
-			RaycastHit[] hits = Physics.RaycastAll(mouseViewRay, maxSelectDistance);
+			RaycastHit[] hits = Physics.RaycastAll(mouseViewRay, currentInteraction.GetRange());
 
 			//Get target control
 			InteractableControl newTarget = null;

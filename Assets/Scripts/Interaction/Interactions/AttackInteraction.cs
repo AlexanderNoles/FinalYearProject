@@ -18,4 +18,11 @@ public class AttackInteraction : Interaction
 	{
 		return "attackInteraction";
 	}
+
+	public override float GetRange()
+	{
+		//Infinite target get range
+		//This is so you can always target enemies
+		return Ranges.infinity;
+	}
 }

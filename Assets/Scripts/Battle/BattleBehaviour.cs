@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BattleBehaviour : InteractableBase
 {
+	public string targetsName = "Target";
 	public Collider targetCollider;
 	//This id should only really be used for testing
 	//All bBehaviour lookups should be done through colliders
@@ -41,7 +42,7 @@ public class BattleBehaviour : InteractableBase
 			return;
 		}
 
-        if (!currentTargets.Remove(target))
+        if (!RemoveTarget(target))
         {
             //If target is not removed (i.e., it was not in the list)
 			AddTargetInternal(target);
@@ -76,18 +77,44 @@ public class BattleBehaviour : InteractableBase
 			}
 		}
 
+		OnAddTarget(target);
 		currentTargets.Add(target);
 	}
 
-	protected void RemoveTarget(BattleBehaviour target)
+	protected bool RemoveTarget(BattleBehaviour target)
 	{
-		currentTargets.Remove(target);
+		bool targetRemoved = currentTargets.Remove(target);
+
+		if (targetRemoved)
+		{
+			OnRemoveTarget(target);
+		}
+
+		return targetRemoved;
 	}
 
 	public void ClearTargets()
 	{
+		OnClearTargets(currentTargets);
 		currentTargets.Clear();
 	}
+
+	//Insert hook methods
+	protected virtual void OnAddTarget(BattleBehaviour newTarget)
+	{
+		//Do nothing by default
+	}
+
+	protected virtual void OnRemoveTarget(BattleBehaviour target)
+	{
+		//Do nothing by default
+	}
+
+	protected virtual void OnClearTargets(List<BattleBehaviour> targetsBefore)
+	{
+		//Do nothing by default
+	}
+	//
 
 	private class AttackProfile 
 	{
