@@ -30,6 +30,7 @@ namespace EntityAndDataDescriptor
         Settlement,
         Population,
         Emblem, 
+		CentralShop,
         Stats,
         Inventory,
 		Interactions,

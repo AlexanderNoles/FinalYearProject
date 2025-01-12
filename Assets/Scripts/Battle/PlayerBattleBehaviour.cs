@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,11 @@ public class PlayerBattleBehaviour : BattleBehaviour
 	public static void ToggleTargetExternal(BattleBehaviour target)
 	{
 		instance.ToggleTarget(target);
+	}
+
+	public static void ClearAllTargetsExternal()
+	{
+		instance.ClearTargets();
 	}
 
 	public static float GetSalvoPercentage()

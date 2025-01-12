@@ -9785,6 +9785,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 593e1e9535ae1a744af4f4339b987232, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiStateWithInteractions: {fileID: 1806634822}
+  interactionValFailed: {fileID: 0}
 --- !u!1 &335119644
 GameObject:
   m_ObjectHideFlags: 0
@@ -15038,7 +15040,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8637e1383a636144e9195d70075032f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiParentState: {fileID: 1806634822}
   selectedImage: {fileID: 14560563}
   interactionSlots:
   - {fileID: 175135601}
@@ -27454,6 +27455,8 @@ GameObject:
   - component: {fileID: 2083627888}
   - component: {fileID: 2083627887}
   - component: {fileID: 2083627886}
+  - component: {fileID: 2083627889}
+  - component: {fileID: 2083627890}
   m_Layer: 0
   m_Name: OuterEffect
   m_TagString: Untagged
@@ -27526,6 +27529,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 970680091}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2083627889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2083627885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ea1a71dd3fc12a409e9aceb3c78e791, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  simulationContext: {fileID: 2083627890}
+--- !u!114 &2083627890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2083627885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d3da75d7658c40428eb92785f2f774e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2088180540
 GameObject:
   m_ObjectHideFlags: 0

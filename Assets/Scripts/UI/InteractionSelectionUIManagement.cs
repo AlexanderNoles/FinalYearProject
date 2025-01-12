@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class InteractionSelectionUIManagement : MonoBehaviour
 {
 	private PlayerInteractions targetData = null;
-	public UIState uiParentState;
 	public RectTransform selectedImage;
 	public List<SlotUI> interactionSlots = new List<SlotUI>();
 
@@ -71,11 +70,7 @@ public class InteractionSelectionUIManagement : MonoBehaviour
 
 	public void SetCurrentInteractionButtonCallback(Interaction target, RectTransform uiRect)
 	{
-		PlayerInteractionManagement.SetCurrentInteraction(target);
+		PlayerInteractionManagement.SetCurrentInteraction(target, target.GetIcon());
 		selectedImage.anchoredPosition3D = uiRect.anchoredPosition3D;
-
-		//Set mouse tag a long
-		uiParentState.mouseState.tagALongImage = target.GetIcon();
-		MouseManagement.ReloadMouseState();
 	}
 }

@@ -342,6 +342,9 @@ public class SimulationManagement : MonoBehaviour
 		//Add game world
 		new GameWorld().Simulate();
 
+		//Add Warp
+		new Warp().Simulate();
+
 		//Add all routine instances
 		RefreshRoutines();
 	}

@@ -34,6 +34,7 @@ public class MouseManagement : MonoBehaviour
 	public Image mouseClickImage;
 	private Material mouseClickMat;
 	private float mouseClickT;
+	private float clickBuffer;
 	public AnimationCurve mouseClickAnimCurve;
 
 	public static void ApplyMouseState(MouseState newMouseState)
@@ -144,16 +145,25 @@ public class MouseManagement : MonoBehaviour
 		mouseClickEffectRect.anchoredPosition = InputManagement.GetMousePosition() * (1.0f / scaler.scaleFactor);
 
 		//Mouse on click effect
-		if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
-		{
-			mouseClickT = 1.0f;
-		}
-		else if (mouseClickT > 0.0f) 
+		if (mouseClickT > 0.0f)
 		{
 			mouseClickT -= Time.unscaledDeltaTime * 9.0f;
 			mouseClickT = Mathf.Clamp01(mouseClickT);
-
 			mouseClickMat.SetFloat("_T", mouseClickAnimCurve.Evaluate(1.0f - mouseClickT));
+		}
+		else if (InputManagement.GetMouseButton(InputManagement.MouseButton.Left))
+		{
+			clickBuffer += Time.deltaTime;
+		}
+		else if (InputManagement.GetMouseButtonUp(InputManagement.MouseButton.Left))
+		{
+			if (clickBuffer <= 0.2f)
+			{
+				//Only clicked mouse button didn't hold it
+				mouseClickT = 1.0f;
+			}
+
+			clickBuffer = 0.0f;
 		}
 	}
 }

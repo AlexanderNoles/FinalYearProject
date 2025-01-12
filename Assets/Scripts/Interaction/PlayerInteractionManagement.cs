@@ -16,12 +16,17 @@ public class PlayerInteractionManagement : MonoBehaviour
 		interactables.Remove(target);
 	}
 
-	public static void SetCurrentInteraction(Interaction newInteraction)
+	public static void SetCurrentInteraction(Interaction newInteraction, Sprite mouseTagALongSprite)
 	{
 		currentInteraction = newInteraction;
+		tagALongSprite = mouseTagALongSprite;
 	}
 
 	private static Interaction currentInteraction;
+	private static Sprite tagALongSprite;
+
+	public UIState uiStateWithInteractions;
+	public Sprite interactionValFailed;
 
 	private void Awake()
 	{
@@ -38,7 +43,14 @@ public class PlayerInteractionManagement : MonoBehaviour
 		//Each frame check if we are over an interactable object
 		//if so be check if that one can be interacted with
 		//If player is not hovering over UI (or in a ui state) try to find any targets that are under mouse
-		if (UIHelper.ElementsUnderMouse().Count <= 0 && UIManagement.InNeutral())
+
+		if (!UIManagement.InNeutral())
+		{
+			return;
+		}
+
+		bool anyValid = false;
+		if (UIHelper.ElementsUnderMouse().Count <= 0)
 		{
 			//Get mouse view ray
 			Ray mouseViewRay = CameraManagement.GetMainCamera().ScreenPointToRay(InputManagement.GetMousePosition());
@@ -61,10 +73,17 @@ public class PlayerInteractionManagement : MonoBehaviour
 				}
 			}
 
-			if (newTarget != null)
+			bool bypass = false;
+			List<InteractableBase> bypassedControl = new List<InteractableBase>();
+			if (PlayerCapitalShip.InJumpTravelStage() && newTarget == null)
 			{
-				bool anyValid = false;
-				List<InteractableBase> controlled = newTarget.GetControlled();
+				bypass = true;
+				bypassedControl.Add(WarpInteractable.GetInstance());
+			}
+
+			if (newTarget != null || bypass)
+			{
+				List<InteractableBase> controlled = bypass ? bypassedControl : newTarget.GetControlled();
 
 				foreach (InteractableBase target in controlled)
 				{
@@ -72,6 +91,7 @@ public class PlayerInteractionManagement : MonoBehaviour
 
 					if (validationResult)
 					{
+
 						//On mouse over
 						if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
 						{
@@ -83,12 +103,15 @@ public class PlayerInteractionManagement : MonoBehaviour
 						break;
 					}
 				}
-
-				if (!anyValid)
-				{
-					//Display can't interact ui here
-				}
 			}
+		}
+
+		Sprite targetSprite = anyValid ? tagALongSprite : interactionValFailed;
+
+		if (uiStateWithInteractions.mouseState.tagALongImage != targetSprite)
+		{
+			uiStateWithInteractions.mouseState.tagALongImage = targetSprite;
+			MouseManagement.ReloadMouseState();
 		}
 	}
 }

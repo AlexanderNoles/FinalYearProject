@@ -67,6 +67,16 @@ public class PlayerLocationManagement : MonoBehaviour
 		return GetPrimaryLocationWrapper(maxDistance).targetLocation;
 	}
 
+	public static DrawnLocation GetWarp()
+	{
+		return warpLocation;
+	}
+
+	public static VisitableLocation GetWarpLocation()
+	{
+		return warpLocation.targetLocation;
+	}
+
 	private static DrawnLocation warpLocation = null;
 	private static DrawnLocation backupLocation = null;
 	private List<DrawnLocation> drawnLocations = new List<DrawnLocation>();

@@ -437,6 +437,9 @@ public class PlayerCapitalShip : MonoBehaviour
 						Vector3.zero
 					});
 
+					//Clear all attack targets
+					PlayerBattleBehaviour.ClearAllTargetsExternal();
+
 					SimulationManagement.SimulationSpeed(10);
 					SimulationManagement.ForceTick();
 

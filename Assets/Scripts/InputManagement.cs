@@ -70,7 +70,12 @@ public class InputManagement
         return Input.GetMouseButtonDown((int)button) && (InputEnabled || _override);
     }
 
-    internal static float ScrollWheelInput(bool _override = false)
+	internal static bool GetMouseButtonUp(MouseButton button, bool _override = false)
+	{
+		return Input.GetMouseButtonUp((int)button) && (InputEnabled || _override);
+	}
+
+	internal static float ScrollWheelInput(bool _override = false)
     {
         if(!(_override || InputEnabled))
         {
