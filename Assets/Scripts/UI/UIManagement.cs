@@ -72,6 +72,15 @@ public class UIManagement : MonoBehaviour
 		{
 			TimeManagement.RemoveTimeScale(instance);
 		}
+
+		if (instance.activeState.useCutsomMouseState)
+		{
+			MouseManagement.ApplyMouseState(instance.activeState.mouseState);
+		}
+		else
+		{
+			MouseManagement.ResetMouseState();
+		}
 	}
 
     public UIState neutral;

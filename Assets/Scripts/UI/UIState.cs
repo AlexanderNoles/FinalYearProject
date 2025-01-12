@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class UIState : MonoBehaviour
 {
+	[Header("Mouse state during UI state")]
+	public bool useCutsomMouseState;
+	public MouseManagement.MouseState mouseState;
+
     [Header("UI State Settings")]
-    public bool enabled = true;
+    public new bool enabled = true;
     public bool autoSetup = true;
     public bool lockout = false;
     public bool toggleable = false;

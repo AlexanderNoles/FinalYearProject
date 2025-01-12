@@ -374,14 +374,10 @@ public class PlayerCapitalShip : MonoBehaviour
 				if (rotateT < 1.0f)
 				{
 					rotateT += Time.deltaTime * 0.1f;
-					float originalY = transform.rotation.eulerAngles.y;
 					transform.rotation = Quaternion.Lerp(startTurnRot, lookAtTargetRot, turnCurve.Evaluate(rotateT));
 
-					float difference = transform.rotation.eulerAngles.y - originalY;
-
-					//Only add rotation to the main camera
-					//Don't want any rotation in map
-					//CameraManagement.AddRotationMainOnly(new Vector2(0, difference));
+					float effectIntensity = rotateT / 3.0f;
+					UpdateEngineIntensityVisuallyDirect(effectIntensity, effectIntensity);
 
 					if (rotateT >= 1.0f)
 					{
