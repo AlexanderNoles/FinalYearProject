@@ -15040,6 +15040,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8637e1383a636144e9195d70075032f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  smartModeButton: {fileID: 0}
   selectedImage: {fileID: 14560563}
   interactionSlots:
   - {fileID: 175135601}
@@ -19751,7 +19752,7 @@ MonoBehaviour:
   - {fileID: 487778561}
   debugRoutines: []
   simulationRoutinesStorage: {fileID: 487778559}
-  historyLength: 17
+  historyLength: 500
   planetsGenerator: {fileID: 1383595365}
 --- !u!1 &1257894382
 GameObject:

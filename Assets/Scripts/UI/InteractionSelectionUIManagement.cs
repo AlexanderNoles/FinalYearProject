@@ -7,7 +7,13 @@ public class InteractionSelectionUIManagement : MonoBehaviour
 {
 	private PlayerInteractions targetData = null;
 	public RectTransform selectedImage;
+	private GameObject selectedImageGO;
 	public List<SlotUI> interactionSlots = new List<SlotUI>();
+
+	private void Awake()
+	{
+		selectedImageGO = selectedImage.gameObject;
+	}
 
 	private void Update()
 	{
@@ -55,22 +61,30 @@ public class InteractionSelectionUIManagement : MonoBehaviour
 
 			DrawSlot(i, interaction);
 		}
+
+		PlayerInteractionManagement.EnableSmartInteraction(true);
+		selectedImageGO.SetActive(false);
 	}
 
 	private void DrawSlot(int index, Interaction target)
 	{
 		interactionSlots[index].Draw(target, () => { SetCurrentInteractionButtonCallback(target, interactionSlots[index].GetComponent<RectTransform>()); });
-
-		if (index == 0)
-		{
-			//Force set first interaction as current
-			interactionSlots[index].ForceOnClick();
-		}
 	}
 
 	public void SetCurrentInteractionButtonCallback(Interaction target, RectTransform uiRect)
 	{
-		PlayerInteractionManagement.SetCurrentInteraction(target, target.GetIcon());
-		selectedImage.anchoredPosition3D = uiRect.anchoredPosition3D;
+		if (target.Equals(PlayerInteractionManagement.GetCurrentInteraction()))
+		{
+			PlayerInteractionManagement.EnableSmartInteraction(true);
+
+			//Hide selected graphic
+			selectedImageGO.SetActive(false);
+		}
+		else
+		{
+			PlayerInteractionManagement.SetCurrentInteraction(target);
+			selectedImageGO.SetActive(true);
+			selectedImage.anchoredPosition3D = uiRect.anchoredPosition3D;
+		}
 	}
 }

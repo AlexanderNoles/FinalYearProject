@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,14 +17,29 @@ public class PlayerInteractionManagement : MonoBehaviour
 		interactables.Remove(target);
 	}
 
-	public static void SetCurrentInteraction(Interaction newInteraction, Sprite mouseTagALongSprite)
+	public static void SetCurrentInteraction(Interaction newInteraction)
 	{
 		currentInteraction = newInteraction;
-		tagALongSprite = mouseTagALongSprite;
+		EnableSmartInteraction(false);
+	}
+
+	public static object GetCurrentInteraction()
+	{
+		return currentInteraction;
+	}
+
+	public static void EnableSmartInteraction(bool active)
+	{
+		smartInteractionEnabled = active;
+
+		if (active)
+		{
+			currentInteraction = null;
+		}
 	}
 
 	private static Interaction currentInteraction;
-	private static Sprite tagALongSprite;
+	private static bool smartInteractionEnabled = false;
 
 	public UIState uiStateWithInteractions;
 	public Sprite interactionValFailed;
@@ -31,11 +47,12 @@ public class PlayerInteractionManagement : MonoBehaviour
 	private void Awake()
 	{
 		currentInteraction = null;
+		smartInteractionEnabled = false;
 	}
 
 	private void Update()
 	{
-		if (currentInteraction == null)
+		if (currentInteraction == null && !smartInteractionEnabled)
 		{
 			return;
 		}
@@ -49,13 +66,31 @@ public class PlayerInteractionManagement : MonoBehaviour
 			return;
 		}
 
-		bool anyValid = false;
+		PerformInteraction(out Sprite mouseTagAlongSprite);
+
+		if (uiStateWithInteractions.mouseState.tagALongImage != mouseTagAlongSprite)
+		{
+			uiStateWithInteractions.mouseState.tagALongImage = mouseTagAlongSprite;
+			MouseManagement.ReloadMouseState();
+		}
+	}
+
+	private void PerformInteraction(out Sprite interactionIcon)
+	{
+		interactionIcon = null;
+
 		if (UIHelper.ElementsUnderMouse().Count <= 0)
 		{
 			//Get mouse view ray
 			Ray mouseViewRay = CameraManagement.GetMainCamera().ScreenPointToRay(InputManagement.GetMousePosition());
 
-			RaycastHit[] hits = Physics.RaycastAll(mouseViewRay, currentInteraction.GetRange());
+			float range = Mathf.Infinity;
+			if (currentInteraction != null)
+			{
+				range = currentInteraction.GetRange();
+			}
+
+			RaycastHit[] hits = Physics.RaycastAll(mouseViewRay, range);
 
 			//Get target control
 			InteractableControl newTarget = null;
@@ -84,34 +119,38 @@ public class PlayerInteractionManagement : MonoBehaviour
 			if (newTarget != null || bypass)
 			{
 				List<InteractableBase> controlled = bypass ? bypassedControl : newTarget.GetControlled();
+				List<Interaction> targetInteractions = new List<Interaction>();
 
-				foreach (InteractableBase target in controlled)
+				if (smartInteractionEnabled)
 				{
-					bool validationResult = currentInteraction.Validate(target);
+					targetInteractions = PlayerManagement.GetInteractions().playersInteractions;
+				}
+				else
+				{
+					targetInteractions.Add(currentInteraction);
+				}
 
-					if (validationResult)
+				foreach (Interaction targetInteraction in targetInteractions)
+				{
+					foreach (InteractableBase targetObject in controlled)
 					{
+						bool validationResult = targetInteraction.Validate(targetObject);
 
-						//On mouse over
-						if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
+						if (validationResult)
 						{
-							//On Interact button pressed
-							currentInteraction.Process(target);
-						}
+							//On mouse over
+							if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
+							{
+								//On Interact button pressed
+								targetInteraction.Process(targetObject);
+							}
 
-						anyValid = true;
-						break;
+							interactionIcon = targetInteraction.GetIcon();
+							return;
+						}
 					}
 				}
 			}
-		}
-
-		Sprite targetSprite = anyValid ? tagALongSprite : interactionValFailed;
-
-		if (uiStateWithInteractions.mouseState.tagALongImage != targetSprite)
-		{
-			uiStateWithInteractions.mouseState.tagALongImage = targetSprite;
-			MouseManagement.ReloadMouseState();
 		}
 	}
 }

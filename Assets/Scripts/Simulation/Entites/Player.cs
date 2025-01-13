@@ -30,8 +30,10 @@ public class Player : SimulationEntity
 
 		PlayerInteractions interactions = new PlayerInteractions();
 		//Add basic interactions that all players have
-		interactions.playersInteractions.Add(new AttackInteraction().Init());
+		//The order of interactions matters as the smart interaction will
+		//iterate through them in that order
 		interactions.playersInteractions.Add(new ShopInteraction().Init());
+		interactions.playersInteractions.Add(new AttackInteraction().Init());
 		//
 		AddData(DataTags.Interactions, interactions);
 	}
