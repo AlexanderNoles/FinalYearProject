@@ -61,7 +61,7 @@ public class InventoryUIManagement : UIState
 
     //This is the area covered by a inventory slot UI component, this includes padding
     //This can be calculated by simply getting the base slot object scale (150), dividing by 2 (75) and adding padding (+15) if need be
-    private const int inventorySlotArea = 90;
+    private const int inventorySlotArea = 70; //typically 90
 	//60 / 2 = 30, 30 + 15 = 45
 	private const int miniInventorySlotArea = 45;
 	//
@@ -98,6 +98,11 @@ public class InventoryUIManagement : UIState
             }
         }
     }
+
+	public static void ForceRedraw()
+	{
+		instance.Draw(!instance.mainInventoryScreen.activeSelf);
+	}
 
 	private void Draw(bool mini)
 	{
@@ -151,7 +156,7 @@ public class InventoryUIManagement : UIState
 		centerDictDrawn = true;
 
 		string itemTypeString = "";
-		int allItemsCount = ItemDatabase.GetItemCount();
+		int allItemsCount = ItemDatabase.GetTotalItemCount();
 		//Slot area is always a constant amount of units wide
 		float fullDivision = 550.0f / dictionarySlotSize;
         int entriesPerRow = Mathf.FloorToInt(fullDivision);
@@ -162,7 +167,7 @@ public class InventoryUIManagement : UIState
 
         for (int i = 0; i < allItemsCount; i++)
 		{
-			ItemDatabase.ItemData item = ItemDatabase.GetItem(i);
+			ItemDatabase.ItemData item = ItemHelper.GetItemByTotalIndex(i);
             if (!item.itemTypeDeclaration.Equals(itemTypeString))
 			{
 				itemTypeString = item.itemTypeDeclaration;
@@ -198,8 +203,11 @@ public class InventoryUIManagement : UIState
 			Transform target = dictionarySlotPool.UpdateNextObjectPosition(0, Vector3.zero);
 			(target as RectTransform).anchoredPosition3D = position;
 
+			Transform mainChild = target.GetChild(1);
 			//Get target image component
-			target.GetChild(0).GetComponent<Image>().sprite = item.icon;
+			mainChild.GetComponent<Image>().sprite = item.icon;
+			//Get idisplay component
+			mainChild.GetComponent<DisplayOnHover>().Setup(item);
 
 			//Increment index in row
 			indexInRow++;
@@ -216,6 +224,16 @@ public class InventoryUIManagement : UIState
 		ItemBase target = instance.targetData.targetInventory.GetInventoryItemAtPosition(index);
 		//If there is no item in that slot then this function will pass null
 		//This will automatically redraw eithier the mini inventory or the big one based on what is needed
+
+		if (index >= instance.inventorySlots.Count)
+		{
+			//Inventory ui full
+			//This can happen in cases were an item is being used as a form of currency and is about to be removed
+			//this draw function is called regardless even during the brief time the number of items
+			//in the inventory exceeds the expected max amount
+			return;
+		}
+
 		instance.inventorySlots[index].Draw(target, () => { instance.DisplayItemInfo(target); });
 	}
 

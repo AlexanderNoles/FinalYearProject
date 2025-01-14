@@ -134,13 +134,23 @@ public class ShopUIControl : MonoBehaviour
 
 		PlayerInventory playerInventory = PlayerManagement.GetInventory();
 
-		if (playerInventory.AttemptToBuy(target, targetShop.itemsInShop[index].calculatedPrice))
+		if (playerInventory.AttemptToBuy(target, targetShop.itemsInShop[index].calculatedPrice, targetShop.GetInventorySizeBuffer()))
 		{
+			bool closeResult = targetShop.OnItemBought();
+
 			//Remove item from target shop
 			targetShop.itemsInShop.RemoveAt(index);
 
-			//Redraw shop interface
-			Draw(true);
+			if (closeResult)
+			{
+				//Close shop
+				CloseShopUI();
+			}
+			else
+			{
+				//Redraw shop interface
+				Draw(true);
+			}
 		}
 	}
 }

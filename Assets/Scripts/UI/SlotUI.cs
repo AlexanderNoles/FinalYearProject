@@ -8,6 +8,8 @@ public class SlotUI : MonoBehaviour
 {
 	public Image slotIcon;
 	public Button button;
+	public bool buttonEnabled = true;
+	public DisplayOnHover onHover;
 
 	public void Draw(IDisplay newTarget, UnityAction onButtonClick)
 	{
@@ -22,7 +24,12 @@ public class SlotUI : MonoBehaviour
 			//Display item
 			slotIcon.gameObject.SetActive(true);
 			slotIcon.sprite = newTarget.GetIcon();
-			button.enabled = true;
+			button.enabled = buttonEnabled;
+
+			if (onHover != null)
+			{
+				onHover.Setup(newTarget);
+			}
 
 			button.onClick.RemoveAllListeners();
 			button.onClick.AddListener(onButtonClick);

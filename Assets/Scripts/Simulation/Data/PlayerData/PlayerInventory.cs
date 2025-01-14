@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +10,7 @@ public class PlayerInventory : InventoryBase
 	protected const int inventorySize = 8;
 	private List<ItemBase> itemBases = new List<ItemBase>();
 	private PlayerStats target = null;
-	public float mainCurrency = 500;
+	public float mainCurrency = 50000;
 	public float fuel = 500;
 
 	public void SetStatsTarget(PlayerStats newTarget)
@@ -37,10 +38,10 @@ public class PlayerInventory : InventoryBase
 		return itemBases[index];
 	}
 
-	public bool AttemptToBuy(ItemBase target, float price)
+	public bool AttemptToBuy(ItemBase target, float price, int inventorySizeBuffer)
 	{
 		//Do we have space?
-		if (itemBases.Count < inventorySize)
+		if (itemBases.Count < inventorySize + inventorySizeBuffer)
 		{
 			//Can we afford item?
 			if (CanAfford(price))
@@ -64,6 +65,37 @@ public class PlayerInventory : InventoryBase
 	public bool CanAfford(float price)
 	{
 		return price <= mainCurrency;
+	}
+
+	public bool HasItemOfType(Type type)
+	{
+		foreach (ItemBase item in itemBases)
+		{
+			if (item.GetType().Equals(type))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public void RemoveItemFromInventoryOfType(Type type)
+	{
+		ItemBase target = null;
+		foreach (ItemBase item in itemBases)
+		{
+			if (item.GetType().Equals(type))
+			{
+				target = item;
+				break;
+			}
+		}
+
+		if (target != null)
+		{
+			RemoveItemFromInventory(target);
+		}
 	}
 
 	public override void AddItemToInventory(ItemBase item)
@@ -118,7 +150,7 @@ public class PlayerInventory : InventoryBase
 			}
 
 			//Ask inventory ui to redraw slot
-			InventoryUIManagement.DrawSlot(indexOf);
+			InventoryUIManagement.ForceRedraw();
 		}
 	}
 }

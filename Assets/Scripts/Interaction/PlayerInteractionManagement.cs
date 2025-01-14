@@ -110,7 +110,7 @@ public class PlayerInteractionManagement : MonoBehaviour
 
 			bool bypass = false;
 			List<InteractableBase> bypassedControl = new List<InteractableBase>();
-			if (PlayerCapitalShip.InJumpTravelStage() && newTarget == null)
+			if (newTarget == null && PlayerCapitalShip.InJumpTravelStage() && PlayerManagement.GetInventory().HasItemOfType(typeof(WarpShopItemBase)))
 			{
 				bypass = true;
 				bypassedControl.Add(WarpInteractable.GetInstance());

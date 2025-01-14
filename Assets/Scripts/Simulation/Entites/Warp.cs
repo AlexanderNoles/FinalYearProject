@@ -24,8 +24,9 @@ public class Warp : SimulationEntity
 	{
 		base.InitData();
 		
-		Shop warpShop = new Shop();
+		Shop warpShop = new WarpShop();
 		warpShop.capacity = 1;
+		warpShop.SetTargetRarity(ItemDatabase.ItemRarity.Exalted);
 		AddData(DataTags.CentralShop, warpShop);
 	}
 }

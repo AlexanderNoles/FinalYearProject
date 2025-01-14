@@ -6,6 +6,15 @@ public class Shop : DataBase
 {
 	public int capacity = 8;
 
+	public bool rarityLimited = false;
+	public ItemDatabase.ItemRarity rarityLimitedToo;
+
+	public void SetTargetRarity(ItemDatabase.ItemRarity newTarget)
+	{
+		rarityLimited = true;
+		rarityLimitedToo = newTarget;
+	}
+
 	public class ShopEntry
 	{
 		public ItemBase item;
@@ -26,19 +35,43 @@ public class Shop : DataBase
 
 	public void OnShopUIOpened()
 	{
-		if (nextShopUpdate <= SimulationManagement.currentTickID)
+		if (RestockShop())
 		{
 			//Update the shop with new items
 			itemsInShop.Clear();
 
 			for (int i = 0; i < capacity; i++)
 			{
-				ItemBase newItem = new ItemBase(ItemDatabase.GetRandomItemIndex());
+				ItemBase newItem;
+				if (rarityLimited)
+				{
+					newItem = ItemHelper.Wrap(ItemHelper.GetRandomItemOfRarity(rarityLimitedToo));
+				}
+				else
+				{
+					newItem = ItemHelper.Wrap(ItemHelper.GetItemForGeneralPurpose());
+				}
+
 				itemsInShop.Add(new ShopEntry(newItem, newItem.GetPrice(parent)));
 			}
 
 			//Every 10 minutes if we don't include warp travel's effect on time
 			nextShopUpdate = SimulationManagement.currentTickID + 200;
 		}
+	}
+
+	public virtual bool RestockShop()
+	{
+		return nextShopUpdate <= SimulationManagement.currentTickID;
+	}
+
+	public virtual bool OnItemBought()
+	{
+		return false;
+	}
+
+	public virtual int GetInventorySizeBuffer()
+	{
+		return 0;
 	}
 }

@@ -27,10 +27,21 @@
 	description: "Wowee wowee, <color=*goodColour*>I love my creature!</color>"
 	extra: "This is for alias testing: *health* wowee"
 }
-
 ### Basic ###
 { item
+	//Normal guns
+	rarity: "0"
+	attackPower: "2"
+	icon: "mark2Cannons"
+	name: "Mark II Hudson Guns"
+	price: "0.1"
+	class: "2"
+	description: "Increases <color=*statColour*>Attack Power</color> slightly"
+	extra: "Named after the company's founder, this weapons array is the galaxy's bread and butter."
+}
+{ item
 	//Dangerous Generator
+	rarity: "0"
 	maxHealth: "-25"
 	healthRegen: "5"
 	icon: "generator"
@@ -42,6 +53,7 @@
 }
 { item
 	//Damage increase
+	rarity: "0"
 	attackPower: "10"
 	icon: "divinebattlelogic"
 	name: "Divine Battle Logic"
@@ -60,4 +72,26 @@
 	description: "Increases <color=*statColour*>Move Speed</color>."
 	extra: "*moveSpeed*"
 }
-
+### Rare ###
+{ item
+	//Buy one item from the warp shop
+	rarity: "1"
+	target: "WarpShopItemBase"
+	icon: "whisperDigitalHemi"
+	name: "Whisphers From The Digital Hemisphere"
+	price: "0.9"
+	class: "0"
+	description: "Allows the purchase of one item from the Warp's Shop, will be consumed upon purchase of an item."
+	extra: "Unlike typical Shops, the Warp's Shop will not refresh until it is empty."
+}
+### Exalted ###
+{ item
+	//Standin item
+	rarity: "2"
+	icon: "angry"
+	name: "Exalted Item Example"
+	price: "1"
+	class: "0"
+	description: "An example of an Exalted item"
+	extra: ""
+}

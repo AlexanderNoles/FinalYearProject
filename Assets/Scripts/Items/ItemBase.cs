@@ -5,9 +5,7 @@ using UnityEngine;
 
 public class ItemBase : IDisplay
 {
-	public int itemIndex = 0;
 	private ItemDatabase.ItemData cachedItemData = null;
-	private string statContributorDescriptions;
 	private List<StatContributor> statContributors = new List<StatContributor>();
 
 	public float GetPrice(EntityLink parentFaction)
@@ -70,60 +68,31 @@ public class ItemBase : IDisplay
 		statContributors.Clear();
 	}
 
-	public void ReCacheItemData()
+	public ItemBase Setup(ItemDatabase.ItemData targetData)
 	{
-		if (!ItemDatabase.itemIDToItemData.ContainsKey(itemIndex))
-		{
-			cachedItemData = null;
-			return;
-		}
-		cachedItemData = ItemDatabase.itemIDToItemData[itemIndex];
-
-		//Generate item additional extra description
-		statContributorDescriptions = "\n\n";
-
-		foreach (KeyValuePair<string, string> entry in cachedItemData.nonPredefinedKeyToValue)
-		{
-			if (float.TryParse(entry.Value, out float modifier))
-			{
-				string modifierSign = modifier >= 0.0f ? "+" : "";
-
-				statContributorDescriptions = $"{statContributorDescriptions}\n{modifierSign}{modifier} {ItemDatabase.GetKeyAsTitle(entry.Key)}";
-			}
-		}
-	}
-
-	public ItemBase(int itemDataIndex)
-	{
-		itemIndex = itemDataIndex;
-		ReCacheItemData();
+		cachedItemData = targetData;
+		return this;
 	}
 
 	//DISPLAY METHODS
 	public string GetTitle()
 	{
-		return cachedItemData.name;
+		return cachedItemData.GetTitle();
 	}
 
 	public string GetDescription()
 	{
-		return $"<color=#949494>[{cachedItemData.itemClass.ToString()}]</color>\n\n" + 
-		cachedItemData.description;
+		return cachedItemData.GetDescription();
 	}
 
 	public Sprite GetIcon()
 	{
-		if (cachedItemData == null)
-		{
-			return null;
-		}
-
-		return cachedItemData.icon;
+		return cachedItemData.GetIcon();
 	}
 
 	public string GetExtraInformation()
 	{
-		return cachedItemData.extraDescription + statContributorDescriptions;
+		return cachedItemData.GetExtraInformation();
 	}
 	//
 }

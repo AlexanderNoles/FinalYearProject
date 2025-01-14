@@ -15,23 +15,97 @@ public class ItemDatabase
 		Void
 	}
 
+	public enum ItemRarity
+	{
+		Basic,
+		Rare,
+		Exalted
+	}
+
 	//Item data storage
-	public class ItemData
+	public class ItemData : IDisplay
 	{
 		//Representation of a item loaded from the items file
 		//Acts as a helper for getting data about items
 		public Sprite icon;
+		public string targetSubtypeName = "";
 		public string name;
 		public string description;
 		public string extraDescription;
 		public string itemTypeDeclaration;
 		public float basePrice;
 		public ItemClass itemClass;
+		public ItemRarity itemRarity = ItemRarity.Basic;
+
+		public string statContributorDescriptions;
+
+		public void GenerateStatContributorDescriptions()
+		{
+			//Generate item additional extra description
+			statContributorDescriptions = "\n\n";
+
+			foreach (KeyValuePair<string, string> entry in nonPredefinedKeyToValue)
+			{
+				if (float.TryParse(entry.Value, out float modifier))
+				{
+					string modifierSign = modifier >= 0.0f ? "+" : "";
+
+					statContributorDescriptions = $"{statContributorDescriptions}\n{modifierSign}{modifier} {GetKeyAsTitle(entry.Key)}";
+				}
+			}
+		}
 
 		//Typically keys in the file are matched to actual variables but there should be a backup in the form of a dict in case
 		//there is not a corresponding variable.
 
 		public Dictionary<string, string> nonPredefinedKeyToValue = new Dictionary<string, string>();
+		
+
+		//DISPLAY METHODS
+		public string GetTitle()
+		{
+			return name;
+		}
+
+		public string GetDescription()
+		{
+			return $"<color=#949494>[{itemClass}]</color>\n\n" + description;
+		}
+
+		public Sprite GetIcon()
+		{
+			return icon;
+		}
+
+		public string GetExtraInformation()
+		{
+			return extraDescription + statContributorDescriptions;
+		}
+	}
+
+	public class ItemCollection
+	{
+		public List<ItemData> items = new List<ItemData>();
+
+		public void Add(ItemData item)
+		{
+			items.Add(item);
+		}
+
+		public ItemData GetRandomItem()
+		{
+			if (items.Count == 0)
+			{
+				return null;
+			}
+
+			return items[GetRandomItemIndex()];
+		}
+
+		public int GetRandomItemIndex()
+		{
+			return Random.Range(0, items.Count);
+		}
 	}
 
 	public static string GetKeyAsTitle(string inputKey)
@@ -48,44 +122,21 @@ public class ItemDatabase
 		return $"{char.ToUpper(inputKey[0])}{inputKey[1..]}";
 	}
 
-	public static Dictionary<int, ItemData> itemIDToItemData = new Dictionary<int, ItemData>();
-	private static string currentItemTypeDeclaration;
-    private static int currentItemIndex = 0;
+	public static Dictionary<ItemRarity, ItemCollection> itemRarityToCollections = new Dictionary<ItemRarity, ItemCollection>();
+	public static int totalLoadedItemCount;
 
-	public static int GetItemCount()
+	public static int GetTotalItemCount()
 	{
-		return currentItemIndex;
+		return totalLoadedItemCount;
 	}
-
-	public static ItemData GetRandomItem()
-	{
-		//No items
-		if (currentItemIndex == 0)
-		{
-			return null;
-		}
-
-		return itemIDToItemData[GetRandomItemIndex()];
-	}
-
-	public static int GetRandomItemIndex()
-	{
-		return Random.Range(0, currentItemIndex);
-	}
-
-	public static ItemData GetItem(int index)
-	{
-		return itemIDToItemData[index];
-	}
-
 	//
 
 	[RuntimeInitializeOnLoadMethod]
 	public static void LoadItemsFromFile()
 	{
-		currentItemIndex = 0;
-		itemIDToItemData.Clear(); 
-		currentItemTypeDeclaration = "";
+		totalLoadedItemCount = 0;
+		itemRarityToCollections.Clear();
+		string currentItemTypeDeclaration = "";
         Dictionary<string, string> aliasDict = new Dictionary<string, string>();
 
 		//Load file from resources
@@ -133,11 +184,15 @@ public class ItemDatabase
 				if (newItem != null)
 				{
 					newItem.itemTypeDeclaration = currentItemTypeDeclaration;
+					newItem.GenerateStatContributorDescriptions();
 
-					//The below two lines could be combined but I find this to be more clear
-					itemIDToItemData.Add(currentItemIndex, newItem);
-					currentItemIndex++;
+					if (!itemRarityToCollections.ContainsKey(newItem.itemRarity))
+					{
+						itemRarityToCollections[newItem.itemRarity] = new ItemCollection();
+					}
 
+					itemRarityToCollections[newItem.itemRarity].Add(newItem);
+					totalLoadedItemCount++;
 					newItem = null;
 				}
 				//
@@ -180,6 +235,14 @@ public class ItemDatabase
 						{
 							//Load sprite from resources
 							VisualDatabase.LoadIconFromResources(textBody, out newItem.icon);
+						}
+						else if (key.Contains("target"))
+						{
+							newItem.targetSubtypeName = textBody;
+						}
+						else if (key.Contains("rarity"))
+						{
+							newItem.itemRarity = (ItemRarity)int.Parse(textBody);
 						}
 						else if (key.Contains("name"))
 						{

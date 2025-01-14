@@ -204,7 +204,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -90, y: 180}
-  m_SizeDelta: {x: 120, y: 120}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8865939990159417122
 CanvasRenderer:
@@ -228,6 +228,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slotIcon: {fileID: 1864895260500802781}
   button: {fileID: 2064051620556692438}
+  buttonEnabled: 0
+  onHover: {fileID: 3384282399555051279}
 --- !u!114 &2595113486902374421
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -330,6 +332,7 @@ GameObject:
   - component: {fileID: 8201178284730529908}
   - component: {fileID: 1864895260500802781}
   - component: {fileID: 2064051620556692438}
+  - component: {fileID: 3384282399555051279}
   m_Layer: 5
   m_Name: MainIcon
   m_TagString: Untagged
@@ -438,3 +441,15 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3384282399555051279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8319791992049788120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35ad36cffd01c99488efe97e00a5bcf7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
