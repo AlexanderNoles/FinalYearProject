@@ -19,6 +19,13 @@ public static class GenerationUtility
 		new Vector3(1,0,1)
 	};
 
+	public static readonly Vector2[] diagonalOffsets2D = new Vector2[] {
+		new Vector2(1,1),
+		new Vector2(1,-1),
+		new Vector2(-1,-1),
+		new Vector2(-1,1),
+	};
+
 	public static readonly Vector3[] orthagonalOffsets = new Vector3[] {
         new Vector3(1,0,0),
         new Vector3(0,0,1),
