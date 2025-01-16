@@ -1,4 +1,4 @@
-[SimulationManagement.ActiveSimulationRoutine(0)]
+[SimulationManagement.SimulationRoutine(0)]
 public class #SCRIPTNAME# : RoutineBase
 {
     #NOTRIM#

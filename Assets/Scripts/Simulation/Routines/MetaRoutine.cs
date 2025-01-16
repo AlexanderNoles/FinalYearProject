@@ -56,11 +56,14 @@ public class MetaRoutine : RoutineBase
             GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattleData);
 
             //Remove from battles if they were partaking
-            foreach (KeyValuePair<RealSpacePostion, GlobalBattleData.Battle> battleEntry in globalBattleData.battles)
+            foreach (KeyValuePair<RealSpacePostion, List<GlobalBattleData.Battle>> battleEntry in globalBattleData.cellCenterToBattles)
             {
                 foreach (int id in idsOfRemovedEntities)
                 {
-                    battleEntry.Value.RemoveInvolvedEntity(id);
+					foreach (GlobalBattleData.Battle battle in battleEntry.Value) 
+					{
+						battle.RemoveInvolvedEntity(id);
+					}
                 }
             }
         }

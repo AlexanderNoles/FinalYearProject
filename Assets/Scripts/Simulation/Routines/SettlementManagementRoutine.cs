@@ -141,13 +141,13 @@ public class SettlementManagementRoutine : RoutineBase
                         int fleetShipLimitForSettlement = Mathf.RoundToInt(MathHelper.ValueTanhFalloff(invertedSettlementIndex, 3));
                         fleetShipLimitForSettlement = Mathf.Max(1, fleetShipLimitForSettlement);
                         int fleetCountInCell = 0;
-                        RealSpacePostion cellCenter = settlePair.Key;
-                        if (militaryData.cellCenterToFleets.ContainsKey(cellCenter))
+                        RealSpacePostion settlementPosition = settlePair.Value.actualSettlementPos;
+                        if (militaryData.positionToFleets.ContainsKey(settlementPosition))
                         {
-                            fleetCountInCell = militaryData.cellCenterToFleets[cellCenter].Count;
+                            fleetCountInCell = militaryData.positionToFleets[settlementPosition].Count;
 
                             //Add ships to fleet or repair ships if they have damage taken
-                            foreach (ShipCollection collection in militaryData.cellCenterToFleets[cellCenter])
+                            foreach (ShipCollection collection in militaryData.positionToFleets[settlementPosition])
                             {
                                 Fleet current = collection as Fleet;
 
@@ -161,8 +161,6 @@ public class SettlementManagementRoutine : RoutineBase
                                 foreach (Ship ship in ships)
                                 {
                                     //Just restore 20% of health each tick
-                                    //Currently (28/11/2024, 15:45) no routine to make ships retreat back to base after winning
-                                    //Should be easy to add but I want to make a general retreat routine instead (so that includes fleeing from battle)
                                     ship.health = Mathf.Clamp(ship.health + (ship.GetMaxHealth() * 0.2f), 0, ship.GetMaxHealth());
                                 }
                             }
@@ -184,7 +182,7 @@ public class SettlementManagementRoutine : RoutineBase
                             {
                                 if (SimulationManagement.random.Next(0, 101) / 100.0f < productionSpeed)
                                 {
-                                    militaryData.AddFleet(cellCenter, new Fleet());
+                                    militaryData.AddFleet(settlementPosition, new Fleet());
                                 }
                             }
                         }

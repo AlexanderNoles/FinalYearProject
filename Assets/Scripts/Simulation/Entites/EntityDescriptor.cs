@@ -37,7 +37,7 @@ namespace EntityAndDataDescriptor
         Military,
         Political,
         Economic, 
-        Capital,
+        TargetableLocation,
         War,
         Feelings,
         ContactPolicy,

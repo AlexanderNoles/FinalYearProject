@@ -128,7 +128,6 @@ public class TerritoryData : DataBase
 	public List<List<Vector3>> CalculateMapBorderPositions(out Vector3 iconPosition, out Vector3 iconScale, float shiftModifier)
 	{
 		iconPosition = Vector3.zero;
-		iconScale = Vector3.one * 3;
 
 		const int lengthLowerBound = 3;
 		int currentAverageCount = 0;
@@ -300,6 +299,15 @@ public class TerritoryData : DataBase
 			}
 
 			loopFailsafe++;
+		}
+
+		if (iconPosition == Vector3.zero)
+		{
+			iconScale = Vector3.zero;
+		}
+		else
+		{
+			iconScale = Vector3.one * 3;
 		}
 
 		return output;

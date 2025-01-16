@@ -1,5 +1,5 @@
-[SimulationManagement.ActiveSimulationRoutine(0)]
-public class #SCRIPTNAME# : RoutineBase
+
+public class #SCRIPTNAME# : DataBase
 {
     #NOTRIM#
 }

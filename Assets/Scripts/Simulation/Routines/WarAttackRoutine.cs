@@ -37,7 +37,7 @@ public class WarAttackRoutine : RoutineBase
             //Current max amount of attacks going on
             int maxAllowedAttacks = Mathf.RoundToInt(milData.currentFleetCount / 10); //Just use a static 10 modifier
 
-            int attackBudget = maxAllowedAttacks - batData.ongoingBattles.Count;
+            int attackBudget = maxAllowedAttacks - batData.positionToOngoingBattles.Count;
             int fleetBudgerPerAttack = Mathf.RoundToInt(milData.currentFleetCount / 20.0f);
 
             if (fleetBudgerPerAttack <= 0)
@@ -77,7 +77,7 @@ public class WarAttackRoutine : RoutineBase
                                 RealSpacePostion actualPos = null;
 
                                 //If this is a brand new battle
-                                if (!globalBattleData.battles.ContainsKey(attackCell))
+                                if (!globalBattleData.cellCenterToBattles.ContainsKey(attackCell))
                                 {
                                     if (enemy.GetData(DataTags.Settlement, out SettlementData setData) && setData.settlements.ContainsKey(attackCell))
                                     {
@@ -89,8 +89,12 @@ public class WarAttackRoutine : RoutineBase
                                         actualPos = WorldManagement.RandomPositionInCell(attackCell, SimulationManagement.random);
                                     }
                                 }
+								else
+								{
+									actualPos = globalBattleData.cellCenterToBattles[attackCell][0].postion;
+								}
 
-                                globalBattleData.StartOrJoinBattle(attackCell, actualPos, milData.parent.Get().id, enemy.id);
+                                globalBattleData.StartOrJoinBattle(attackCell, actualPos, milData.parent.Get().id, enemy.id, true);
                                 //Lower remaining attack budget
                                 attackBudget--;
                             }

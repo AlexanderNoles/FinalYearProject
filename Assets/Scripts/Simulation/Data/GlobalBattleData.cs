@@ -83,7 +83,7 @@ public class GlobalBattleData : DataBase
 
 				if (current.GetData(DataTags.Battle, out BattleData data))
 				{
-					if (!data.ongoingBattles.Remove(pos))
+					if (!data.positionToOngoingBattles.Remove(pos))
 					{
 						Debug.LogWarning("Entity was unaware of battle it was in!");
 					}
@@ -93,7 +93,7 @@ public class GlobalBattleData : DataBase
 			involvedEntities.Clear();
 		}
 
-		public void ResolveTerritory(RealSpacePostion pos, HistoryData historyData, int winnerID, bool isLazy = true)
+		public void ResolveTerritory(RealSpacePostion cellCenterOfPos, RealSpacePostion pos, HistoryData historyData, int winnerID)
 		{
 			// Decide new owner //
 			if (winnerID == -1)
@@ -118,7 +118,7 @@ public class GlobalBattleData : DataBase
 
 					if (lostEntity.GetData(DataTags.Territory, out TerritoryData lossData))
 					{
-                        lossData.RemoveTerritory(pos);
+                        lossData.RemoveTerritory(cellCenterOfPos);
 
 						float modifier = 1.0f;
 
@@ -158,9 +158,9 @@ public class GlobalBattleData : DataBase
 						//Transfer previously owned faction to history data
 						if (historyData != null)
 						{
-							if (!historyData.previouslyOwnedTerritories.ContainsKey(pos))
+							if (!historyData.previouslyOwnedTerritories.ContainsKey(cellCenterOfPos))
 							{
-								historyData.previouslyOwnedTerritories.Add(pos, new HistoryData.HistoryCell());
+								historyData.previouslyOwnedTerritories.Add(cellCenterOfPos, new HistoryData.HistoryCell());
 							}
 							else
 							{
@@ -172,7 +172,7 @@ public class GlobalBattleData : DataBase
 					//Destroy any settlement in this area
 					if (lostEntity.GetData(DataTags.Settlement, out SettlementData setData))
 					{
-						setData.settlements.Remove(pos);
+						setData.settlements.Remove(cellCenterOfPos);
 					}
 				}
 			}
@@ -199,19 +199,47 @@ public class GlobalBattleData : DataBase
 		}
 	}
 
-	public Dictionary<RealSpacePostion, Battle> battles = new Dictionary<RealSpacePostion, Battle>();
+	public Dictionary<RealSpacePostion, List<Battle>> cellCenterToBattles = new Dictionary<RealSpacePostion, List<Battle>>();
 	public static int totalBattlesCount = 0;
 
-	public bool StartOrJoinBattle(RealSpacePostion key, RealSpacePostion actualPos, int originID, int targetID)
+	public bool StartOrJoinBattle(RealSpacePostion key, RealSpacePostion actualPos, int originID, int targetID, bool mergeToExisting)
 	{
-		if (!battles.ContainsKey(key))
+		if (!cellCenterToBattles.ContainsKey(key))
 		{
-			battles[key] = new Battle(actualPos);
-			battles[key].startTickID = SimulationManagement.currentTickID;
+			//Create list
+			cellCenterToBattles[key] = new List<Battle>();
+		}
+
+		//Check if battle is already going on
+		//If it isn't make a new battle
+		Battle battle = null;
+
+		foreach (Battle storedBattle in cellCenterToBattles[key])
+		{
+			//If merge is enabled we simply join a battle if any exist already
+			if (mergeToExisting || storedBattle.postion.Equals(actualPos))
+			{
+				battle = storedBattle;
+
+				if (mergeToExisting)
+				{
+					actualPos = storedBattle.postion;
+				}
+
+				break;
+			}
+		}
+
+		if (battle == null)
+		{
+			battle = new Battle(actualPos);
+			battle.startTickID = SimulationManagement.currentTickID;
+
+			cellCenterToBattles[key].Add(battle);
+
 			totalBattlesCount++;
 		}
 
-		Battle battle = battles[key];
 		List<int> involvedFactions = battle.GetInvolvedEntities();
 
 		if (!involvedFactions.Contains(originID))
@@ -228,10 +256,10 @@ public class GlobalBattleData : DataBase
 			SimulationEntity attacker = SimulationManagement.GetEntityByID(originID);
 			if (attacker.GetData(DataTags.Battle, out BattleData attackBData))
 			{
-				if (!attackBData.ongoingBattles.ContainsKey(key))
+				if (!attackBData.positionToOngoingBattles.ContainsKey(actualPos))
 				{
 					//This check should always pass
-					attackBData.ongoingBattles.Add(key, new BattleData.BattleReference());
+					attackBData.positionToOngoingBattles.Add(actualPos, battle);
 				}
 				else
 				{
@@ -255,11 +283,11 @@ public class GlobalBattleData : DataBase
 
 				if (defender.GetData(DataTags.Battle, out BattleData defendBData))
 				{
-					if (!defendBData.ongoingBattles.ContainsKey(key))
+					if (!defendBData.positionToOngoingBattles.ContainsKey(actualPos))
 					{
 						//Not currently considering defending this spot already
 						//Add it
-						defendBData.ongoingBattles.Add(key, new BattleData.BattleReference());
+						defendBData.positionToOngoingBattles.Add(actualPos, battle);
 					}
 				}
 			}

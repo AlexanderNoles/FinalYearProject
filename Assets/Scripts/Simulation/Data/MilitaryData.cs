@@ -9,7 +9,7 @@ public class MilitaryData : DataBase
 
 	public float maxMilitaryCapacity;
 	public int currentFleetCount;
-	public Dictionary<RealSpacePostion, List<ShipCollection>> cellCenterToFleets = new Dictionary<RealSpacePostion, List<ShipCollection>>();
+	public Dictionary<RealSpacePostion, List<ShipCollection>> positionToFleets = new Dictionary<RealSpacePostion, List<ShipCollection>>();
 	public List<(RealSpacePostion, RealSpacePostion)> markedTransfers = new List<(RealSpacePostion, RealSpacePostion)>();
 
 	public void MarkTransfer(RealSpacePostion from, RealSpacePostion to)
@@ -19,12 +19,12 @@ public class MilitaryData : DataBase
 
 	public void AddFleet(RealSpacePostion pos, Fleet fleet)
 	{
-		if (!cellCenterToFleets.ContainsKey(pos))
+		if (!positionToFleets.ContainsKey(pos))
 		{
-			cellCenterToFleets.Add(pos, new List<ShipCollection>());
+			positionToFleets.Add(pos, new List<ShipCollection>());
 		}
 
-		cellCenterToFleets[pos].Add(fleet);
+		positionToFleets[pos].Add(fleet);
 		currentFleetCount++;
 	}
 
@@ -32,27 +32,27 @@ public class MilitaryData : DataBase
 	{
 		Fleet toReturn = null;
 
-		if (cellCenterToFleets.ContainsKey(pos))
+		if (positionToFleets.ContainsKey(pos))
 		{
 			if (fleet == null)
 			{
 				//Should always be at least one in the cell
 				//Otherwise the cell should have been removed
-				toReturn = cellCenterToFleets[pos][0] as Fleet;
-				cellCenterToFleets[pos].RemoveAt(0);
+				toReturn = positionToFleets[pos][0] as Fleet;
+				positionToFleets[pos].RemoveAt(0);
 			}
 			else
 			{
-				if (cellCenterToFleets[pos].Remove(fleet))
+				if (positionToFleets[pos].Remove(fleet))
 				{
 					toReturn = fleet;
 				}
 			}
 
-			if (cellCenterToFleets[pos].Count == 0)
+			if (positionToFleets[pos].Count == 0)
 			{
 				//No remaing ships in this position
-				cellCenterToFleets.Remove(pos);
+				positionToFleets.Remove(pos);
 			}
 		}
 
@@ -74,9 +74,9 @@ public class MilitaryData : DataBase
 		int fleetTransferredCount = 0;
 
 		//Reduce budget if we already have ships there
-		if (cellCenterToFleets.ContainsKey(target))
+		if (positionToFleets.ContainsKey(target))
 		{
-			budget -= cellCenterToFleets[target].Count;
+			budget -= positionToFleets[target].Count;
 		}
 
 		budget = Mathf.Max(budget, 0);
@@ -88,9 +88,9 @@ public class MilitaryData : DataBase
 		//the new cell until they we meet our expected fleet amount (or we run out of fleets to send)
 		List<(RealSpacePostion, int)> fromPositions = new List<(RealSpacePostion, int)>();
 
-		foreach (KeyValuePair<RealSpacePostion, List<ShipCollection>> fleet in cellCenterToFleets)
+		foreach (KeyValuePair<RealSpacePostion, List<ShipCollection>> fleet in positionToFleets)
 		{
-			if (!battleData.ongoingBattles.ContainsKey(fleet.Key) || allowRetreat)
+			if (!battleData.positionToOngoingBattles.ContainsKey(fleet.Key) || allowRetreat)
 			{
 				//Not currently in a battle (or we are allowed to retreat)
 				//Transfer ships out to new target cell

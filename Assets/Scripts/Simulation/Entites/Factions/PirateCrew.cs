@@ -15,6 +15,6 @@ public class PirateCrew : Faction
 	{
 		base.InitData();
 		AddData(DataTags.Military, new MilitaryData());
-		AddData(DataTags.Capital, new CapitalData("Pirate Crew", "", Color.red));
+		AddData(DataTags.TargetableLocation, new TargetableLocationData("Pirate Crew", "", Color.red));
 	}
 }

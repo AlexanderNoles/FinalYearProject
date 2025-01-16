@@ -2,18 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CapitalData : DataBase
+public class TargetableLocationData : DataBase
 {
-	public class CapitalLocation : VisitableLocation
+	public class ActualLocation : VisitableLocation
 	{
-		public CapitalData target;
+		public TargetableLocationData target;
+		public RealSpacePostion actualPos;
 
 		public override RealSpacePostion GetPosition()
 		{
-			return target.position;
+			return actualPos;
 		}
 
-		public CapitalLocation(CapitalData target)
+		public ActualLocation(TargetableLocationData target)
 		{
 			this.target = target;
 		}
@@ -32,20 +33,25 @@ public class CapitalData : DataBase
 		{
 			return target.mapColour;
 		}
+
+		public override float GetEntryOffset()
+		{
+			return 100.0f;
+		}
 	}
 
-	public CapitalLocation location;
+	public ActualLocation location;
 	public RealSpacePostion position = null;
 	private string name;
 	private string description;
 	private Color mapColour;
 
-	public CapitalData(string name, string description, Color mapColour)
+	public TargetableLocationData(string name, string description, Color mapColour)
 	{
 		this.name = name;
 		this.description = description;
 		this.mapColour = mapColour;
 
-		location = new CapitalLocation(this);
+		location = new ActualLocation(this);
 	}
 }

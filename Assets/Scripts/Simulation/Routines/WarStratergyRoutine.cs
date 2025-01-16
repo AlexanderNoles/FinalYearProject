@@ -4,7 +4,7 @@ using System.Linq;
 using EntityAndDataDescriptor;
 using UnityEngine;
 
-[SimulationManagement.SimulationRoutine(150)]
+[SimulationManagement.SimulationRoutine(150, SimulationManagement.SimulationRoutine.RoutineTypes.Absent)]
 public class WarStratergyRoutine : RoutineBase
 {
     public override void Run()

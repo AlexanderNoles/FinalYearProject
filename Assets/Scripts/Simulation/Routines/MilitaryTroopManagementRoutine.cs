@@ -32,14 +32,14 @@ public class MilitaryTroopManagementRoutine : RoutineBase
 
             //If we have any avaliable battles
             List<RealSpacePostion> targets = new List<RealSpacePostion>();
-            if (hasBattleData && battleData.ongoingBattles.Count > 0)
+            if (hasBattleData && battleData.positionToOngoingBattles.Count > 0)
             {
                 List<float> targetImportance = new List<float>();
                 //Iterate through current battles and calculate the most important ones
                 //Then transfer free fleets to those 
-                foreach (KeyValuePair<RealSpacePostion, BattleData.BattleReference> battle in battleData.ongoingBattles)
+                foreach (KeyValuePair<RealSpacePostion, GlobalBattleData.Battle> battle in battleData.positionToOngoingBattles)
                 {
-                    List<int> involvedEntities = globalBattleData.battles[battle.Key].GetInvolvedEntities();
+                    List<int> involvedEntities = battle.Value.GetInvolvedEntities();
 
                     //Calculate opposing force
                     int oppositionCount = 0;
@@ -55,9 +55,9 @@ public class MilitaryTroopManagementRoutine : RoutineBase
                         }
 
                         int totalShips = 0;
-                        if (idToMilitary[otherID].cellCenterToFleets.ContainsKey(battle.Key))
+                        if (idToMilitary[otherID].positionToFleets.ContainsKey(battle.Key))
                         {
-                            List<ShipCollection> shipCollections = idToMilitary[otherID].cellCenterToFleets[battle.Key];
+                            List<ShipCollection> shipCollections = idToMilitary[otherID].positionToFleets[battle.Key];
 
                             foreach (ShipCollection collection in shipCollections)
                             {
@@ -131,8 +131,8 @@ public class MilitaryTroopManagementRoutine : RoutineBase
                     List<(RealSpacePostion, int)> posAndCount = new List<(RealSpacePostion, int)>();
 
                     //Seperate out into two loops to avoid change while iterating over error
-                    //Current obvious alternative is very unperformant
-                    foreach (KeyValuePair<RealSpacePostion, List<ShipCollection>> heldPosition in militaryData.cellCenterToFleets)
+                    //Current obvious alternative is very unperformant (element at with a standard for loop)
+                    foreach (KeyValuePair<RealSpacePostion, List<ShipCollection>> heldPosition in militaryData.positionToFleets)
                     {
                         if (!setData.settlements.ContainsKey(heldPosition.Key))
                         {

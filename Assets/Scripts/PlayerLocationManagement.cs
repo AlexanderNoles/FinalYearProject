@@ -321,7 +321,7 @@ public class PlayerLocationManagement : MonoBehaviour
 	{
 		//Grab data needed to compute
 		List<SettlementData> setData = SimulationManagement.GetDataViaTag(DataTags.Settlement).Cast<SettlementData>().ToList();
-		List<CapitalData> capitalData = SimulationManagement.GetDataViaTag(DataTags.Capital).Cast<CapitalData>().ToList();
+		List<TargetableLocationData> capitalData = SimulationManagement.GetDataViaTag(DataTags.TargetableLocation).Cast<TargetableLocationData>().ToList();
 		GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattle);
 
 		//Get postion to run check from
@@ -364,7 +364,7 @@ public class PlayerLocationManagement : MonoBehaviour
                         }
                     }
 
-					foreach (CapitalData cap in capitalData)
+					foreach (TargetableLocationData cap in capitalData)
 					{
                         if (cap.position != null)
                         {
@@ -375,9 +375,13 @@ public class PlayerLocationManagement : MonoBehaviour
                         }
                     }
 
-                    if (globalBattle.battles.ContainsKey(currentCellCenter))
+                    if (globalBattle.cellCenterToBattles.ContainsKey(currentCellCenter))
                     {
-                        foundLocations.Add(globalBattle.battles[currentCellCenter]);
+						//Add all battles in cell
+						foreach (GlobalBattleData.Battle battle in globalBattle.cellCenterToBattles[currentCellCenter])
+						{
+							foundLocations.Add(battle);
+						}
                     }
 					//
 
