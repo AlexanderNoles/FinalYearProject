@@ -10,7 +10,8 @@ public class MapManagement : UIState
 	/// UI STATE IMPLEMENTATION
 	private static MapManagement instance;
     public const float mapRelativeScaleModifier = 1000.0f;
-    public AnimationCurve mapIntroCurve;
+	public float shiftModifier;
+	public AnimationCurve mapIntroCurve;
 
     public override float GetIntroSpeed()
     {
@@ -275,25 +276,23 @@ public class MapManagement : UIState
 						int id = territoryData.parent.Get().id;
 						bool hasEmblemData = entityIDtoEmblemDatas.ContainsKey(id);
 
-                        int count = territoryData.borders.Count;
-
 						//Traverse along the border of the territory
 						//Find all continous edges
-                        List<List<Vector3>> borderLines = territoryData.CalculateMapBorderPositions(out Vector3 iconPos, out Vector3 iconScale);
+						List<List<Vector3>> borderLines = territoryData.CalculateMapBorderPositions(out Vector3 iconPos, out Vector3 iconScale, shiftModifier);
 
-                        foreach (List<Vector3> line in borderLines)
-                        {
-                            Transform borderRendererTransform = mapElementsPools.UpdateNextObjectPosition(3, Vector3.zero);
+						foreach (List<Vector3> line in borderLines)
+						{
+							Transform borderRendererTransform = mapElementsPools.UpdateNextObjectPosition(3, Vector3.zero);
 
-                            if (!cachedTransformToBorderRenderer.ContainsKey(borderRendererTransform))
-                            {
-                                cachedTransformToBorderRenderer.Add(borderRendererTransform, borderRendererTransform.GetComponent<LineRenderer>());
-                            }
+							if (!cachedTransformToBorderRenderer.ContainsKey(borderRendererTransform))
+							{
+								cachedTransformToBorderRenderer.Add(borderRendererTransform, borderRendererTransform.GetComponent<LineRenderer>());
+							}
 
-                            LineRenderer lineRenderer = cachedTransformToBorderRenderer[borderRendererTransform];
+							LineRenderer lineRenderer = cachedTransformToBorderRenderer[borderRendererTransform];
 
-                            if (lineRenderer != null)
-                            {
+							if (lineRenderer != null)
+							{
 								Color color = Color.white;
 								if (hasEmblemData)
 								{
@@ -301,102 +300,101 @@ public class MapManagement : UIState
 								}
 
 #pragma warning disable CS0618 // Type or member is obsolete
-                                lineRenderer.SetColors(color, color);
+								lineRenderer.SetColors(color, color);
 #pragma warning restore CS0618 // Type or member is obsolete
 
-                                lineRenderer.positionCount = line.Count;
-                                lineRenderer.SetPositions(line.ToArray());
+								lineRenderer.positionCount = line.Count;
+								lineRenderer.SetPositions(line.ToArray());
 
-                                lineRenderer.loop = true;
-                            }
-                        }
+								lineRenderer.loop = true;
+							}
+						}
 
-                        if (hasEmblemData)
-                        {
-                            Transform centralIcon = mapElementsPools.UpdateNextObjectPosition(5, iconPos - (Vector3.up * 0.25f));
-                            centralIcon.localScale = iconScale;
+						if (hasEmblemData)
+						{
+							Transform centralIcon = mapElementsPools.UpdateNextObjectPosition(5, iconPos - (Vector3.up * 0.25f));
+							centralIcon.localScale = iconScale;
 
-                            if (!cachedTransformToNationIconRenderers.ContainsKey(centralIcon))
-                            {
-                                cachedTransformToNationIconRenderers.Add(centralIcon, centralIcon.GetComponent<SpriteRenderer>());
-                            }
+							if (!cachedTransformToNationIconRenderers.ContainsKey(centralIcon))
+							{
+								cachedTransformToNationIconRenderers.Add(centralIcon, centralIcon.GetComponent<SpriteRenderer>());
+							}
 
-                            cachedTransformToNationIconRenderers[centralIcon].sprite = entityIDtoEmblemDatas[id].mainIcon;
-                            cachedTransformToNationIconRenderers[centralIcon].color = entityIDtoEmblemDatas[id].highlightColour;
-                        }
-                    }
+							cachedTransformToNationIconRenderers[centralIcon].sprite = entityIDtoEmblemDatas[id].mainIcon;
+							cachedTransformToNationIconRenderers[centralIcon].color = entityIDtoEmblemDatas[id].highlightColour;
+						}
+					}
 
                     //Get all military data for marked transfer drawing
-                    PathHelper.SimplePathParameters pathParams = new PathHelper.SimplePathParameters();
-                    List<DataBase> militaryDatas = SimulationManagement.GetDataViaTag(DataTags.Military);
+//                    PathHelper.SimplePathParameters pathParams = new PathHelper.SimplePathParameters();
+//                    List<DataBase> militaryDatas = SimulationManagement.GetDataViaTag(DataTags.Military);
 
-					foreach (MilitaryData militaryData in militaryDatas)
-					{
-                        int id = militaryData.parent.Get().id;
-                        bool hasEmblemData = entityIDtoEmblemDatas.ContainsKey(id);
+//					foreach (MilitaryData militaryData in militaryDatas)
+//					{
+//                        int id = militaryData.parent.Get().id;
+//                        bool hasEmblemData = entityIDtoEmblemDatas.ContainsKey(id);
 
-                        Color color = Color.white;
-                        if (hasEmblemData)
-                        {
-                            color = entityIDtoEmblemDatas[id].mainColour;
-                        }
+//                        Color color = Color.white;
+//                        if (hasEmblemData)
+//                        {
+//                            color = entityIDtoEmblemDatas[id].mainColour;
+//                        }
 
+//                        foreach ((RealSpacePostion, RealSpacePostion) entry in militaryData.markedTransfers)
+//                        {
+//                            Transform borderRendererTransform = mapElementsPools.UpdateNextObjectPosition(3, Vector3.zero);
 
-                        foreach ((RealSpacePostion, RealSpacePostion) entry in militaryData.markedTransfers)
-                        {
-                            Transform borderRendererTransform = mapElementsPools.UpdateNextObjectPosition(3, Vector3.zero);
+//                            if (!cachedTransformToBorderRenderer.ContainsKey(borderRendererTransform))
+//                            {
+//                                cachedTransformToBorderRenderer.Add(borderRendererTransform, borderRendererTransform.GetComponent<LineRenderer>());
+//                            }
 
-                            if (!cachedTransformToBorderRenderer.ContainsKey(borderRendererTransform))
-                            {
-                                cachedTransformToBorderRenderer.Add(borderRendererTransform, borderRendererTransform.GetComponent<LineRenderer>());
-                            }
+//                            LineRenderer lineRenderer = cachedTransformToBorderRenderer[borderRendererTransform];
 
-                            LineRenderer lineRenderer = cachedTransformToBorderRenderer[borderRendererTransform];
+//                            if (lineRenderer != null)
+//                            {
+//#pragma warning disable CS0618 // Type or member is obsolete
+//                                lineRenderer.SetColors(color, color);
+//#pragma warning restore CS0618 // Type or member is obsolete
 
-                            if (lineRenderer != null)
-                            {
-#pragma warning disable CS0618 // Type or member is obsolete
-                                lineRenderer.SetColors(color, color);
-#pragma warning restore CS0618 // Type or member is obsolete
+//                                Vector3 startPos = -entry.Item1.AsTruncatedVector3(mapRelativeScaleModifier);
+//                                RealSpacePostion endPosRS;
 
-                                Vector3 startPos = -entry.Item1.AsTruncatedVector3(mapRelativeScaleModifier);
-                                RealSpacePostion endPosRS;
+//                                //Draw to actual battle pos
+//                                if (globalBattleData.battles.ContainsKey(entry.Item2))
+//                                {
+//                                    endPosRS = globalBattleData.battles[entry.Item2].GetPosition();
+//                                }
+//                                else
+//                                {
+//                                    endPosRS = entry.Item2;
+//                                }
 
-                                //Draw to actual battle pos
-                                if (globalBattleData.battles.ContainsKey(entry.Item2))
-                                {
-                                    endPosRS = globalBattleData.battles[entry.Item2].GetPosition();
-                                }
-                                else
-                                {
-                                    endPosRS = entry.Item2;
-                                }
+//                                Vector3 endPos = -endPosRS.AsTruncatedVector3(mapRelativeScaleModifier);
 
-                                Vector3 endPos = -endPosRS.AsTruncatedVector3(mapRelativeScaleModifier);
+//                                Vector3 difference = endPos - startPos;
+//                                pathParams.forwardVector = difference.normalized;
+//                                pathParams.rightVector = Vector3.up * (difference.magnitude * 0.4f);
 
-                                Vector3 difference = endPos - startPos;
-                                pathParams.forwardVector = difference.normalized;
-                                pathParams.rightVector = Vector3.up * (difference.magnitude * 0.4f);
+//                                PathHelper.SimplePath path = PathHelper.GenerateSimplePathStatic(startPos, endPos, pathParams);
+//                                int res = Mathf.CeilToInt(path.EstimateLength() / 2.5f);
+//                                res = Mathf.Max(4, res);
 
-                                PathHelper.SimplePath path = PathHelper.GenerateSimplePathStatic(startPos, endPos, pathParams);
-                                int res = Mathf.CeilToInt(path.EstimateLength() / 2.5f);
-                                res = Mathf.Max(4, res);
+//                                lineRenderer.loop = false;
+//                                lineRenderer.positionCount = res;
 
-                                lineRenderer.loop = false;
-                                lineRenderer.positionCount = res;
-
-                                TroopTransferEffect newTTE = new TroopTransferEffect
-                                {
-                                    length = timeTillNextMapUpdate * Random.Range(0.1f, 0.2f),
-                                    path = path,
-                                    pathResolution = res,
-                                    startTime = Time.time,
-                                    target = lineRenderer
-                                };
-                                ttEffects.Add(newTTE);
-                            }
-                        }
-                    }
+//                                TroopTransferEffect newTTE = new TroopTransferEffect
+//                                {
+//                                    length = timeTillNextMapUpdate * Random.Range(0.1f, 0.2f),
+//                                    path = path,
+//                                    pathResolution = res,
+//                                    startTime = Time.time,
+//                                    target = lineRenderer
+//                                };
+//                                ttEffects.Add(newTTE);
+//                            }
+//                        }
+//                    }
 
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(3);
                     mapElementsPools.PruneObjectsNotUpdatedThisFrame(5);

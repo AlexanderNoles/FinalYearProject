@@ -31,12 +31,11 @@ public class RandomEventTickRoutine : RoutineBase
 			//For every nation we have some chance to spawn offshoots
 			foreach (SimulationEntity nation in nations)
 			{
+				//Could make this based on nation's internal state
 				if (SimulationManagement.random.Next(0, 101) < 1)
 				{
 					//Spawn some pirates
-					//Disabled as pirates currently do nothing
-					//This means they would simply sit on the world map clogging up space
-					//new PirateCrew().Simulate();
+					new PirateCrew().Simulate();
 				}
 			}
 		}

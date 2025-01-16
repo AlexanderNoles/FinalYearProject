@@ -125,13 +125,13 @@ public class TerritoryData : DataBase
 	};
 
 
-	public List<List<Vector3>> CalculateMapBorderPositions(out Vector3 iconPosition, out Vector3 iconScale)
+	public List<List<Vector3>> CalculateMapBorderPositions(out Vector3 iconPosition, out Vector3 iconScale, float shiftModifier)
 	{
 		iconPosition = Vector3.zero;
-		iconScale = Vector3.zero;
+		iconScale = Vector3.one * 3;
 
+		const int lengthLowerBound = 3;
 		int currentAverageCount = 0;
-		int largestBorderIndex = -1;
 
 		double halfDensity = WorldManagement.GetGridDensityHalf();
 		double fullDensity = WorldManagement.GetGridDensity();
@@ -168,8 +168,11 @@ public class TerritoryData : DataBase
 						//Add to already visited so we don't add this again
 						alreadyVisited.Add(pos);
 
-						//Add to output
-						output.Add(toAddToOutput);
+						if (toAddToOutput.Count > lengthLowerBound)
+						{
+							//Add to output
+							output.Add(ApplyModifier(toAddToOutput, shiftModifier, out Vector3 unused));
+						}
 					}
 					else
 					{
@@ -225,14 +228,11 @@ public class TerritoryData : DataBase
 				List<Vector3> toAddToOutput = new List<Vector3>();
 
 				int loopClamp = 10000;
-				Vector3 sumOfPositions = Vector3.zero;
 				do
 				{
-					//Add current to output first
+					//Add current to output
 					Vector3 outputPos = GetMapPosition(currentPoint);
 					toAddToOutput.Add(outputPos);
-					//The add position to sum
-					sumOfPositions += outputPos;
 
 					//If it is not already there add cell pos to closed
 					if (!alreadyVisited.Contains(currentCellPos))
@@ -279,17 +279,18 @@ public class TerritoryData : DataBase
 				}
 				while (!currentPoint.Equals(startPoint) && loopClamp > 0); //We run the loop once so we won't crash out immediately
 
-				if (toAddToOutput.Count > 0)
+				if (toAddToOutput.Count > lengthLowerBound)
 				{
-					//We want the largest area to have the icon over it
+					//Add to output
+					output.Add(ApplyModifier(toAddToOutput, shiftModifier, out Vector3 averagePos));
+
+					//We want the largest area to have the icon over it so use raw count
 					if (currentAverageCount < toAddToOutput.Count)
 					{
-						iconPosition = sumOfPositions / toAddToOutput.Count;
+						iconPosition = averagePos;
 						currentAverageCount = toAddToOutput.Count;
-						largestBorderIndex = output.Count;
 					}
 
-					output.Add(toAddToOutput);
 				}
 			}
 			else
@@ -301,50 +302,68 @@ public class TerritoryData : DataBase
 			loopFailsafe++;
 		}
 
-		if (largestBorderIndex != -1)
-		{
-			// //Method for finding the Icon position and scale
-			// //This is represented by a box
-			// //So essentially;
-			// //Start at average pos clamped to grid
-			// //Expand a square from that position
-			// //Stop expanding an edge if it intersects a position not owned
-
-			// //Actually maybe sleep before implementation, incase something better and obvious comes up
-			// //Last thought before honk mim mimim, perhaps we could (depending on cost) not use the average position
-			// //if the result doesn't reach some desired threshold based on the algorithm we could just pick random points within
-			// //our territory and repeat the steps till we get a desired result
-			// //This sound like a really bad idea if we want pleasing looking icon placement actually, sleep time
-
-			//This is actually just very unneccesary, we have to stop caring about looks as much
-
-			//
-
-			//Instead simply iterate through the largest border and find the offset from the average pos
-			//use that offset to get a position more weighted to the shape of the border
-			List<Vector3> points = output[largestBorderIndex];
-			Vector3 summedOffset = Vector3.zero;
-
-			foreach (Vector3 pos in points)
-			{
-				Vector3 difference = iconPosition - pos;
-
-				float scale = difference.magnitude;
-				if (iconScale.x < scale)
-				{
-					iconScale = Vector3.one * scale;
-				}
-
-				summedOffset += difference;
-			}
-
-			iconPosition += summedOffset;
-			iconScale = Vector3.one * MathHelper.ValueTanhFalloff(iconScale.x, 14);
-		}
-
 		return output;
 	}
 
+	private List<Vector3> ApplyModifier(List<Vector3> input, float shiftModifier, out Vector3 averagePos)
+	{
+		averagePos = Vector3.zero;
+		List<Vector3> output = new List<Vector3>();
+
+		//For each position in the input
+		//Find that points in (d1) and out (d2) direction
+		//If those directions are the same then doon't add to output
+		//If the corner is convex use p, p - d1 and p + d2 to create a triangle
+		//The center of that triangle is the new point
+		//Do the same for concave corners but the new point should be flipped in p
+		//This ultimately shrinks the border so it won't cause z fighting with other borders
+
+		int listCount = input.Count;
+
+		for (int i = 0; i < listCount; i++)
+		{
+			//Calculate directions
+			//Need to use a specialized form of mod as typical c# mod doesn't work as expected with negative numbers
+			Vector3 inDirection = input[i] - input[(((i - 1) % listCount) + listCount) % listCount];
+			inDirection.Normalize();
+
+			Vector3 outDirection = input[(i + 1) % listCount] - input[i];
+			outDirection.Normalize();
+
+			//Might need to give some leniency for floating point inaccuracy here
+			if (inDirection.Equals(outDirection))
+			{
+				//Straight line
+				//Don't add to output
+				continue;
+			}
+			else
+			{
+				//Calculate the average of the three points, this is equivalent to finding the center point of the triangle
+				Vector3 centerPos = (
+					input[i] +
+					(input[i] + (-inDirection * shiftModifier)) +
+					(input[i] + (outDirection * shiftModifier))
+					) / 3.0f;
+
+				//Check if this point lies inside the territory
+				//If it doesn't then we need to invert
+				Vector3 finalPos = centerPos;
+
+				if (!territoryCenters.Contains(WorldManagement.ClampPositionToGrid(ReverseMapPosition(finalPos))))
+				{
+					finalPos = input[i] - (finalPos - input[i]);
+				}
+
+				averagePos += finalPos;
+				output.Add(finalPos);
+			}
+		}
+
+		averagePos /= output.Count;
+		return output;
+	}
+	
 	private bool IsAlone(RealSpacePostion input)
 	{
 		List<RealSpacePostion> neighbours = WorldManagement.GetNeighboursInGrid(input);
@@ -404,5 +423,14 @@ public class TerritoryData : DataBase
 	private Vector3 GetMapPosition(RealSpacePostion input)
 	{
 		return -input.AsTruncatedVector3(MapManagement.mapRelativeScaleModifier);
+	}
+
+	private RealSpacePostion ReverseMapPosition(Vector3 input)
+	{
+		return new RealSpacePostion(
+			-input.x * MapManagement.mapRelativeScaleModifier, 
+			-input.y * MapManagement.mapRelativeScaleModifier, 
+			-input.z * MapManagement.mapRelativeScaleModifier
+			);
 	}
 }

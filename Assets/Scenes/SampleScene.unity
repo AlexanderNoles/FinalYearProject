@@ -11407,6 +11407,7 @@ MonoBehaviour:
   lockout: 0
   toggleable: 1
   pause: 0
+  shiftModifier: 0.4
   mapIntroCurve:
     serializedVersion: 2
     m_Curve:
@@ -15089,7 +15090,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 2333, y: 915}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 400, y: 655}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &760864605
@@ -17006,7 +17007,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c1af6f8dc7bad141981fb6ea66f94aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scale: 3000
+  scale: 2000
   shellOffset: 0
   postion:
     x: 0
@@ -17697,6 +17698,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 995136682}
   m_CullTransparentMesh: 1
+--- !u!1 &1001462105
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1001462106}
+  - component: {fileID: 1001462107}
+  m_Layer: 0
+  m_Name: Asteroids
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1001462106
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1001462105}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1513395590}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1001462107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1001462105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a48886b28d500654981dbd3f70683e63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 1eaf02e1dd557b24e8488e1f7ca7ab03, type: 2}
+  mesh: {fileID: 289301614986012343, guid: 31f21a58b4331cd4789c681327eece96, type: 3}
 --- !u!1 &1009649871
 GameObject:
   m_ObjectHideFlags: 0
@@ -22905,6 +22952,7 @@ Transform:
   - {fileID: 1383595364}
   - {fileID: 948373291}
   - {fileID: 2071338137}
+  - {fileID: 1001462106}
   m_Father: {fileID: 461544555}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1543487874

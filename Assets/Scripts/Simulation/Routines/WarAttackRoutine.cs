@@ -97,7 +97,7 @@ public class WarAttackRoutine : RoutineBase
 
                             attacksForThisWar--;
 
-                            if (attacksForThisWar <= 0)
+                            if (attacksForThisWar <= 0 || attackBudget <= 0)
                             {
                                 break;
                             }
