@@ -312,6 +312,15 @@ public class MapManagement : UIState
 
 						if (hasEmblemData)
 						{
+							//If this entity has settlements set iconPos to be placed ontop of their oldest one instead
+							if (territoryData.TryGetLinkedData(DataTags.Settlement, out SettlementData setData))
+							{
+								if (setData.settlements.Count > 0)
+								{
+									iconPos = -setData.settlements.First().Value.actualSettlementPos.AsTruncatedVector3(MapManagement.mapRelativeScaleModifier);
+								}
+							}
+
 							Transform centralIcon = mapElementsPools.UpdateNextObjectPosition(5, iconPos - (Vector3.up * 0.25f));
 							centralIcon.localScale = iconScale;
 

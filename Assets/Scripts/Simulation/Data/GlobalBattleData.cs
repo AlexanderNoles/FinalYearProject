@@ -14,6 +14,7 @@ public class GlobalBattleData : DataBase
 		public int startTickID;
 		public int firstAttacker = -1;
 		public int defender = -1;
+		private const float winLimit = 1.2f;
 
 		private List<int> involvedEntities = new List<int>();
 		private List<float> involvedEntitiesProgress = new List<float>();
@@ -65,7 +66,7 @@ public class GlobalBattleData : DataBase
 
 			for (int i = 0; i < involvedEntities.Count; i++)
 			{
-				if (involvedEntitiesProgress[i] > 1.2f)
+				if (involvedEntitiesProgress[i] > winLimit)
 				{
 					winnerID = involvedEntities[i];
 					return true;
@@ -93,7 +94,7 @@ public class GlobalBattleData : DataBase
 			involvedEntities.Clear();
 		}
 
-		public void ResolveTerritory(RealSpacePostion cellCenterOfPos, RealSpacePostion pos, HistoryData historyData, int winnerID)
+		public void ResolveTerritory(RealSpacePostion cellCenterOfPos, HistoryData historyData, int winnerID)
 		{
 			// Decide new owner //
 			if (winnerID == -1)
@@ -150,6 +151,15 @@ public class GlobalBattleData : DataBase
                             }
 						}
 
+						//Set the lost entity to be inConflict with the Won Entity
+						if (lostEntity.GetData(DataTags.Feelings, out FeelingsData feelingsData))
+						{
+							if (feelingsData.idToFeelings.ContainsKey(winnerID))
+							{
+								feelingsData.idToFeelings[winnerID].inConflict = true;
+							}
+						}
+
                         //Apply territory cap loss
                         //This is too ensure entites don't just get stuck in eternal wars
                         //where they keep claiming
@@ -196,6 +206,25 @@ public class GlobalBattleData : DataBase
 		public override Color GetMapColour()
 		{
 			return Color.yellow;
+		}
+
+		public override string GetDescription()
+		{
+			string descString = "";
+
+			for (int i = 0; i < involvedEntities.Count; i++)
+			{
+				string color = "#ffffff";
+
+				if (SimulationManagement.GetEntityByID(involvedEntities[i]).GetData(DataTags.Emblem, out EmblemData emblemData))
+				{
+					color = emblemData.mainColourHex;
+				}
+
+				descString += $"<color={color}>{Mathf.RoundToInt(100.0f * (involvedEntitiesProgress[i] / winLimit))}%</color>\n";
+			}
+
+			return descString;
 		}
 	}
 

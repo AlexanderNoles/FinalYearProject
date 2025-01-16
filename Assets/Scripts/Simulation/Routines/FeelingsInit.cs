@@ -34,15 +34,22 @@ public class FeelingsInit : InitRoutineBase
                 }
 
                 //Tell every other entity this one exists
+				//And add feelings about that entity to this one
                 foreach (FeelingsData otherEntityFeelings in allFeelingsData)
                 {
-                    //Can't have a relationship with itself!
-                    if (otherEntityFeelings.parent.Get().id != thisEntityID)
+					int otherID = otherEntityFeelings.parent.Get().id;
+					//Can't have a relationship with itself!
+					if (otherID != thisEntityID)
                     {
                         if (!otherEntityFeelings.idToFeelings.ContainsKey(thisEntityID)) //No established relationship
                         {
                             otherEntityFeelings.idToFeelings.Add(thisEntityID, new FeelingsData.Relationship(feelingsData.baseFavourability));
                         }
+
+						if (!feelingsData.idToFeelings.ContainsKey(otherID))
+						{
+							feelingsData.idToFeelings.Add(otherID, new FeelingsData.Relationship(otherEntityFeelings.baseFavourability));
+						}
                     }
                 }
             }

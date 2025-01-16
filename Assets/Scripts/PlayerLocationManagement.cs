@@ -356,6 +356,15 @@ public class PlayerLocationManagement : MonoBehaviour
 
 					//Iterate through all captured data
 					//If they have a location (that we have decided is relevant to the player) in this chunk place it on the map
+					if (globalBattle.cellCenterToBattles.ContainsKey(currentCellCenter))
+					{
+						//Add all battles in cell
+						foreach (GlobalBattleData.Battle battle in globalBattle.cellCenterToBattles[currentCellCenter])
+						{
+							foundLocations.Add(battle);
+						}
+					}
+
 					foreach (SettlementData set in setData)
 					{
                         if (set.settlements.ContainsKey(currentCellCenter))
@@ -373,15 +382,6 @@ public class PlayerLocationManagement : MonoBehaviour
                                 foundLocations.Add(cap.location);
                             }
                         }
-                    }
-
-                    if (globalBattle.cellCenterToBattles.ContainsKey(currentCellCenter))
-                    {
-						//Add all battles in cell
-						foreach (GlobalBattleData.Battle battle in globalBattle.cellCenterToBattles[currentCellCenter])
-						{
-							foundLocations.Add(battle);
-						}
                     }
 					//
 

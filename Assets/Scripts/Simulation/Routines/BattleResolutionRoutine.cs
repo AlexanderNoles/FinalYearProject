@@ -11,7 +11,7 @@ public class BattleResolutionRoutine : RoutineBase
 {
 	public override void Run()
 	{
-		const float battleLengthMultiplier = 10.0f;
+		const float battleLengthMultiplier = 100.0f;
 
 		//Each tick the battle system runs over every created battle (stored in the global battle data)
 		//and processes it
@@ -232,7 +232,7 @@ public class BattleResolutionRoutine : RoutineBase
 				//not in the above if(!battleOver) scope so if an outside force removes a entity battles don't freeze in place
 				if (battle.BattleWon(out int winnerID))
 				{
-					battle.ResolveTerritory(entry.Key, battle.postion, historyData, winnerID);
+					battle.ResolveTerritory(entry.Key, historyData, winnerID);
 
 					//For all remaing factions we need to remove their ongoing battle
 					battle.End(battle.postion);

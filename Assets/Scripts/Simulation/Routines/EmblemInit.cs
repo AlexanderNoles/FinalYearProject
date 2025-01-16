@@ -28,6 +28,8 @@ public class EmblemInit : InitRoutineBase
 
             //Get the next colour from the colour rotation
             emblemData.mainColour = VisualDatabase.GetNextFactionColour();
+			emblemData.mainColourHex = "#" + ColorUtility.ToHtmlStringRGB(emblemData.mainColour);
+
             emblemData.highlightColour = emblemData.mainColour * 2.0f;
             emblemData.shadowColour = emblemData.mainColour * 0.25f;
 

@@ -6,6 +6,7 @@ public class EmblemData : DataBase
 {
     public bool hasCreatedEmblem = false;
     public Color mainColour;
+	public string mainColourHex;
     public Color highlightColour;
     public Color shadowColour;
     public Sprite mainIcon;

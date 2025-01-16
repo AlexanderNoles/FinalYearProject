@@ -117,6 +117,7 @@ public class WorldManagement : MonoBehaviour
     private const double gridDensity = 3000;
 	private static readonly double gridDensityHalf = gridDensity / 2;
 	private static readonly int gridDensityIntHalf = (int)gridDensity/2;
+	private static readonly int softGridDensityHalf = (int)((gridDensity / 2.0d) * 0.9d);
 
     public static double GetGridDensity()
     {
@@ -147,9 +148,9 @@ public class WorldManagement : MonoBehaviour
     public static RealSpacePostion RandomPositionInCell(RealSpacePostion chunkCenter, System.Random random)
     {
         return new RealSpacePostion(
-            chunkCenter.x + random.Next(-gridDensityIntHalf, gridDensityIntHalf),
+            chunkCenter.x + random.Next(-softGridDensityHalf, softGridDensityHalf),
             chunkCenter.y,
-            chunkCenter.z + random.Next(-gridDensityIntHalf, gridDensityIntHalf));
+            chunkCenter.z + random.Next(-softGridDensityHalf, softGridDensityHalf));
     }
 
     private const double debugMultiplier = 1000.0f;
