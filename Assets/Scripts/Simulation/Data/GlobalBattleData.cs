@@ -226,6 +226,11 @@ public class GlobalBattleData : DataBase
 
 			return descString;
 		}
+
+		public override float GetEntryOffset()
+		{
+			return 100.0f;
+		}
 	}
 
 	public Dictionary<RealSpacePostion, List<Battle>> cellCenterToBattles = new Dictionary<RealSpacePostion, List<Battle>>();

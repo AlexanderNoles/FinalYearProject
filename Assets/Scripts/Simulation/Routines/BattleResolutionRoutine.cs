@@ -72,6 +72,7 @@ public class BattleResolutionRoutine : RoutineBase
 				{
 					//This battle is being proccessed by the typical game loop
 					//not by the simulation
+
 					continue;
 				}
 

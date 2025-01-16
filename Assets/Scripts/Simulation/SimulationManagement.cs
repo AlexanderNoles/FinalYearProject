@@ -528,30 +528,23 @@ public class SimulationManagement : MonoBehaviour
 
 			instance.tickTask = Task.Run(() =>
 			{
-				try
+				for (int i = 0; i < count; i++)
 				{
-					for (int i = 0; i < count; i++)
+					currentTickID++;
+
+					IncrementDay();
+
+					instance.SimulationTick(isInstant);
+
+					if (instance.historyTicksLeft > 0)
 					{
-						currentTickID++;
+						instance.historyTicksLeft--;
 
-						IncrementDay();
-
-						instance.SimulationTick(isInstant);
-
-						if (instance.historyTicksLeft > 0)
+						if (instance.historyTicksLeft <= 0)
 						{
-							instance.historyTicksLeft--;
-
-							if (instance.historyTicksLeft <= 0)
-							{
-								instance.historyJustEnded = true;
-							}
+							instance.historyJustEnded = true;
 						}
 					}
-				}
-				catch (Exception ex)
-				{
-					MonitorBreak.Bebug.Console.Log(ex);
 				}
             });
 

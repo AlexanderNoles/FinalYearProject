@@ -317,7 +317,7 @@ public class MapManagement : UIState
 							{
 								if (setData.settlements.Count > 0)
 								{
-									iconPos = -setData.settlements.First().Value.actualSettlementPos.AsTruncatedVector3(MapManagement.mapRelativeScaleModifier);
+									iconPos = -setData.settlements.First().Value.actualSettlementPos.AsTruncatedVector3(mapRelativeScaleModifier);
 								}
 							}
 

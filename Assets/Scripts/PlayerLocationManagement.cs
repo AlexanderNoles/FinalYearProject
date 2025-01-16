@@ -18,7 +18,7 @@ public class PlayerLocationManagement : MonoBehaviour
 		{
 			foreach (DrawnLocation drawn in instance.drawnLocations)
 			{
-				if (drawn.Equals(location))
+				if (drawn.targetLocation.Equals(location))
 				{
 					return true;
 				}
