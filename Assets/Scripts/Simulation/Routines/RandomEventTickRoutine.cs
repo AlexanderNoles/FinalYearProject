@@ -42,7 +42,7 @@ public class RandomEventTickRoutine : RoutineBase
 			int mineralDepositCountPerMonth = 5;
 			for (int i = 0; i < mineralDepositCountPerMonth; i++)
 			{
-				if (SimulationManagement.random.Next(0, 101) < 1)
+				if (SimulationManagement.random.Next(0, 101) < 30)
 				{
 					//Spawn a new mineral deposit
 					new MineralDeposit().Simulate();

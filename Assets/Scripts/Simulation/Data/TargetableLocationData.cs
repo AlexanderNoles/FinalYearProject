@@ -47,6 +47,7 @@ public class TargetableLocationData : DataBase
 	private Color mapColour;
 
 	public int desirability = 1;
+	public int lastTickTime;
 
 	public TargetableLocationData(string name, string description, Color mapColour)
 	{

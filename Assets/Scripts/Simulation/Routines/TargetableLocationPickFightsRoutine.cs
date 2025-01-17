@@ -20,6 +20,14 @@ public class TargetableLocationPickFightsRoutine : RoutineBase
 
 		foreach (TargetableLocationData data in targetableLocations.Cast<TargetableLocationData>())
 		{
+			//Only run every 10 ticks
+			if (SimulationManagement.currentTickID < data.lastTickTime + 10)
+			{
+				continue;
+			}
+
+			data.lastTickTime = SimulationManagement.currentTickID;
+
 			//Before anything we need to check whether this location is going to even try to pick a fight this tick
 			//This is meant to represent the willgness by another entity to come claim this one
 			//This can be based on certain things but the key assumption should be made clear
