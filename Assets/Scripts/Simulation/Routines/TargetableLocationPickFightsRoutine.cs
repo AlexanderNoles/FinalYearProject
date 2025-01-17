@@ -1,5 +1,6 @@
 using EntityAndDataDescriptor;
 using System.Collections.Generic;
+using System.Linq;
 
 [SimulationManagement.SimulationRoutine(40)]
 public class TargetableLocationPickFightsRoutine : RoutineBase
@@ -12,6 +13,49 @@ public class TargetableLocationPickFightsRoutine : RoutineBase
 
 	public override void Run()
 	{
+		GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattleData);
 		List<DataBase> targetableLocations = SimulationManagement.GetDataViaTag(DataTags.TargetableLocation);
+		List<TerritoryData> territoryDatas = SimulationManagement.GetDataViaTag(DataTags.Territory).Cast<TerritoryData>().ToList();
+		List<DataBase> militaries = SimulationManagement.GetDataViaTag(DataTags.Military);
+
+		foreach (TargetableLocationData data in targetableLocations.Cast<TargetableLocationData>())
+		{
+			//Before anything we need to check whether this location is going to even try to pick a fight this tick
+			//This is meant to represent the willgness by another entity to come claim this one
+			//This can be based on certain things but the key assumption should be made clear
+			//"All entites want this entity the same amount", this can be adjusted in the future (by getting the target first) if need be
+			if (SimulationManagement.random.Next(0, 101) > data.desirability)
+			{
+				continue;
+			}
+
+			SimulationEntity target = null;
+			//Find simulation entites that might want to attack this one
+			//
+			//First check if we are in a territory data;
+			foreach (TerritoryData territory in territoryDatas)
+			{
+				if (territory.Contains(data.cellCenter))
+				{
+					//We've found one!
+					target = territory.parent.Get();
+					break;
+				}
+			}
+
+			if (target == null)
+			{
+				//Not within territory
+				//Pick random military
+				target = militaries[SimulationManagement.random.Next(0, militaries.Count)].parent.Get();
+			}
+
+			//Final null check
+			//Start a battle with target
+			if (target != null)
+			{
+				globalBattleData.StartOrJoinBattle(data.cellCenter, data.actualPosition, target.id, data.parent.Get().id, false);
+			}
+		}
 	}
 }

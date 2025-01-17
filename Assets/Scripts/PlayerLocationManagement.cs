@@ -150,6 +150,7 @@ public class PlayerLocationManagement : MonoBehaviour
 	public RectTransform uiPoolTargetRect;
 	private const int drawnLocationTargetIndex = 0;
 	private Dictionary<RectTransform, LocationTrackingUI> transformToLocationTracker = new Dictionary<RectTransform, LocationTrackingUI>();
+	private bool setInitalLocation;
 
 	private void Awake()
 	{
@@ -166,6 +167,7 @@ public class PlayerLocationManagement : MonoBehaviour
 
 		//Set inital world center position
 		WorldManagement.SetWorldCenterPosition(new RealSpacePostion(0, 0, 20000));
+		setInitalLocation = false;
 
 		instance = this;
 		sessionNextID = 2;
@@ -233,6 +235,25 @@ public class PlayerLocationManagement : MonoBehaviour
 		if (!PlayerManagement.PlayerEntityExists())
 		{
 			return;
+		}
+		else if (!setInitalLocation)
+		{
+			//Place player near a settlement
+			List<DataBase> setData = SimulationManagement.GetDataViaTag(DataTags.Settlement);
+
+			foreach (SettlementData set in setData.Cast<SettlementData>())
+			{
+				if (set.settlements.Count > 0)
+				{
+					RealSpacePostion initalPos = set.settlements.ElementAt(0).Value.actualSettlementPos.Clone();
+					initalPos.Add(Vector3.back * (100.0f * WorldManagement.invertedInEngineWorldScaleMultiplier));
+
+					WorldManagement.SetWorldCenterPosition(initalPos);
+					setInitalLocation = true;
+
+					break;
+				}
+			}
 		}
 
 		RealSpacePostion worldCenter = WorldManagement.worldCenterPosition;
@@ -375,9 +396,9 @@ public class PlayerLocationManagement : MonoBehaviour
 
 					foreach (TargetableLocationData cap in capitalData)
 					{
-                        if (cap.position != null)
+                        if (cap.cellCenter != null)
                         {
-                            if (cap.position.Equals(currentCellCenter))
+                            if (cap.cellCenter.Equals(currentCellCenter))
                             {
                                 foundLocations.Add(cap.location);
                             }

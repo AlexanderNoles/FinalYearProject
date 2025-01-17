@@ -89,6 +89,12 @@ public class BattleResolutionRoutine : RoutineBase
 				for (int i = 0; i < involvedEntitiesCount; i++)
 				{
 					int id = involvedEntities[i];
+
+					if (!idToMilitaryData.ContainsKey(id))
+					{
+						continue;
+					}
+
 					MilitaryData militaryData = idToMilitaryData[id];
 
 					if (militaryData.positionToFleets.ContainsKey(battle.postion))

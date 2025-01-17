@@ -110,79 +110,87 @@ public class GlobalBattleData : DataBase
 
 			//Otherwise if winner is hostile to defender than we remove this cell from the defender
 			SimulationEntity wonEntity = SimulationManagement.GetEntityByID(winnerID);
+			SimulationEntity lostEntity = SimulationManagement.GetEntityByID(defender);
 
-            if (wonEntity.GetData(DataTags.Feelings, out FeelingsData relData))
+			if (lostEntity != null && lostEntity.HasTag(EntityStateTags.Insignificant))
 			{
-				if (relData.idToFeelings.ContainsKey(defender) && relData.idToFeelings[defender].inConflict)
+				//This has some future implications that aren't neccesarily wanted
+				//Should be fine for practical purposes though
+				lostEntity.AddTag(EntityStateTags.Dead);
+			}
+			else if (wonEntity.GetData(DataTags.Feelings, out FeelingsData relData))
+			{
+				if (relData.idToFeelings.ContainsKey(defender))
 				{
-					SimulationEntity lostEntity = SimulationManagement.GetEntityByID(defender);
-
-					if (lostEntity.GetData(DataTags.Territory, out TerritoryData lossData))
+					if (relData.idToFeelings[defender].inConflict)
 					{
-                        lossData.RemoveTerritory(cellCenterOfPos);
-
-						float modifier = 1.0f;
-
-						//If this entity is at war with the winner add some additional
-						//or the winner is at war with this entity
-						//war exhaustion for losing a territory
-						if (lostEntity.GetData(DataTags.War, out WarData warData))
+						if (lostEntity.GetData(DataTags.Territory, out TerritoryData lossData))
 						{
-							bool applyWarExhaustion = false;
+							lossData.RemoveTerritory(cellCenterOfPos);
 
-							//If at war with winner
-							if (warData.atWarWith.Contains(winnerID))
+							float modifier = 1.0f;
+
+							//If this entity is at war with the winner add some additional
+							//or the winner is at war with this entity
+							//war exhaustion for losing a territory
+							if (lostEntity.GetData(DataTags.War, out WarData warData))
 							{
-								applyWarExhaustion = true;
+								bool applyWarExhaustion = false;
+
+								//If at war with winner
+								if (warData.atWarWith.Contains(winnerID))
+								{
+									applyWarExhaustion = true;
+								}
+								//Or winner is at war with us
+								else if (wonEntity.GetData(DataTags.War, out WarData wonWarData) && wonWarData.atWarWith.Contains(defender))
+								{
+									applyWarExhaustion = true;
+
+									//Make this faction now at war with winner
+									warData.atWarWith.Add(winnerID);
+								}
+
+								if (applyWarExhaustion)
+								{
+									modifier = warData.warExhaustion;
+									warData.warExhaustion += 10.0f * warData.warExhaustionGrowthMultiplier;
+								}
 							}
-							//Or winner is at war with us
-							else if (wonEntity.GetData(DataTags.War, out WarData wonWarData) && wonWarData.atWarWith.Contains(defender))
+
+							//Set the lost entity to be inConflict with the Won Entity
+							if (lostEntity.GetData(DataTags.Feelings, out FeelingsData feelingsData))
 							{
-								applyWarExhaustion = true;
-
-								//Make this faction now at war with winner
-								warData.atWarWith.Add(winnerID);
+								if (feelingsData.idToFeelings.ContainsKey(winnerID))
+								{
+									feelingsData.idToFeelings[winnerID].inConflict = true;
+								}
 							}
 
-							if (applyWarExhaustion)
-                            {
-                                modifier = warData.warExhaustion;
-                                warData.warExhaustion += 10.0f * warData.warExhaustionGrowthMultiplier;
-                            }
+							//Apply territory cap loss
+							//This is too ensure entites don't just get stuck in eternal wars
+							//where they keep claiming
+							lossData.territoryClaimUpperLimit -= 2f * modifier;
+
+							//Transfer previously owned faction to history data
+							if (historyData != null)
+							{
+								if (!historyData.previouslyOwnedTerritories.ContainsKey(cellCenterOfPos))
+								{
+									historyData.previouslyOwnedTerritories.Add(cellCenterOfPos, new HistoryData.HistoryCell());
+								}
+								else
+								{
+									Debug.LogError("Battle fighting over unowned territory?");
+								}
+							}
 						}
 
-						//Set the lost entity to be inConflict with the Won Entity
-						if (lostEntity.GetData(DataTags.Feelings, out FeelingsData feelingsData))
+						//Destroy any settlement in this area
+						if (lostEntity.GetData(DataTags.Settlement, out SettlementData setData))
 						{
-							if (feelingsData.idToFeelings.ContainsKey(winnerID))
-							{
-								feelingsData.idToFeelings[winnerID].inConflict = true;
-							}
+							setData.settlements.Remove(cellCenterOfPos);
 						}
-
-                        //Apply territory cap loss
-                        //This is too ensure entites don't just get stuck in eternal wars
-                        //where they keep claiming
-                        lossData.territoryClaimUpperLimit -= 2f * modifier;
-
-						//Transfer previously owned faction to history data
-						if (historyData != null)
-						{
-							if (!historyData.previouslyOwnedTerritories.ContainsKey(cellCenterOfPos))
-							{
-								historyData.previouslyOwnedTerritories.Add(cellCenterOfPos, new HistoryData.HistoryCell());
-							}
-							else
-							{
-								Debug.LogError("Battle fighting over unowned territory?");
-							}
-						}
-					}
-
-					//Destroy any settlement in this area
-					if (lostEntity.GetData(DataTags.Settlement, out SettlementData setData))
-					{
-						setData.settlements.Remove(cellCenterOfPos);
 					}
 				}
 			}

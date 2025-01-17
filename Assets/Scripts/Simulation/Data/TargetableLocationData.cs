@@ -7,11 +7,10 @@ public class TargetableLocationData : DataBase
 	public class ActualLocation : VisitableLocation
 	{
 		public TargetableLocationData target;
-		public RealSpacePostion actualPos;
 
 		public override RealSpacePostion GetPosition()
 		{
-			return actualPos;
+			return target.actualPosition;
 		}
 
 		public ActualLocation(TargetableLocationData target)
@@ -41,10 +40,13 @@ public class TargetableLocationData : DataBase
 	}
 
 	public ActualLocation location;
-	public RealSpacePostion position = null;
+	public RealSpacePostion cellCenter = null;
+	public RealSpacePostion actualPosition;
 	private string name;
 	private string description;
 	private Color mapColour;
+
+	public int desirability = 1;
 
 	public TargetableLocationData(string name, string description, Color mapColour)
 	{

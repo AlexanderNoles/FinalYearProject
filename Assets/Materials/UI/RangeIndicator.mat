@@ -39,13 +39,14 @@ Material:
     m_Ints: []
     m_Floats:
     - _AlphaMultiplier: 1
+    - _Mask: 0
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Radius: 0
     - _RingItemRadius: 0
-    - _Thickness: 0.25
+    - _Thickness: 0.1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.23789605, g: 0.509434, b: 0.46314913, a: 1}
     - _RingItemPos: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &5025359885432034085

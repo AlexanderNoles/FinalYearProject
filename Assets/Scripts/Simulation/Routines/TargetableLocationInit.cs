@@ -18,7 +18,7 @@ public class TargetableLocationInit : InitRoutineBase
 
 		foreach (TargetableLocationData targetableLocation in toInit.Cast<TargetableLocationData>())
 		{
-            if (targetableLocation.position == null)
+            if (targetableLocation.cellCenter == null)
             {
                 //Get position
                 if (targetableLocation.TryGetLinkedData(DataTags.Territory, out TerritoryData territoryData))
@@ -26,19 +26,19 @@ public class TargetableLocationInit : InitRoutineBase
                     //Get oldest territory
                     if (territoryData.territoryCenters.Count > 0)
                     {
-                        targetableLocation.position = territoryData.territoryCenters.ElementAt(0);
+                        targetableLocation.cellCenter = territoryData.territoryCenters.ElementAt(0);
                     }
                 }
 
                 //If no other capital position was assigned
-                if (targetableLocation.position == null)
+                if (targetableLocation.cellCenter == null)
                 {
                     //If this faction does not own territory then just place it in a random spot
-                    targetableLocation.position = WorldManagement.RandomCellCenterWithinSolarSystem();
+                    targetableLocation.cellCenter = WorldManagement.RandomCellCenterWithinSolarSystem();
                 }
 
 				//Move on map position to be off grid
-				targetableLocation.location.actualPos = WorldManagement.RandomPositionInCell(targetableLocation.position, SimulationManagement.random);
+				targetableLocation.actualPosition = WorldManagement.RandomPositionInCell(targetableLocation.cellCenter, SimulationManagement.random);
 			}
         }
 	}

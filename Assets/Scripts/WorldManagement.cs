@@ -108,6 +108,10 @@ public class WorldManagement : MonoBehaviour
 			{
 				toReturn = null;
 			}
+			else if (Planet.availablePlanetPositions.Contains(toReturn))
+			{
+				toReturn = null;
+			}
 		}
 		while (toReturn == null);
 
@@ -342,5 +346,10 @@ public class RealSpacePostion
 			(a.y + (b.y - a.y) * t),
 			(a.z + (b.z - a.z) * t)
 			); 
+	}
+
+	public RealSpacePostion Clone()
+	{
+		return new RealSpacePostion(x, y, z);
 	}
 }

@@ -31,11 +31,21 @@ public class RandomEventTickRoutine : RoutineBase
 			//For every nation we have some chance to spawn offshoots
 			foreach (SimulationEntity nation in nations)
 			{
-				//Could make this based on nation's internal state
+				//Could make this based on nation's internal political state
 				if (SimulationManagement.random.Next(0, 101) < 1)
 				{
 					//Spawn some pirates
-					//new PirateCrew().Simulate();
+					new PirateCrew().Simulate();
+				}
+			}
+
+			int mineralDepositCountPerMonth = 5;
+			for (int i = 0; i < mineralDepositCountPerMonth; i++)
+			{
+				if (SimulationManagement.random.Next(0, 101) < 1)
+				{
+					//Spawn a new mineral deposit
+					new MineralDeposit().Simulate();
 				}
 			}
 		}

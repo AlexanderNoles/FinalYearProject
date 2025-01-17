@@ -81,6 +81,11 @@ public class SimulationEntity
         dataModules = new Dictionary<Enum, DataBase>();
     }
 
+	public bool HasData(Enum tag)
+	{
+		return dataModules.ContainsKey(tag);
+	}
+
     //Get a data module
     public bool GetData<T>(Enum tag, out T data) where T : DataBase
     {
