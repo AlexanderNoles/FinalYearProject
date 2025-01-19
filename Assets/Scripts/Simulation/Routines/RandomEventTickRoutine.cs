@@ -39,13 +39,17 @@ public class RandomEventTickRoutine : RoutineBase
 				}
 			}
 
-			int mineralDepositCountPerMonth = 5;
-			for (int i = 0; i < mineralDepositCountPerMonth; i++)
+			const int maxMineralCount = 75;
+			if (MineralDeposit.totalMineralCount < maxMineralCount)
 			{
-				if (SimulationManagement.random.Next(0, 101) < 30)
+				int mineralDepositCountPerMonth = 5;
+				for (int i = 0; i < mineralDepositCountPerMonth; i++)
 				{
-					//Spawn a new mineral deposit
-					new MineralDeposit().Simulate();
+					if (SimulationManagement.random.Next(0, 101) < 30)
+					{
+						//Spawn a new mineral deposit
+						new MineralDeposit().Simulate();
+					}
 				}
 			}
 		}

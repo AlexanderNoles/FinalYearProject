@@ -11,11 +11,13 @@ public class UIState : MonoBehaviour
     [Header("UI State Settings")]
     public new bool enabled = true;
     public bool autoSetup = true;
+	protected bool autoSetupDone = false;
     public bool lockout = false;
     public bool toggleable = false;
 	public bool pause = false;
     protected float introT;
-    protected bool oneFrameBuffer = false;
+	protected int framesSinceAnimBegan;
+    protected bool outroOneFrameBuffer = false;
     protected bool wantsActive = false;
 
     protected virtual void Awake()
@@ -28,6 +30,8 @@ public class UIState : MonoBehaviour
         //Add state and set inactive
         UIManagement.AddUIState(this);
         SetActive(false);
+
+		autoSetupDone = true;
     }
 
     public virtual KeyCode GetSetActiveKey()
@@ -76,8 +80,9 @@ public class UIState : MonoBehaviour
 
     public virtual void InitIntro()
     {
-        oneFrameBuffer = false;
-        SetIntroT(1.0f);
+        outroOneFrameBuffer = false;
+		framesSinceAnimBegan = 0;
+		SetIntroT(1.0f);
     }
 
     public virtual void SetIntroT(float input)
@@ -88,16 +93,17 @@ public class UIState : MonoBehaviour
     public virtual void RunIntro()
     {
         introT = Mathf.Clamp01(introT - (Time.deltaTime * GetIntroSpeed()));
+		framesSinceAnimBegan++;
 
-        if (introT <= 0.0f)
+		if (introT <= 0.0f)
         {
-            if (!oneFrameBuffer)
+            if (!outroOneFrameBuffer)
             {
-                oneFrameBuffer = true;
+                outroOneFrameBuffer = true;
             }
             else
             {
-                oneFrameBuffer = false;
+                outroOneFrameBuffer = false;
                 EndIntro();
             }
         }
@@ -115,16 +121,16 @@ public class UIState : MonoBehaviour
 
     public virtual bool IntroRunning()
     {
-        return introT > 0.0f || oneFrameBuffer;
+        return introT > 0.0f || outroOneFrameBuffer;
     }
 
     public virtual bool LastFrameOfIntro()
     {
-        return oneFrameBuffer;
+        return outroOneFrameBuffer;
     }
 
     public virtual bool FirstFrameOfIntro()
     {
-        return introT == 1.0f;
+        return introT == 1.0f || framesSinceAnimBegan < 2;
     }
 }

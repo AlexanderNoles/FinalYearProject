@@ -129,6 +129,7 @@ public class SimulationManagement : MonoBehaviour
             entity.RemoveData(tag);
         }
 
+		entity.OnDeath();
         instance.idToEntity.Remove(entity.id);
     }
 
@@ -323,6 +324,8 @@ public class SimulationManagement : MonoBehaviour
         currentDay = 15;
         currentMonth = 3;
         currentYear = 3004;
+
+		MineralDeposit.totalMineralCount = 0;
         //
 
         simulationSeed = UnityEngine.Random.Range(-10000, 10000);

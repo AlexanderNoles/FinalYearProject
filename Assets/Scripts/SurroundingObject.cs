@@ -7,7 +7,8 @@ public class SurroundingObject : MonoBehaviour
     public float scale = 1f;
 	public float shellOffset;
     protected float rawScale;
-    private new Transform transform;
+	[HideInInspector]
+    public new Transform transform;
     public RealSpacePostion postion;
 
     protected virtual void Awake()

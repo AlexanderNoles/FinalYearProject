@@ -10,6 +10,7 @@ public class PlayerMapInteraction : PostTickUpdate
 	public MultiObjectPool mapPools;
 
 	private static bool viewRangeOverride = false;
+	private const bool mergeEnabled = false;
 
 	[MonitorBreak.Bebug.ConsoleCMD("TrueSight")]
 	public static void ToggleViewRangeOverride()
@@ -171,7 +172,7 @@ public class PlayerMapInteraction : PostTickUpdate
 
 				//if close
 				const float closeThreshold = 0.5f;
-				if (distance < closeThreshold)
+				if (distance < closeThreshold && mergeEnabled)
 				{
 					if (distance < minimumDistance)
 					{

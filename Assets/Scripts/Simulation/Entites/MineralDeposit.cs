@@ -5,6 +5,22 @@ using UnityEngine;
 
 public class MineralDeposit : SimulationEntity
 {
+	public static int totalMineralCount;
+
+	public override void Simulate()
+	{
+		base.Simulate();
+
+		totalMineralCount++;
+	}
+
+	public override void OnDeath()
+	{
+		base.OnDeath();
+
+		totalMineralCount--;
+	}
+
 	public override void InitTags()
 	{
 		base.InitTags();

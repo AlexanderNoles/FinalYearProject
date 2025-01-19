@@ -46,9 +46,17 @@ public class TerritoryInit : InitRoutineBase
                 //Pick random position
                 if (territoryData.origin == null)
                 {
+					int loopClamp = 1000;
                     do
                     {
                         territoryData.origin = WorldManagement.RandomCellCenterWithinSolarSystem();
+
+						//If above function returned null it couldn't find any position
+						//This means the solar system is likely full!
+						if (loopClamp <= 0 || territoryData.origin == null)
+						{
+							break;
+						}
 
                         if (!RoutineHelper.AnyContains(territories, territoryData.origin))
                         {
@@ -58,9 +66,17 @@ public class TerritoryInit : InitRoutineBase
                         {
                             territoryData.origin = null;
                         }
+
+						loopClamp--;
                     }
                     while (territoryData.origin == null);
                 }
+
+				//If we can't find any position at all
+				if (territoryData.origin == null)
+				{
+					territoryData.parent.Get().AddTag(EntityStateTags.Dead);
+				}
             }
         }
     }

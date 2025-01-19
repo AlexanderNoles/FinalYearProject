@@ -96,8 +96,14 @@ public class WorldManagement : MonoBehaviour
 	{
 		RealSpacePostion toReturn = null;
 
+		int loopClamp = 1000;
 		do
 		{
+			if (loopClamp <= 0)
+			{
+				return null;
+			}
+
 			toReturn = new RealSpacePostion(
 				LerpInSolarSystemRange(SimulationManagement.random.Next(-100, 101) / 100.0f),
 				0,
@@ -112,6 +118,8 @@ public class WorldManagement : MonoBehaviour
 			{
 				toReturn = null;
 			}
+
+			loopClamp--;
 		}
 		while (toReturn == null);
 

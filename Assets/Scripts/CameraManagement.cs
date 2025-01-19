@@ -123,6 +123,11 @@ public class CameraManagement : MonoBehaviour
     
     public static void SetMainCameraActive(bool active)
     {
+		if (instance == null)
+		{
+			return;
+		}
+
         instance.mainCamera.enabled = active;
     }
 

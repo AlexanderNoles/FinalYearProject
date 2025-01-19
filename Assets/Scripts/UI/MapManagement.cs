@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using System.Linq;
 using EntityAndDataDescriptor;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class MapManagement : UIState
 {
@@ -55,37 +56,9 @@ public class MapManagement : UIState
 		CameraManagement.SetMainCameraActive(!_bool);
         SurroundingsRenderingManagement.SetNotInMap(!_bool);
 
-		if (_bool)
-        {
-            extraFrame = true;
-			pastFirstFrameOfMapAnim = false;
-            //Disable any map elements that might still be showing
-            //The parent object will have been set inactive so they won't actually render
-            //But they would now cause we have turned the object active again
-            for (int i = 3; i <= 8; i++)
-            {
-                if (i == 4)
-                {
-                    continue;
-                }
-
-                mapElementsPools.HideAllObjects(i);
-            }
-
-            mapObjectsAndParents = new List<(Transform, Transform)>();
-
-            List<SurroundingObject> surroundingObjects = SurroundingsRenderingManagement.GetControlledObjects();
-
-            foreach (SurroundingObject surroundingObject in surroundingObjects)
-            {
-                mapObjectsAndParents.Add((surroundingObject.transform, surroundingObject.GetInWorldParent()));
-            };
-
-            mapBasePos = Vector3.zero;
-        }
-		else
+		if (autoSetupDone)
 		{
-			cantFindLocation.SetActive(false);
+			mapElementsPools.gameObject.SetActive(_bool);
 		}
     }
 
@@ -117,22 +90,23 @@ public class MapManagement : UIState
 		}
 	}
 
+	protected override GameObject GetTargetObject()
+	{
+		return target;
+	}
+
+	public GameObject target;
 	[Header("Map Settings")]
-	public GameObject cantFindLocation;
 	public FadeOnEnable fadeInEffect;
     public MultiObjectPool mapElementsPools;
     private const int mapRingPool = 0;
     private const int shipIndicatorPool = 1;
     private const int mapBasePool = 2;
 
-    private List<(Transform, Transform)> mapObjectsAndParents;
-    private bool pastFirstFrameOfMapAnim = false;
-    private bool extraFrame;
-    private Vector3 mapBasePos;
-
     private float mapRefreshTime;
     private const bool autoUpdateMap = true;
 
+	private List<SurroundingObject> mapTargetObjects;
     private Dictionary<Transform, MeshRenderer> mapRingMeshRenderes;
 	private Dictionary<Transform, LineRenderer> cachedTransformToBorderRenderer = new Dictionary<Transform, LineRenderer>();
 	private Dictionary<Transform, SpriteRenderer> cachedTransformToNationIconRenderers = new Dictionary<Transform, SpriteRenderer>();
@@ -155,75 +129,81 @@ public class MapManagement : UIState
     {
         if (MapActive())
         {
-			if (PlayerCapitalShip.InJumpTravelStage())
-			{
-				if (!cantFindLocation.activeSelf)
-				{
-					//Restart fade effect so it still plays even if we are in the map
-					//Don't use a second effect for just can't find location ui
-					//as they would overlap and look messy
-					//It's also kinda wasteful
-					fadeInEffect.Restart();
-					cantFindLocation.SetActive(true);
-				}
-
-				return;
-			}
-			else if (cantFindLocation.activeSelf)
-			{
-				fadeInEffect.Restart();
-				cantFindLocation.SetActive(false);
-			}
-
 			Vector3 playerPos = -PlayerCapitalShip.GetPCSPosition().AsTruncatedVector3(mapRelativeScaleModifier);
 			mapElementsPools.UpdateNextObjectPosition(shipIndicatorPool, playerPos);
 			mapElementsPools.PruneObjectsNotUpdatedThisFrame(shipIndicatorPool);
 
-			if (MapIntroRunning() || extraFrame)
+			if (MapIntroRunning())
             {
-                if (!MapIntroRunning())
-                {
-					//Extra frame after map intro runs
+				if (FirstFrameMapIntroRunning())
+				{
+					mapTargetObjects = SurroundingsRenderingManagement.GetControlledObjects();
 
-                    //Want to run for an extra frame otherwise surroundings rendering could move out of sync after we've finished
-                    //This actually happens a lot because of the speed of the map intro animation
-                    extraFrame = false;
-                    Shader.SetGlobalFloat("_FlashTime", Time.time);
-                    mapRefreshTime = 0.0f;
-                }
-
-                foreach ((Transform, Transform) entry in mapObjectsAndParents)
-                {
-                    Vector3 parentPos = Vector3.zero;
-
-                    if (entry.Item2 != null)
-                    {
-                        parentPos = entry.Item2.position;
-                    }
-
-                    parentPos.y = entry.Item1.position.y;
-                    Vector3 scale = entry.Item1.position - parentPos;
-                    scale.y = 0;
-                    float scaleMag = Mathf.Max(1, scale.magnitude);
-
-                    Transform mapRing = mapElementsPools.UpdateNextObjectPosition(mapRingPool, parentPos);
-                    mapRing.localScale = new Vector3(scaleMag, 1, scaleMag) * 2;
-                    mapRingMeshRenderes[mapRing].material.SetFloat("_Radius", scaleMag);
-                    mapRingMeshRenderes[mapRing].material.SetVector("_RingItemPos", entry.Item1.position);
-                    mapRingMeshRenderes[mapRing].material.SetFloat("_RingItemRadius", entry.Item1.localScale.magnitude * 0.75f);
-
-					if (!pastFirstFrameOfMapAnim)
+					foreach (SurroundingObject target in mapTargetObjects)
 					{
-						mapRingMeshRenderes[mapRing].material.SetFloat("_Thickness", Mathf.Max(0.1f, 0.3f * entry.Item1.localScale.x));
+						//Indicate we are not using the shell system
+						target.SetShellOffset(-1);
+						//Set on map scale
+						target.SetObjectVisualScale(target.scale / mapRelativeScaleModifier);
 					}
-                }
 
-                Vector3 mapBasePosThisFrame = mapBasePos + (Vector3.up * Mathf.Lerp(-25, -0.1f, EvaluatedMapIntroT()));
-                mapElementsPools.UpdateNextObjectPosition(mapBasePool, mapBasePosThisFrame);
+					//Ensure controlled objects are shown
+					SurroundingsRenderingManagement.SetAllSurroundingsActive(true);
 
-                mapElementsPools.PruneObjectsNotUpdatedThisFrame(mapRingPool);
-                mapElementsPools.PruneObjectsNotUpdatedThisFrame(mapBasePool);
-				pastFirstFrameOfMapAnim = true;
+					//Disable skybox
+					SurroundingsRenderingManagement.SetSkyboxActive(false);
+
+					//Undraw all border rendering lines
+					mapElementsPools.PruneObjectsNotUpdatedThisFrame(3, true);
+					mapElementsPools.PruneObjectsNotUpdatedThisFrame(5, true);
+
+					//Hide journey and destination indicator
+					mapElementsPools.HideAllObjects(7);
+					mapElementsPools.HideAllObjects(8);
+				}
+				else if (LastFrameOfMapIntro())
+				{
+					Shader.SetGlobalFloat("_FlashTime", Time.time);
+					mapRefreshTime = 0.0f;
+				}
+
+				float evaluatedIntroT = EvaluatedMapIntroT();
+				Vector3 currentOffset = Vector3.down * Mathf.Lerp(0.0f, CameraManagement.cameraOffsetInMap, 1.0f - evaluatedIntroT);
+				foreach (SurroundingObject target in mapTargetObjects)
+				{
+					//Update surrounding objects
+					target.transform.localPosition = -target.postion.AsTruncatedVector3(mapRelativeScaleModifier) + currentOffset;
+
+					//Update UI
+					if (target.GetInWorldParent() != null)
+					{
+						Vector3 orbitIndicatorPos = target.GetInWorldParent().position;
+						//Set orbit indicator to target height
+						orbitIndicatorPos.y = target.transform.position.y;
+						//Calculate scale
+						Vector3 scale = target.transform.position - orbitIndicatorPos;
+						scale.y = 0;
+
+						float scaleMag = Mathf.Max(1, scale.magnitude);
+						Transform orbitIndicatorRing = mapElementsPools.UpdateNextObjectPosition(mapRingPool, orbitIndicatorPos);
+
+						orbitIndicatorRing.localScale = new Vector3(scaleMag, 1, scaleMag) * 2;
+
+						mapRingMeshRenderes[orbitIndicatorRing].material.SetFloat("_Radius", scaleMag);
+						mapRingMeshRenderes[orbitIndicatorRing].material.SetVector("_RingItemPos", target.transform.position);
+						mapRingMeshRenderes[orbitIndicatorRing].material.SetFloat("_RingItemRadius", target.transform.localScale.magnitude * 0.75f);
+
+						if (FirstFrameMapIntroRunning())
+						{
+							mapRingMeshRenderes[orbitIndicatorRing].material.SetFloat("_Thickness", Mathf.Max(0.1f, 0.3f * target.transform.localScale.x));
+						}
+					}
+				}
+
+				mapElementsPools.UpdateNextObjectPosition(mapBasePool, Vector3.up * Mathf.Lerp(-25, -0.1f, EvaluatedMapIntroT()));
+
+				mapElementsPools.PruneObjectsNotUpdatedThisFrame(mapRingPool);
+				mapElementsPools.PruneObjectsNotUpdatedThisFrame(mapBasePool);
 			}
             else
             {

@@ -120,4 +120,11 @@ public class SimulationEntity
         //Remove from simulation management register so routines don't pick it up
         SimulationManagement.DeRegisterDataModule(tag, data);
     }
+
+
+
+	public virtual void OnDeath()
+	{
+		//Do nothing by default
+	}
 }
