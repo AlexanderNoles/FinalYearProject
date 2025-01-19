@@ -89,14 +89,14 @@ public class SurroundingsRenderingManagement : MonoBehaviour
 
 			transform.position = Vector3.zero;
 
-			List<(double, RealSpacePostion, int)> distanceOffsetAndIndex = new List<(double, RealSpacePostion, int)>();
+			List<(double, RealSpacePosition, int)> distanceOffsetAndIndex = new List<(double, RealSpacePosition, int)>();
 
 			//Calculate distances, so can sort them by distance
 			//We also cache offsets cause there is no reason to calculate them twice
 			for (int i = 0; i < controlledObjects.Count; i++)
 			{
 				//Get offset from world center
-				RealSpacePostion offset = WorldManagement.OffsetFromWorldCenter(controlledObjects[i].postion, cameraOffset);
+				RealSpacePosition offset = WorldManagement.OffsetFromWorldCenter(controlledObjects[i].postion, cameraOffset);
 				//Get distance to world center
 				double magnitude = offset.Magnitude();
 

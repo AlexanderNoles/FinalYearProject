@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BattleBehaviour : InteractableBase
-{
+{ 
 	public string targetsName = "Target";
 	public Collider targetCollider;
-	//This id should only really be used for testing
-	//All bBehaviour lookups should be done through colliders
-	private int bBehaviourID;
 
 	[HideInInspector]
 	public new Transform transform;
@@ -17,21 +14,44 @@ public class BattleBehaviour : InteractableBase
 	protected List<BattleBehaviour> currentTargets = new List<BattleBehaviour>();
 
     protected float currentHealth;
+	protected HealthContextLink simulationLink;
 
     protected virtual void Awake()
 	{
 		transform = base.transform;
-		bBehaviourID = Random.Range(-100000, 100000);
 	}
 
 	protected void OnEnable()
 	{
 		BattleManagement.RegisterBattleBehaviour(targetCollider, this);
+		simulationLink = GetComponent<HealthContextLink>();
+
+		if (simulationLink != null )
+		{
+			currentHealth = simulationLink.GetMaxHealth();
+		}
 	}
 
 	protected void OnDisable()
 	{
 		BattleManagement.DeRegisterBattleBehaviour(targetCollider);
+	}
+
+	public virtual float GetHealthPercentage()
+	{
+		return Mathf.Clamp01(currentHealth / GetMaxHealth());
+	}
+
+	public virtual float GetMaxHealth()
+	{
+		return 100.0f;
+	}
+
+	protected virtual void Update()
+	{
+		//Clamp current health to max health
+		//This is dirty but flexible
+		currentHealth = Mathf.Min(currentHealth, GetMaxHealth());
 	}
 
 	protected void ToggleTarget(BattleBehaviour target)
@@ -159,10 +179,20 @@ public class BattleBehaviour : InteractableBase
 		//They don't always keep going to the first index, a.k.a single target fire
 		int randomOffset = Random.Range(0, count);
 
-		for (int i = 0; i < count; i++)
+		for (int i = 0; i < currentTargets.Count;)
 		{
 			int index = (i + randomOffset) % count;
 			BattleBehaviour target = currentTargets[index];
+
+			if (target.Dead())
+			{
+				RemoveTarget(target);
+				continue;
+			}
+			else
+			{
+				i++;
+			}
 
 			Vector3 targetPosition = target.GetPosition();
 
@@ -187,7 +217,11 @@ public class BattleBehaviour : InteractableBase
 					while (attack.numberOfAttacksSoFar < attack.totalNumberOfAttacks && attackCap > 0)
 					{
 						//Apply damage
-						target.TakeDamage(attack.parentProfile.GetDamage());
+						if (target.TakeDamage(attack.parentProfile.GetDamage()))
+						{
+							//Killed target
+
+						}
 
 						Vector3 shotTargetPosition = target.GetTargetablePosition();
 						//Draw Attack
@@ -246,9 +280,30 @@ public class BattleBehaviour : InteractableBase
 
 	//DAMAGE
 
-	protected virtual void TakeDamage(float rawDamageNumber)
+	public virtual bool Dead()
 	{
+		return currentHealth <= 0.0f;
+	}
 
+	protected virtual bool TakeDamage(float rawDamageNumber)
+	{
+		currentHealth -= rawDamageNumber;
+
+		if (Dead())
+		{
+			OnDeath();
+			return true;
+		}
+
+		return false;
+	}
+
+	protected virtual void OnDeath()
+	{
+		if (simulationLink != null)
+		{
+			simulationLink.OnDeath();
+		}
 	}
 
 	//HELPER FUNCTIONS

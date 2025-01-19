@@ -159,7 +159,7 @@ public class HistoryUIManagement : UIState
 		{
 			for (int z = -range; z <= range; z++)
 			{
-				RealSpacePostion currentCell = WorldManagement.ClampPositionToGrid(new RealSpacePostion(x * gridDensity, 0, z * gridDensity));
+				RealSpacePosition currentCell = WorldManagement.ClampPositionToGrid(new RealSpacePosition(x * gridDensity, 0, z * gridDensity));
 
 				try
 				{
@@ -188,7 +188,7 @@ public class HistoryUIManagement : UIState
 		pixelPool.PruneObjectsNotUpdatedThisFrame(0);
 	}
 
-	private void AddPixel(RealSpacePostion postion, Color color)
+	private void AddPixel(RealSpacePosition postion, Color color)
 	{
 		Transform pixelTrans = pixelPool.UpdateNextObjectPosition(0, Vector3.zero);
 

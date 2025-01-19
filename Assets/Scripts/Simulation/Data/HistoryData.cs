@@ -9,7 +9,7 @@ public class HistoryData : DataBase
 
 	}
 
-	public Dictionary<RealSpacePostion, HistoryCell> previouslyOwnedTerritories = new Dictionary<RealSpacePostion, HistoryCell>();
+	public Dictionary<RealSpacePosition, HistoryCell> previouslyOwnedTerritories = new Dictionary<RealSpacePosition, HistoryCell>();
 
 	public class Period
     {

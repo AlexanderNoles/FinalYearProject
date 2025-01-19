@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LocationContext : MonoBehaviour
+public class LocationContextLink : MonoBehaviour
 {
 	[HideInInspector]
 	public VisitableLocation target;

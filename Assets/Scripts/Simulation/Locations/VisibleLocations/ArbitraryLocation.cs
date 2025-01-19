@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class ArbitraryLocation : VisitableLocation
 {
-	public ArbitraryLocation SetLocation(RealSpacePostion pos)
+	public ArbitraryLocation SetLocation(RealSpacePosition pos)
 	{
 		postion = pos;
 
 		return this;
 	}
 
-	public RealSpacePostion postion;
+	public RealSpacePosition postion;
 
-	public override RealSpacePostion GetPosition()
+	public override RealSpacePosition GetPosition()
 	{
 		return postion;
 	}

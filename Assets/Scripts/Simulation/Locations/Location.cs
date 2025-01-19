@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Location
 {
-    public virtual RealSpacePostion GetPosition()
+    public virtual RealSpacePosition GetPosition()
     {
         throw new System.NotImplementedException();
     }

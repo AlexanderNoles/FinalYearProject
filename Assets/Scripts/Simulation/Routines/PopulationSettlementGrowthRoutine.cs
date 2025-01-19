@@ -17,7 +17,7 @@ public class PopulationSettlementGrowthRoutine : RoutineBase
             {
                 populationData.populationNaturalGrowthLimt = 0;
 
-                foreach (RealSpacePostion pos in settlementData.settlements.Keys)
+                foreach (RealSpacePosition pos in settlementData.settlements.Keys)
                 {
                     populationData.populationNaturalGrowthLimt += settlementData.settlements[pos].maxPop;
                 }

@@ -46,7 +46,7 @@ public class BattleManagement : MonoBehaviour
 	private const int basicBeamIndex = 0;
 	private const int explosionIndex = 1;
 
-    private static BattleManagement instance;
+	private static BattleManagement instance;
 
 	public struct BasicEffectData
 	{

@@ -718,6 +718,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5dc45ebfd7935944952d83c077bc94d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  asteroidMeshes:
+  - {fileID: 289301614986012343, guid: 31f21a58b4331cd4789c681327eece96, type: 3}
   structuresPool: {fileID: 14063473}
 --- !u!114 &14063473
 MonoBehaviour:
@@ -738,6 +740,14 @@ MonoBehaviour:
     baseObject: {fileID: 7181530414214187603, guid: 6f8fd4471dff9ce49ae3f7b45e864878,
       type: 3}
     baseNumberOfObjects: 2
+    generateAsNeeded: 1
+    currentUpdatedObjectPointer: 0
+    automaticallySetParent: 1
+  - name: ASTEROIDS
+    mode: 0
+    baseObject: {fileID: 9045322733121574744, guid: 4311f24b7f7f9934d92bff78e1a89c7a,
+      type: 3}
+    baseNumberOfObjects: 10
     generateAsNeeded: 1
     currentUpdatedObjectPointer: 0
     automaticallySetParent: 1

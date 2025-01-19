@@ -31,13 +31,13 @@ public class MilitaryTroopManagementRoutine : RoutineBase
             int transferBudget = 10;
 
             //If we have any avaliable battles
-            List<RealSpacePostion> targets = new List<RealSpacePostion>();
+            List<RealSpacePosition> targets = new List<RealSpacePosition>();
             if (hasBattleData && battleData.positionToOngoingBattles.Count > 0)
             {
                 List<float> targetImportance = new List<float>();
                 //Iterate through current battles and calculate the most important ones
                 //Then transfer free fleets to those 
-                foreach (KeyValuePair<RealSpacePostion, GlobalBattleData.Battle> battle in battleData.positionToOngoingBattles)
+                foreach (KeyValuePair<RealSpacePosition, GlobalBattleData.Battle> battle in battleData.positionToOngoingBattles)
                 {
                     List<int> involvedEntities = battle.Value.GetInvolvedEntities();
 
@@ -114,7 +114,7 @@ public class MilitaryTroopManagementRoutine : RoutineBase
                 }
 
                 int maxTransferPer = Mathf.CeilToInt(transferBudget / (float)targets.Count);
-                foreach (RealSpacePostion target in targets)
+                foreach (RealSpacePosition target in targets)
                 {
                     transferBudget -= militaryData.TransferFreeUnits(maxTransferPer, target, battleData);
                 }
@@ -125,14 +125,14 @@ public class MilitaryTroopManagementRoutine : RoutineBase
                 if (setData.settlements.Count > 0)
                 {
                     //Get random position among settlements
-                    RealSpacePostion targetPos = setData.settlements.ElementAt(SimulationManagement.random.Next(0, setData.settlements.Count)).Key;
+                    RealSpacePosition targetPos = setData.settlements.ElementAt(SimulationManagement.random.Next(0, setData.settlements.Count)).Key;
 
                     //Find ships that are out of nation
-                    List<(RealSpacePostion, int)> posAndCount = new List<(RealSpacePostion, int)>();
+                    List<(RealSpacePosition, int)> posAndCount = new List<(RealSpacePosition, int)>();
 
                     //Seperate out into two loops to avoid change while iterating over error
                     //Current obvious alternative is very unperformant (element at with a standard for loop)
-                    foreach (KeyValuePair<RealSpacePostion, List<ShipCollection>> heldPosition in militaryData.positionToFleets)
+                    foreach (KeyValuePair<RealSpacePosition, List<ShipCollection>> heldPosition in militaryData.positionToFleets)
                     {
                         if (!setData.settlements.ContainsKey(heldPosition.Key))
                         {
@@ -152,7 +152,7 @@ public class MilitaryTroopManagementRoutine : RoutineBase
                     }
 
                     //Transfer fleets back to settlements
-                    foreach ((RealSpacePostion, int) target in posAndCount)
+                    foreach ((RealSpacePosition, int) target in posAndCount)
                     {
                         for (int i = 0; i < target.Item2; i++)
                         {

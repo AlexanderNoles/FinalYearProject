@@ -10,7 +10,7 @@ public class CelestialBody : SurroundingObject
     {
         scale *= (WorldManagement.solarSystemScaleModifier / WorldManagement.referncePointSolarSystemScaleModifier);
         Vector3 pos = transform.position * WorldManagement.solarSystemScaleModifier;
-        postion = new RealSpacePostion(pos.x, pos.y, pos.z);
+        postion = new RealSpacePosition(pos.x, pos.y, pos.z);
         //Clamp position to grid
         postion = WorldManagement.ClampPositionToGrid(postion);
 

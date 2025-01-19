@@ -38,8 +38,6 @@ public class PlayerBattleBehaviour : BattleBehaviour
 	}
 
 	public List<Vector3> firePoints = new List<Vector3>();
-
-	private const float maxSelectDistance = 500;
 	private float lastRecordedSalvoPercentage;
 
 	protected override void Awake()
@@ -104,20 +102,22 @@ public class PlayerBattleBehaviour : BattleBehaviour
 		return firePos;
 	}
 
-	private void Update()
+	public override float GetMaxHealth()
 	{
-		//Clamp current health to max health
-		//This is dirty but flexible
 		PlayerStats playerStats = PlayerManagement.GetStats();
-
 		float maxHealth = 100;
+
 		if (playerStats != null)
 		{
 			maxHealth = playerStats.GetStat(Stats.maxHealth.ToString());
-        }
+		}
 
-        currentHealth = Mathf.Min(currentHealth, maxHealth);
-        //
+		return maxHealth;
+	}
+
+	protected override void Update()
+	{
+		base.Update();
 
         float salvoAmountThisFrame = GetSalvoPercentage();
 		if (salvoAmountThisFrame != lastRecordedSalvoPercentage)

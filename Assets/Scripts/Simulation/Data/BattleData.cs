@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class BattleData : DataBase
 {
-	public Dictionary<RealSpacePostion, GlobalBattleData.Battle> positionToOngoingBattles = new Dictionary<RealSpacePostion, GlobalBattleData.Battle>();
+	public Dictionary<RealSpacePosition, GlobalBattleData.Battle> positionToOngoingBattles = new Dictionary<RealSpacePosition, GlobalBattleData.Battle>();
 }

@@ -9,12 +9,12 @@ public class SurroundingObject : MonoBehaviour
     protected float rawScale;
 	[HideInInspector]
     public new Transform transform;
-    public RealSpacePostion postion;
+    public RealSpacePosition postion;
 
     protected virtual void Awake()
     {
         transform = base.transform;
-        postion = new RealSpacePostion(0, 0, 0);
+        postion = new RealSpacePosition(0, 0, 0);
     }
 
     protected virtual void OnEnable()

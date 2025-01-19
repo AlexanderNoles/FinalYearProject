@@ -10,7 +10,7 @@ public class WorldCenter : MonoBehaviour
     {
         positionLastFrame = transform.position;
 
-        WorldManagement.SetWorldCenterPosition(new RealSpacePostion(positionLastFrame.x, positionLastFrame.y, positionLastFrame.z));
+        WorldManagement.SetWorldCenterPosition(new RealSpacePosition(positionLastFrame.x, positionLastFrame.y, positionLastFrame.z));
     }
 
     private void Update()

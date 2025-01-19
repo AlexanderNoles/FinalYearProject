@@ -29,7 +29,7 @@ public class SettlementManagementRoutine : RoutineBase
 			//
 
             //Iterate through each settlement
-            foreach (KeyValuePair<RealSpacePostion, SettlementData.Settlement> settlePair in settlementData.settlements)
+            foreach (KeyValuePair<RealSpacePosition, SettlementData.Settlement> settlePair in settlementData.settlements)
             {
                 SettlementData.Settlement currentSettlement = settlePair.Value;
                 //Get inverted settlement index
@@ -141,7 +141,7 @@ public class SettlementManagementRoutine : RoutineBase
                         int fleetShipLimitForSettlement = Mathf.RoundToInt(MathHelper.ValueTanhFalloff(invertedSettlementIndex, 3));
                         fleetShipLimitForSettlement = Mathf.Max(1, fleetShipLimitForSettlement);
                         int fleetCountInCell = 0;
-                        RealSpacePostion settlementPosition = settlePair.Value.actualSettlementPos;
+                        RealSpacePosition settlementPosition = settlePair.Value.actualSettlementPos;
                         if (militaryData.positionToFleets.ContainsKey(settlementPosition))
                         {
                             fleetCountInCell = militaryData.positionToFleets[settlementPosition].Count;

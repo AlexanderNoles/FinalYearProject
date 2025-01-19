@@ -8,7 +8,7 @@ public class GlobalBattleData : DataBase
 {
 	public class Battle : VisitableLocation
 	{
-		public RealSpacePostion postion;
+		public RealSpacePosition postion;
 		public float backgroundProgression;
 
 		public int startTickID;
@@ -76,7 +76,7 @@ public class GlobalBattleData : DataBase
 			return false;
 		}
 
-		public void End(RealSpacePostion pos)
+		public void End(RealSpacePosition pos)
 		{
 			foreach (int id in involvedEntities)
 			{
@@ -94,7 +94,7 @@ public class GlobalBattleData : DataBase
 			involvedEntities.Clear();
 		}
 
-		public void ResolveTerritory(RealSpacePostion cellCenterOfPos, HistoryData historyData, int winnerID)
+		public void ResolveTerritory(RealSpacePosition cellCenterOfPos, HistoryData historyData, int winnerID)
 		{
 			// Decide new owner //
 			if (winnerID == -1)
@@ -196,12 +196,12 @@ public class GlobalBattleData : DataBase
 			}
 		}
 
-		public Battle(RealSpacePostion pos)
+		public Battle(RealSpacePosition pos)
 		{
 			postion = pos;
 		}
 
-		public override RealSpacePostion GetPosition()
+		public override RealSpacePosition GetPosition()
 		{
 			return postion;
 		}
@@ -241,10 +241,10 @@ public class GlobalBattleData : DataBase
 		}
 	}
 
-	public Dictionary<RealSpacePostion, List<Battle>> cellCenterToBattles = new Dictionary<RealSpacePostion, List<Battle>>();
+	public Dictionary<RealSpacePosition, List<Battle>> cellCenterToBattles = new Dictionary<RealSpacePosition, List<Battle>>();
 	public static int totalBattlesCount = 0;
 
-	public bool StartOrJoinBattle(RealSpacePostion key, RealSpacePostion actualPos, int originID, int targetID, bool mergeToExisting)
+	public bool StartOrJoinBattle(RealSpacePosition key, RealSpacePosition actualPos, int originID, int targetID, bool mergeToExisting)
 	{
 		if (!cellCenterToBattles.ContainsKey(key))
 		{

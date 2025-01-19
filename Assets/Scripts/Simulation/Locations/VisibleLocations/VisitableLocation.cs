@@ -5,13 +5,28 @@ using System;
 
 public class VisitableLocation : Location, IDisplay
 {
-	private static Dictionary<Transform, LocationContext> transformToContextLink = new Dictionary<Transform, LocationContext>();
+	private static Dictionary<Transform, LocationContextLink> transformToContextLink = new Dictionary<Transform, LocationContextLink>();
+	
+	public virtual bool HasHealth()
+	{
+		return true;
+	}
+
+	public virtual float GetMaxHealth()
+	{
+		return 100.0f;
+	}
+
+	public virtual void OnDeath()
+	{
+
+	}
 
 	protected void ApplyContext(Transform target)
 	{
 		if (!transformToContextLink.ContainsKey(target))
 		{
-			if (target.TryGetComponent(out LocationContext component))
+			if (target.TryGetComponent(out LocationContextLink component))
 			{
 				transformToContextLink[target] = component;
 			}
@@ -49,7 +64,7 @@ public class VisitableLocation : Location, IDisplay
 
 	public virtual string GetDescription()
 	{
-		RealSpacePostion pos = GetPosition();
+		RealSpacePosition pos = GetPosition();
 
 		return $"Coordinates: (X:{Math.Round(pos.x)}, Y:{Math.Round(pos.z)})";
 	}

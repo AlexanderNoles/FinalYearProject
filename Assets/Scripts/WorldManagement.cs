@@ -54,7 +54,7 @@ public class WorldManagement : MonoBehaviour
         return solarSystemRadius;
     }
 
-    public static bool WithinValidSolarSystem(RealSpacePostion pos)
+    public static bool WithinValidSolarSystem(RealSpacePosition pos)
     {
         double mag = pos.Magnitude();
 
@@ -92,9 +92,9 @@ public class WorldManagement : MonoBehaviour
 		return sign * ((difference * absT) + lowerSolarSystemLimit);
 	}
 
-	public static RealSpacePostion RandomCellCenterWithinSolarSystem() 
+	public static RealSpacePosition RandomCellCenterWithinSolarSystem() 
 	{
-		RealSpacePostion toReturn = null;
+		RealSpacePosition toReturn = null;
 
 		int loopClamp = 1000;
 		do
@@ -104,7 +104,7 @@ public class WorldManagement : MonoBehaviour
 				return null;
 			}
 
-			toReturn = new RealSpacePostion(
+			toReturn = new RealSpacePosition(
 				LerpInSolarSystemRange(SimulationManagement.random.Next(-100, 101) / 100.0f),
 				0,
 				LerpInSolarSystemRange(SimulationManagement.random.Next(-100, 101) / 100.0f)
@@ -141,25 +141,25 @@ public class WorldManagement : MonoBehaviour
 		return gridDensityHalf;
 	}
 
-    public static RealSpacePostion ClampPositionToGrid(RealSpacePostion pos)
+    public static RealSpacePosition ClampPositionToGrid(RealSpacePosition pos)
     {
-        return new RealSpacePostion(Math.Round(pos.x / gridDensity) * gridDensity, 0, Math.Round(pos.z / gridDensity) * gridDensity);
+        return new RealSpacePosition(Math.Round(pos.x / gridDensity) * gridDensity, 0, Math.Round(pos.z / gridDensity) * gridDensity);
     }
 
-    public static List<RealSpacePostion> GetNeighboursInGrid(RealSpacePostion origin)
+    public static List<RealSpacePosition> GetNeighboursInGrid(RealSpacePosition origin)
     {
-        List<RealSpacePostion> toReturn = new List<RealSpacePostion>();
+        List<RealSpacePosition> toReturn = new List<RealSpacePosition>();
         foreach (Vector3 offset in GenerationUtility.orthagonalOffsets)
         {
-            toReturn.Add(new RealSpacePostion((offset.x * gridDensity) + origin.x, 0, (offset.z * gridDensity) + origin.z));
+            toReturn.Add(new RealSpacePosition((offset.x * gridDensity) + origin.x, 0, (offset.z * gridDensity) + origin.z));
         }
 
         return toReturn;
     }
 
-    public static RealSpacePostion RandomPositionInCell(RealSpacePostion chunkCenter, System.Random random)
+    public static RealSpacePosition RandomPositionInCell(RealSpacePosition chunkCenter, System.Random random)
     {
-        return new RealSpacePostion(
+        return new RealSpacePosition(
             chunkCenter.x + random.Next(-softGridDensityHalf, softGridDensityHalf),
             chunkCenter.y,
             chunkCenter.z + random.Next(-softGridDensityHalf, softGridDensityHalf));
@@ -168,9 +168,9 @@ public class WorldManagement : MonoBehaviour
     private const double debugMultiplier = 1000.0f;
     private const float debugSize = 2.0f;
     private static List<Vector3> debugPositions = new List<Vector3>();
-    public static RealSpacePostion worldCenterPosition;
+    public static RealSpacePosition worldCenterPosition;
 
-    public static void SetWorldCenterPosition(RealSpacePostion initialPos)
+    public static void SetWorldCenterPosition(RealSpacePosition initialPos)
     {
         worldCenterPosition = initialPos;
     }
@@ -189,12 +189,12 @@ public class WorldManagement : MonoBehaviour
 
     //OPERATIONS
 
-    public static RealSpacePostion OffsetFromWorldCenter(RealSpacePostion position, Vector3 additionalOffset)
+    public static RealSpacePosition OffsetFromWorldCenter(RealSpacePosition position, Vector3 additionalOffset)
     {
 #if UNITY_EDITOR
         debugPositions.Add(position.AsTruncatedVector3(debugMultiplier));
 #endif
-        RealSpacePostion toReturn = new RealSpacePostion(position);
+        RealSpacePosition toReturn = new RealSpacePosition(position);
 
         return toReturn.Subtract(worldCenterPosition).Subtract(additionalOffset);
     }
@@ -215,7 +215,7 @@ public class WorldManagement : MonoBehaviour
 }
 
 [System.Serializable]
-public class RealSpacePostion
+public class RealSpacePosition
 {
     //Utilize doubles for extra precision
     //This position cannot be directly applied to a transform (beyond a certain point) as the loss of precision creates obvious errors
@@ -229,7 +229,7 @@ public class RealSpacePostion
             return false;
         }
 
-        RealSpacePostion otherPos = (RealSpacePostion)obj;
+        RealSpacePosition otherPos = (RealSpacePosition)obj;
 
         return x == otherPos.x && y == otherPos.y && z == otherPos.z;
     }
@@ -240,21 +240,21 @@ public class RealSpacePostion
     }
 
     //CONSTRUCTORS
-    public RealSpacePostion(RealSpacePostion rsp)
+    public RealSpacePosition(RealSpacePosition rsp)
     {
         x = rsp.x;
         y = rsp.y;
         z = rsp.z;
     }
 
-    public RealSpacePostion(double x, double y, double z)
+    public RealSpacePosition(double x, double y, double z)
     {
         this.x = x; 
         this.y = y; 
         this.z = z;
     }
 
-    public RealSpacePostion(int x, int y, int z)
+    public RealSpacePosition(int x, int y, int z)
     {
         this.x = x;
         this.y = y;
@@ -262,7 +262,7 @@ public class RealSpacePostion
     }
 
 	//OPERATIONS
-	public RealSpacePostion Add(RealSpacePostion postion)
+	public RealSpacePosition Add(RealSpacePosition postion)
     {
         x += postion.x;
         y += postion.y;
@@ -271,7 +271,7 @@ public class RealSpacePostion
         return this;
     }
 
-	public RealSpacePostion Divide(float value)
+	public RealSpacePosition Divide(float value)
 	{
 		x /= value;
 		y /= value;
@@ -287,7 +287,7 @@ public class RealSpacePostion
         z += value.z;
     }
 
-    public RealSpacePostion Subtract(Vector3 value)
+    public RealSpacePosition Subtract(Vector3 value)
     {
         x -= value.x;
         y -= value.y;
@@ -296,7 +296,7 @@ public class RealSpacePostion
 		return this;
     }
 
-    public RealSpacePostion Subtract(RealSpacePostion value)
+    public RealSpacePosition Subtract(RealSpacePosition value)
     {
         x -= value.x;
         y -= value.y;
@@ -305,9 +305,9 @@ public class RealSpacePostion
         return this;
     }
 
-    public RealSpacePostion SubtractToClone(RealSpacePostion value)
+    public RealSpacePosition SubtractToClone(RealSpacePosition value)
     {
-        return new RealSpacePostion(
+        return new RealSpacePosition(
             x - value.x,
             y - value.y,
             z - value.z
@@ -321,7 +321,7 @@ public class RealSpacePostion
         return System.Math.Sqrt(value);
     }
 
-    public double Distance(RealSpacePostion value)
+    public double Distance(RealSpacePosition value)
     {
         return SubtractToClone(value).Magnitude();
     }
@@ -331,10 +331,10 @@ public class RealSpacePostion
         return new Vector3((float)x, (float)y, (float)z);
     }
 
-    public RealSpacePostion Normalized()
+    public RealSpacePosition Normalized()
     {
         double mag = Magnitude();
-        return new RealSpacePostion(x / mag, y / mag, z / mag);
+        return new RealSpacePosition(x / mag, y / mag, z / mag);
     }
 
     public Vector3 AsTruncatedVector3(double modifier)
@@ -347,17 +347,17 @@ public class RealSpacePostion
         return new Vector2((float)(x/modifier), (float)(z/modifier));
     }
 
-	public static RealSpacePostion Lerp(RealSpacePostion a, RealSpacePostion b, float t)
+	public static RealSpacePosition Lerp(RealSpacePosition a, RealSpacePosition b, float t)
 	{
-		return new RealSpacePostion(
+		return new RealSpacePosition(
 			(a.x + (b.x - a.x) * t),
 			(a.y + (b.y - a.y) * t),
 			(a.z + (b.z - a.z) * t)
 			); 
 	}
 
-	public RealSpacePostion Clone()
+	public RealSpacePosition Clone()
 	{
-		return new RealSpacePostion(x, y, z);
+		return new RealSpacePosition(x, y, z);
 	}
 }

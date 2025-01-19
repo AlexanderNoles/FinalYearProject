@@ -34,7 +34,7 @@ public class PlayerLocationManagement : MonoBehaviour
 	}
 
 	//Check if position is within the distance to be considered a player location
-	public static bool IsPlayerLocation(RealSpacePostion pos)
+	public static bool IsPlayerLocation(RealSpacePosition pos)
 	{
 		//If the distance between this and the world center is greater
 		//is greater than allowed value
@@ -131,10 +131,10 @@ public class PlayerLocationManagement : MonoBehaviour
 			Destroy(parent.gameObject);
 		}
 
-		public void SetPosAsOffsetFrom(RealSpacePostion rsp, Vector3 additionalOffset)
+		public void SetPosAsOffsetFrom(RealSpacePosition rsp, Vector3 additionalOffset)
 		{
 			//Calculate difference between rsp and target location rsp
-			RealSpacePostion difference = targetLocation.GetPosition().SubtractToClone(rsp);
+			RealSpacePosition difference = targetLocation.GetPosition().SubtractToClone(rsp);
 
 			//Set that as our offset plus an additional offset
 			parent.position = (difference.AsVector3() * WorldManagement.inEngineWorldScaleMultiplier) + additionalOffset;
@@ -166,7 +166,7 @@ public class PlayerLocationManagement : MonoBehaviour
 		}
 
 		//Set inital world center position
-		WorldManagement.SetWorldCenterPosition(new RealSpacePostion(0, 0, 20000));
+		WorldManagement.SetWorldCenterPosition(new RealSpacePosition(0, 0, 20000));
 		setInitalLocation = false;
 
 		instance = this;
@@ -245,7 +245,7 @@ public class PlayerLocationManagement : MonoBehaviour
 			{
 				if (set.settlements.Count > 0)
 				{
-					RealSpacePostion initalPos = set.settlements.ElementAt(0).Value.actualSettlementPos.Clone();
+					RealSpacePosition initalPos = set.settlements.ElementAt(0).Value.actualSettlementPos.Clone();
 					initalPos.Add(Vector3.back * (100.0f * WorldManagement.invertedInEngineWorldScaleMultiplier));
 
 					WorldManagement.SetWorldCenterPosition(initalPos);
@@ -256,7 +256,7 @@ public class PlayerLocationManagement : MonoBehaviour
 			}
 		}
 
-		RealSpacePostion worldCenter = WorldManagement.worldCenterPosition;
+		RealSpacePosition worldCenter = WorldManagement.worldCenterPosition;
 
 		//Reset list as new object
 		newDrawnLocations = new List<DrawnLocation>();
@@ -283,47 +283,69 @@ public class PlayerLocationManagement : MonoBehaviour
 		Vector2 targetRectSizeDelta = uiPoolTargetRect.sizeDelta;
 		Vector2 halfTRSD = targetRectSizeDelta * 0.5f;
 
+		List<Vector2> positionsSoFar = new List<Vector2>();
+
         foreach (DrawnLocation location in drawnLocations)
 		{
 			location.SetPosAsOffsetFrom(worldCenter, PlayerCapitalShip.GetPosition());
 			location.targetLocation.DrawUpdate();
 
-			//Disable ui while in warp
-			if (!PlayerCapitalShip.InJumpTravelStage())
+			//Set position of ui indicator
+			Vector3 worldPos = location.GetWorldPosition();
+			Vector3 viewPortPos = mainCamera.WorldToViewportPoint(worldPos);
+
+			if (viewPortPos.z > 0.0f)
 			{
-				//Set position of ui indicator
-				Vector3 worldPos = location.GetWorldPosition();
-				Vector3 viewPortPos = mainCamera.WorldToViewportPoint(worldPos);
+				RectTransform uiIndicator = uiPool.UpdateNextObjectPosition(drawnLocationTargetIndex, Vector3.zero).transform as RectTransform;
 
-				if (viewPortPos.z > 0.0f)
+				Vector2 uiPos = new Vector2(viewPortPos.x * targetRectSizeDelta.x, viewPortPos.y * targetRectSizeDelta.y) - halfTRSD;
+
+				//For each label already at this position displace this one up slightly
+				Vector2 additionalOffset = Vector2.zero;
+				foreach (Vector2 posSoFar in positionsSoFar)
 				{
-					RectTransform uiIndicator = uiPool.UpdateNextObjectPosition(drawnLocationTargetIndex, Vector3.zero).transform as RectTransform;
-
-					uiIndicator.anchoredPosition3D = new Vector2(viewPortPos.x * targetRectSizeDelta.x, viewPortPos.y * targetRectSizeDelta.y) - halfTRSD;
-					//uiIndicator.localScale = Mathf.Clamp((100.0f / Vector3.Distance(worldPos, CameraManagement.GetMainCameraPosition())), 0.25f, 1.0f) * 3.0f * Vector3.one;
-
-					if (!transformToLocationTracker.ContainsKey(uiIndicator))
+					if (Vector2.Distance(uiPos, posSoFar) < 0.01f)
 					{
-						transformToLocationTracker.Add(uiIndicator, uiIndicator.GetComponent<LocationTrackingUI>());
-					}
-
-					LocationTrackingUI targetUI = transformToLocationTracker[uiIndicator];
-					string locationTitle = location.targetLocation.GetTitle();
-					if (!targetUI.label.text.Equals(locationTitle))
-					{
-						targetUI.label.text = locationTitle;
-					}
-
-					//Calculate distance from worldCenter
-					double distance = WorldManagement.OffsetFromWorldCenter(location.targetLocation.GetPosition(), Vector3.zero).Magnitude();
-					string distanceText = Math.Round(distance).ToString() + " u";
-					if (!targetUI.distanceLabel.text.Equals(distanceText))
-					{
-						targetUI.distanceLabel.text = distanceText;
+						additionalOffset += Vector2.up * 100.0f;
 					}
 				}
+				positionsSoFar.Add(uiPos);
+				//
+
+				uiIndicator.anchoredPosition3D = uiPos + additionalOffset;
+
+				if (!transformToLocationTracker.ContainsKey(uiIndicator))
+				{
+					transformToLocationTracker.Add(uiIndicator, uiIndicator.GetComponent<LocationTrackingUI>());
+				}
+
+				LocationTrackingUI targetUI = transformToLocationTracker[uiIndicator];
+				string locationTitle = location.targetLocation.GetTitle();
+				if (!targetUI.label.text.Equals(locationTitle))
+				{
+					targetUI.label.text = locationTitle;
+				}
+
+				//Calculate distance from player ship
+				float distance = Mathf.Round(Vector3.Distance(PlayerCapitalShip.GetPosition(), location.GetWorldPosition()));
+
+				string distanceText = "";
+
+				if (distance > 1000)
+				{
+					distanceText = Math.Round(distance / 1000.0f, 2).ToString() + " ku";
+				}
+				else
+				{
+					distanceText = distance.ToString() + " u";
+				}
+
+				if (!targetUI.distanceLabel.text.Equals(distanceText))
+				{
+					targetUI.distanceLabel.text = distanceText;
+				}
 			}
-        }
+		}
 
 		uiPool.PruneObjectsNotUpdatedThisFrame(drawnLocationTargetIndex, true);
 
@@ -338,7 +360,7 @@ public class PlayerLocationManagement : MonoBehaviour
 		}
 	}
 
-	public static void PerformOperationOnNearbyLocations(RealSpacePostion pos, Func<VisitableLocation, int> operation, int chunkRange = 1, int buffer = 1, double distanceClamp = -1)
+	public static void PerformOperationOnNearbyLocations(RealSpacePosition pos, Func<VisitableLocation, int> operation, int chunkRange = 1, int buffer = 1, double distanceClamp = -1)
 	{
 		//Grab data needed to compute
 		List<SettlementData> setData = SimulationManagement.GetDataViaTag(DataTags.Settlement).Cast<SettlementData>().ToList();
@@ -346,7 +368,7 @@ public class PlayerLocationManagement : MonoBehaviour
 		GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattle);
 
 		//Get postion to run check from
-		RealSpacePostion currentPlayerCellCenter = WorldManagement.ClampPositionToGrid(pos);
+		RealSpacePosition currentPlayerCellCenter = WorldManagement.ClampPositionToGrid(pos);
 		
 		double density = WorldManagement.GetGridDensity();
 
@@ -368,7 +390,7 @@ public class PlayerLocationManagement : MonoBehaviour
 				if (Mathf.Abs(x + playerXOffsetFromCellCenter) + Mathf.Abs(z + playerZOffsetFromCellCenter) <= bufferedChunkRange)
 				{
 					//Find offset from cell center
-					RealSpacePostion currentCellCenter = new RealSpacePostion(
+					RealSpacePosition currentCellCenter = new RealSpacePosition(
 						currentPlayerCellCenter.x + (density * x), 
 						0, 
 						currentPlayerCellCenter.z + (density * z));

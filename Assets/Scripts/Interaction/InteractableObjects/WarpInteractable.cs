@@ -11,7 +11,7 @@ public class WarpInteractable : ContextLinkedInteractable
 		return instance;
 	}
 
-	public static LocationContext GetWarpContext()
+	public static LocationContextLink GetWarpContext()
 	{
 		return instance.simulationContext;
 	}

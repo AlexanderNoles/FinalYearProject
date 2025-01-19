@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WorldCenterLocation : VisitableLocation
 {
-    public override RealSpacePostion GetPosition()
+    public override RealSpacePosition GetPosition()
     {
         return WorldManagement.worldCenterPosition;
     }

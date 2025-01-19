@@ -20,7 +20,7 @@ public class Planet : CelestialBody
     public Vector3 lightWavelengths = new Vector3(700, 530, 440);
     public float scatteringStrength = 1;
 
-    public static List<RealSpacePostion> availablePlanetPositions = new List<RealSpacePostion>();
+    public static List<RealSpacePosition> availablePlanetPositions = new List<RealSpacePosition>();
 
     private void Start()
     {

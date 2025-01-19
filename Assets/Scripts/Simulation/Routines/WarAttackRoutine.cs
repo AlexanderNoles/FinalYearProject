@@ -66,7 +66,7 @@ public class WarAttackRoutine : RoutineBase
                     }
                     else
                     {
-                        foreach (RealSpacePostion attackCell in terData.borders)
+                        foreach (RealSpacePosition attackCell in terData.borders)
                         {
                             //Transfer fleets to new attack if they are free
                             //Function should automatically check if we already have ships there and adjust the budget accordingly
@@ -74,7 +74,7 @@ public class WarAttackRoutine : RoutineBase
 
                             if (amountTransferred > 0)
                             {
-                                RealSpacePostion actualPos = null;
+                                RealSpacePosition actualPos = null;
 
                                 //If this is a brand new battle
                                 if (!globalBattleData.cellCenterToBattles.ContainsKey(attackCell))

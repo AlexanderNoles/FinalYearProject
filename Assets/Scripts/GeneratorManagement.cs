@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,18 +7,26 @@ using UnityEngine;
 public class GeneratorManagement : MonoBehaviour
 {
 	public static GeneratorManagement _instance;
+	public List<Mesh> asteroidMeshes = new List<Mesh>();
 
 	//HELPER INDEXES
 	public enum STRUCTURES_INDEXES
 	{
-		SETTLEMENT = 0
+		SETTLEMENT = 0,
+		ASTEROID = 1
 	}
 
 	public MultiObjectPool structuresPool;
+	private Dictionary<Transform, MeshFilter> asteroidToMeshFilter = new Dictionary<Transform, MeshFilter>();
 
 	private void Awake()
 	{
 		_instance = this;
+	}
+
+	private void Start()
+	{
+		asteroidToMeshFilter = structuresPool.GetComponentsOnAllActiveObjects<MeshFilter>((int)STRUCTURES_INDEXES.ASTEROID);
 	}
 
 	public static void SetOffset(Vector3 offset)
@@ -68,6 +77,24 @@ public class GeneratorManagement : MonoBehaviour
 			newTarget.localPosition = localPos;
 
 			targets.Add(((int)index, newTarget));
+
+			return this;
+		}
+	}
+
+	public class AsteroidGeneration : Generation
+	{
+		public AsteroidGeneration SpawnAsteroid(Vector3 localPos)
+		{
+			Transform newTarget = GetStructure((int)STRUCTURES_INDEXES.ASTEROID);
+			newTarget.parent = parent;
+			newTarget.localPosition = localPos;
+
+			targets.Add(((int)STRUCTURES_INDEXES.ASTEROID, newTarget));
+
+			MeshFilter meshFilter = _instance.asteroidToMeshFilter[newTarget];
+
+			meshFilter.mesh = _instance.asteroidMeshes[0];
 
 			return this;
 		}

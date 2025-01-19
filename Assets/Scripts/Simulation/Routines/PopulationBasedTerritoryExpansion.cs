@@ -52,11 +52,11 @@ public class PopulationBasedTerritoryExpansion : RoutineBase
             {
                 //This is an absurdly unperformant function! (ElementAt is from IEnumerable so to get to an element it will enumerate through
                 //every entry if it has too)
-                RealSpacePostion currentBorder = territory.borders.ElementAt(SimulationManagement.random.Next(0, territory.borders.Count));
+                RealSpacePosition currentBorder = territory.borders.ElementAt(SimulationManagement.random.Next(0, territory.borders.Count));
 
-                List<RealSpacePostion> neighbours = WorldManagement.GetNeighboursInGrid(currentBorder);
+                List<RealSpacePosition> neighbours = WorldManagement.GetNeighboursInGrid(currentBorder);
 
-                foreach (RealSpacePostion pos in neighbours)
+                foreach (RealSpacePosition pos in neighbours)
                 {
                     //If not currently claimed by anyone else and within solar system
                     if (!RoutineHelper.AnyContains(territories, pos) && WorldManagement.WithinValidSolarSystem(pos))

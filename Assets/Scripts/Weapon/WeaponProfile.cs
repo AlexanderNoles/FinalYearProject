@@ -6,7 +6,7 @@ public class WeaponProfile
 {
 	public virtual float GetDamage()
 	{
-		return 10;
+		return 0.5f;
 	}
 
 	public virtual float ShotsPerAttack()

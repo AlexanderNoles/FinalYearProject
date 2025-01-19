@@ -7,18 +7,18 @@ using UnityEngine;
 
 public class TerritoryData : DataBase
 {
-    public RealSpacePostion origin = null;
-    public HashSet<RealSpacePostion> territoryCenters = new HashSet<RealSpacePostion>();
-    public HashSet<RealSpacePostion> borders = new HashSet<RealSpacePostion>();
+    public RealSpacePosition origin = null;
+    public HashSet<RealSpacePosition> territoryCenters = new HashSet<RealSpacePosition>();
+    public HashSet<RealSpacePosition> borders = new HashSet<RealSpacePosition>();
 	public float growthRate;
 	public float territoryClaimUpperLimit;
 
-    public bool Contains(RealSpacePostion postion)
+    public bool Contains(RealSpacePosition postion)
     {
         return territoryCenters.Contains(postion);
     }
 
-	public void AddTerritory(RealSpacePostion center)
+	public void AddTerritory(RealSpacePosition center)
 	{
 		territoryCenters.Add(center);
 
@@ -35,7 +35,7 @@ public class TerritoryData : DataBase
 		BorderCheck(center, true);
 	}
 
-	public void RemoveTerritory(RealSpacePostion center)
+	public void RemoveTerritory(RealSpacePosition center)
 	{
 		territoryCenters.Remove(center);
 
@@ -47,9 +47,9 @@ public class TerritoryData : DataBase
 		BorderCheck(center, false);
 	}
 
-	private void BorderCheck(RealSpacePostion pos, bool hasCenter)
+	private void BorderCheck(RealSpacePosition pos, bool hasCenter)
 	{
-		List<RealSpacePostion> toCheck = WorldManagement.GetNeighboursInGrid(pos);
+		List<RealSpacePosition> toCheck = WorldManagement.GetNeighboursInGrid(pos);
 
 		//If we have just removed this territory we don't bother checking whether it can be a border
 		//if this check wasn't here kinda nothing would change but it feels cleaner this way
@@ -58,7 +58,7 @@ public class TerritoryData : DataBase
 			toCheck.Add(pos);
 		}
 
-		foreach (RealSpacePostion potentialBorder in toCheck)
+		foreach (RealSpacePosition potentialBorder in toCheck)
 		{
 			//Couple of cases to account for:
 
@@ -72,9 +72,9 @@ public class TerritoryData : DataBase
 				//Assuming it isn't already removed or added in the first place
 
 				bool allClaimed = true;
-				List<RealSpacePostion> neighboursOfPotentialBorder = WorldManagement.GetNeighboursInGrid(potentialBorder);
+				List<RealSpacePosition> neighboursOfPotentialBorder = WorldManagement.GetNeighboursInGrid(potentialBorder);
 
-				foreach (RealSpacePostion neighbourOfPB in neighboursOfPotentialBorder)
+				foreach (RealSpacePosition neighbourOfPB in neighboursOfPotentialBorder)
 				{
 					if (!territoryCenters.Contains(neighbourOfPB))
 					{
@@ -137,15 +137,15 @@ public class TerritoryData : DataBase
 
 		List<List<Vector3>> output = new List<List<Vector3>>();
 
-		HashSet<RealSpacePostion> alreadyVisited = new HashSet<RealSpacePostion>();
+		HashSet<RealSpacePosition> alreadyVisited = new HashSet<RealSpacePosition>();
 
 		int loopFailsafe = 0;
 		while (alreadyVisited.Count != borders.Count && loopFailsafe < 100000)
 		{
 			//Establish start position
-			RealSpacePostion startPos = null;
+			RealSpacePosition startPos = null;
 
-			foreach (RealSpacePostion pos in borders)
+			foreach (RealSpacePosition pos in borders)
 			{
 				if (!alreadyVisited.Contains(pos))
 				{
@@ -156,10 +156,10 @@ public class TerritoryData : DataBase
 					//We do this here so we don't have to iterate through the whole set again
 					if (IsAlone(startPos))
 					{
-						List<RealSpacePostion> points = GetPoints(startPos);
+						List<RealSpacePosition> points = GetPoints(startPos);
 						List<Vector3> toAddToOutput = new List<Vector3>();
 
-						foreach (RealSpacePostion point in points)
+						foreach (RealSpacePosition point in points)
 						{
 							toAddToOutput.Add(GetMapPosition(point));
 						}
@@ -185,19 +185,19 @@ public class TerritoryData : DataBase
 				//Main part of routine
 				//We have established we have a valid start pos
 				//No we need to find a valid point for this cell
-				List<RealSpacePostion> startPosPoints = GetPoints(startPos);
+				List<RealSpacePosition> startPosPoints = GetPoints(startPos);
 
-				RealSpacePostion startPoint = null;
+				RealSpacePosition startPoint = null;
 
 				//Perform a basic interior check on all the start pos points
 				//This just means getting their points and using them
 				//If any aren't "solid" we have our position
-				foreach (RealSpacePostion point in startPosPoints)
+				foreach (RealSpacePosition point in startPosPoints)
 				{
-					List<RealSpacePostion> checkPoints = GetPoints(point);
+					List<RealSpacePosition> checkPoints = GetPoints(point);
 
 					bool validPoint = false;
-					foreach (RealSpacePostion checkPoint in checkPoints)
+					foreach (RealSpacePosition checkPoint in checkPoints)
 					{
 						if (!borders.Contains(checkPoint))
 						{
@@ -220,8 +220,8 @@ public class TerritoryData : DataBase
 				}
 
 				//Set current
-				RealSpacePostion currentCellPos = startPos;
-				RealSpacePostion currentPoint = startPoint;
+				RealSpacePosition currentCellPos = startPos;
+				RealSpacePosition currentPoint = startPoint;
 
 				//Instatiate new output
 				List<Vector3> toAddToOutput = new List<Vector3>();
@@ -245,12 +245,12 @@ public class TerritoryData : DataBase
 
 					foreach ((Vector3, Vector3, Vector3) direction in CounterClockwiseOffsets)
 					{
-						RealSpacePostion freeCheckPos = new RealSpacePostion(
+						RealSpacePosition freeCheckPos = new RealSpacePosition(
 							currentPoint.x + (direction.Item2.x * halfDensity),
 							0,
 							currentPoint.z + (direction.Item2.z * halfDensity));
 
-						RealSpacePostion filledCheckPos = new RealSpacePostion(
+						RealSpacePosition filledCheckPos = new RealSpacePosition(
 							currentPoint.x + (direction.Item3.x * halfDensity),
 							0,
 							currentPoint.z + (direction.Item3.z * halfDensity));
@@ -262,7 +262,7 @@ public class TerritoryData : DataBase
 							{
 								//Setup new variables
 								currentCellPos = filledCheckPos;
-								currentPoint = new RealSpacePostion(
+								currentPoint = new RealSpacePosition(
 									currentPoint.x + (direction.Item1.x * fullDensity),
 									0,
 									currentPoint.z + (direction.Item1.z * fullDensity)
@@ -372,11 +372,11 @@ public class TerritoryData : DataBase
 		return output;
 	}
 	
-	private bool IsAlone(RealSpacePostion input)
+	private bool IsAlone(RealSpacePosition input)
 	{
-		List<RealSpacePostion> neighbours = WorldManagement.GetNeighboursInGrid(input);
+		List<RealSpacePosition> neighbours = WorldManagement.GetNeighboursInGrid(input);
 
-		foreach (RealSpacePostion neighbour in neighbours)
+		foreach (RealSpacePosition neighbour in neighbours)
 		{
 			if (territoryCenters.Contains(neighbour))
 			{
@@ -387,11 +387,11 @@ public class TerritoryData : DataBase
 		return true;
 	}
 
-	private bool OnlyConnectedByCorner(RealSpacePostion posA, RealSpacePostion posB, RealSpacePostion cornerPos)
+	private bool OnlyConnectedByCorner(RealSpacePosition posA, RealSpacePosition posB, RealSpacePosition cornerPos)
 	{
-		List<RealSpacePostion> cornersPoints = GetPoints(cornerPos);
+		List<RealSpacePosition> cornersPoints = GetPoints(cornerPos);
 
-		foreach (RealSpacePostion checkPos in cornersPoints)
+		foreach (RealSpacePosition checkPos in cornersPoints)
 		{
 			if (territoryCenters.Contains(checkPos) && !checkPos.Equals(posA) && !checkPos.Equals(posB))
 			{
@@ -412,14 +412,14 @@ public class TerritoryData : DataBase
 		}
 	}
 
-	private List<RealSpacePostion> GetPoints(RealSpacePostion input)
+	private List<RealSpacePosition> GetPoints(RealSpacePosition input)
 	{
-		List<RealSpacePostion> toReturn = new List<RealSpacePostion>();
+		List<RealSpacePosition> toReturn = new List<RealSpacePosition>();
 
 		foreach (Vector3 offset in GenerationUtility.diagonalOffsets)
 		{
 			toReturn.Add(
-				new RealSpacePostion(
+				new RealSpacePosition(
 					input.x + (offset.x * WorldManagement.GetGridDensityHalf()), 
 					0,
 					input.z + (offset.z * WorldManagement.GetGridDensityHalf())));
@@ -428,14 +428,14 @@ public class TerritoryData : DataBase
 		return toReturn;
 	}  
 
-	private Vector3 GetMapPosition(RealSpacePostion input)
+	private Vector3 GetMapPosition(RealSpacePosition input)
 	{
 		return -input.AsTruncatedVector3(MapManagement.mapRelativeScaleModifier);
 	}
 
-	private RealSpacePostion ReverseMapPosition(Vector3 input)
+	private RealSpacePosition ReverseMapPosition(Vector3 input)
 	{
-		return new RealSpacePostion(
+		return new RealSpacePosition(
 			-input.x * MapManagement.mapRelativeScaleModifier, 
 			-input.y * MapManagement.mapRelativeScaleModifier, 
 			-input.z * MapManagement.mapRelativeScaleModifier

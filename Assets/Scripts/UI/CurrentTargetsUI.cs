@@ -11,6 +11,7 @@ public class CurrentTargetsUI : MonoBehaviour
 	public CanvasScaler targetCanvasScalar;
 
 	private static List<BattleBehaviour> displayedTargets = new List<BattleBehaviour>();
+	private Dictionary<RectTransform, Image> rectTransformToHealthIndicator = new Dictionary<RectTransform, Image>();
 
 	private void Awake()
 	{
@@ -63,6 +64,13 @@ public class CurrentTargetsUI : MonoBehaviour
 			{
 				//Set
 				RectTransform targetRect = targetObjectsPool.UpdateNextObjectPosition(0, Vector3.zero).transform as RectTransform;
+
+				if (!rectTransformToHealthIndicator.ContainsKey(targetRect))
+				{
+					rectTransformToHealthIndicator.Add(targetRect, targetRect.GetChild(1).GetComponent<Image>());
+				}
+
+				rectTransformToHealthIndicator[targetRect].fillAmount = target.GetHealthPercentage();
 
 				//Zero z component so ui lines up correctly with ui camera
 				targetRect.anchoredPosition3D = new Vector3(screenSpacePos.x, screenSpacePos.y, 0.0f);

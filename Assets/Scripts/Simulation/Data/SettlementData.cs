@@ -1,3 +1,4 @@
+using EntityAndDataDescriptor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,7 +35,7 @@ public class SettlementData : DataBase
 				generation.AutoCleanup();
 			}
 
-			public override RealSpacePostion GetPosition()
+			public override RealSpacePosition GetPosition()
             {
                 return actualSettlement.actualSettlementPos;
             }
@@ -70,11 +71,19 @@ public class SettlementData : DataBase
 			{
 				return true;
 			}
+
+			public override void OnDeath()
+			{
+				if(actualSettlement.parent.Get().GetData(DataTags.Settlement, out SettlementData setData))
+				{
+					setData.settlements.Remove(actualSettlement.setCellCenter);
+				}
+			}
 		}
 
-
         public int maxPop = 100;
-        public RealSpacePostion actualSettlementPos = new RealSpacePostion(0, 0, 0);
+		public RealSpacePosition setCellCenter;
+        public RealSpacePosition actualSettlementPos = new RealSpacePosition(0, 0, 0);
         public SettlementLocation location;
 
         public class TradeFleet
@@ -87,7 +96,7 @@ public class SettlementData : DataBase
         public List<TradeFleet> tradeFleets = new List<TradeFleet>();
 
 
-        public Settlement(RealSpacePostion pos, EntityLink parent)
+        public Settlement(RealSpacePosition pos, EntityLink parent)
         {
             actualSettlementPos = pos;
 			//Set parent
@@ -102,17 +111,18 @@ public class SettlementData : DataBase
         }
     }
 
-    public void AddSettlement(RealSpacePostion realSpacePostion, Settlement settlement)
+    public void AddSettlement(RealSpacePosition realSpacePostion, Settlement settlement)
     {
         if (settlements.ContainsKey(realSpacePostion))
         {
             return;
         }
 
+		settlement.setCellCenter = realSpacePostion;
         settlement.setID = nextID++;
         settlements.Add(realSpacePostion, settlement);
     }
 
-    public Dictionary<RealSpacePostion, Settlement> settlements = new Dictionary<RealSpacePostion, Settlement>();
+    public Dictionary<RealSpacePosition, Settlement> settlements = new Dictionary<RealSpacePosition, Settlement>();
     public int rawSettlementCapacity = 5;
 }

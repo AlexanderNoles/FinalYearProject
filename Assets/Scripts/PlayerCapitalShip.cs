@@ -19,7 +19,7 @@ public class PlayerCapitalShip : MonoBehaviour
 	public AnimationCurve jumpCurve;
 
 	private static PlayerCapitalShip instance;
-	private RealSpacePostion pcsRSP;
+	private RealSpacePosition pcsRSP;
 	private static bool jumping;
 
 	public static bool IsJumping()
@@ -40,12 +40,12 @@ public class PlayerCapitalShip : MonoBehaviour
 	private static JumpStage jumpStage;
 	private static VisitableLocation jumpTarget;
 
-	public static RealSpacePostion GetTargetPosition()
+	public static RealSpacePosition GetTargetPosition()
 	{
 		return jumpTarget.GetPosition();
 	}
 
-	public static bool IsTargetPosition(RealSpacePostion pos)
+	public static bool IsTargetPosition(RealSpacePosition pos)
 	{
 		if (pos == null || jumpTarget == null)
 		{
@@ -55,8 +55,8 @@ public class PlayerCapitalShip : MonoBehaviour
 		return pos.Equals(GetTargetPosition());
 	}
 
-	private static RealSpacePostion jumpEnd;
-	private static RealSpacePostion jumpStart;
+	private static RealSpacePosition jumpEnd;
+	private static RealSpacePosition jumpStart;
 	private static Quaternion lookAtTargetRot;
 	private static Quaternion startTurnRot;
 	private static float jumpT;
@@ -162,13 +162,13 @@ public class PlayerCapitalShip : MonoBehaviour
 		}
 	}
 
-	public static void UpdatePCSPosition(RealSpacePostion pos)
+	public static void UpdatePCSPosition(RealSpacePosition pos)
 	{
 		instance.pcsRSP = pos;
 		Shader.SetGlobalVector("_PCSPosition", instance.pcsRSP.AsTruncatedVector3(20000));
 	}
 
-	public static RealSpacePostion GetPCSPosition()
+	public static RealSpacePosition GetPCSPosition()
 	{
 		return instance.pcsRSP;
 	}
@@ -220,14 +220,14 @@ public class PlayerCapitalShip : MonoBehaviour
 		instance.UpdateEngineIntensityVisuallyAuto();
 
 		//Get start position
-		jumpStart = new RealSpacePostion(WorldManagement.worldCenterPosition);
+		jumpStart = new RealSpacePosition(WorldManagement.worldCenterPosition);
 
 		//Get final position
-		jumpEnd = new RealSpacePostion(jumpTarget.GetPosition());
+		jumpEnd = new RealSpacePosition(jumpTarget.GetPosition());
 
 		//Setup rotation
 		//Get difference between positions jumpBaseLineSpeed
-		RealSpacePostion difference = new RealSpacePostion(jumpEnd).Subtract(jumpStart);
+		RealSpacePosition difference = new RealSpacePosition(jumpEnd).Subtract(jumpStart);
 		thisJumpSpeed = (float)(jumpBaseLineSpeed / difference.Magnitude());
 
 		Vector3 vectorDifference = difference.AsTruncatedVector3(20000);
@@ -250,9 +250,9 @@ public class PlayerCapitalShip : MonoBehaviour
 		instance.fuelAtBeginningOfJump = startValue;
 	}
 
-	public static double CalculateDistance(RealSpacePostion to)
+	public static double CalculateDistance(RealSpacePosition to)
 	{
-		return new RealSpacePostion(to).Subtract(instance.pcsRSP).Magnitude();
+		return new RealSpacePosition(to).Subtract(instance.pcsRSP).Magnitude();
 	}
 
 	private void UpdateEngineIntensityVisuallyAuto()
@@ -459,7 +459,7 @@ public class PlayerCapitalShip : MonoBehaviour
 					}
 
 					trail.SetPosition(1, new Vector3(0, 0, Mathf.Lerp(0, -maxTrailLength, jumpT * 15.0f)));
-					WorldManagement.SetWorldCenterPosition(RealSpacePostion.Lerp(jumpStart, jumpEnd, jumpCurve.Evaluate(jumpT)));
+					WorldManagement.SetWorldCenterPosition(RealSpacePosition.Lerp(jumpStart, jumpEnd, jumpCurve.Evaluate(jumpT)));
 
 					if (jumpT >= 1.0f)
 					{

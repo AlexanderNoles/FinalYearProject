@@ -1,11 +1,10 @@
 {
   "dependencies": {
     "com.monitorbreak.additions": {
-      "version": "https://github.com/Monitor-Break/Additions.git",
+      "version": "file:E:/UnityProjects/Additions",
       "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "a92ab5e09fabe4f3294950fa99073e5c4de5d7f9"
+      "source": "local",
+      "dependencies": {}
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",

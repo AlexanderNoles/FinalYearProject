@@ -53,21 +53,21 @@ public static class GenerationUtility
         return toReturn;
     }
 
-    public static HashSet<RealSpacePostion> GenerateFalloffPositionSpread(RealSpacePostion origin, Vector2 minMaxFalloffPerStep, int maxSize, Func<RealSpacePostion, bool> validPositionEval, System.Random random)
+    public static HashSet<RealSpacePosition> GenerateFalloffPositionSpread(RealSpacePosition origin, Vector2 minMaxFalloffPerStep, int maxSize, Func<RealSpacePosition, bool> validPositionEval, System.Random random)
     {
-        List<(float, RealSpacePostion)> frontier = new List<(float, RealSpacePostion)>
+        List<(float, RealSpacePosition)> frontier = new List<(float, RealSpacePosition)>
         {
             (1.0f, origin) //Add start point to frontier
         };
 
         //Closed set that will be returned
-        HashSet<RealSpacePostion> closed = new HashSet<RealSpacePostion>();
+        HashSet<RealSpacePosition> closed = new HashSet<RealSpacePosition>();
 
         while (closed.Count < maxSize && frontier.Count > 0)
         {
             //Get current frontier point
             int index = random.Next(0, frontier.Count);
-            (float, RealSpacePostion) current = frontier[index];
+            (float, RealSpacePosition) current = frontier[index];
 
             //Remove it from frontier
             frontier.RemoveAt(index);
@@ -82,9 +82,9 @@ public static class GenerationUtility
                 {
                     //Get neighbours from world management
                     //If this neighbour is already closed then we don't care about it
-                    List<RealSpacePostion> neighbours = WorldManagement.GetNeighboursInGrid(current.Item2);
+                    List<RealSpacePosition> neighbours = WorldManagement.GetNeighboursInGrid(current.Item2);
 
-                    foreach (RealSpacePostion pos in neighbours)
+                    foreach (RealSpacePosition pos in neighbours)
                     {
                         if (!closed.Contains(pos) && validPositionEval.Invoke(pos))
                         {

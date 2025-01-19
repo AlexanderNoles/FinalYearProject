@@ -31,8 +31,8 @@ public class BattleResolutionRoutine : RoutineBase
         Dictionary<int, MilitaryData> idToMilitaryData = SimulationManagement.GetEntityIDToData<MilitaryData>(DataTags.Military);
 
 		//Can't remove battles mid foreach loop
-		Dictionary<RealSpacePostion, List<GlobalBattleData.Battle>> finishedBattlesToRemove = new Dictionary<RealSpacePostion, List<GlobalBattleData.Battle>>();
-		foreach (KeyValuePair<RealSpacePostion, List<GlobalBattleData.Battle>> entry in globalBattleData.cellCenterToBattles)
+		Dictionary<RealSpacePosition, List<GlobalBattleData.Battle>> finishedBattlesToRemove = new Dictionary<RealSpacePosition, List<GlobalBattleData.Battle>>();
+		foreach (KeyValuePair<RealSpacePosition, List<GlobalBattleData.Battle>> entry in globalBattleData.cellCenterToBattles)
 		{
 			int battleCount = entry.Value.Count;
 			for (int b = 0; b < battleCount; b++)
@@ -257,7 +257,7 @@ public class BattleResolutionRoutine : RoutineBase
 		}
 
 		//Prune battle data of battles that have been finished
-		foreach (KeyValuePair<RealSpacePostion, List<GlobalBattleData.Battle>> entry in finishedBattlesToRemove)
+		foreach (KeyValuePair<RealSpacePosition, List<GlobalBattleData.Battle>> entry in finishedBattlesToRemove)
 		{
 			if (!globalBattleData.cellCenterToBattles.ContainsKey(entry.Key))
 			{

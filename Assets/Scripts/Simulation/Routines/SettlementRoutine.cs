@@ -23,7 +23,7 @@ public class SettlementRoutine : RoutineBase
                 for (int i = 0; i < difference; i++)
                 {
                     //Try to find appriopriate position
-                    RealSpacePostion pos = null;
+                    RealSpacePosition pos = null;
 
                     if (settlementData.TryGetLinkedData(DataTags.Territory, out TerritoryData territoryData))
                     {
@@ -68,7 +68,7 @@ public class SettlementRoutine : RoutineBase
             {
                 //Destroy
                 //Right now we just destroy one at random 
-                KeyValuePair<RealSpacePostion, SettlementData.Settlement> keyValuePair = settlementData.settlements.ElementAt(SimulationManagement.random.Next(0, settlementData.settlements.Count));
+                KeyValuePair<RealSpacePosition, SettlementData.Settlement> keyValuePair = settlementData.settlements.ElementAt(SimulationManagement.random.Next(0, settlementData.settlements.Count));
                 settlementData.settlements.Remove(keyValuePair.Key);
             }
         }

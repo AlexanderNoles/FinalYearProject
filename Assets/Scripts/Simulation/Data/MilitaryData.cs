@@ -9,15 +9,15 @@ public class MilitaryData : DataBase
 
 	public float maxMilitaryCapacity;
 	public int currentFleetCount;
-	public Dictionary<RealSpacePostion, List<ShipCollection>> positionToFleets = new Dictionary<RealSpacePostion, List<ShipCollection>>();
-	public List<(RealSpacePostion, RealSpacePostion)> markedTransfers = new List<(RealSpacePostion, RealSpacePostion)>();
+	public Dictionary<RealSpacePosition, List<ShipCollection>> positionToFleets = new Dictionary<RealSpacePosition, List<ShipCollection>>();
+	public List<(RealSpacePosition, RealSpacePosition)> markedTransfers = new List<(RealSpacePosition, RealSpacePosition)>();
 
-	public void MarkTransfer(RealSpacePostion from, RealSpacePostion to)
+	public void MarkTransfer(RealSpacePosition from, RealSpacePosition to)
 	{
 		markedTransfers.Add((from, to));
 	}
 
-	public void AddFleet(RealSpacePostion pos, Fleet fleet)
+	public void AddFleet(RealSpacePosition pos, Fleet fleet)
 	{
 		if (!positionToFleets.ContainsKey(pos))
 		{
@@ -28,7 +28,7 @@ public class MilitaryData : DataBase
 		currentFleetCount++;
 	}
 
-	public Fleet RemoveFleet(RealSpacePostion pos, Fleet fleet)
+	public Fleet RemoveFleet(RealSpacePosition pos, Fleet fleet)
 	{
 		Fleet toReturn = null;
 
@@ -64,12 +64,12 @@ public class MilitaryData : DataBase
 		return toReturn;
 	}
 
-	public Fleet RemoveFleet(RealSpacePostion pos)
+	public Fleet RemoveFleet(RealSpacePosition pos)
 	{
 		return RemoveFleet(pos, null);
 	}
 
-	public int TransferFreeUnits(int budget, RealSpacePostion target, BattleData battleData, int budgetMinimum = 0, bool allowRetreat = false)
+	public int TransferFreeUnits(int budget, RealSpacePosition target, BattleData battleData, int budgetMinimum = 0, bool allowRetreat = false)
 	{
 		int fleetTransferredCount = 0;
 
@@ -86,9 +86,9 @@ public class MilitaryData : DataBase
 		//We need to identify which ships are not currently engaged in a battle
 		//So we scan through the current avliable military and check if their are already positioned at a battle, if they are not we move them to 
 		//the new cell until they we meet our expected fleet amount (or we run out of fleets to send)
-		List<(RealSpacePostion, int)> fromPositions = new List<(RealSpacePostion, int)>();
+		List<(RealSpacePosition, int)> fromPositions = new List<(RealSpacePosition, int)>();
 
-		foreach (KeyValuePair<RealSpacePostion, List<ShipCollection>> fleet in positionToFleets)
+		foreach (KeyValuePair<RealSpacePosition, List<ShipCollection>> fleet in positionToFleets)
 		{
 			if (!battleData.positionToOngoingBattles.ContainsKey(fleet.Key) || allowRetreat)
 			{
@@ -108,7 +108,7 @@ public class MilitaryData : DataBase
 			}
 		}
 
-		foreach ((RealSpacePostion, int) entry in fromPositions)
+		foreach ((RealSpacePosition, int) entry in fromPositions)
 		{
 			for (int i = 0; i < entry.Item2; i++)
 			{

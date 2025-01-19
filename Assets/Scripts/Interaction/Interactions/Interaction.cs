@@ -74,7 +74,7 @@ public class Interaction : IDisplay
 			{
 				//Linked to simulation context
 
-				LocationContext targetContext = (interactable as ContextLinkedInteractable).simulationContext;
+				LocationContextLink targetContext = (interactable as ContextLinkedInteractable).simulationContext;
 
 				if (targetContext != null)
 				{
