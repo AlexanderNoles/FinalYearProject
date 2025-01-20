@@ -127,7 +127,8 @@ public class UIManagement : MonoBehaviour
 
             //If active state key is pressed down this frame
             //toggle back to neutral
-            if (activeState.toggleable && InputManagement.GetKeyDown(activeState.GetSetActiveKey()))
+            if (activeState.toggleable && InputManagement.GetKeyDown(activeState.GetSetActiveKey()) && 
+				MonitorBreak.Bebug.Console.GetConsoleState() == MonitorBreak.Bebug.Console.ConsoleState.Closed)
             {
                 LoadUIState(neutral);
                 return;

@@ -4,35 +4,41 @@ using UnityEngine;
 
 public class AsteroidRendering : MonoBehaviour
 {
-	public Material material;
-	public Mesh mesh;
+	//Object representing a loaded in chunk
+	public class AsteroidChunk
+	{
+		public Transform root;
+		public List<Transform> asteroids = new List<Transform>();
+	}
 
-	GraphicsBuffer commandBuffer;
-	GraphicsBuffer.IndirectDrawIndexedArgs[] commandData;
-	const int commandCount = 1;
+	public List<AsteroidChunk> chunks = new List<AsteroidChunk>();
+	private List<Vector3> offsets = new List<Vector3>();
+	private const float scale = 500.0f;
 
 	private void Start()
 	{
-		commandBuffer = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
-		commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[commandCount];
-	}
+		//Precompute offsets
+		offsets.Clear();
 
-	private void OnDestroy()
-	{
-		commandBuffer?.Release();
-		commandBuffer = null;
+		for (int x = -1; x < 2; x++)
+		{
+			for (int y = -1; y < 2; y++)
+			{
+				for (int z = -1; z < 2; z++)
+				{
+					offsets.Add(new Vector3(x, y, z) * scale);
+				}
+			}
+		}
 	}
 
 	private void Update()
 	{
-		//Copied from unity docs to use for learning
-		RenderParams rp = new RenderParams(material);
-		rp.worldBounds = new Bounds(Vector3.zero, 10000 * Vector3.one); // use tighter bounds for better FOV culling
-		rp.matProps = new MaterialPropertyBlock();
-		rp.matProps.SetMatrix("_ObjectToWorld", Matrix4x4.Translate(transform.position));
-		commandData[0].indexCountPerInstance = mesh.GetIndexCount(0);
-		commandData[0].instanceCount = 1000;
-		commandBuffer.SetData(commandData);
-		Graphics.RenderMeshIndirect(rp, mesh, commandBuffer, commandCount);
+		//Clamp current world center to grid
+		//Convert that position to world space by getting it's offset from world center converted to a vector3
+		RealSpacePosition cellCenterRS = WorldManagement.ClampPositionToGrid(WorldManagement.worldCenterPosition, 100);
+		Vector3 cellCenter = WorldManagement.OffsetFromWorldCenter(cellCenterRS, Vector3.zero).AsVector3();
+
+		Debug.DrawRay(cellCenter, Vector3.up, Color.red);
 	}
 }

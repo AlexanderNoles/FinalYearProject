@@ -8,12 +8,23 @@ public class SurroundingObject : MonoBehaviour
 	public float shellOffset;
     protected float rawScale;
 	[HideInInspector]
-    public new Transform transform;
+    public new Transform transform
+	{
+		get
+		{
+			if (baseTransform == null)
+			{
+				baseTransform = base.transform;
+			}
+
+			return baseTransform;
+		}
+	}
+	protected Transform baseTransform;
     public RealSpacePosition postion;
 
     protected virtual void Awake()
     {
-        transform = base.transform;
         postion = new RealSpacePosition(0, 0, 0);
     }
 

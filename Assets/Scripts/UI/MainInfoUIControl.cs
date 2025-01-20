@@ -67,6 +67,16 @@ public class MainInfoUIControl : PostTickUpdate
         instance.Draw();
     }
 
+	public static void ForceCurrencyRedraw()
+	{
+		if (instance == null)
+		{
+			return;
+		}
+
+		instance.RedrawCurrencyLabel();
+	}
+
     private void Draw()
     {
         dateLabel.text = SimulationManagement.GetDateString();
@@ -74,10 +84,9 @@ public class MainInfoUIControl : PostTickUpdate
 
         if (PlayerManagement.PlayerEntityExists())
         {
-            //Get player inventory
-            currencyLabel.text = PlayerManagement.GetInventory().mainCurrency.ToString();
+			RedrawCurrencyLabel();
 
-            if (!emblemDrawn)
+			if (!emblemDrawn)
             {
                 //Only need to draw emblem once, not every post tick
                 PlayerManagement.GetTarget().GetData(DataTags.Emblem, out EmblemData emblemData);
@@ -86,6 +95,11 @@ public class MainInfoUIControl : PostTickUpdate
             }
         }
     }
+
+	private void RedrawCurrencyLabel()
+	{
+		currencyLabel.text = PlayerManagement.GetInventory().mainCurrency.ToString();
+	}
 
     private void DrawHealthAuto()
     {

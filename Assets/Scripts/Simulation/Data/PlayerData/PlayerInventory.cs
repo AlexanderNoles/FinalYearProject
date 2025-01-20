@@ -10,8 +10,14 @@ public class PlayerInventory : InventoryBase
 	protected const int inventorySize = 8;
 	private List<ItemBase> itemBases = new List<ItemBase>();
 	private PlayerStats target = null;
-	public float mainCurrency = 50000;
+	public float mainCurrency = 0;
 	public float fuel = 500;
+
+	public void AdjustCurrency(float value)
+	{
+		mainCurrency += value;
+		MainInfoUIControl.ForceCurrencyRedraw();
+	}
 
 	public void SetStatsTarget(PlayerStats newTarget)
 	{
@@ -50,7 +56,7 @@ public class PlayerInventory : InventoryBase
 				mainCurrency -= price;
 
 				//Redraw info ui
-				MainInfoUIControl.ForceRedraw();
+				MainInfoUIControl.ForceCurrencyRedraw();
 
 				//Add item to inventory
 				AddItemToInventory(target);

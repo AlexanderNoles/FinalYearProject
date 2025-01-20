@@ -110,6 +110,8 @@ public class WorldManagement : MonoBehaviour
 				LerpInSolarSystemRange(SimulationManagement.random.Next(-100, 101) / 100.0f)
 				);
 
+			toReturn = ClampPositionToGrid(toReturn);
+
 			if (!WithinValidSolarSystem(toReturn))
 			{
 				toReturn = null;
@@ -123,7 +125,7 @@ public class WorldManagement : MonoBehaviour
 		}
 		while (toReturn == null);
 
-		return ClampPositionToGrid(toReturn);
+		return toReturn;
 	}
 
     private const double gridDensity = 3000;
@@ -141,7 +143,7 @@ public class WorldManagement : MonoBehaviour
 		return gridDensityHalf;
 	}
 
-    public static RealSpacePosition ClampPositionToGrid(RealSpacePosition pos)
+    public static RealSpacePosition ClampPositionToGrid(RealSpacePosition pos, double density = gridDensity)
     {
         return new RealSpacePosition(Math.Round(pos.x / gridDensity) * gridDensity, 0, Math.Round(pos.z / gridDensity) * gridDensity);
     }

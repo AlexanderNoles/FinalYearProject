@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8420779003909153072}
   - component: {fileID: 2537568439393503887}
   - component: {fileID: 2731059755958637755}
-  - component: {fileID: -5110826431050354788}
+  - component: {fileID: 1946929317169096998}
   - component: {fileID: 6375078479108853753}
   - component: {fileID: 2210245109402893483}
   - component: {fileID: 8569512961834514648}
@@ -104,7 +104,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canBeInteractedWith: 1
   mouseTargetCollider: {fileID: 6967696567541003043}
---- !u!114 &-5110826431050354788
+--- !u!114 &1946929317169096998
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -113,7 +113,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 9045322733121574744}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b16208d1a27691543bea7f1a7a27ed34, type: 3}
+  m_Script: {fileID: 11500000, guid: 298e01f8d3e8a994690d5072227d5e5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   targetsName: OreDeposit

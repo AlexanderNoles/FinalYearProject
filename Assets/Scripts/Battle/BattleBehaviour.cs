@@ -29,6 +29,11 @@ public class BattleBehaviour : InteractableBase
 		if (simulationLink != null )
 		{
 			currentHealth = simulationLink.GetMaxHealth();
+
+			if (Dead())
+			{
+				OnDeath();
+			}
 		}
 	}
 
@@ -217,11 +222,7 @@ public class BattleBehaviour : InteractableBase
 					while (attack.numberOfAttacksSoFar < attack.totalNumberOfAttacks && attackCap > 0)
 					{
 						//Apply damage
-						if (target.TakeDamage(attack.parentProfile.GetDamage()))
-						{
-							//Killed target
-
-						}
+						target.TakeDamage(attack.parentProfile.GetDamage(), this);
 
 						Vector3 shotTargetPosition = target.GetTargetablePosition();
 						//Draw Attack
@@ -285,17 +286,28 @@ public class BattleBehaviour : InteractableBase
 		return currentHealth <= 0.0f;
 	}
 
-	protected virtual bool TakeDamage(float rawDamageNumber)
+	public struct TakenDamageResult
 	{
-		currentHealth -= rawDamageNumber;
+		public bool destroyed;
+		public float damageTaken;
+	}
+
+	protected virtual TakenDamageResult TakeDamage(float rawDamageNumber, BattleBehaviour origin)
+	{
+		TakenDamageResult result = new TakenDamageResult();
+
+		float finalDamageNumber = rawDamageNumber;
+		result.damageTaken = finalDamageNumber;
+
+		currentHealth -= finalDamageNumber;
 
 		if (Dead())
 		{
+			result.destroyed = true;
 			OnDeath();
-			return true;
 		}
 
-		return false;
+		return result;
 	}
 
 	protected virtual void OnDeath()

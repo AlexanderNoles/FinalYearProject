@@ -37,6 +37,15 @@ public class TargetableLocationInit : InitRoutineBase
                     targetableLocation.cellCenter = WorldManagement.RandomCellCenterWithinSolarSystem();
                 }
 
+				if (targetableLocation.cellCenter == null)
+				{
+					//If still null
+					//Likely zero valid positions
+					//Kill this entity
+					targetableLocation.parent.Get().AddTag(EntityStateTags.Dead);
+					continue;
+				}
+
 				//Move on map position to be off grid
 				targetableLocation.actualPosition = WorldManagement.RandomPositionInCell(targetableLocation.cellCenter, SimulationManagement.random);
 			}

@@ -67,7 +67,7 @@ public class CurrentTargetsUI : MonoBehaviour
 
 				if (!rectTransformToHealthIndicator.ContainsKey(targetRect))
 				{
-					rectTransformToHealthIndicator.Add(targetRect, targetRect.GetChild(1).GetComponent<Image>());
+					rectTransformToHealthIndicator.Add(targetRect, targetRect.GetChild(3).GetComponent<Image>());
 				}
 
 				rectTransformToHealthIndicator[targetRect].fillAmount = target.GetHealthPercentage();

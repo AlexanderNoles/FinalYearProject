@@ -29,6 +29,8 @@ public class SurroundingsRenderingManagement : MonoBehaviour
 		instance = this;
         SetNotInMap(true);
 		mainTransform = transform;
+
+		SetAllSurroundingsActive(false);
     }
 
     public static void SetNotInMap(bool active)
@@ -68,7 +70,7 @@ public class SurroundingsRenderingManagement : MonoBehaviour
 
     private void LateUpdate()
     {
-		if (!MapManagement.MapActive())
+		if (!MapManagement.MapActive() && !SimulationManagement.RunningHistory())
         {
 			//If in jump travel then disable default surroundings rendering
 			if (PlayerCapitalShip.InJumpTravelStage())

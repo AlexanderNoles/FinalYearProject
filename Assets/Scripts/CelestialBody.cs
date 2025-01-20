@@ -6,7 +6,7 @@ public class CelestialBody : SurroundingObject
 {
     protected Material targetMat;
 
-    public void Init()
+    public virtual void Init()
     {
         scale *= (WorldManagement.solarSystemScaleModifier / WorldManagement.referncePointSolarSystemScaleModifier);
         Vector3 pos = transform.position * WorldManagement.solarSystemScaleModifier;
@@ -16,17 +16,11 @@ public class CelestialBody : SurroundingObject
 
         targetMat = GetComponent<MeshRenderer>().material;
         targetMat.SetVector("_RealSpacePosition", transform.position);
-    }
+		WorldManagement.AddMajorWorldPart(this);
+	}
 
-    protected override void OnEnable()
-    {
-        base.OnEnable();
-        WorldManagement.AddMajorWorldPart(this);
-    }
-
-    protected override void OnDisable()
-    {
-        base.OnDisable();
-        WorldManagement.RemoveMajorWorldPart(this);
-    }
+	private void OnDestroy()
+	{
+		WorldManagement.RemoveMajorWorldPart(this);
+	}
 }

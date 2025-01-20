@@ -46,7 +46,7 @@ public class MineralDeposit : SimulationEntity
 		//give this location a random desirability
 		float t = SimulationManagement.random.Next(0, 101) / 100.0f;
 		targetableLocationData.desirability = Mathf.CeilToInt(Mathf.Lerp(1, 31, Mathf.Pow(t, 3)));
-		targetableLocationData.maxHealth = 200.0f;
+		targetableLocationData.maxHealth = 50.0f * targetableLocationData.desirability;
 
 		AddData(DataTags.TargetableLocation, targetableLocationData);
 	}
