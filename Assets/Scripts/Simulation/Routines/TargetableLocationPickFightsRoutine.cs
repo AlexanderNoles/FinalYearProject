@@ -22,7 +22,7 @@ public class TargetableLocationPickFightsRoutine : RoutineBase
 		foreach (TargetableLocationData data in targetableLocations.Cast<TargetableLocationData>())
 		{
 			//Only run every 10 ticks
-			if (SimulationManagement.currentTickID < data.lastTickTime + 10)
+			if (SimulationManagement.currentTickID < data.lastTickTime + 10 || data.parent.Get().HasTag(EntityStateTags.Dead))
 			{
 				continue;
 			}

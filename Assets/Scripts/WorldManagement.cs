@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MonitorBreak;
 using System;
+using UnityEngine.UIElements;
 
 [IntializeAtRuntime]
 public class WorldManagement : MonoBehaviour
@@ -145,7 +146,7 @@ public class WorldManagement : MonoBehaviour
 
     public static RealSpacePosition ClampPositionToGrid(RealSpacePosition pos, double density = gridDensity)
     {
-        return new RealSpacePosition(Math.Round(pos.x / gridDensity) * gridDensity, 0, Math.Round(pos.z / gridDensity) * gridDensity);
+        return new RealSpacePosition(Math.Round(pos.x / density) * density, 0, Math.Round(pos.z / density) * density);
     }
 
     public static List<RealSpacePosition> GetNeighboursInGrid(RealSpacePosition origin)
@@ -193,9 +194,6 @@ public class WorldManagement : MonoBehaviour
 
     public static RealSpacePosition OffsetFromWorldCenter(RealSpacePosition position, Vector3 additionalOffset)
     {
-#if UNITY_EDITOR
-        debugPositions.Add(position.AsTruncatedVector3(debugMultiplier));
-#endif
         RealSpacePosition toReturn = new RealSpacePosition(position);
 
         return toReturn.Subtract(worldCenterPosition).Subtract(additionalOffset);
@@ -241,8 +239,13 @@ public class RealSpacePosition
         return HashCode.Combine(x, y, z);
     }
 
-    //CONSTRUCTORS
-    public RealSpacePosition(RealSpacePosition rsp)
+	public override string ToString()
+	{
+		return $"{x}, {y}, {z}";
+	}
+
+	//CONSTRUCTORS
+	public RealSpacePosition(RealSpacePosition rsp)
     {
         x = rsp.x;
         y = rsp.y;
@@ -273,6 +276,15 @@ public class RealSpacePosition
         return this;
     }
 
+	public RealSpacePosition AddToClone(RealSpacePosition position)
+	{
+		return new RealSpacePosition(
+			position.x + x,
+			position.y + y,
+			position.z + z
+			);
+	}
+
 	public RealSpacePosition Divide(float value)
 	{
 		x /= value;
@@ -289,7 +301,16 @@ public class RealSpacePosition
         z += value.z;
     }
 
-    public RealSpacePosition Subtract(Vector3 value)
+	public RealSpacePosition AddToClone(Vector3 value)
+	{
+		return new RealSpacePosition(
+			value.x + x,
+			value.y + y,
+			value.z + z
+			);
+	}
+
+	public RealSpacePosition Subtract(Vector3 value)
     {
         x -= value.x;
         y -= value.y;

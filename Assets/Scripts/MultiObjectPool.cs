@@ -311,7 +311,7 @@ public class MultiObjectPool : MonoBehaviour
         return GetObject<MonoBehaviour>(poolName);
     }
 
-    public ObjectFromPool<T> GetObject<T>(string poolName)
+    public ObjectFromPool<T> GetObject<T>(string poolName) where T : MonoBehaviour
     {
         return GetObject<T>(GetPoolIndex(poolName));
     }
@@ -335,7 +335,7 @@ public class MultiObjectPool : MonoBehaviour
         return GetObject<MonoBehaviour>(poolIndex);
     }
 
-    public ObjectFromPool<T> GetObject<T>(int poolIndex)
+    public ObjectFromPool<T> GetObject<T>(int poolIndex) where T : MonoBehaviour
     {
         Transform newObject = pools[poolIndex].GetObject();
         if (newObject == null)
@@ -344,9 +344,16 @@ public class MultiObjectPool : MonoBehaviour
         }
         else
         {
-            newObject.TryGetComponent(out T component);
+			if (typeof(T) != typeof(MonoBehaviour))
+			{
+				newObject.TryGetComponent(out T component);
 
-            return new ObjectFromPool<T>(poolIndex, newObject, component);
+				return new ObjectFromPool<T>(poolIndex, newObject, component);
+			}
+			else
+			{
+				return new ObjectFromPool<T>(poolIndex, newObject, null);
+			}
         }
     }
 
