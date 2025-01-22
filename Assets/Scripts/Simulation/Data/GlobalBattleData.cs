@@ -352,7 +352,7 @@ public class GlobalBattleData : DataBase
 					{
 						foreach (ShipCollection newTargetCollection in milData.toTransfer[postion])
 						{
-							DrawCollection(newTargetCollection, entry.Value);
+							DrawCollection(newTargetCollection, entry.Value, entity);
 						}
 					}
 
@@ -375,20 +375,20 @@ public class GlobalBattleData : DataBase
 
 					foreach (ShipCollection collection in shipCollections)
 					{
-						DrawCollection(collection, participant);
+						DrawCollection(collection, participant, entity);
 					}
 				}
 			}
 		}
 
-		private void DrawCollection(ShipCollection collection, DrawnData.Participant participant)
+		private void DrawCollection(ShipCollection collection, DrawnData.Participant participant, SimulationEntity parentEntity)
 		{
 			//Add each collection as a new collection drawer instance
 			ShipCollectionDrawer shipCollectionDrawer = new ShipCollectionDrawer();
 			//Set parent
 			shipCollectionDrawer.parent = drawnData.parent;
 			//Link that collection to this drawer
-			shipCollectionDrawer.Link(collection);
+			shipCollectionDrawer.Link(collection, parentEntity);
 
 			//Do full inital draw
 			shipCollectionDrawer.DrawShips();

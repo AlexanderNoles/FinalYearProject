@@ -171,7 +171,7 @@ public class AsteroidRendering : MonoBehaviour
 						newAsteroid.localScale = asteriodScale;
 						newAsteroid.localRotation = Quaternion.Euler(asteriodScale);
 
-						newAsteroid.localPosition += yDirection * (15.0f + asteriodScale.y);
+						newAsteroid.localPosition += yDirection * (15.0f + Mathf.Max(asteriodScale.x, asteriodScale.y, asteriodScale.z));
 					}
 				}
 			}

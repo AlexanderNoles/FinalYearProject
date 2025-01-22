@@ -6,17 +6,19 @@ public class ShipCollectionDrawer
 {
 	public ShipCollection target = null;
 	public Transform parent;
+	private SimulationEntity entity;
 	private int targetLTUI = -1;
 	public List<ShipDrawer> drawnShips = new List<ShipDrawer>();
 
-	public void Link(ShipCollection newTarget)
+	public void Link(ShipCollection newTarget, SimulationEntity entity)
 	{
 		target = newTarget;
+		this.entity = entity;
 	}
 
 	public void UnLink()
 	{
-		Link(null);
+		Link(null, null);
 		UndrawAll();
 	}
 
@@ -61,6 +63,8 @@ public class ShipCollectionDrawer
 		ShipDrawer newShip = GeneratorManagement.DrawShip(Vector3.zero);
 		newShip.SetParent(parent);
 		newShip.Link(ship);
+
+		newShip.Init(entity);
 
 		//Start tracking ship drawer
 		drawnShips.Add(newShip);

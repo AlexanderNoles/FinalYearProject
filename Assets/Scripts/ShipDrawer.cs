@@ -7,6 +7,7 @@ public class ShipDrawer : MonoBehaviour
 	[HideInInspector]
 	public new Transform transform;
 	public Ship target = null;
+	private SimulationEntity parentEntity;
 
 	private void Awake()
 	{
@@ -26,5 +27,17 @@ public class ShipDrawer : MonoBehaviour
 	public void SetParent(Transform newParent)
 	{
 		transform.parent = newParent;
+	}
+
+	public void Init(SimulationEntity entity)
+	{
+		parentEntity = entity;
+
+		//Set position
+		Vector3 newShipPosition = Random.onUnitSphere;
+		newShipPosition.y = 0.0f;
+		newShipPosition.Normalize();
+
+		transform.position = newShipPosition * Random.Range(10.0f, 100.0f);
 	}
 }
