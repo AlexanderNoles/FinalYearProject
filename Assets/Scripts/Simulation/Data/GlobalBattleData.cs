@@ -2,7 +2,9 @@ using EntityAndDataDescriptor;
 using MonitorBreak.Bebug;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine;
+using static GlobalBattleData.Battle.DrawnData;
 
 public class GlobalBattleData : DataBase
 {
@@ -30,6 +32,8 @@ public class GlobalBattleData : DataBase
 		{
 			involvedEntities.Add(id);
 			involvedEntitiesProgress.Add(0.0f);
+
+			drawnData?.involvedEntityDifference.Add(id);
 		}
 
 		public void RemoveInvolvedEntity(int id)
@@ -43,6 +47,8 @@ public class GlobalBattleData : DataBase
 
 			involvedEntities.RemoveAt(indexOf);
 			involvedEntitiesProgress.RemoveAt(indexOf);
+
+			drawnData?.involvedEntityDifference.Add(id);
 		}
 
 		public void AddToWinProgress(int index, float amount)
@@ -216,20 +222,23 @@ public class GlobalBattleData : DataBase
 			return Color.yellow;
 		}
 
+		public override bool FlashOnMap()
+		{
+			return true;
+		}
+
 		public override string GetDescription()
 		{
 			string descString = "";
 
 			for (int i = 0; i < involvedEntities.Count; i++)
 			{
-				string color = "#ffffff";
-
+				//Only add to description if the target has emblem data
+				//This means entites such as mineral deposits won't show up
 				if (SimulationManagement.GetEntityByID(involvedEntities[i]).GetData(DataTags.Emblem, out EmblemData emblemData))
 				{
-					color = emblemData.mainColourHex;
+					descString += $"<color={emblemData.mainColourHex}>{Mathf.RoundToInt(100.0f * (involvedEntitiesProgress[i] / winLimit))}%</color>\n";
 				}
-
-				descString += $"<color={color}>{Mathf.RoundToInt(100.0f * (involvedEntitiesProgress[i] / winLimit))}%</color>\n";
 			}
 
 			return descString;
@@ -238,6 +247,179 @@ public class GlobalBattleData : DataBase
 		public override float GetEntryOffset()
 		{
 			return 100.0f;
+		}
+
+
+		// DRAW FUNCTIONS //
+		//Object used to keep track of active ships in the drawn scene
+		public class DrawnData
+		{
+			public Transform parent;
+			public List<int> involvedEntityDifference = new List<int>();
+
+			public class Participant
+			{
+				public List<ShipCollectionDrawer> drawnCollections = new List<ShipCollectionDrawer>();
+			}
+
+			public Dictionary<int, Participant> idToParticipant = new Dictionary<int, Participant>();
+		}
+
+		private DrawnData drawnData = null;
+
+		public override void InitDraw(Transform parent)
+		{
+			drawnData = new DrawnData();
+			drawnData.parent = parent;
+			//Iterate through all active participants in this battle
+			//Generate inital drawn data for them
+			//This drawn data will then be updated based on differences per tick
+			foreach (int id in involvedEntities)
+			{
+				Participant participant = new Participant();
+				//Do inital draw
+				DrawShips(SimulationManagement.GetEntityByID(id), participant);
+
+				//Add to data
+				drawnData.idToParticipant.Add(id, participant);
+			}
+		}
+
+		public override void DrawUpdatePostTick()
+		{
+			//Used to ensure we don't redraw transfered ships that we already drew when we initalized a new participant
+			HashSet<int> drawnThisTick = new HashSet<int>();
+			//Update drawn data based on changes
+			//Involved entity changes are stored as involved entity difference
+			foreach (int id in drawnData.involvedEntityDifference)
+			{
+				if (drawnData.idToParticipant.ContainsKey(id))
+				{
+					//Needs to be removed
+					DrawnData.Participant participant = drawnData.idToParticipant[id];
+					drawnData.idToParticipant.Remove(id);
+
+					//Undraw all ship drawers
+					UndrawAll(participant);
+				}
+				else
+				{
+					//Needs to be added
+					DrawnData.Participant participant = new DrawnData.Participant();
+					drawnData.idToParticipant.Add(id, participant);
+
+					//For each ship the participant owns in this cell
+					//add a ship instance in the scene
+					DrawShips(SimulationManagement.GetEntityByID(id), participant);
+					drawnThisTick.Add(id);
+				}
+			}
+
+			drawnData.involvedEntityDifference.Clear();
+
+			//Now we need to draw or undraw ships that have been transfered this frame
+			//For each participant
+			foreach (KeyValuePair<int, DrawnData.Participant> entry in drawnData.idToParticipant)
+			{
+				SimulationEntity entity = SimulationManagement.GetEntityByID(entry.Key);
+				//Get this entites military data
+				if (entity.GetData(DataTags.Military, out MilitaryData milData))
+				{
+					//Check if any collections have been transferred in or out
+					//Then draw or undraw accordingly
+					if (milData.fromTransfer.ContainsKey(postion))
+					{
+						List<ShipCollectionDrawer> targetDrawers = entry.Value.drawnCollections;
+						List<ShipCollection> collectionsLeft = milData.fromTransfer[postion];
+
+						for (int i = 0; i < targetDrawers.Count; i++)
+						{
+							int index = collectionsLeft.IndexOf(targetDrawers[i].target);
+
+							//If this collection left this frame
+							if (index != -1)
+							{
+								UnDrawCollection(targetDrawers[i]);
+								targetDrawers.RemoveAt(i);
+								i--;
+
+								collectionsLeft.RemoveAt(index);
+							}
+						}
+					}
+
+					if (milData.toTransfer.ContainsKey(postion))
+					{
+						foreach (ShipCollection newTargetCollection in milData.toTransfer[postion])
+						{
+							DrawCollection(newTargetCollection, entry.Value);
+						}
+					}
+
+					//Then check for updates for any remaning collections
+					foreach (ShipCollectionDrawer drawer in entry.Value.drawnCollections)
+					{
+						drawer.Update();
+					}
+				}
+			}
+		}
+
+		private void DrawShips(SimulationEntity entity, DrawnData.Participant participant)
+		{
+			if (entity.GetData(DataTags.Military, out MilitaryData militaryData))
+			{
+				if (militaryData.positionToFleets.ContainsKey(postion))
+				{
+					List<ShipCollection> shipCollections = militaryData.positionToFleets[postion];
+
+					foreach (ShipCollection collection in shipCollections)
+					{
+						DrawCollection(collection, participant);
+					}
+				}
+			}
+		}
+
+		private void DrawCollection(ShipCollection collection, DrawnData.Participant participant)
+		{
+			//Add each collection as a new collection drawer instance
+			ShipCollectionDrawer shipCollectionDrawer = new ShipCollectionDrawer();
+			//Set parent
+			shipCollectionDrawer.parent = drawnData.parent;
+			//Link that collection to this drawer
+			shipCollectionDrawer.Link(collection);
+
+			//Do full inital draw
+			shipCollectionDrawer.DrawShips();
+
+			//Start tracking collection
+			participant.drawnCollections.Add(shipCollectionDrawer);
+		}
+
+		private void UnDrawCollection(ShipCollectionDrawer collection)
+		{
+			collection.UndrawAll();
+		}
+
+		private void UndrawAll(DrawnData.Participant participant)
+		{
+			foreach (ShipCollectionDrawer shipCollectionDrawer in participant.drawnCollections)
+			{
+				shipCollectionDrawer.UndrawAll();
+			}
+		}
+
+		public override void Cleanup()
+		{
+			//Return any remaing drawn ships
+			foreach (DrawnData.Participant participant in drawnData.idToParticipant.Values)
+			{
+				UndrawAll(participant);
+			}
+
+			//Remove drawn data
+			drawnData = null;
 		}
 	}
 

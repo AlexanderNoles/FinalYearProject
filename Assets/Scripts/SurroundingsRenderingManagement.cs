@@ -98,7 +98,7 @@ public class SurroundingsRenderingManagement : MonoBehaviour
 			for (int i = 0; i < controlledObjects.Count; i++)
 			{
 				//Get offset from world center
-				RealSpacePosition offset = WorldManagement.OffsetFromWorldCenter(controlledObjects[i].postion, cameraOffset);
+				RealSpacePosition offset = WorldManagement.OffsetFromWorldCenter(controlledObjects[i].position, cameraOffset);
 				//Get distance to world center
 				double magnitude = offset.Magnitude();
 

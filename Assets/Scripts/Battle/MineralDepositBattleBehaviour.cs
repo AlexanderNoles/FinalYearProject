@@ -13,7 +13,7 @@ public class MineralDepositBattleBehaviour : BoxDescribedBattleBehaviour
 			//Give player currency equivalent to damage delt
 			//This means mining ability scales with attack power
 			PlayerInventory playerInventory = PlayerManagement.GetInventory();
-			playerInventory.AdjustCurrency(result.damageTaken);
+			playerInventory.AdjustCurrency(result.damageTaken * BalanceManagement.mineralDepositWorthRatio);
 		}
 
 		return result;

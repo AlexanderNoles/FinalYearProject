@@ -14,7 +14,9 @@ public class MilitaryPerTickReset : RoutineBase
 
 		foreach (MilitaryData militaryData in militaryDatas.Cast<MilitaryData>())
 		{
-            militaryData.markedTransfers.Clear();
+            militaryData.toTransfer.Clear();
+			militaryData.fromTransfer.Clear();
+
             militaryData.totalDamageBuildup = 0.0f;
         }
 	}

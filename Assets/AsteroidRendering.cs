@@ -163,9 +163,15 @@ public class AsteroidRendering : MonoBehaviour
 						newAsteroid.parent = chunk.target;
 
 						newAsteroid.localPosition = GenerateChunkPos(random, out Vector3 yDirection);
-						float scaleModifier = Mathf.Lerp(5, 100, GeneratePercentage(random, res));
-						newAsteroid.localScale = Vector3.one * scaleModifier;
-						newAsteroid.localPosition += yDirection * Mathf.Max(15.0f, scaleModifier);
+						Vector3 asteriodScale = new Vector3(
+							Mathf.Lerp(5, 100, GeneratePercentage(random, res)),
+							Mathf.Lerp(5, 100, GeneratePercentage(random, res)),
+							Mathf.Lerp(5, 100, GeneratePercentage(random, res))
+							);
+						newAsteroid.localScale = asteriodScale;
+						newAsteroid.localRotation = Quaternion.Euler(asteriodScale);
+
+						newAsteroid.localPosition += yDirection * (15.0f + asteriodScale.y);
 					}
 				}
 			}

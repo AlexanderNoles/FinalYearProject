@@ -22,11 +22,11 @@ public class Planet : CelestialBody
 
     public static List<RealSpacePosition> availablePlanetPositions = new List<RealSpacePosition>();
 
-	public override void Init()
+	public override void Init(Vector3 pos)
 	{
-		base.Init();
+		base.Init(pos);
 		//Add position to planet list
-		availablePlanetPositions.Add(WorldManagement.ClampPositionToGrid(postion));
+		availablePlanetPositions.Add(position);
 	}
 
 	public void ActivateRing(bool _bool)

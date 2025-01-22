@@ -10,11 +10,32 @@ public class MilitaryData : DataBase
 	public float maxMilitaryCapacity;
 	public int currentFleetCount;
 	public Dictionary<RealSpacePosition, List<ShipCollection>> positionToFleets = new Dictionary<RealSpacePosition, List<ShipCollection>>();
-	public List<(RealSpacePosition, RealSpacePosition)> markedTransfers = new List<(RealSpacePosition, RealSpacePosition)>();
+	public Dictionary<RealSpacePosition, List<ShipCollection>> fromTransfer = new Dictionary<RealSpacePosition, List<ShipCollection>>();
+	public Dictionary<RealSpacePosition, List<ShipCollection>> toTransfer = new Dictionary<RealSpacePosition, List<ShipCollection>>();
 
-	public void MarkTransfer(RealSpacePosition from, RealSpacePosition to)
+	public void MarkTransfer(RealSpacePosition from, RealSpacePosition to, ShipCollection target)
 	{
-		markedTransfers.Add((from, to));
+		//From
+		if (from != null)
+		{
+			if (!fromTransfer.ContainsKey(from))
+			{
+				fromTransfer.Add(from, new List<ShipCollection>());
+			}
+
+			fromTransfer[from].Add(target);
+		}
+
+		//To
+		if (to != null)
+		{
+			if (!toTransfer.ContainsKey(to))
+			{
+				toTransfer.Add(to, new List<ShipCollection>());
+			}
+
+			toTransfer[to].Add(target);
+		}
 	}
 
 	public void AddFleet(RealSpacePosition pos, Fleet fleet)
@@ -25,6 +46,9 @@ public class MilitaryData : DataBase
 		}
 
 		positionToFleets[pos].Add(fleet);
+
+		//Mark a transfer
+		MarkTransfer(null, pos, fleet);
 		currentFleetCount++;
 	}
 
@@ -58,6 +82,8 @@ public class MilitaryData : DataBase
 
 		if (toReturn != null)
 		{
+			//Mark a transfer
+			MarkTransfer(pos, null, toReturn);
 			currentFleetCount--;
 		}
 
@@ -120,9 +146,6 @@ public class MilitaryData : DataBase
 
 				fleetTransferredCount++;
 			}
-
-			//Mark a transfer
-			MarkTransfer(entry.Item1, target);
 		}
 
 		return fleetTransferredCount;

@@ -23,7 +23,7 @@ public class SettlementData : DataBase
 
 				generation.parent = parent;
 
-				generation.SpawnStructure(GeneratorManagement.STRUCTURES_INDEXES.SETTLEMENT, Vector3.zero);
+				generation.SpawnStructure(GeneratorManagement.POOL_INDEXES.SETTLEMENT, Vector3.zero);
 				//Apply simulation context to object
 				ApplyContext(generation.targets[^1].Item2);
 
@@ -105,6 +105,8 @@ public class SettlementData : DataBase
             location = new SettlementLocation();
             location.actualSettlement = this;
 			location.shop = new Shop();
+
+			location.shop.capacity = 4;
 
 			//Set shop to use same parent
 			location.shop.parent = this.parent;

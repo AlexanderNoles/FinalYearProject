@@ -10,10 +10,11 @@ public class GeneratorManagement : MonoBehaviour
 	public List<Mesh> asteroidMeshes = new List<Mesh>();
 
 	//HELPER INDEXES
-	public enum STRUCTURES_INDEXES
+	public enum POOL_INDEXES
 	{
 		SETTLEMENT = 0,
-		ASTEROID = 1
+		ASTEROID = 1,
+		SHIP = 2
 	}
 
 	public MultiObjectPool structuresPool;
@@ -26,7 +27,7 @@ public class GeneratorManagement : MonoBehaviour
 
 	private void Start()
 	{
-		asteroidToMeshFilter = structuresPool.GetComponentsOnAllActiveObjects<MeshFilter>((int)STRUCTURES_INDEXES.ASTEROID);
+		asteroidToMeshFilter = structuresPool.GetComponentsOnAllActiveObjects<MeshFilter>((int)POOL_INDEXES.ASTEROID);
 	}
 
 	public static void SetOffset(Vector3 offset)
@@ -70,7 +71,7 @@ public class GeneratorManagement : MonoBehaviour
 
 	public class StructureGeneration : Generation
 	{
-		public StructureGeneration SpawnStructure(STRUCTURES_INDEXES index, Vector3 localPos)
+		public StructureGeneration SpawnStructure(POOL_INDEXES index, Vector3 localPos)
 		{
 			Transform newTarget = GetStructure((int)index);
 			newTarget.parent = parent;
@@ -86,11 +87,11 @@ public class GeneratorManagement : MonoBehaviour
 	{
 		public AsteroidGeneration SpawnAsteroid(Vector3 localPos)
 		{
-			Transform newTarget = GetStructure((int)STRUCTURES_INDEXES.ASTEROID);
+			Transform newTarget = GetStructure((int)POOL_INDEXES.ASTEROID);
 			newTarget.parent = parent;
 			newTarget.localPosition = localPos;
 
-			targets.Add(((int)STRUCTURES_INDEXES.ASTEROID, newTarget));
+			targets.Add(((int)POOL_INDEXES.ASTEROID, newTarget));
 
 			MeshFilter meshFilter = _instance.asteroidToMeshFilter[newTarget];
 
@@ -98,5 +99,15 @@ public class GeneratorManagement : MonoBehaviour
 
 			return this;
 		}
+	}
+
+	public static ShipDrawer DrawShip(Vector3 initalPos)
+	{
+		return _instance.structuresPool.SpawnObject<ShipDrawer>(POOL_INDEXES.SHIP, initalPos).component;
+	}
+
+	public static void ReturnShip(ShipDrawer ship)
+	{
+		_instance.structuresPool.ReturnObject((int)POOL_INDEXES.SHIP, ship.transform);
 	}
 }

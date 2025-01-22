@@ -87,6 +87,7 @@ public class PlayerMapInteraction : PostTickUpdate
 		Shader.SetGlobalFloat("_ShipRange", 0.0f);
 		doneInitialDraw = false;
 		mapPools.HideAllObjects(4);
+		mapPools.HideAllObjects(9);
 	}
 
 	protected override void PostTick()
@@ -101,7 +102,10 @@ public class PlayerMapInteraction : PostTickUpdate
 
 	public void DrawAvaliableLocations()
 	{
+		//Normal indicators
 		mapPools.PruneObjectsNotUpdatedThisFrame(4);
+		//Flashing indicators
+		mapPools.PruneObjectsNotUpdatedThisFrame(9, true);
 		//Need to first collect all avaliable locations
 		//Then draw those locations on the map
 		//Store information about the found locations so we can see if the player is trying to go there and then send them there
@@ -143,13 +147,25 @@ public class PlayerMapInteraction : PostTickUpdate
 		//
 
 		Transform newLocationTrans = mapPools.UpdateNextObjectPosition(4, worldPos);
-
 		if (!transformToLocationRenderer.ContainsKey(newLocationTrans))
 		{
 			transformToLocationRenderer.Add(newLocationTrans, newLocationTrans.GetComponent<SpriteRenderer>());
 		}
 
 		transformToLocationRenderer[newLocationTrans].color = location.GetMapColour();
+
+		//Add an additional flashing indicator if this location requires
+		if (location.FlashOnMap())
+		{
+			Transform newFlashTrans = mapPools.UpdateNextObjectPosition(9, worldPos);
+
+			if (!transformToLocationRenderer.ContainsKey(newFlashTrans))
+			{
+				transformToLocationRenderer.Add(newFlashTrans, newFlashTrans.GetComponent<SpriteRenderer>());
+			}
+
+			transformToLocationRenderer[newFlashTrans].color = location.GetFlashColour();
+		}
 
 		//Get on map cell center
 		Vector3 cellCenter = ClampPositionToGridMap(worldPos);
@@ -163,27 +179,30 @@ public class PlayerMapInteraction : PostTickUpdate
 		LOMCompound mergeTarget = null;
 		float minimumDistance = float.MaxValue;
 
-		PerformOperationOnSurroundingCells(cellCenter, new Func<Vector3, int>((Vector3 cellCenter) =>
+		if (mergeEnabled)
 		{
-			foreach (LOMCompound compound in cellCenterToLocations[cellCenter])
+			PerformOperationOnSurroundingCells(cellCenter, new Func<Vector3, int>((Vector3 cellCenter) =>
 			{
-				//Find distance from primary compound entry
-				float distance = (compound.primaryLocation.worldPos - worldPos).magnitude;
-
-				//if close
-				const float closeThreshold = 0.5f;
-				if (distance < closeThreshold && mergeEnabled)
+				foreach (LOMCompound compound in cellCenterToLocations[cellCenter])
 				{
-					if (distance < minimumDistance)
+					//Find distance from primary compound entry
+					float distance = (compound.primaryLocation.worldPos - worldPos).magnitude;
+
+					//if close
+					const float closeThreshold = 0.5f;
+					if (distance < closeThreshold)
 					{
-						mergeTarget = compound;
-						minimumDistance = distance;
+						if (distance < minimumDistance)
+						{
+							mergeTarget = compound;
+							minimumDistance = distance;
+						}
 					}
 				}
-			}
 
-			return 0;
-		}));
+				return 0;
+			}));
+		}
 
 		if (mergeTarget != null)
 		{
@@ -354,7 +373,8 @@ public class PlayerMapInteraction : PostTickUpdate
                         doneInitialDraw = false;
 
                         mapPools.HideAllObjects(4);
-                    }
+                        mapPools.HideAllObjects(9);
+					}
                 }
                 else
                 {

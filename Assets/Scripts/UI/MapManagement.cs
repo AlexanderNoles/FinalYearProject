@@ -172,7 +172,7 @@ public class MapManagement : UIState
 				foreach (SurroundingObject target in mapTargetObjects)
 				{
 					//Update surrounding objects
-					target.transform.localPosition = -target.postion.AsTruncatedVector3(mapRelativeScaleModifier) + currentOffset;
+					target.transform.localPosition = -target.position.AsTruncatedVector3(mapRelativeScaleModifier) + currentOffset;
 
 					//Update UI
 					if (target.GetInWorldParent() != null)

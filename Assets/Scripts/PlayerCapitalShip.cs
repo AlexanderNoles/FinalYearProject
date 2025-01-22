@@ -69,7 +69,7 @@ public class PlayerCapitalShip : MonoBehaviour
 	private static float jumpBuildupBuffer;
 	private const float jumpBuildupMax = 10.0f;
 
-	public const float jumpBaseLineSpeed = 500.0f;
+	public const float jumpBaseLineSpeed = 2500.0f;
 
 	[MonitorBreak.Bebug.ConsoleCMD("SHIPJUMPSPEED")]
 	public static void SetShipSpeedCMD(string newSpeed)
@@ -127,6 +127,8 @@ public class PlayerCapitalShip : MonoBehaviour
 
 	public GameObject outerEffect;
 	private Material outerMaterial;
+
+	public List<TrailRenderer> TRtrails;
 
 	private void Awake()
 	{
@@ -235,6 +237,12 @@ public class PlayerCapitalShip : MonoBehaviour
 		lookAtTargetRot = Quaternion.LookRotation(vectorDifference, Vector3.up);
 		startTurnRot = instance.transform.rotation;
 
+		//Turn off trail renderer
+		foreach (TrailRenderer tr in instance.TRtrails)
+		{
+			tr.enabled = false;
+		}
+
 		//Add entry offset to jump target
 		jumpEnd.Subtract(jumpTarget.GetEntryOffset() * vectorDifference.normalized * WorldManagement.invertedInEngineWorldScaleMultiplier);
 
@@ -266,6 +274,11 @@ public class PlayerCapitalShip : MonoBehaviour
 	{
 		MainInfoUIControl.UpdateEngineBarInensity(uiT);
 		Shader.SetGlobalFloat("_PCSEngineIntensity", shaderT);
+
+		foreach (TrailRenderer tr in TRtrails)
+		{
+			tr.time = shaderT;
+		}
 	}
 
 	private void Update()
@@ -357,7 +370,7 @@ public class PlayerCapitalShip : MonoBehaviour
 			lastRecordedPos = transform.position;
 			WorldManagement.MoveWorldCenter(moveDifference);
 
-			if(transform.position.magnitude > 500.0f)
+			if(transform.position.magnitude > 2000.0f)
 			{
 				ResetPosition();
 			}
@@ -482,8 +495,9 @@ public class PlayerCapitalShip : MonoBehaviour
 						modelTransform.localPosition = Vector3.back * modelOffsetAfterJump;
 					}
 
-					outerMaterial.SetFloat("_NearClamp", Mathf.Lerp(15, -15, Mathf.Clamp01(jumpT * 10.0f)));
-					float farT = Mathf.Clamp01((jumpT - 0.9f) * 10.0f);
+					const float effectModifer = 5f;
+					outerMaterial.SetFloat("_NearClamp", Mathf.Lerp(15, -15, Mathf.Clamp01(jumpT * effectModifer)));
+					float farT = Mathf.Clamp01((jumpT - (1.0f - (1.0f / effectModifer))) * effectModifer);
 					outerMaterial.SetFloat("_FarClamp", Mathf.Lerp(15, -15, farT));
 
 					for (int i = 0; i < arcaneRings.Count; i++)
@@ -549,7 +563,7 @@ public class PlayerCapitalShip : MonoBehaviour
 		nextJumpAllowedTime = Time.time + 1.0f;
         MainInfoUIControl.SetEngineArcaneFlameActive(false);
         UpdateEngineIntensityVisuallyDirect(0.0f, 0.0f);
-		
+
 		ResetPosition();
 	}
 
@@ -557,8 +571,14 @@ public class PlayerCapitalShip : MonoBehaviour
 	{
 		//Zero position
 		posBeforeReset = transform.position;
+		transform.position = Vector3.zero;
 
-        transform.position = Vector3.zero;
+		foreach (TrailRenderer tr in TRtrails)
+		{
+			tr.enabled = true;
+			tr.Clear();
+		}
+
 		lastRecordedPos = transform.position;
 
 		//Make sure the camera doesn't just lerp to the new positions so it looks seamless

@@ -50,6 +50,11 @@ public class VisitableLocation : Location, IDisplay
 
 	}
 
+	public virtual void DrawUpdatePostTick()
+	{
+
+	}
+
 	public virtual float GetEntryOffset()
 	{
 		return 0.0f;
@@ -82,6 +87,16 @@ public class VisitableLocation : Location, IDisplay
 	public virtual Color GetMapColour()
 	{
 		return Color.white;
+	}
+
+	public virtual bool FlashOnMap()
+	{
+		return false;
+	}
+
+	public virtual Color GetFlashColour()
+	{
+		return Color.red;
 	}
 
 	//Shop

@@ -86,6 +86,7 @@ public class PlayerLocationManagement : MonoBehaviour
 
 	private int sessionNextID;
 	private int currentPrimaryLocationID;
+	private int lastSimTickDrawn = -1;
 
 	public class DrawnLocation
 	{
@@ -123,7 +124,7 @@ public class PlayerLocationManagement : MonoBehaviour
 		{
 			//Create new parent object
 			//Could use an object pool for this but I don't think it really matters with such a small amount of nearby locations
-			parent = new GameObject("DrawnLocation").transform;
+			parent = new GameObject(targetLocation.GetTitle()).transform;
 		}
 
 		public void Cleanup()
@@ -198,13 +199,13 @@ public class PlayerLocationManagement : MonoBehaviour
 
 			if (!currentlyDrawing)
 			{
+				newDrawnLocation.targetLocation = visitableLocation;
 				newDrawnLocation.InitParent();
 
 				newDrawnLocation.SetID(sessionNextID);
 				sessionNextID++;
 
 				visitableLocation.InitDraw(newDrawnLocation.parent);
-				newDrawnLocation.targetLocation = visitableLocation;
 			}
 
 			//Add location to new list based on it's distance
@@ -285,9 +286,18 @@ public class PlayerLocationManagement : MonoBehaviour
 
 		List<Vector2> positionsSoFar = new List<Vector2>();
 
-        foreach (DrawnLocation location in drawnLocations)
+		bool simTickHappened = lastSimTickDrawn != SimulationManagement.currentTickID;
+		lastSimTickDrawn = SimulationManagement.currentTickID;
+
+		foreach (DrawnLocation location in drawnLocations)
 		{
 			location.SetPosAsOffsetFrom(worldCenter, PlayerCapitalShip.GetPosition());
+
+			if (simTickHappened)
+			{
+				location.targetLocation.DrawUpdatePostTick();
+			}
+
 			location.targetLocation.DrawUpdate();
 
 			//Set position of ui indicator
@@ -329,7 +339,7 @@ public class PlayerLocationManagement : MonoBehaviour
 				//Calculate distance from player ship
 				float distance = Mathf.Round(Vector3.Distance(PlayerCapitalShip.GetPosition(), location.GetWorldPosition()));
 
-				string distanceText = "";
+				string distanceText;
 
 				if (distance > 1000)
 				{

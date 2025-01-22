@@ -65,7 +65,7 @@ public class PlanetsGenerator : MonoBehaviour
             newPlanet.scale = lowerSizeBound + (relativeSize * sizeDifference);
             newPlanet.sun = sun;
 
-            newPlanet.Init();
+            newPlanet.Init(worldPos);
             bool hasRing = random.Next(0, 101) > 75;
             //If we have a ring can't have atmosphere as shader's conflict
             bool hasAtmosphere = ((percentage > 0.2 && percentage < 0.4) || debug) && !hasRing;
@@ -87,7 +87,7 @@ public class PlanetsGenerator : MonoBehaviour
                 newMoon.scale = (random.Next(30, 45) / 100.0f) * newPlanet.scale;
                 newMoon.parent = newPlanet.transform;
 
-                newMoon.Init();
+                newMoon.Init(moonPos);
             }
         }
     }

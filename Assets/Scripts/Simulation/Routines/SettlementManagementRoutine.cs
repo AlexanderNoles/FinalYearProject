@@ -24,6 +24,9 @@ public class SettlementManagementRoutine : RoutineBase
 			MilitaryData militaryData = null;
 			bool hasMilitary = settlementData.TryGetLinkedData(DataTags.Military, out militaryData);
 
+			BattleData battleData = null;
+			bool hasBattleData = settlementData.TryGetLinkedData(DataTags.Battle, out battleData);
+
 			WarData warData = null;
 			bool hasWarData = settlementData.TryGetLinkedData(DataTags.War, out warData);
 			//
@@ -146,24 +149,38 @@ public class SettlementManagementRoutine : RoutineBase
                         {
                             fleetCountInCell = militaryData.positionToFleets[settlementPosition].Count;
 
-                            //Add ships to fleet or repair ships if they have damage taken
-                            foreach (ShipCollection collection in militaryData.positionToFleets[settlementPosition])
-                            {
-                                Fleet current = collection as Fleet;
+							//Don't repair or add new ships if ongoing battle in this settlement
+							if (!(hasBattleData && battleData.positionToOngoingBattles.ContainsKey(settlementPosition)))
+							{
+								//Add ships to fleet or repair ships if they have damage taken
+								foreach (ShipCollection collection in militaryData.positionToFleets[settlementPosition])
+								{
+									Fleet current = collection as Fleet;
 
-                                if (current.ships.Count < fleetShipLimitForSettlement)
-                                {
-                                    //Add new ship
-                                    current.ships.Add(new FleetShip());
-                                }
+									if (current.ships.Count < fleetShipLimitForSettlement)
+									{
+										//Add new ship
+										FleetShip newShip = new FleetShip();
+										current.ships.Add(newShip);
+										//Mark the collection as having been updated
+										//So we need to draw more ships
+										current.MarkCollectionUpdate(ShipCollection.UpdateType.Add, newShip);
+									}
 
-                                List<Ship> ships = current.GetShips();
-                                foreach (Ship ship in ships)
-                                {
-                                    //Just restore 20% of health each tick
-                                    ship.health = Mathf.Clamp(ship.health + (ship.GetMaxHealth() * 0.2f), 0, ship.GetMaxHealth());
-                                }
-                            }
+									List<Ship> ships = current.GetShips();
+									foreach (Ship ship in ships)
+									{
+										//Just restore 20% of health each tick
+										ship.health = Mathf.Clamp(ship.health + (ship.GetMaxHealth() * 0.2f), 0, ship.GetMaxHealth());
+
+										//Undestroy a ship
+										if (ship.destroyed)
+										{
+											ship.destroyed = false;
+										}
+									}
+								}
+							}
                         }
 
                         float maxAmountToAdd = Mathf.Min(currentRemaingFleetCapacityNationWide, maxUnitStorageCapacity - fleetCountInCell);

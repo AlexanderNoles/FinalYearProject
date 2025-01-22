@@ -127,8 +127,7 @@ public class UIManagement : MonoBehaviour
 
             //If active state key is pressed down this frame
             //toggle back to neutral
-            if (activeState.toggleable && InputManagement.GetKeyDown(activeState.GetSetActiveKey()) && 
-				MonitorBreak.Bebug.Console.GetConsoleState() == MonitorBreak.Bebug.Console.ConsoleState.Closed)
+            if (activeState.toggleable && ValidateInput(activeState.GetSetActiveKey()))
             {
                 LoadUIState(neutral);
                 return;
@@ -141,7 +140,7 @@ public class UIManagement : MonoBehaviour
             //If key code input registered this frame
             //OR ui state wants to be active
             //Then try to set that state active
-            if (state.WantsToBeActive() || InputManagement.GetKeyDown(state.GetSetActiveKey()))
+            if (state.WantsToBeActive() || ValidateInput(state.GetSetActiveKey()))
             {
 				if (LoadUIState(state))
 				{
@@ -149,5 +148,10 @@ public class UIManagement : MonoBehaviour
 				}
             }
         }
+	}
+
+	private bool ValidateInput(KeyCode keyCode)
+	{
+		return InputManagement.GetKeyDown(keyCode) && MonitorBreak.Bebug.Console.GetConsoleState() == MonitorBreak.Bebug.Console.ConsoleState.Closed;
 	}
 }

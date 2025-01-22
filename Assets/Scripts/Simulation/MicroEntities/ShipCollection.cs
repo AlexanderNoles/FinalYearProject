@@ -4,6 +4,28 @@ using UnityEngine;
 
 public class ShipCollection
 {
+	public int lastTickUpdateID = -1;
+	public List<(UpdateType, Ship)> recordedUpdates = new List<(UpdateType, Ship)>();
+
+	public enum UpdateType
+	{
+		Add,
+		Remove
+	}
+
+	public void MarkCollectionUpdate(UpdateType type, Ship target)
+	{
+		if (lastTickUpdateID != SimulationManagement.currentTickID)
+		{
+			lastTickUpdateID = SimulationManagement.currentTickID;
+
+			//Reset recorded updates
+			recordedUpdates.Clear();
+		}
+
+		recordedUpdates.Add((type, target));
+	}
+
 	public virtual List<Ship> GetShips()
 	{
 		return null;
@@ -16,11 +38,13 @@ public class ShipCollection
 		bool allShipsDestroyed = true;
 		foreach (Ship ship in ships)
 		{
+			//Don't take any damage if already destroyed
 			if (!ship.destroyed)
 			{
 				ship.TakeDamage(damage);
 			}
 
+			//Check if it is destroyed after taking damage
 			if (!ship.destroyed)
 			{
 				allShipsDestroyed = false;

@@ -28,7 +28,7 @@ Material:
     - _Clamp: -14
     - _FarClamp: -15
     - _NearClamp: 15
-    - _Speed: 50
+    - _Speed: 250
     m_Colors:
     - _FractalOffset: {r: 1, g: 1, b: 0, a: 1}
   m_BuildTextureStacks: []

@@ -6,15 +6,19 @@ public class CelestialBody : SurroundingObject
 {
     protected Material targetMat;
 
-    public virtual void Init()
+    public virtual void Init(Vector3 pos)
     {
         scale *= (WorldManagement.solarSystemScaleModifier / WorldManagement.referncePointSolarSystemScaleModifier);
-        Vector3 pos = transform.position * WorldManagement.solarSystemScaleModifier;
-        postion = new RealSpacePosition(pos.x, pos.y, pos.z);
-        //Clamp position to grid
-        postion = WorldManagement.ClampPositionToGrid(postion);
+        position = new RealSpacePosition(
+			(double)pos.x * WorldManagement.solarSystemScaleModifier, 
+			(double)pos.y * WorldManagement.solarSystemScaleModifier, 
+			(double)pos.z * WorldManagement.solarSystemScaleModifier
+			);
 
-        targetMat = GetComponent<MeshRenderer>().material;
+        //Clamp position to grid
+        position = WorldManagement.ClampPositionToGrid(position);
+
+		targetMat = GetComponent<MeshRenderer>().material;
         targetMat.SetVector("_RealSpacePosition", transform.position);
 		WorldManagement.AddMajorWorldPart(this);
 	}

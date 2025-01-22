@@ -21,12 +21,7 @@ public class SurroundingObject : MonoBehaviour
 		}
 	}
 	protected Transform baseTransform;
-    public RealSpacePosition postion;
-
-    protected virtual void Awake()
-    {
-        postion = new RealSpacePosition(0, 0, 0);
-    }
+    public RealSpacePosition position;
 
     protected virtual void OnEnable()
     {

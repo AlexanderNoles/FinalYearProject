@@ -38,7 +38,7 @@ public class WorldManagement : MonoBehaviour
 
             foreach (CelestialBody body in majorWorldParts)
             {
-                double mag = body.postion.Magnitude();
+                double mag = body.position.Magnitude();
 
                 if (mag > solarSystemRadius)
                 {
