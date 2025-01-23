@@ -687,6 +687,7 @@ GameObject:
   m_Component:
   - component: {fileID: 14063470}
   - component: {fileID: 14063471}
+  - component: {fileID: 14063474}
   - component: {fileID: 14063473}
   m_Layer: 0
   m_Name: GeneratorManagement
@@ -724,6 +725,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   asteroidMeshes:
   - {fileID: 289301614986012343, guid: 31f21a58b4331cd4789c681327eece96, type: 3}
+  shipModelsPool: {fileID: 14063474}
   structuresPool: {fileID: 14063473}
 --- !u!114 &14063473
 MonoBehaviour:
@@ -760,6 +762,44 @@ MonoBehaviour:
     baseObject: {fileID: 5299200730849592043, guid: 76e28c1102ca4b140afd825f35a606b3,
       type: 3}
     baseNumberOfObjects: 10
+    generateAsNeeded: 1
+    currentUpdatedObjectPointer: 0
+    automaticallySetParent: 1
+--- !u!114 &14063474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 14063469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca3a3b334a5db2d48b0841b895098083, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  generateOnAwake: 1
+  pools:
+  - name: Ship1
+    mode: 0
+    baseObject: {fileID: 8776646265606527062, guid: 9cba2efc761d1af4798c6143d38a1e0f,
+      type: 3}
+    baseNumberOfObjects: 5
+    generateAsNeeded: 1
+    currentUpdatedObjectPointer: 0
+    automaticallySetParent: 1
+  - name: Ship2
+    mode: 0
+    baseObject: {fileID: 6013837345855444211, guid: f11fd687d31e37c469d807de0cdeb5b0,
+      type: 3}
+    baseNumberOfObjects: 5
+    generateAsNeeded: 1
+    currentUpdatedObjectPointer: 0
+    automaticallySetParent: 1
+  - name: Ship3
+    mode: 0
+    baseObject: {fileID: 1022840745101786655, guid: 0d8a2b61a10250443a2016307f1504ff,
+      type: 3}
+    baseNumberOfObjects: 5
     generateAsNeeded: 1
     currentUpdatedObjectPointer: 0
     automaticallySetParent: 1

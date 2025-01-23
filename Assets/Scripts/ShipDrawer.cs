@@ -9,6 +9,9 @@ public class ShipDrawer : MonoBehaviour
 	public Ship target = null;
 	private SimulationEntity parentEntity;
 
+	private int modelPoolIndex;
+	private Transform model;
+
 	private void Awake()
 	{
 		transform = base.transform;
@@ -39,5 +42,21 @@ public class ShipDrawer : MonoBehaviour
 		newShipPosition.Normalize();
 
 		transform.position = newShipPosition * Random.Range(10.0f, 100.0f);
+
+		//If we are holding onto a model give it back
+		//This can't be done in OnDisable because we can't set parents when activating or deactivating
+		if (model != null)
+		{
+			GeneratorManagement.ReturnShipModel(modelPoolIndex, model);
+			model = null;
+		}
+
+		//Get model
+		modelPoolIndex = Random.Range(0, 3);
+		model = GeneratorManagement.GetShipModel(modelPoolIndex);
+		model.parent = transform;
+
+		model.localPosition = Vector3.zero;
+		model.localRotation = Quaternion.identity;
 	}
 }

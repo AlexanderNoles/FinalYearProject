@@ -8,6 +8,7 @@ public class GeneratorManagement : MonoBehaviour
 {
 	public static GeneratorManagement _instance;
 	public List<Mesh> asteroidMeshes = new List<Mesh>();
+	public MultiObjectPool shipModelsPool;
 
 	//HELPER INDEXES
 	public enum POOL_INDEXES
@@ -109,5 +110,15 @@ public class GeneratorManagement : MonoBehaviour
 	public static void ReturnShip(ShipDrawer ship)
 	{
 		_instance.structuresPool.ReturnObject((int)POOL_INDEXES.SHIP, ship.transform);
+	}
+
+	public static Transform GetShipModel(int index)
+	{
+		return _instance.shipModelsPool.SpawnObject(index, Vector3.zero).transform;
+	}
+
+	public static void ReturnShipModel(int index, Transform transform)
+	{
+		_instance.shipModelsPool.ReturnObject(index, transform);
 	}
 }
