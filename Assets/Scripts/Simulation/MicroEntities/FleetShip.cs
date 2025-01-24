@@ -8,12 +8,17 @@ public class FleetShip : Ship
 	public override float GetDamgeRaw()
 	{
 		//Static value for now
-		return 30;
+		return 3;
+	}
+
+	public override float GetTimeBetweenAttacks()
+	{
+		return base.GetTimeBetweenAttacks();
 	}
 
 	public override float GetMaxHealth()
 	{
 		//Static value for now
-		return 50;
+		return 25;
 	}
 }

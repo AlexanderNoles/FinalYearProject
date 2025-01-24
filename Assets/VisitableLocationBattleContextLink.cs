@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VisitableLocationHealthContextLink : HealthContextLink
+public class VisitableLocationBattleContextLink : BattleContextLink
 {
 	private LocationContextLink locationLink;
 

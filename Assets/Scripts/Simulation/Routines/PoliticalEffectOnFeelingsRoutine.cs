@@ -44,6 +44,10 @@ public class PoliticalEffectOnFeelingsRoutine : RoutineBase
 
                         newInstability *= Mathf.Abs(difference);
                     }
+					else
+					{
+						newInstability = 0.0f;
+					}
 
                     //Reduce instability if favourability is above a certain value and difference is negative
                     if (relationship.favourability > 0.4f && difference < 0.0f)

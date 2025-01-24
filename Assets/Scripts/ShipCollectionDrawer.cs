@@ -64,7 +64,7 @@ public class ShipCollectionDrawer
 		newShip.SetParent(parent);
 		newShip.Link(ship);
 
-		newShip.Init(entity);
+		newShip.Init(entity, this);
 
 		//Start tracking ship drawer
 		drawnShips.Add(newShip);

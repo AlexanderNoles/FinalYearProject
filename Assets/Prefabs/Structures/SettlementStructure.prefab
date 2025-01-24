@@ -105,7 +105,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetsName: Settlement
   targetCollider: {fileID: 5931483769712804950}
+  autoFindTargets: 1
   transform: {fileID: 0}
+  simulationLink: {fileID: 1243620067146735923}
   targetBox:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 3.54, y: 5.88, z: 3.92}

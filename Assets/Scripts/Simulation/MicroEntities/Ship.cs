@@ -5,11 +5,16 @@ using UnityEngine;
 public class Ship
 {
 	public float health;
-	public bool destroyed = false;
+	public bool isWreck = false;
 
 	public virtual float GetDamgeRaw()
 	{
 		return 0;
+	}
+
+	public virtual float GetTimeBetweenAttacks()
+	{
+		return 1.0f;
 	}
 
 	public virtual float GetDamageWithVariance(bool lazy = true)
@@ -30,7 +35,7 @@ public class Ship
 
 		if (health <= 0)
 		{
-			destroyed = true;
+			isWreck = true;
 		}
 	}
 

@@ -11,6 +11,7 @@ public class Player : SimulationEntity
 		base.InitTags();
 
 		AddTag(EntityTypeTags.Player);
+		AddTag(EntityStateTags.Insignificant);
 		AddTag(EntityStateTags.Unkillable);
 	}
 
@@ -36,5 +37,8 @@ public class Player : SimulationEntity
 		interactions.playersInteractions.Add(new AttackInteraction().Init());
 		//
 		AddData(DataTags.Interactions, interactions);
+
+		AddData(DataTags.Feelings, new FeelingsData());
+		AddData(DataTags.ContactPolicy, new ContactPolicyData());
 	}
 }

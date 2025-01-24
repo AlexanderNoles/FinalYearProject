@@ -1,3 +1,4 @@
+using EntityAndDataDescriptor;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -83,6 +84,8 @@ public class BattleManagement : MonoBehaviour
     private Func<BasicEffectData, float, int> explosionEffectFunc;
 
 	public AnimationCurve explosionAnimCurve;
+	private int nextGlobalRefresh;
+	private float bbTickTime;
 
     private void Awake()
 	{
@@ -200,7 +203,77 @@ public class BattleManagement : MonoBehaviour
 	{
 		RunEffect(basicBeamFunc, currentBasicBeamEffects, basicBeamIndex);
 		RunEffect(explosionEffectFunc, currentExplosionEffects, explosionIndex);
-    }
+
+		//Global process on battle behaviours
+		//For each battle behaviour
+		if (Time.frameCount > nextGlobalRefresh)
+		{
+			//Every 100 to 200 frames refresh the targets
+			//Randomized to reduce chance of syncing up with frame spikes
+			//without having a complicated execution priority system
+			nextGlobalRefresh = Time.frameCount + UnityEngine.Random.Range(100, 200);
+
+			//Get relationship data
+			Dictionary<int, FeelingsData> idToFeelingsData = SimulationManagement.GetEntityIDToData<FeelingsData>(DataTags.Feelings);
+
+			foreach (BattleBehaviour bb in colliderToBattleBehaviour.Values)
+			{
+				if (bb.autoFindTargets)
+				{
+					//First clear the targets
+					bb.ClearTargets();
+
+					//Get feelings data for this bb
+					int entityID = bb.TryGetEntityID();
+
+					if (entityID == -1 || !idToFeelingsData.ContainsKey(entityID))
+					{
+						continue;
+					}
+
+					FeelingsData feelingsData = idToFeelingsData[entityID];
+					//Now iterate over all other bbs in the scene and get ones that we could be aggressive towards
+					foreach (BattleBehaviour otherBB in colliderToBattleBehaviour.Values)
+					{
+						int otherID = otherBB.TryGetEntityID();
+
+						if (otherID == entityID)
+						{
+							//Can't attack our own ships!
+							continue;
+						}
+						else if (otherID == -1 || !feelingsData.idToFeelings.ContainsKey(otherID))
+						{
+							//Add target if it doesn't have an entity, or we have no feelings about this entity
+							//So by default things attack each other
+							bb.AddTarget(otherBB, false);
+							Debug.Log(otherID);
+						}
+						else if (feelingsData.idToFeelings[otherID].inConflict)
+						{
+							//Hostile
+							bb.AddTarget(otherBB, false);
+						}
+					}
+				}
+			}
+		}
+
+		//Per tick update
+		bbTickTime -= Time.deltaTime;
+
+		if (bbTickTime <=  0.0f)
+		{
+			int ticksPassedSinceLastFrame = 1 + Mathf.FloorToInt(Mathf.Abs(bbTickTime) / 1.0f);
+
+			bbTickTime += ticksPassedSinceLastFrame;
+
+			foreach (BattleBehaviour bb in colliderToBattleBehaviour.Values)
+			{
+				bb.DoTicks(ticksPassedSinceLastFrame);
+			}
+		}
+	}
 
 	private void RunEffect(Func<BasicEffectData, float, int> effectFunc, List<BasicEffectData> effects, int returnIndex)
 	{

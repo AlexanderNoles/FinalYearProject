@@ -174,9 +174,9 @@ public class SettlementManagementRoutine : RoutineBase
 										ship.health = Mathf.Clamp(ship.health + (ship.GetMaxHealth() * 0.2f), 0, ship.GetMaxHealth());
 
 										//Undestroy a ship
-										if (ship.destroyed)
+										if (ship.isWreck)
 										{
-											ship.destroyed = false;
+											ship.isWreck = false;
 										}
 									}
 								}

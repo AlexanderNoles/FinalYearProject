@@ -39,13 +39,13 @@ public class ShipCollection
 		foreach (Ship ship in ships)
 		{
 			//Don't take any damage if already destroyed
-			if (!ship.destroyed)
+			if (!ship.isWreck)
 			{
 				ship.TakeDamage(damage);
 			}
 
 			//Check if it is destroyed after taking damage
-			if (!ship.destroyed)
+			if (!ship.isWreck)
 			{
 				allShipsDestroyed = false;
 			}

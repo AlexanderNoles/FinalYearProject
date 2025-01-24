@@ -106,7 +106,16 @@ public class BattleResolutionRoutine : RoutineBase
 
 							foreach (ShipCollection collection in shipsInCell)
 							{
-								totalShipCount += collection.GetShips().Count;
+								List<Ship> ships = collection.GetShips();
+
+								foreach (Ship ship in ships)
+								{
+									if (!ship.isWreck)
+									{
+										//If not a wreck
+										totalShipCount++;
+									}
+								}
 							}
 
 							if (totalShipCount > 0)
@@ -218,16 +227,8 @@ public class BattleResolutionRoutine : RoutineBase
 										//Add to total damage buildup
 										militaryData.totalDamageBuildup += damagePerFleet;
 
-										if (collections[i].TakeDamage(damagePerFleet))
-										{
-											//All ships destroyed
-											//Remove fleet from cell
-											militaryData.RemoveFleet(battle.postion, collections[i] as Fleet);
-										}
-										else
-										{
-											i++;
-										}
+										//Have all ships in a fleet take equal damage
+										collections[i].TakeDamage(damagePerFleet);
 									}
 								}
 							}

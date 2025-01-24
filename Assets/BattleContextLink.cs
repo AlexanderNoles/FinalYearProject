@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealthContextLink : MonoBehaviour
+public class BattleContextLink : MonoBehaviour
 {
 	public virtual float GetMaxHealth()
 	{
@@ -12,5 +12,10 @@ public class HealthContextLink : MonoBehaviour
 	public virtual void OnDeath()
 	{
 
+	}
+
+	public virtual int GetEntityID()
+	{
+		return -1;
 	}
 }

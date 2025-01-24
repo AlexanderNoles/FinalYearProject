@@ -29,6 +29,11 @@ public class WeaponProfile
 		return true;
 	}
 
+	protected virtual bool AttackTimeVariance()
+	{
+		return false;
+	}
+
 	public virtual void OnBattleStart()
 	{
 		//When weapons begin firing
@@ -49,6 +54,11 @@ public class WeaponProfile
 	protected float lastAttackTime;
 	public void MarkLastAttackTime(float time)
 	{
+		if (AttackTimeVariance())
+		{
+			time += Random.Range(0.0f, GetTimeBetweenAttacks() * 0.25f);
+		}
+
 		lastAttackTime = time;
 	}
 

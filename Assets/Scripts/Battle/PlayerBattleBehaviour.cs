@@ -37,6 +37,16 @@ public class PlayerBattleBehaviour : BattleBehaviour
 		return instance.currentHealth;
 	}
 
+	public override int TryGetEntityID()
+	{
+		if (!PlayerManagement.PlayerEntityExists())
+		{
+			return base.TryGetEntityID();
+		}
+
+		return PlayerManagement.GetTarget().id;
+	}
+
 	public List<Vector3> firePoints = new List<Vector3>();
 	private float lastRecordedSalvoPercentage;
 
@@ -115,6 +125,16 @@ public class PlayerBattleBehaviour : BattleBehaviour
 		return maxHealth;
 	}
 
+	public override float GetRegenPerTick()
+	{
+		if (!PlayerManagement.PlayerEntityExists())
+		{
+			return base.GetRegenPerTick();
+		}
+
+		return Mathf.Max(1.0f, PlayerManagement.GetStats().GetStat(Stats.healthRegen.ToString()));
+	}
+
 	protected override void Update()
 	{
 		base.Update();
@@ -125,9 +145,13 @@ public class PlayerBattleBehaviour : BattleBehaviour
 			lastRecordedSalvoPercentage = salvoAmountThisFrame;
 			MainInfoUIControl.UpdateSalvoBarInensity(lastRecordedSalvoPercentage);
 		}
+	}
 
-		//Process all current targets
-		ProcessTargets();
+	public override void DoTicks(int tickCount)
+	{
+		base.DoTicks(tickCount);
+
+		MainInfoUIControl.ForceHealthBarRedraw();
 	}
 
 	protected override void OnAddTarget(BattleBehaviour newTarget)
@@ -140,6 +164,21 @@ public class PlayerBattleBehaviour : BattleBehaviour
 	{
 		//Notify targets UI
 		CurrentTargetsUI.RemoveTarget(target);
+	}
+
+	protected override TakenDamageResult TakeDamage(float rawDamageNumber, BattleBehaviour origin)
+	{
+		TakenDamageResult result = base.TakeDamage(rawDamageNumber, origin);
+
+		//Update ui
+		MainInfoUIControl.ForceHealthBarRedraw();
+
+		return result;
+	}
+
+	protected override void OnDeath()
+	{
+		PlayerManagement.KillPlayer();
 	}
 
 	protected override void OnClearTargets(List<BattleBehaviour> targetsBefore)

@@ -6,25 +6,36 @@ public class BattleBehaviour : InteractableBase
 { 
 	public string targetsName = "Target";
 	public Collider targetCollider;
+	public bool autoFindTargets = true;
 
 	[HideInInspector]
 	public new Transform transform;
 
-	protected List<WeaponProfile> weapons = new List<WeaponProfile>();
-	protected List<BattleBehaviour> currentTargets = new List<BattleBehaviour>();
+	[HideInInspector]
+	public List<WeaponProfile> weapons = new List<WeaponProfile>();
+	public List<BattleBehaviour> currentTargets = new List<BattleBehaviour>();
 
     protected float currentHealth;
-	protected HealthContextLink simulationLink;
+	public BattleContextLink simulationLink;
 
     protected virtual void Awake()
 	{
 		transform = base.transform;
 	}
 
+	public virtual int TryGetEntityID()
+	{
+		if (simulationLink == null)
+		{
+			return -1;
+		}
+
+		return simulationLink.GetEntityID();
+	}
+
 	protected void OnEnable()
 	{
 		BattleManagement.RegisterBattleBehaviour(targetCollider, this);
-		simulationLink = GetComponent<HealthContextLink>();
 
 		if (simulationLink != null )
 		{
@@ -52,14 +63,28 @@ public class BattleBehaviour : InteractableBase
 		return 100.0f;
 	}
 
+	public virtual float GetRegenPerTick()
+	{
+		return 0.0f;
+	}
+
 	protected virtual void Update()
 	{
 		//Clamp current health to max health
 		//This is dirty but flexible
 		currentHealth = Mathf.Min(currentHealth, GetMaxHealth());
+
+		//Process all current targets
+		ProcessTargets();
 	}
 
-	protected void ToggleTarget(BattleBehaviour target)
+	public virtual void DoTicks(int tickCount)
+	{
+		//Apply regen
+		currentHealth = Mathf.Min(currentHealth + (tickCount * GetRegenPerTick()), GetMaxHealth()); 
+	}
+
+	protected void ToggleTarget(BattleBehaviour target, bool battleReset = true)
 	{
 		//Can't attack ourself
 		if (Equals(target))
@@ -70,11 +95,11 @@ public class BattleBehaviour : InteractableBase
         if (!RemoveTarget(target))
         {
             //If target is not removed (i.e., it was not in the list)
-			AddTargetInternal(target);
+			AddTargetInternal(target, battleReset);
         }
     }
 
-	protected void AddTarget(BattleBehaviour newTarget)
+	public void AddTarget(BattleBehaviour newTarget, bool battleReset = true)
 	{
 		//Can't attack ourself
 		if (Equals(newTarget))
@@ -88,12 +113,12 @@ public class BattleBehaviour : InteractableBase
 			return;
 		}
 
-		AddTargetInternal(newTarget);
+		AddTargetInternal(newTarget, battleReset);
 	}
 
-	private void AddTargetInternal(BattleBehaviour target)
+	private void AddTargetInternal(BattleBehaviour target, bool battleReset)
 	{
-		if (currentTargets.Count == 0)
+		if (currentTargets.Count == 0 && battleReset)
 		{
 			//No targets before this point
 			foreach (WeaponProfile weapon in weapons)
@@ -186,7 +211,8 @@ public class BattleBehaviour : InteractableBase
 
 		for (int i = 0; i < currentTargets.Count;)
 		{
-			int index = (i + randomOffset) % count;
+			//Use current count instead of the count cached at the start of these function incase element is removed
+			int index = (i + randomOffset) % currentTargets.Count;
 			BattleBehaviour target = currentTargets[index];
 
 			if (target.Dead())

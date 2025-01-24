@@ -77,6 +77,16 @@ public class MainInfoUIControl : PostTickUpdate
 		instance.RedrawCurrencyLabel();
 	}
 
+	public static void ForceHealthBarRedraw()
+	{
+		if (instance == null)
+		{
+			return;
+		}
+
+		instance.DrawHealthAuto();
+	}
+
     private void Draw()
     {
         dateLabel.text = SimulationManagement.GetDateString();
@@ -103,6 +113,11 @@ public class MainInfoUIControl : PostTickUpdate
 
     private void DrawHealthAuto()
     {
+		if (!PlayerManagement.PlayerEntityExists())
+		{
+			return;
+		}
+
         //Get current and max player health
         PlayerStats playerStats = PlayerManagement.GetStats();
 
@@ -114,7 +129,7 @@ public class MainInfoUIControl : PostTickUpdate
         float percentage = Mathf.Clamp01(currentHealth / maxHealth);
 
         healthBarImage.fillAmount = percentage;
-        currentHealthLabel.text = currentHealth.ToString();
+        currentHealthLabel.text = Mathf.Max(0.0f, Mathf.Round(currentHealth)).ToString();
         maxHealthLabel.text = maxHealth.ToString();
     }
 
