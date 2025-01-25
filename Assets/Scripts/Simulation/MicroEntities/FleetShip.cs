@@ -5,7 +5,7 @@ using UnityEngine;
 public class FleetShip : Ship
 {
 	//Get base damage
-	public override float GetDamgeRaw()
+	public override float GetDamageRaw()
 	{
 		//Static value for now
 		return 3;

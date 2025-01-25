@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class ContextLinkedWeaponProfile : WeaponProfile
 {
-	private Ship target;
+	private WeaponBase target;
 
-	public ContextLinkedWeaponProfile SetTarget(Ship ship)
+	public ContextLinkedWeaponProfile SetTarget(WeaponBase ship)
 	{
 		target = ship;
 		return this;

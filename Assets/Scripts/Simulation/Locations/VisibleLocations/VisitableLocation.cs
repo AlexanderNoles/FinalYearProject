@@ -7,19 +7,29 @@ public class VisitableLocation : Location, IDisplay
 {
 	private static Dictionary<Transform, LocationContextLink> transformToContextLink = new Dictionary<Transform, LocationContextLink>();
 	
-	public virtual bool HasHealth()
+	public bool HasHealth()
 	{
-		return true;
+		return GetMaxHealth() != -1;
 	}
 
 	public virtual float GetMaxHealth()
 	{
-		return 100.0f;
+		return -1;
 	}
 
 	public virtual void OnDeath()
 	{
 
+	}
+
+	public virtual int GetEntityID()
+	{
+		return -1;
+	}
+
+	public virtual List<WeaponBase> GetWeapons()
+	{
+		return new List<WeaponBase>();
 	}
 
 	protected void ApplyContext(Transform target)
@@ -100,9 +110,9 @@ public class VisitableLocation : Location, IDisplay
 	}
 
 	//Shop
-	public virtual bool HasShop()
+	public bool HasShop()
 	{
-		return false;
+		return GetShop() != null;
 	}
 
 	public virtual Shop GetShop()

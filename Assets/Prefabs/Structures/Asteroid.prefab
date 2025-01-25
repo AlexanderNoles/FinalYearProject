@@ -120,6 +120,7 @@ MonoBehaviour:
   targetCollider: {fileID: 6967696567541003043}
   autoFindTargets: 1
   transform: {fileID: 0}
+  currentTargets: []
   simulationLink: {fileID: 2210245109402893483}
   targetBox:
     m_Center: {x: 0, y: 0, z: 0}
@@ -151,6 +152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 231374dcaed51a1438df0fec53fbfd2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  simulationContext: {fileID: 8569512961834514648}
+  targetBattleBehaviour: {fileID: 1946929317169096998}
 --- !u!114 &8569512961834514648
 MonoBehaviour:
   m_ObjectHideFlags: 0

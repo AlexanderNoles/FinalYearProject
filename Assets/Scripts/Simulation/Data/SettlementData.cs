@@ -11,9 +11,23 @@ public class SettlementData : DataBase
     {
         public int setID;
 
+		public class SettlementWeapon : WeaponBase
+		{
+			public override float GetDamageRaw()
+			{
+				return 1;
+			}
+
+			public override float GetTimeBetweenAttacks()
+			{
+				return 1.5f;
+			}
+		}
+
         public class SettlementLocation : VisitableLocation
         {
 			public Shop shop;
+			public SettlementWeapon weapon;
             public Settlement actualSettlement;
 			private GeneratorManagement.StructureGeneration generation;
 
@@ -57,9 +71,9 @@ public class SettlementData : DataBase
 				return $"<color={VisualDatabase.statisticColour}>Settlements</color> are important locations, from here you can buy <color={VisualDatabase.goodColourString}>Items</color> and <color={VisualDatabase.goodColourString}>Fuel</color> to support your endeavours.";
 			}
 
-			public override bool HasShop()
+			public override int GetEntityID()
 			{
-				return shop != null;
+				return actualSettlement.parent.Get().id;
 			}
 
 			public override Shop GetShop()
@@ -70,6 +84,13 @@ public class SettlementData : DataBase
 			public override bool CanBuyFuel()
 			{
 				return true;
+			}
+
+			public override List<WeaponBase> GetWeapons()
+			{
+				List<WeaponBase> baseList = base.GetWeapons();
+				baseList.Add(weapon);
+				return baseList;
 			}
 
 			public override void OnDeath()
@@ -110,6 +131,9 @@ public class SettlementData : DataBase
 
 			//Set shop to use same parent
 			location.shop.parent = this.parent;
+
+			//Create weapon
+			location.weapon = new SettlementWeapon();
         }
     }
 

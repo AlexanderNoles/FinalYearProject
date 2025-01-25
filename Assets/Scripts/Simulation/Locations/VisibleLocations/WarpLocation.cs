@@ -18,12 +18,6 @@ public class WarpLocation : VisitableLocation
 		return "The Warp is used to facillitate travel over long distances. While inside The Warp, observers outside of it appear accelerated, moving 10 times faster than normal.";
 	}
 
-	public override bool HasShop()
-	{
-		//This should check if the player has a specific item
-		return true;
-	}
-
 	public override Shop GetShop()
 	{
 		Warp.main.GetData(DataTags.CentralShop, out Shop shop);

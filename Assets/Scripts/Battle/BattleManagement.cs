@@ -247,7 +247,6 @@ public class BattleManagement : MonoBehaviour
 							//Add target if it doesn't have an entity, or we have no feelings about this entity
 							//So by default things attack each other
 							bb.AddTarget(otherBB, false);
-							Debug.Log(otherID);
 						}
 						else if (feelingsData.idToFeelings[otherID].inConflict)
 						{
