@@ -67,28 +67,34 @@ public class TargetableLocationData : DataBase
 		{
 			return target.maxHealth;
 		}
+
+		public override List<WeaponBase> GetWeapons()
+		{
+			return target.weapons;
+		}
+
+		public override int GetEntityID()
+		{
+			return target.parent.Get().id;
+		}
 	}
 
 	public ActualLocation location;
 	public RealSpacePosition cellCenter = null;
 	public RealSpacePosition actualPosition;
-	private string name;
-	private string description;
-	private Color mapColour;
+	public string name;
+	public string description;
+	public Color mapColour;
 
 	public float maxHealth;
 	public int desirability = 1;
 	public int lastTickTime;
+	public List<WeaponBase> weapons = new List<WeaponBase>();
 
-	private Func<Transform, GeneratorManagement.Generation> drawFunc;
+	public Func<Transform, GeneratorManagement.Generation> drawFunc;
 
-	public TargetableLocationData(string name, string description, Color mapColour, Func<Transform, GeneratorManagement.Generation> drawFunc)
+	public TargetableLocationData()
 	{
-		this.name = name;
-		this.description = description;
-		this.mapColour = mapColour;
-
-		this.drawFunc = drawFunc;
 		location = new ActualLocation(this);
 	}
 }

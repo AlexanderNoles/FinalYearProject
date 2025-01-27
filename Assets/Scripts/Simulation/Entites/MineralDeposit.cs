@@ -50,15 +50,20 @@ public class MineralDeposit : SimulationEntity
 		//Allows the mineral depoist to pick fights
 		//It has no military so it cannot fight back
 		AddData(DataTags.Battle, new BattleData());
-		TargetableLocationData targetableLocationData = new TargetableLocationData("Ore Deposit", "", Color.green,
-			(parent) =>
-			{
-				GeneratorManagement.AsteroidGeneration generation = new GeneratorManagement.AsteroidGeneration();
-				generation.parent = parent;
-				generation.SpawnAsteroid(Vector3.zero);
+		TargetableLocationData targetableLocationData = new TargetableLocationData();
 
-				return generation;
-			});
+		targetableLocationData.name = "Ore Deposit";
+		targetableLocationData.description = "";
+		targetableLocationData.mapColour = Color.green;
+
+		targetableLocationData.drawFunc = (parent) =>
+		{
+			GeneratorManagement.AsteroidGeneration generation = new GeneratorManagement.AsteroidGeneration();
+			generation.parent = parent;
+			generation.SpawnAsteroid(Vector3.zero);
+
+			return generation;
+		};
 
 		//give this location a random desirability
 		float t = SimulationManagement.random.Next(0, 101) / 100.0f;

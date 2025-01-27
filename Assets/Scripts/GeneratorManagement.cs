@@ -15,7 +15,8 @@ public class GeneratorManagement : MonoBehaviour
 	{
 		SETTLEMENT = 0,
 		ASTEROID = 1,
-		SHIP = 2
+		SHIP = 2,
+		PIRATEBASE = 3
 	}
 
 	public MultiObjectPool structuresPool;

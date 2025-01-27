@@ -348,6 +348,7 @@ MonoBehaviour:
   targetsName: Target
   targetCollider: {fileID: 2777602}
   autoFindTargets: 0
+  autoRetaliate: 0
   transform: {fileID: 0}
   currentTargets: []
   simulationLink: {fileID: 0}
@@ -763,6 +764,14 @@ MonoBehaviour:
   - name: SHIPS
     mode: 0
     baseObject: {fileID: 5299200730849592043, guid: 76e28c1102ca4b140afd825f35a606b3,
+      type: 3}
+    baseNumberOfObjects: 10
+    generateAsNeeded: 1
+    currentUpdatedObjectPointer: 0
+    automaticallySetParent: 1
+  - name: PirateBase
+    mode: 0
+    baseObject: {fileID: 8031708224019238251, guid: ff995aeeec490894589431ef0ca9e60f,
       type: 3}
     baseNumberOfObjects: 10
     generateAsNeeded: 1

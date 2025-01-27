@@ -7,6 +7,7 @@ public class BattleBehaviour : InteractableBase
 	public string targetsName = "Target";
 	public Collider targetCollider;
 	public bool autoFindTargets = true;
+	public bool autoRetaliate = true;
 
 	[HideInInspector]
 	public new Transform transform;
@@ -14,6 +15,7 @@ public class BattleBehaviour : InteractableBase
 	[HideInInspector]
 	public List<WeaponProfile> weapons = new List<WeaponProfile>();
 	public List<BattleBehaviour> currentTargets = new List<BattleBehaviour>();
+	public List<BattleBehaviour> maintainedTargets = new List<BattleBehaviour>();
 
     protected float currentHealth;
 	public BattleContextLink simulationLink;
@@ -51,6 +53,10 @@ public class BattleBehaviour : InteractableBase
 	protected void OnDisable()
 	{
 		BattleManagement.DeRegisterBattleBehaviour(targetCollider);
+
+		//Do full clear
+		currentTargets.Clear();
+		maintainedTargets.Clear();
 	}
 
 	public virtual float GetHealthPercentage()
@@ -116,9 +122,48 @@ public class BattleBehaviour : InteractableBase
 		AddTargetInternal(newTarget, battleReset);
 	}
 
+	public void AddMaintainedTarget(BattleBehaviour newTarget, bool battleReset = true)
+	{
+		//Can't attack ourself
+		if (Equals(newTarget))
+		{
+			return;
+		}
+
+		//Can't target something twice
+		if (currentTargets.Contains(newTarget))
+		{
+			return;
+		}
+
+		AddMaintainedTargetInternal(newTarget, battleReset);
+	}
+
 	private void AddTargetInternal(BattleBehaviour target, bool battleReset)
 	{
-		if (currentTargets.Count == 0 && battleReset)
+		if (battleReset)
+		{
+			BattleResetCheck();
+		}
+
+		OnAddTarget(target);
+		currentTargets.Add(target);
+	}
+
+	private void AddMaintainedTargetInternal(BattleBehaviour target, bool battleReset)
+	{
+		if (battleReset)
+		{
+			BattleResetCheck();
+		}
+
+		OnAddTarget(target);
+		maintainedTargets.Add(target);
+	}
+
+	private void BattleResetCheck()
+	{
+		if (currentTargets.Count == 0)
 		{
 			//No targets before this point
 			foreach (WeaponProfile weapon in weapons)
@@ -126,9 +171,6 @@ public class BattleBehaviour : InteractableBase
 				weapon.OnBattleStart();
 			}
 		}
-
-		OnAddTarget(target);
-		currentTargets.Add(target);
 	}
 
 	protected bool RemoveTarget(BattleBehaviour target)
@@ -184,7 +226,7 @@ public class BattleBehaviour : InteractableBase
 
 	protected void ProcessTargets()
 	{
-		int count = currentTargets.Count;
+		int count = currentTargets.Count + maintainedTargets.Count;
 		if(count <= 0)
 		{
 			//No targets
@@ -204,16 +246,22 @@ public class BattleBehaviour : InteractableBase
 			}
 		}
 
+		ProcessTargetList(currentTargets, attackProfiles, count);
+		ProcessTargetList(maintainedTargets, attackProfiles, count);
+	}
+
+	private void ProcessTargetList(List<BattleBehaviour> targets, List<AttackProfile> attackProfiles, int fullCount)
+	{
 		//Apply damage to targets
 		//Apply some random offset to the index so if too few attacks are applied on one frame
 		//They don't always keep going to the first index, a.k.a single target fire
-		int randomOffset = Random.Range(0, count);
+		int randomOffset = Random.Range(0, targets.Count);
 
-		for (int i = 0; i < currentTargets.Count;)
+		for (int i = 0; i < targets.Count;)
 		{
 			//Use current count instead of the count cached at the start of these function incase element is removed
-			int index = (i + randomOffset) % currentTargets.Count;
-			BattleBehaviour target = currentTargets[index];
+			int index = (i + randomOffset) % targets.Count;
+			BattleBehaviour target = targets[index];
 
 			if (target.Dead())
 			{
@@ -244,7 +292,7 @@ public class BattleBehaviour : InteractableBase
 
 					//Number of attacks from this weapon for this target
 					//Rounded up so we always use all our attacks, even if some targets don't get hit
-					int attackCap = Mathf.CeilToInt(attack.totalNumberOfAttacks / (float)count);
+					int attackCap = Mathf.CeilToInt(attack.totalNumberOfAttacks / (float)fullCount);
 					while (attack.numberOfAttacksSoFar < attack.totalNumberOfAttacks && attackCap > 0)
 					{
 						//Apply damage
@@ -331,6 +379,13 @@ public class BattleBehaviour : InteractableBase
 		{
 			result.destroyed = true;
 			OnDeath();
+		}
+		else
+		{
+			if (autoRetaliate)
+			{
+				AddMaintainedTarget(origin);
+			}
 		}
 
 		return result;
