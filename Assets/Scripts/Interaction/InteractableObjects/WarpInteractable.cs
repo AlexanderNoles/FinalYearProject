@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WarpInteractable : ContextLinkedInteractable
+public class WarpInteractable : LocationContextLinkedInteractable
 {
 	private static WarpInteractable instance;
 

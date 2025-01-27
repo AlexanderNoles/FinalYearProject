@@ -70,11 +70,11 @@ public class Interaction : IDisplay
 
 		public static bool ShopValidation(InteractableBase interactable)
 		{
-			if (interactable is ContextLinkedInteractable)
+			if (interactable is LocationContextLinkedInteractable)
 			{
 				//Linked to simulation context
 
-				LocationContextLink targetContext = (interactable as ContextLinkedInteractable).simulationContext;
+				LocationContextLink targetContext = (interactable as LocationContextLinkedInteractable).simulationContext;
 
 				if (targetContext != null)
 				{

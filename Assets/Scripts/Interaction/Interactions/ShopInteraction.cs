@@ -11,7 +11,7 @@ public class ShopInteraction : Interaction
 
 	public override void Process(InteractableBase interactable)
 	{
-		VisitableLocation targetLocation = (interactable as ContextLinkedInteractable).simulationContext.target;
+		VisitableLocation targetLocation = (interactable as LocationContextLinkedInteractable).simulationContext.target;
 
 		if (targetLocation != null)
 		{

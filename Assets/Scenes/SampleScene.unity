@@ -349,6 +349,7 @@ MonoBehaviour:
   targetCollider: {fileID: 2777602}
   autoFindTargets: 0
   transform: {fileID: 0}
+  currentTargets: []
   simulationLink: {fileID: 0}
   firePoints:
   - {x: -2.2, y: 0, z: -0.31}
@@ -9557,7 +9558,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 30000
+  far clip plane: 90000
   field of view: 60
   orthographic: 0
   orthographic size: 5

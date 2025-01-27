@@ -53,7 +53,7 @@ public class AsteroidRendering : MonoBehaviour
 		//Precompute offsets
 		offsets.Clear();
 
-		const int gridDimensions = 1;
+		const int gridDimensions = 2;
 		for (int x = -gridDimensions; x <= gridDimensions; x++)
 		{
 			for (int z = -gridDimensions; z <= gridDimensions; z++)
