@@ -351,6 +351,7 @@ MonoBehaviour:
   autoRetaliate: 0
   transform: {fileID: 0}
   currentTargets: []
+  maintainedTargets: []
   simulationLink: {fileID: 0}
   firePoints:
   - {x: -2.2, y: 0, z: -0.31}

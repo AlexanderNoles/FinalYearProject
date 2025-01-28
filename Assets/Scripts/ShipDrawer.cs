@@ -71,7 +71,7 @@ public class ShipDrawer : BattleContextLink
 			model.parent = transform;
 
 			model.localPosition = Vector3.zero;
-			model.localRotation = Quaternion.identity;
+			model.localRotation = Quaternion.Euler(0, Random.Range(0, 360.0f), 0);
 
 			//Add battle behaviour weapons
 			ContextLinkedWeaponProfile wp = new ContextLinkedWeaponProfile().SetTarget(target);

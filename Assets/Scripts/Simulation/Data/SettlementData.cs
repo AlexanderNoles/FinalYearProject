@@ -20,7 +20,7 @@ public class SettlementData : DataBase
 
 			public override float GetTimeBetweenAttacks()
 			{
-				return 1.5f;
+				return 0.25f;
 			}
 		}
 

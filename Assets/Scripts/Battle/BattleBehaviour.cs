@@ -131,7 +131,7 @@ public class BattleBehaviour : InteractableBase
 		}
 
 		//Can't target something twice
-		if (currentTargets.Contains(newTarget))
+		if (maintainedTargets.Contains(newTarget))
 		{
 			return;
 		}
@@ -265,7 +265,10 @@ public class BattleBehaviour : InteractableBase
 
 			if (target.Dead())
 			{
-				RemoveTarget(target);
+				if (targets.Remove(target))
+				{
+					OnRemoveTarget(target);
+				}
 				continue;
 			}
 			else
