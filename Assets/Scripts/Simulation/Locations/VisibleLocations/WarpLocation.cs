@@ -1,4 +1,3 @@
-
 using EntityAndDataDescriptor;
 
 public class WarpLocation : VisitableLocation

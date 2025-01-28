@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ship : WeaponBase
+public class Ship : SimObject
 {
 	public float health;
 	public bool isWreck = false;
@@ -17,7 +17,7 @@ public class Ship : WeaponBase
 		}
 	}
 
-	public virtual float GetMaxHealth()
+	public override float GetMaxHealth()
 	{
 		return 10;
 	}

@@ -9,9 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4450409684934854621}
-  - component: {fileID: 8793071340828438041}
-  - component: {fileID: 581286135979985476}
-  - component: {fileID: 1614907898933062972}
+  - component: {fileID: 1097613748675430911}
   - component: {fileID: 7662382907794166482}
   - component: {fileID: 7694274686706516533}
   m_Layer: 0
@@ -36,7 +34,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8793071340828438041
+--- !u!114 &1097613748675430911
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,46 +43,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 5299200730849592043}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de970d3b5ee9efc4483a6afaeaed5222, type: 3}
+  m_Script: {fileID: 11500000, guid: 5a9fe8405f64a3e408e3e2ed1afaf006, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  transform: {fileID: 0}
-  bb: {fileID: 1614907898933062972}
---- !u!114 &581286135979985476
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5299200730849592043}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 428f3f51183642749a12deffaf451cd1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canBeInteractedWith: 1
-  mouseTargetCollider: {fileID: 7694274686706516533}
---- !u!114 &1614907898933062972
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5299200730849592043}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b16208d1a27691543bea7f1a7a27ed34, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetsName: Ship
+  battleEnabled: 1
   targetCollider: {fileID: 7694274686706516533}
   autoFindTargets: 1
+  autoRetaliate: 1
   transform: {fileID: 0}
   currentTargets: []
-  simulationLink: {fileID: 8793071340828438041}
+  maintainedTargets: []
   targetBox:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0.25, y: 0.25, z: 0.25}
+  canBeInteractedWith: 1
+  mouseTargetCollider: {fileID: 7694274686706516533}
 --- !u!114 &7662382907794166482
 MonoBehaviour:
   m_ObjectHideFlags: 0

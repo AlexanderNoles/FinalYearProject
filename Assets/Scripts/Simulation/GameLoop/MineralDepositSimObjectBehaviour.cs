@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MineralDepositBattleBehaviour : BoxDescribedBattleBehaviour
+public class MineralDepositSimObjectBehaviour : SimObjectBehaviour
 {
 	protected override TakenDamageResult TakeDamage(float rawDamageNumber, BattleBehaviour origin)
 	{

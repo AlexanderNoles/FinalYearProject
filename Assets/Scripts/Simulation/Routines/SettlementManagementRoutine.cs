@@ -161,6 +161,8 @@ public class SettlementManagementRoutine : RoutineBase
 									{
 										//Add new ship
 										FleetShip newShip = new FleetShip();
+										//Set the parent so this ship can know things about its faction
+										newShip.SetParent(settlementData.parent);
 										current.ships.Add(newShip);
 										//Mark the collection as having been updated
 										//So we need to draw more ships

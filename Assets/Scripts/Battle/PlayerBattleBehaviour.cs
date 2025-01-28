@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerBattleBehaviour : BattleBehaviour
+public class PlayerBattleBehaviour : SimObjectBehaviour
 {
 	private static PlayerBattleBehaviour instance;
 
@@ -154,13 +154,19 @@ public class PlayerBattleBehaviour : BattleBehaviour
 		MainInfoUIControl.ForceHealthBarRedraw();
 	}
 
-	protected override void OnAddTarget(BattleBehaviour newTarget)
+	protected override void OnAddTarget(Target newTarget)
 	{
 		//Notify targets UI
-		CurrentTargetsUI.AddTarget(newTarget);
+		CurrentTargetsUI.AddTarget(newTarget.bb);
 	}
 
-	protected override void OnRemoveTarget(BattleBehaviour target)
+	protected override void OnRemoveTarget(Target target)
+	{
+		//Call raw method
+		OnRemoveTargetRaw(target.bb);
+	}
+
+	protected override void OnRemoveTargetRaw(BattleBehaviour target)
 	{
 		//Notify targets UI
 		CurrentTargetsUI.RemoveTarget(target);
@@ -181,10 +187,10 @@ public class PlayerBattleBehaviour : BattleBehaviour
 		PlayerManagement.KillPlayer();
 	}
 
-	protected override void OnClearTargets(List<BattleBehaviour> targetsBefore)
+	protected override void OnClearTargets(List<Target> targetsBefore)
 	{
 		//Just run on remove target for all of them
-		foreach (BattleBehaviour bb in targetsBefore)
+		foreach (Target bb in targetsBefore)
 		{
 			OnRemoveTarget(bb);
 		}

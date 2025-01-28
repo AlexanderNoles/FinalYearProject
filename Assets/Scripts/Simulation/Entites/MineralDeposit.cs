@@ -71,5 +71,10 @@ public class MineralDeposit : SimulationEntity
 		targetableLocationData.maxHealth = 50.0f * targetableLocationData.desirability;
 
 		AddData(DataTags.TargetableLocation, targetableLocationData);
+
+		ContactPolicyData contactPolicyData = new ContactPolicyData();
+		contactPolicyData.openlyHostile = true;
+
+		AddData(DataTags.ContactPolicy, contactPolicyData);
 	}
 }

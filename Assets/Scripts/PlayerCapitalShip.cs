@@ -388,7 +388,7 @@ public class PlayerCapitalShip : MonoBehaviour
 					rotateT += Time.deltaTime * 0.1f;
 					transform.rotation = Quaternion.Lerp(startTurnRot, lookAtTargetRot, turnCurve.Evaluate(rotateT));
 
-					float effectIntensity = rotateT / 3.0f;
+					float effectIntensity = rotateT * 1.25f;
 					UpdateEngineIntensityVisuallyDirect(effectIntensity, effectIntensity);
 
 					if (rotateT >= 1.0f)

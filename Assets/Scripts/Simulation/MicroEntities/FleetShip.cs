@@ -4,21 +4,28 @@ using UnityEngine;
 
 public class FleetShip : Ship
 {
-	//Get base damage
-	public override float GetDamageRaw()
-	{
-		//Static value for now
-		return 3;
-	}
+	public WeaponBase weapon = new FleetWeapon();
 
-	public override float GetTimeBetweenAttacks()
+	public override List<WeaponBase> GetWeapons()
 	{
-		return base.GetTimeBetweenAttacks();
+		return new List<WeaponBase>
+		{
+			weapon
+		};
 	}
 
 	public override float GetMaxHealth()
 	{
 		//Static value for now
 		return 25;
+	}
+}
+
+public class FleetWeapon : WeaponBase
+{
+	public override float GetDamageRaw()
+	{
+		//Static value for now
+		return 3;
 	}
 }

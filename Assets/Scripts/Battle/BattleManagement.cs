@@ -215,16 +215,20 @@ public class BattleManagement : MonoBehaviour
 
 			//Get relationship data
 			Dictionary<int, FeelingsData> idToFeelingsData = SimulationManagement.GetEntityIDToData<FeelingsData>(DataTags.Feelings);
+			//Get contact policy data
+			Dictionary<int, ContactPolicyData> idToContactData = SimulationManagement.GetEntityIDToData<ContactPolicyData>(DataTags.ContactPolicy);
 
 			foreach (BattleBehaviour bb in colliderToBattleBehaviour.Values)
 			{
-				if (bb.autoFindTargets)
+				if (bb.autoFindTargets && SimObjectBehaviour.IsSimObj(bb.GetType()))
 				{
-					//First clear the targets
-					bb.ClearTargets();
+					//First clear the targets, (unless they are maintained)
+					bb.ClearNonMaintainedTargets();
+
+					SimObjectBehaviour simObjectBehaviour = (SimObjectBehaviour)bb;
 
 					//Get feelings data for this bb
-					int entityID = bb.TryGetEntityID();
+					int entityID = simObjectBehaviour.TryGetEntityID();
 
 					if (entityID == -1 || !idToFeelingsData.ContainsKey(entityID))
 					{
@@ -235,17 +239,29 @@ public class BattleManagement : MonoBehaviour
 					//Now iterate over all other bbs in the scene and get ones that we could be aggressive towards
 					foreach (BattleBehaviour otherBB in colliderToBattleBehaviour.Values)
 					{
-						int otherID = otherBB.TryGetEntityID();
+						int otherID = -1;
+
+						if (SimObjectBehaviour.IsSimObj(otherBB.GetType()))
+						{
+							otherID = (otherBB as SimObjectBehaviour).TryGetEntityID();
+						}
 
 						if (otherID == entityID)
 						{
 							//Can't attack our own ships!
 							continue;
 						}
-						else if (otherID == -1 || !feelingsData.idToFeelings.ContainsKey(otherID))
+						else if (
+							otherID == -1 || 
+							!feelingsData.idToFeelings.ContainsKey(otherID) ||
+							(idToContactData.ContainsKey(otherID) && idToContactData[otherID].openlyHostile) ||
+							(idToContactData.ContainsKey(entityID) && idToContactData[entityID].openlyHostile)
+							)
 						{
 							//Add target if it doesn't have an entity, or we have no feelings about this entity
 							//So by default things attack each other
+
+							//Also add it if it is openly hostile or we are openly hostile
 							bb.AddTarget(otherBB, false);
 						}
 						else if (feelingsData.idToFeelings[otherID].inConflict)

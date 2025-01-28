@@ -179,7 +179,12 @@ public class BattleResolutionRoutine : RoutineBase
 								foreach (Ship ship in collectionShips)
 								{
 									//Because this is a lazy battle we can just estimate the damage to each ship per tick
-									totalDamage += ship.GetDamageWithVariance();
+									List<WeaponBase> weapons = ship.GetWeapons();
+
+									foreach (WeaponBase weapon in weapons)
+									{
+										totalDamage += weapon.GetDamageWithVariance();
+									}
 								}
 							}
 

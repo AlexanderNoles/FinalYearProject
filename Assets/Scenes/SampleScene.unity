@@ -345,14 +345,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c52007ef590c604419e2ab1334e86de7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetsName: Target
+  battleEnabled: 1
   targetCollider: {fileID: 2777602}
   autoFindTargets: 0
   autoRetaliate: 0
   transform: {fileID: 0}
   currentTargets: []
   maintainedTargets: []
-  simulationLink: {fileID: 0}
+  targetBox:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  canBeInteractedWith: 0
+  mouseTargetCollider: {fileID: 0}
   firePoints:
   - {x: -2.2, y: 0, z: -0.31}
   - {x: -2.2, y: 0, z: -1.89}
@@ -28589,7 +28593,6 @@ GameObject:
   - component: {fileID: 2083627887}
   - component: {fileID: 2083627886}
   - component: {fileID: 2083627889}
-  - component: {fileID: 2083627890}
   m_Layer: 0
   m_Name: OuterEffect
   m_TagString: Untagged
@@ -28671,22 +28674,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 2083627885}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ea1a71dd3fc12a409e9aceb3c78e791, type: 3}
+  m_Script: {fileID: 11500000, guid: d859e7aeb0448b444be9b215abbc4ba2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  simulationContext: {fileID: 2083627890}
---- !u!114 &2083627890
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2083627885}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d3da75d7658c40428eb92785f2f774e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  battleEnabled: 0
+  targetCollider: {fileID: 0}
+  autoFindTargets: 1
+  autoRetaliate: 1
+  transform: {fileID: 0}
+  currentTargets: []
+  maintainedTargets: []
+  targetBox:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  canBeInteractedWith: 0
+  mouseTargetCollider: {fileID: 0}
 --- !u!1 &2088180540
 GameObject:
   m_ObjectHideFlags: 0

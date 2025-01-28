@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattleBehaviour : InteractableBase
-{ 
-	public string targetsName = "Target";
+public class BattleBehaviour : MonoBehaviour
+{
+	[Header("Battle Settings")]
+	public bool battleEnabled = true;
 	public Collider targetCollider;
 	public bool autoFindTargets = true;
 	public bool autoRetaliate = true;
@@ -14,49 +15,61 @@ public class BattleBehaviour : InteractableBase
 
 	[HideInInspector]
 	public List<WeaponProfile> weapons = new List<WeaponProfile>();
-	public List<BattleBehaviour> currentTargets = new List<BattleBehaviour>();
-	public List<BattleBehaviour> maintainedTargets = new List<BattleBehaviour>();
+
+	[System.Serializable]
+	public class Target
+	{
+		public enum TargetType
+		{
+			Normal,
+			Maintained
+		}
+
+		public BattleBehaviour bb;
+		public TargetType type;
+	}
+
+	public List<Target> currentTargets = new List<Target>();
+
+	private bool Targeting(BattleBehaviour bb, out int index)
+	{
+		index = -1;
+		foreach (Target target in currentTargets)
+		{
+			index++;
+			if (target.bb.Equals(bb))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
 
     protected float currentHealth;
-	public BattleContextLink simulationLink;
 
     protected virtual void Awake()
 	{
 		transform = base.transform;
 	}
 
-	public virtual int TryGetEntityID()
+	protected virtual void OnEnable()
 	{
-		if (simulationLink == null)
+		if (battleEnabled)
 		{
-			return -1;
-		}
-
-		return simulationLink.GetEntityID();
-	}
-
-	protected void OnEnable()
-	{
-		BattleManagement.RegisterBattleBehaviour(targetCollider, this);
-
-		if (simulationLink != null )
-		{
-			currentHealth = simulationLink.GetMaxHealth();
-
-			if (Dead())
-			{
-				OnDeath();
-			}
+			BattleManagement.RegisterBattleBehaviour(targetCollider, this);
 		}
 	}
 
-	protected void OnDisable()
+	protected virtual void OnDisable()
 	{
-		BattleManagement.DeRegisterBattleBehaviour(targetCollider);
+		if (battleEnabled)
+		{
+			BattleManagement.DeRegisterBattleBehaviour(targetCollider);
+		}
 
 		//Do full clear
 		currentTargets.Clear();
-		maintainedTargets.Clear();
 	}
 
 	public virtual float GetHealthPercentage()
@@ -71,7 +84,7 @@ public class BattleBehaviour : InteractableBase
 
 	public virtual float GetRegenPerTick()
 	{
-		return 0.0f;
+		return 0.5f;
 	}
 
 	protected virtual void Update()
@@ -98,49 +111,47 @@ public class BattleBehaviour : InteractableBase
 			return;
 		}
 
-        if (!RemoveTarget(target))
-        {
-            //If target is not removed (i.e., it was not in the list)
-			AddTargetInternal(target, battleReset);
-        }
+		if (Targeting(target, out int index))
+		{
+			//Remove
+			currentTargets.RemoveAt(index);
+			OnRemoveTargetRaw(target);
+		}
+		else
+		{
+			AddTarget(target);
+		}
     }
 
-	public void AddTarget(BattleBehaviour newTarget, bool battleReset = true)
+	public void AddTarget(BattleBehaviour newTarget, bool battleReset = true, Target.TargetType type = Target.TargetType.Normal)
 	{
-		//Can't attack ourself
-		if (Equals(newTarget))
-		{
-			return;
-		}
-
 		//Can't target something twice
-		if (currentTargets.Contains(newTarget))
+		if (Targeting(newTarget, out int index))
 		{
-			return;
+			//Switch target to maintained if it is currently normal and the new target is meant to be maintained
+			if (currentTargets[index].type == Target.TargetType.Normal)
+			{
+				currentTargets[index].type = type;
+			}
 		}
+		else
+		{
+			Target wrappedTarget = new Target();
+			wrappedTarget.bb = newTarget;
+			wrappedTarget.type = type;
 
-		AddTargetInternal(newTarget, battleReset);
+			AddTargetInternal(wrappedTarget, battleReset);
+		}
 	}
 
-	public void AddMaintainedTarget(BattleBehaviour newTarget, bool battleReset = true)
+	private void AddTargetInternal(Target target, bool battleReset)
 	{
 		//Can't attack ourself
-		if (Equals(newTarget))
+		if (Equals(target.bb))
 		{
 			return;
 		}
 
-		//Can't target something twice
-		if (maintainedTargets.Contains(newTarget))
-		{
-			return;
-		}
-
-		AddMaintainedTargetInternal(newTarget, battleReset);
-	}
-
-	private void AddTargetInternal(BattleBehaviour target, bool battleReset)
-	{
 		if (battleReset)
 		{
 			BattleResetCheck();
@@ -148,17 +159,6 @@ public class BattleBehaviour : InteractableBase
 
 		OnAddTarget(target);
 		currentTargets.Add(target);
-	}
-
-	private void AddMaintainedTargetInternal(BattleBehaviour target, bool battleReset)
-	{
-		if (battleReset)
-		{
-			BattleResetCheck();
-		}
-
-		OnAddTarget(target);
-		maintainedTargets.Add(target);
 	}
 
 	private void BattleResetCheck()
@@ -173,9 +173,23 @@ public class BattleBehaviour : InteractableBase
 		}
 	}
 
-	protected bool RemoveTarget(BattleBehaviour target)
+	protected bool RemoveTarget(BattleBehaviour battleBehaviour)
 	{
-		bool targetRemoved = currentTargets.Remove(target);
+		if (Targeting(battleBehaviour, out int index))
+		{
+			currentTargets.RemoveAt(index);
+
+			OnRemoveTargetRaw(battleBehaviour);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	protected bool RemoveTarget(Target target)
+	{
+		bool targetRemoved = RemoveTarget(target.bb);
 
 		if (targetRemoved)
 		{
@@ -185,6 +199,23 @@ public class BattleBehaviour : InteractableBase
 		return targetRemoved;
 	}
 
+	public void ClearNonMaintainedTargets()
+	{
+		OnClearTargets(currentTargets);
+
+		for (int i = 0; i < currentTargets.Count;)
+		{
+			if (currentTargets[i].type == Target.TargetType.Maintained)
+			{
+				i++;
+			}
+			else
+			{
+				currentTargets.RemoveAt(i);
+			}
+		}
+	}
+
 	public void ClearTargets()
 	{
 		OnClearTargets(currentTargets);
@@ -192,17 +223,22 @@ public class BattleBehaviour : InteractableBase
 	}
 
 	//Insert hook methods
-	protected virtual void OnAddTarget(BattleBehaviour newTarget)
+	protected virtual void OnAddTarget(Target newTarget)
 	{
 		//Do nothing by default
 	}
 
-	protected virtual void OnRemoveTarget(BattleBehaviour target)
+	protected virtual void OnRemoveTargetRaw(BattleBehaviour target)
 	{
 		//Do nothing by default
 	}
 
-	protected virtual void OnClearTargets(List<BattleBehaviour> targetsBefore)
+	protected virtual void OnRemoveTarget(Target target)
+	{
+		//Do nothing by default
+	}
+
+	protected virtual void OnClearTargets(List<Target> targetsBefore)
 	{
 		//Do nothing by default
 	}
@@ -226,7 +262,7 @@ public class BattleBehaviour : InteractableBase
 
 	protected void ProcessTargets()
 	{
-		int count = currentTargets.Count + maintainedTargets.Count;
+		int count = currentTargets.Count;
 		if(count <= 0)
 		{
 			//No targets
@@ -247,10 +283,9 @@ public class BattleBehaviour : InteractableBase
 		}
 
 		ProcessTargetList(currentTargets, attackProfiles, count);
-		ProcessTargetList(maintainedTargets, attackProfiles, count);
 	}
 
-	private void ProcessTargetList(List<BattleBehaviour> targets, List<AttackProfile> attackProfiles, int fullCount)
+	private void ProcessTargetList(List<Target> targets, List<AttackProfile> attackProfiles, int fullCount)
 	{
 		//Apply damage to targets
 		//Apply some random offset to the index so if too few attacks are applied on one frame
@@ -261,9 +296,9 @@ public class BattleBehaviour : InteractableBase
 		{
 			//Use current count instead of the count cached at the start of these function incase element is removed
 			int index = (i + randomOffset) % targets.Count;
-			BattleBehaviour target = targets[index];
+			Target target = targets[index];
 
-			if (target.Dead())
+			if (target.bb.Dead())
 			{
 				if (targets.Remove(target))
 				{
@@ -276,7 +311,7 @@ public class BattleBehaviour : InteractableBase
 				i++;
 			}
 
-			Vector3 targetPosition = target.GetPosition();
+			Vector3 targetPosition = target.bb.GetPosition();
 
 			//Preprocess
 			PreTargetProcess(target);
@@ -299,9 +334,9 @@ public class BattleBehaviour : InteractableBase
 					while (attack.numberOfAttacksSoFar < attack.totalNumberOfAttacks && attackCap > 0)
 					{
 						//Apply damage
-						target.TakeDamage(attack.parentProfile.GetDamage(), this);
+						target.bb.TakeDamage(attack.parentProfile.GetDamage(), this);
 
-						Vector3 shotTargetPosition = target.GetTargetablePosition();
+						Vector3 shotTargetPosition = target.bb.GetTargetablePosition();
 						//Draw Attack
 						DrawAttack(shotTargetPosition, GetFireFromPosition(shotTargetPosition), weapons[a]);
 
@@ -318,12 +353,12 @@ public class BattleBehaviour : InteractableBase
 		}
 	}
 
-	protected virtual void PreTargetProcess(BattleBehaviour target)
+	protected virtual void PreTargetProcess(Target target)
 	{
 
 	}
 
-	protected virtual void PostTargetProcess(BattleBehaviour target)
+	protected virtual void PostTargetProcess(Target target)
 	{
 
 	}
@@ -387,7 +422,7 @@ public class BattleBehaviour : InteractableBase
 		{
 			if (autoRetaliate)
 			{
-				AddMaintainedTarget(origin);
+				AddTarget(origin, true, Target.TargetType.Maintained);
 			}
 		}
 
@@ -396,10 +431,7 @@ public class BattleBehaviour : InteractableBase
 
 	protected virtual void OnDeath()
 	{
-		if (simulationLink != null)
-		{
-			simulationLink.OnDeath();
-		}
+		//Do nothing by default
 	}
 
 	//HELPER FUNCTIONS

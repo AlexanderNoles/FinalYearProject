@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class PlayerInteractionManagement : MonoBehaviour
 {
-	private static Dictionary<Collider, InteractableControl> interactables = new Dictionary<Collider, InteractableControl>();
+	private static Dictionary<Collider, SimObjectBehaviour> interactables = new Dictionary<Collider, SimObjectBehaviour>();
 
-	public static void AddInteractable(Collider target, InteractableControl interactable)
+	public static void AddInteractable(Collider target, SimObjectBehaviour interactable)
 	{
 		interactables.Add(target, interactable);
 	}
@@ -93,32 +93,32 @@ public class PlayerInteractionManagement : MonoBehaviour
 			RaycastHit[] hits = Physics.RaycastAll(mouseViewRay, range);
 
 			//Get target control
-			InteractableControl newTarget = null;
+			SimObjectBehaviour target = null;
 			float currentLowestRange = float.MaxValue;
 
 			foreach (RaycastHit hit in hits)
 			{
-				if (interactables.TryGetValue(hit.collider, out InteractableControl target))
+				if (interactables.TryGetValue(hit.collider, out SimObjectBehaviour outTarget))
 				{
 					if (hit.distance < currentLowestRange)
 					{
 						currentLowestRange = hit.distance;
-						newTarget = target;
+						target = outTarget;
 					}
 				}
 			}
 
-			bool bypass = false;
-			List<InteractableBase> bypassedControl = new List<InteractableBase>();
-			if (newTarget == null && PlayerCapitalShip.InJumpTravelStage() && PlayerManagement.GetInventory().HasItemOfType(typeof(WarpShopItemBase)))
+			if (target == null)
 			{
-				bypass = true;
-				bypassedControl.Add(WarpInteractable.GetInstance());
+				//Warp fallback
+				if (PlayerCapitalShip.InJumpTravelStage() && PlayerManagement.GetInventory().HasItemOfType(typeof(WarpShopItemBase)))
+				{
+					target = WarpSimBehaviour.GetInstance();
+				}
 			}
 
-			if (newTarget != null || bypass)
+			if (target != null)
 			{
-				List<InteractableBase> controlled = bypass ? bypassedControl : newTarget.GetControlled();
 				List<Interaction> targetInteractions = new List<Interaction>();
 
 				if (smartInteractionEnabled)
@@ -132,22 +132,19 @@ public class PlayerInteractionManagement : MonoBehaviour
 
 				foreach (Interaction targetInteraction in targetInteractions)
 				{
-					foreach (InteractableBase targetObject in controlled)
+					bool validationResult = targetInteraction.Validate(target);
+
+					if (validationResult)
 					{
-						bool validationResult = targetInteraction.Validate(targetObject);
-
-						if (validationResult)
+						//On mouse over
+						if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
 						{
-							//On mouse over
-							if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
-							{
-								//On Interact button pressed
-								targetInteraction.Process(targetObject);
-							}
-
-							interactionIcon = targetInteraction.GetIcon();
-							return;
+							//On Interact button pressed
+							targetInteraction.Process(target);
 						}
+
+						interactionIcon = targetInteraction.GetIcon();
+						return;
 					}
 				}
 			}

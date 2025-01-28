@@ -103,12 +103,12 @@ public class GeneratorManagement : MonoBehaviour
 		}
 	}
 
-	public static ShipDrawer DrawShip(Vector3 initalPos)
+	public static ShipSimObjectBehaviour DrawShip(Vector3 initalPos)
 	{
-		return _instance.structuresPool.SpawnObject<ShipDrawer>(POOL_INDEXES.SHIP, initalPos).component;
+		return _instance.structuresPool.SpawnObject<ShipSimObjectBehaviour>(POOL_INDEXES.SHIP, initalPos).component;
 	}
 
-	public static void ReturnShip(ShipDrawer ship)
+	public static void ReturnShip(ShipSimObjectBehaviour ship)
 	{
 		_instance.structuresPool.ReturnObject((int)POOL_INDEXES.SHIP, ship.transform);
 	}

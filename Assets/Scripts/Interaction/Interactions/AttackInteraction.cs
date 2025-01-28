@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class AttackInteraction : Interaction
 {
-	public override bool Validate(InteractableBase interactable)
+	public override bool Validate(SimObjectBehaviour interactable)
 	{
 		return InteractionValidationHelper.AttackValidation(interactable);
 	}
 
-	public override void Process(InteractableBase interactable)
+	public override void Process(SimObjectBehaviour interactable)
 	{
-		PlayerBattleBehaviour.ToggleTargetExternal(interactable as BattleBehaviour);
+		PlayerBattleBehaviour.ToggleTargetExternal(interactable);
 	}
 
 	protected override string GetIconPath()

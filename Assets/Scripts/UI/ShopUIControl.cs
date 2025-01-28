@@ -7,7 +7,7 @@ using UnityEngine.Assertions;
 public class ShopUIControl : MonoBehaviour
 {
 	private static ShopUIControl instance;
-	private VisitableLocation target;
+	private SimObject target;
 	private Transform targetsTransform;
 	private Shop targetShop;
 	public DraggableWindow draggableWindowControl;
@@ -62,7 +62,7 @@ public class ShopUIControl : MonoBehaviour
 		}
 	}
 
-	public static void ToggleShopUI(VisitableLocation target, Transform targetsTransform)
+	public static void ToggleShopUI(SimObject target, Transform targetsTransform)
 	{
 		if (target == instance.target)
 		{

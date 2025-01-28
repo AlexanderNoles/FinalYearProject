@@ -46,7 +46,7 @@ public class TargetableLocationData : DataBase
 			generation = target.drawFunc.Invoke(parent);
 
 			//Apply simulation context
-			ApplyContext(generation.targets[^1].Item2);
+			LinkToBehaviour(generation.targets[^1].Item2);
 
 			//Finalize
 			generation.FinalizeGeneration();

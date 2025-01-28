@@ -10,15 +10,14 @@ public class Interaction : IDisplay
 		public const float infinity = Mathf.Infinity;
 	}
 
-
 	protected Sprite sprite;
 
-	public virtual bool Validate(InteractableBase interactable)
+	public virtual bool Validate(SimObjectBehaviour interactable)
 	{
 		return true;
 	}
 
-	public virtual void Process(InteractableBase interactable)
+	public virtual void Process(SimObjectBehaviour interactable)
 	{
 		//Do nothing by default
 	}
@@ -63,23 +62,16 @@ public class Interaction : IDisplay
 
 	protected static class InteractionValidationHelper
 	{
-		public static bool AttackValidation(InteractableBase interactable)
+		public static bool AttackValidation(SimObjectBehaviour interactable)
 		{
 			return interactable is BattleBehaviour &&!PlayerBattleBehaviour.IsPlayerBB(interactable as BattleBehaviour);
 		}
 
-		public static bool ShopValidation(InteractableBase interactable)
+		public static bool ShopValidation(SimObjectBehaviour interactable)
 		{
-			if (interactable is LocationContextLinkedInteractable)
+			if (interactable.Linked())
 			{
-				//Linked to simulation context
-
-				LocationContextLink targetContext = (interactable as LocationContextLinkedInteractable).simulationContext;
-
-				if (targetContext != null)
-				{
-					return targetContext.target.HasShop();
-				}
+				return interactable.target.HasShop();
 			}
 
 			return false;

@@ -39,7 +39,7 @@ public class SettlementData : DataBase
 
 				generation.SpawnStructure(GeneratorManagement.POOL_INDEXES.SETTLEMENT, Vector3.zero);
 				//Apply simulation context to object
-				ApplyContext(generation.targets[^1].Item2);
+				LinkToBehaviour(generation.targets[^1].Item2);
 
 				generation.FinalizeGeneration();
 			}
@@ -129,6 +129,7 @@ public class SettlementData : DataBase
 
 			location.shop.capacity = 4;
 
+			location.SetParent(parent);
 			//Set shop to use same parent
 			location.shop.parent = this.parent;
 

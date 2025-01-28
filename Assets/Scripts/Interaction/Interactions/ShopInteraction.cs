@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class ShopInteraction : Interaction
 {
-	public override bool Validate(InteractableBase interactable)
+	public override bool Validate(SimObjectBehaviour interactable)
 	{
 		return InteractionValidationHelper.ShopValidation(interactable);
 	}
 
-	public override void Process(InteractableBase interactable)
+	public override void Process(SimObjectBehaviour interactable)
 	{
-		VisitableLocation targetLocation = (interactable as LocationContextLinkedInteractable).simulationContext.target;
+		SimObject targetObject = interactable.target;
 
-		if (targetLocation != null)
+		if (targetObject != null)
 		{
 			//Activate shop ui and have it display and act on shop information
 			//Need to pass the Visitable Location itself so the shop can auto close if the location is too far away!
-			ShopUIControl.ToggleShopUI(targetLocation, interactable.transform);
+			ShopUIControl.ToggleShopUI(targetObject, interactable.transform);
 		}
 	}
 

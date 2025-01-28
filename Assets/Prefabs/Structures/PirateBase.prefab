@@ -9,12 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5494204738508901481}
+  - component: {fileID: 2710924277477743292}
   - component: {fileID: 4861282858207474214}
   - component: {fileID: 1322960781904055301}
-  - component: {fileID: 294616186703069996}
-  - component: {fileID: 5714298985836459827}
-  - component: {fileID: 7202049771506082268}
-  - component: {fileID: 529684382907314067}
   - component: {fileID: 6671128360712285819}
   - component: {fileID: 3289435846975279660}
   m_Layer: 0
@@ -39,6 +36,30 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2710924277477743292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8031708224019238251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a80d0f9ebb738c14b8e59196b1e08a66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  battleEnabled: 1
+  targetCollider: {fileID: 3289435846975279660}
+  autoFindTargets: 1
+  autoRetaliate: 1
+  transform: {fileID: 0}
+  currentTargets: []
+  maintainedTargets: []
+  targetBox:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 1, y: 1, z: 1}
+  canBeInteractedWith: 1
+  mouseTargetCollider: {fileID: 3289435846975279660}
 --- !u!33 &4861282858207474214
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -89,64 +110,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &294616186703069996
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8031708224019238251}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 428f3f51183642749a12deffaf451cd1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canBeInteractedWith: 1
-  mouseTargetCollider: {fileID: 3289435846975279660}
---- !u!114 &5714298985836459827
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8031708224019238251}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 231374dcaed51a1438df0fec53fbfd2c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  simulationContext: {fileID: 529684382907314067}
-  targetBattleBehaviour: {fileID: 7202049771506082268}
---- !u!114 &7202049771506082268
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8031708224019238251}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 538adb43e5b1c5a45ae0d509736086aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetsName: PirateBase
-  targetCollider: {fileID: 3289435846975279660}
-  autoFindTargets: 1
-  transform: {fileID: 0}
-  currentTargets: []
-  simulationLink: {fileID: 5714298985836459827}
---- !u!114 &529684382907314067
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8031708224019238251}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d3da75d7658c40428eb92785f2f774e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &6671128360712285819
 MonoBehaviour:
   m_ObjectHideFlags: 0

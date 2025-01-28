@@ -8,7 +8,7 @@ public class ShipCollectionDrawer
 	public Transform parent;
 	private SimulationEntity entity;
 	private int targetLTUI = -1;
-	public List<ShipDrawer> drawnShips = new List<ShipDrawer>();
+	public List<ShipSimObjectBehaviour> drawnShips = new List<ShipSimObjectBehaviour>();
 
 	public void Link(ShipCollection newTarget, SimulationEntity entity)
 	{
@@ -44,7 +44,7 @@ public class ShipCollectionDrawer
 
 	public void UndrawAll()
 	{
-		foreach (ShipDrawer sh in drawnShips)
+		foreach (ShipSimObjectBehaviour sh in drawnShips)
 		{
 			UndrawShip(sh, false);
 		}
@@ -60,17 +60,17 @@ public class ShipCollectionDrawer
 
 		//Set position as vector3.zero, ship drawer should figure out position on it's own
 		//to keep things dynamic and flexible
-		ShipDrawer newShip = GeneratorManagement.DrawShip(Vector3.zero);
+		ShipSimObjectBehaviour newShip = GeneratorManagement.DrawShip(Vector3.zero);
 		newShip.SetParent(parent);
 		newShip.Link(ship);
 
-		newShip.Init(entity, this);
+		newShip.Init(this);
 
 		//Start tracking ship drawer
 		drawnShips.Add(newShip);
 	}
 
-	public void UndrawShip(ShipDrawer shipDrawer, bool stopTracking)
+	public void UndrawShip(ShipSimObjectBehaviour shipDrawer, bool stopTracking)
 	{
 		GeneratorManagement.ReturnShip(shipDrawer);
 
@@ -104,7 +104,7 @@ public class ShipCollectionDrawer
 
 			for (int i = 0; i < drawnShips.Count && toRemove.Count > 0; i++)
 			{
-				int index = toRemove.IndexOf(drawnShips[i].target);
+				int index = toRemove.IndexOf(drawnShips[i].target as Ship);
 
 				if (index != -1)
 				{
