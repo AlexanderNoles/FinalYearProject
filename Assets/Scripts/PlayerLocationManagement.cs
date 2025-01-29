@@ -152,6 +152,19 @@ public class PlayerLocationManagement : MonoBehaviour
 		}
     }
 
+	public static void ForceStopDrawingLocation(DrawnLocation location)
+	{
+		CleanupLocationInternal(location);
+
+		instance.drawnLocations.Remove(location);
+	}
+
+	private static void CleanupLocationInternal(DrawnLocation location)
+	{
+		location.targetLocation.Cleanup();
+		location.Cleanup();
+	}
+
 	public MultiObjectPool uiPool;
 	public RectTransform uiPoolTargetRect;
 	private const int drawnLocationTargetIndex = 0;
@@ -210,7 +223,7 @@ public class PlayerLocationManagement : MonoBehaviour
 				newDrawnLocation.SetID(sessionNextID);
 				sessionNextID++;
 
-				visitableLocation.InitDraw(newDrawnLocation.parent);
+				visitableLocation.InitDraw(newDrawnLocation.parent, newDrawnLocation);
 			}
 
 			//Add location to new list based on it's distance
@@ -276,9 +289,10 @@ public class PlayerLocationManagement : MonoBehaviour
 		//Remove any remaining locations in drawn locations
 		foreach (DrawnLocation location in drawnLocations)
 		{
-			location.targetLocation.Cleanup();
-			location.Cleanup();
+			CleanupLocationInternal(location);
 		}
+
+		drawnLocations.Clear();
 
 		//Replace drawn locations
 		drawnLocations = newDrawnLocations;
@@ -419,7 +433,12 @@ public class PlayerLocationManagement : MonoBehaviour
 						//Add all battles in cell
 						foreach (GlobalBattleData.Battle battle in globalBattle.cellCenterToBattles[currentCellCenter])
 						{
-							foundLocations.Add(battle);
+							//Don't include any battles that don't have any active participants, this helps to remove potential confusion for the player
+							//as sim entities will sometimes open up a battle as a front but not send any ships there immediately
+							if (battle.anyShipsInBattle)
+							{
+								foundLocations.Add(battle);
+							}
 						}
 					}
 

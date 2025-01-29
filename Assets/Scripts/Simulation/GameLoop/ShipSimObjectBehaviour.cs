@@ -13,6 +13,16 @@ public class ShipSimObjectBehaviour : SimObjectBehaviour
 	{
 		//Stop drawing ship
 		//Set ship to be destroyed sim side
+
+		//(29/01/2025) something was causing this target to be null
+		//Assumption is that the collection drawer unrendered at the same moment this ship was killed
+		//a.k.a on death should not run if unlinked
+		//Ideally the design would prevent this inherently but this is a better solution than a crash
+		if (!Linked())
+		{
+			return;
+		}
+
 		(target as Ship).isWreck = true;
 
 		//Tell parent collection drawer to not draw ship

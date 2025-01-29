@@ -41,7 +41,7 @@ public class TargetableLocationData : DataBase
 			return 100.0f;
 		}
 
-		public override void InitDraw(Transform parent)
+		public override void InitDraw(Transform parent, PlayerLocationManagement.DrawnLocation drawnLocation)
 		{
 			generation = target.drawFunc.Invoke(parent);
 
@@ -55,7 +55,7 @@ public class TargetableLocationData : DataBase
 		public override void OnDeath()
 		{
 			//Remove from simulation
-			target.parent.Get().AddTag(EntityStateTags.Dead);
+			SimulationManagement.RemoveEntityFromSimulation(target.parent.Get());
 		}
 
 		public override void Cleanup()

@@ -38,7 +38,7 @@ public class SimObject : IDisplay
 	}
 
 	// Draw System //
-	public virtual void InitDraw(Transform parent)
+	public virtual void InitDraw(Transform parent, PlayerLocationManagement.DrawnLocation drawnLocation)
 	{
 
 	}

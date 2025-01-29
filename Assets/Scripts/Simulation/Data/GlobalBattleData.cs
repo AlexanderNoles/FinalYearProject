@@ -20,6 +20,7 @@ public class GlobalBattleData : DataBase
 
 		private List<int> involvedEntities = new List<int>();
 		private List<float> involvedEntitiesProgress = new List<float>();
+		public bool anyShipsInBattle = true;
 
 		public Dictionary<int, List<int>> opositionMatrix = new Dictionary<int, List<int>>();
 
@@ -267,7 +268,7 @@ public class GlobalBattleData : DataBase
 
 		private DrawnData drawnData = null;
 
-		public override void InitDraw(Transform parent)
+		public override void InitDraw(Transform parent, PlayerLocationManagement.DrawnLocation drawnLocation)
 		{
 			drawnData = new DrawnData();
 			drawnData.parent = parent;

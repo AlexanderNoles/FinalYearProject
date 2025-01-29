@@ -67,15 +67,6 @@ public class BattleResolutionRoutine : RoutineBase
 					}
 				}
 
-				//Battles are visitable locations so we can just pass the battle itself
-				if (!SimulationManagement.LocationIsLazy(battle))
-				{
-					//This battle is being proccessed by the typical game loop
-					//not by the simulation
-
-					continue;
-				}
-
 				int involvedEntitiesCount = involvedEntities.Count;
 
 				//First we need to know many units are in this battle for each entity 
@@ -127,7 +118,17 @@ public class BattleResolutionRoutine : RoutineBase
 					}
 				}
 
-				if (shipCollections.Count <= 0)
+				battle.anyShipsInBattle = shipCollections.Count > 0;
+
+				//(Battles are VisitableLocations so we can just pass the battle itself)
+				if (!SimulationManagement.LocationIsLazy(battle))
+				{
+					//This battle is being proccessed by the typical game loop
+					//not by the simulation
+					continue;
+				}
+
+				if (!battle.anyShipsInBattle)
 				{
 					//Currently no one involved in this battle
 					//This can occur from a dead draw between ships

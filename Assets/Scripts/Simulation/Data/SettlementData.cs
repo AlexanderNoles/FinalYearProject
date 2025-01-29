@@ -36,7 +36,7 @@ public class SettlementData : DataBase
             public Settlement actualSettlement;
 			private GeneratorManagement.StructureGeneration generation;
 
-			public override void InitDraw(Transform parent)
+			public override void InitDraw(Transform parent, PlayerLocationManagement.DrawnLocation drawnLocation)
 			{
 				generation = new GeneratorManagement.StructureGeneration();
 

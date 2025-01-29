@@ -420,7 +420,8 @@ public class BattleBehaviour : MonoBehaviour
 		TakenDamageResult result = new TakenDamageResult();
 
 		float finalDamageNumber = rawDamageNumber;
-		result.damageTaken = finalDamageNumber;
+		//Don't allow attack to count as dealing more damage then we have health
+		result.damageTaken = Mathf.Min(finalDamageNumber, currentHealth);
 
 		currentHealth -= finalDamageNumber;
 
