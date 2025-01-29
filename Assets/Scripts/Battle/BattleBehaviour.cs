@@ -87,6 +87,11 @@ public class BattleBehaviour : MonoBehaviour
 		return 0.5f;
 	}
 
+	public virtual bool CanBeAttacked()
+	{
+		return true;
+	}
+
 	protected virtual void Update()
 	{
 		//Clamp current health to max health
@@ -309,6 +314,12 @@ public class BattleBehaviour : MonoBehaviour
 			else
 			{
 				i++;
+			}
+
+			if (!target.bb.CanBeAttacked())
+			{
+				//Not allowed to attack this target
+				continue;
 			}
 
 			Vector3 targetPosition = target.bb.GetPosition();

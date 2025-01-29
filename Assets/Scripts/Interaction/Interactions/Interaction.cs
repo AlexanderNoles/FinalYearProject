@@ -64,7 +64,7 @@ public class Interaction : IDisplay
 	{
 		public static bool AttackValidation(SimObjectBehaviour interactable)
 		{
-			return interactable is BattleBehaviour &&!PlayerBattleBehaviour.IsPlayerBB(interactable as BattleBehaviour);
+			return interactable is BattleBehaviour &&!PlayerSimObjBehaviour.IsPlayerBB(interactable as BattleBehaviour);
 		}
 
 		public static bool ShopValidation(SimObjectBehaviour interactable)

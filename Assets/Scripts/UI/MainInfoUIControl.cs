@@ -121,7 +121,7 @@ public class MainInfoUIControl : PostTickUpdate
         //Get current and max player health
         PlayerStats playerStats = PlayerManagement.GetStats();
 
-        DrawHealthDirect(PlayerBattleBehaviour.GetCurrentHealth(), playerStats.GetStat(Stats.maxHealth.ToString()));
+        DrawHealthDirect(PlayerSimObjBehaviour.GetCurrentHealth(), playerStats.GetStat(Stats.maxHealth.ToString()));
     }
 
     private void DrawHealthDirect(float currentHealth, float maxHealth)

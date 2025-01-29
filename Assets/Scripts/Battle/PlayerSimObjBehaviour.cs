@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerBattleBehaviour : SimObjectBehaviour
+public class PlayerSimObjBehaviour : SimObjectBehaviour
 {
-	private static PlayerBattleBehaviour instance;
+	private static PlayerSimObjBehaviour instance;
 
 	public static bool IsPlayerBB(BattleBehaviour bb)
 	{
@@ -45,6 +45,14 @@ public class PlayerBattleBehaviour : SimObjectBehaviour
 		}
 
 		return PlayerManagement.GetTarget().id;
+	}
+
+	public override bool CanBeAttacked()
+	{
+		//Don't let things attack us while jumping
+		return 
+			PlayerCapitalShip.CurrentStage() == PlayerCapitalShip.JumpStage.Done ||
+			PlayerCapitalShip.CurrentStage() < PlayerCapitalShip.JumpStage.ActualJump;
 	}
 
 	private float lastRecordedSalvoPercentage;

@@ -11,7 +11,7 @@ public class AttackInteraction : Interaction
 
 	public override void Process(SimObjectBehaviour interactable)
 	{
-		PlayerBattleBehaviour.ToggleTargetExternal(interactable);
+		PlayerSimObjBehaviour.ToggleTargetExternal(interactable);
 	}
 
 	protected override string GetIconPath()
