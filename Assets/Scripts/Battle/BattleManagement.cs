@@ -55,11 +55,17 @@ public class BattleManagement : MonoBehaviour
 		public float startTime;
 		public float length;
 
+		public Vector3 startPos;
+		public Vector3 endPos;
+
 		public Transform target;
 
 		public void Offset(Vector3 offset)
 		{
 			target.position += offset;
+
+			startPos += offset;
+			endPos += offset;
 		}
 
 		public bool Done()
@@ -67,13 +73,15 @@ public class BattleManagement : MonoBehaviour
 			return Time.time > endTime;
 		}
 
-		public BasicEffectData(Transform target, float length) 
+		public BasicEffectData(Transform target, float length, Vector3 startPos, Vector3 endPos) 
 		{
 			startTime = Time.time;
 			endTime = startTime + length;
 			this.length = length;
 
 			this.target = target;
+			this.startPos = startPos;
+			this.endPos = endPos;
 		}
 	}
 
@@ -93,10 +101,18 @@ public class BattleManagement : MonoBehaviour
 
 		basicBeamFunc = new Func<BasicEffectData, float, int>((BasicEffectData effectData, float percentage) =>
 		{
+			const float scale = 0.25f;
+
+			//Find halfway point
+			Vector3 displacement = Vector3.Lerp(effectData.startPos, effectData.endPos, percentage) - effectData.startPos;
+			Vector3 halfway = effectData.startPos + (displacement / 2.0f);
+
+			effectData.target.position = halfway;
+
             effectData.target.localScale =
-				new Vector3(effectData.target.localScale.x,
-				percentage * 0.1f,
-				percentage * 0.1f);
+				new Vector3(displacement.magnitude,
+				percentage * scale,
+				percentage * scale);
 
             return 0;
 		});
@@ -160,16 +176,12 @@ public class BattleManagement : MonoBehaviour
 
 	private void InitBeamEffect(Vector3 start, Vector3 end, float length)
 	{
-		//Find halfway point
-		Vector3 displacement = end - start;
-		Vector3 halfWay = start + (displacement / 2);
-
-		Transform targetBeam = attackEffectsPool.SpawnObject(basicBeamIndex, halfWay).transform;
+		Transform targetBeam = attackEffectsPool.SpawnObject(basicBeamIndex, start).transform;
 		targetBeam.LookAt(end);
 		targetBeam.Rotate(0, -90, 0);
-		targetBeam.localScale = new Vector3(displacement.magnitude, 0.0f, 0.0f);
+		targetBeam.localScale = Vector3.zero;
 
-		currentBasicBeamEffects.Add(new BasicEffectData(targetBeam, length));
+		currentBasicBeamEffects.Add(new BasicEffectData(targetBeam, length, start, end));
 	}
 
 	public static void CreateExplosion(Vector3 worldPos, float length) 
@@ -194,7 +206,7 @@ public class BattleManagement : MonoBehaviour
 		expTransformToMaterial[targetExplosion].SetFloat("_StartTime", Time.time);
 		expTransformToMaterial[targetExplosion].SetFloat("_Length", length);
 
-		BasicEffectData effectData = new BasicEffectData(targetExplosion, length);
+		BasicEffectData effectData = new BasicEffectData(targetExplosion, length, pos, pos);
 		effectData.endTime += length * 4; //Add additional length to the end time
         currentExplosionEffects.Add(effectData);
 	}

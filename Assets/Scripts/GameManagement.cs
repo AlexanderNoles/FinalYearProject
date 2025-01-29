@@ -65,6 +65,11 @@ public class GameManagement : MonoBehaviour
         }
     }
 
+	public static void LoadScene(int index)
+	{
+		SceneManager.LoadScene(index);
+	}
+
     [MonitorBreak.Bebug.ConsoleCMD("RELOAD")]
     public static void ReloadScene()
     {

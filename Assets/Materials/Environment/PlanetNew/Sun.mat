@@ -83,6 +83,7 @@ Material:
     m_Floats:
     - _AlphaClip: 0
     - _AlphaToMask: 0
+    - _AnimSpeed: 0.1
     - _AtmosphereRadius: 0.3
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
@@ -97,17 +98,18 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
+    - _FinalColorMultiplier: 240
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _InMap: 0
-    - _LandDisplacement: 1
-    - _LandFloor: 0
-    - _LandMaskModifier: 0
+    - _LandDisplacement: 0.3
+    - _LandFloor: 0.63
+    - _LandMaskModifier: -0.35
     - _Metallic: 0
     - _OcclusionStrength: 1
-    - _OceanFlat: 1
-    - _OceanSmoothness: 5
+    - _OceanFlat: 0
+    - _OceanSmoothness: 1
     - _Parallax: 0.005
     - _PlanetRelativeRadius: 0.25
     - _QueueOffset: 0
@@ -115,11 +117,11 @@ Material:
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SpecularIntensity: 0.1
+    - _SpecularIntensity: 0
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
-    - _SunLightShift: 0
-    - _SunLightSmoothness: 0.4
+    - _SunLightShift: 5
+    - _SunLightSmoothness: 1
     - _Surface: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
@@ -127,8 +129,8 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _LandColor: {r: 0.6493114, g: 0.8018868, b: 0.4501157, a: 1}
-    - _OceanColor: {r: 0.13389996, g: 0.4993341, b: 0.5566038, a: 1}
+    - _LandColor: {r: 0.8207547, g: 0.20604266, b: 0.13550194, a: 1}
+    - _OceanColor: {r: 0.5471698, g: 0.17117679, b: 0.080010675, a: 1}
     - _OceanFloorColor: {r: 0.5283019, g: 0.4813433, b: 0.3264507, a: 1}
     - _RealSpacePosition: {r: 5, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}

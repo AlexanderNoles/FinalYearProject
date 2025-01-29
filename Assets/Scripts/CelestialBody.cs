@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CelestialBody : SurroundingObject
 {
+	public bool autoSetupRPS = true;
     protected Material targetMat;
 
     public virtual void Init(Vector3 pos)
@@ -19,7 +20,12 @@ public class CelestialBody : SurroundingObject
         position = WorldManagement.ClampPositionToGrid(position);
 
 		targetMat = GetComponent<MeshRenderer>().material;
-        targetMat.SetVector("_RealSpacePosition", transform.position);
+
+		if (autoSetupRPS)
+		{
+			targetMat.SetVector("_RealSpacePosition", transform.position);
+		}
+
 		WorldManagement.AddMajorWorldPart(this);
 	}
 

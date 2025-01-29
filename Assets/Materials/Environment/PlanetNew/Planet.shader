@@ -1,7 +1,8 @@
-Shader "Unlit/Planet"
+Shader"Unlit/Planet"
 {
     Properties
     {
+		_AnimSpeed ("Animation Speed", float) = 0
         _LandMaskModifier ("Land Mask Modifier", float) = 0
         _PlanetRelativeRadius ("Relative Radius", float) = .5
         _AtmosphereRadius ("Atmosphere Radius", float) = .4
@@ -9,6 +10,7 @@ Shader "Unlit/Planet"
         _LandDisplacement ("Land Displacement", float) = 2
         _LandColor ("Land Colour", Color) = (0, 1, 0)
         _OceanColor ("Ocean Colour", Color) = (0, 1, 0)
+		_FinalColorMultiplier ("Final Color Multiplier", float) = 1
         _RealSpacePosition ("RPS", Vector) = (0, 0, 0, 0)
         _SunLightSmoothness ("Sun Light Smoothness", float) = 1.0
         _SunLightShift ("Sun Light Shift", float) = 0
@@ -64,6 +66,8 @@ Shader "Unlit/Planet"
             float _LandDisplacement;
             float _LandFloor;
             float _OceanFlat;
+			float _FinalColorMultiplier;
+			float _AnimSpeed;
             float3 _LandColor;
             float3 _OceanColor;
             float3 _RealSpacePosition;
@@ -91,6 +95,7 @@ Shader "Unlit/Planet"
 
                 position *= scale;
                 position += _RealSpacePosition;
+				position += _Time * _AnimSpeed * normalize(_RealSpacePosition);
 	
 	            for (int i = 0; i < iterations; i++)
 	            {
@@ -326,7 +331,7 @@ Shader "Unlit/Planet"
                     discard;
                 }
 
-                return col;
+                return abs(col) * _FinalColorMultiplier;
             }
             ENDCG
         }

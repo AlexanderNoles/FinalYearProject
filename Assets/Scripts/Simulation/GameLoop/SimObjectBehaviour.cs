@@ -85,6 +85,8 @@ public class SimObjectBehaviour : BoxDescribedBattleBehaviour
 	}
 	//
 
+	public float firePointsFuzziness = 1.0f;
+	public List<Vector3> firePoints = new List<Vector3>();
 	[Header("Interaction Settings")]
 	public bool canBeInteractedWith = true;
 	public Collider mouseTargetCollider;
@@ -115,6 +117,60 @@ public class SimObjectBehaviour : BoxDescribedBattleBehaviour
 		UnLink();
 	}
 
+	protected override Vector3 GetFireFromPosition(Vector3 targetPos)
+	{
+		if (firePoints.Count == 0)
+		{
+			return base.GetFireFromPosition(targetPos);
+		}
+
+		//Find the smallest angle between the look direction and the displacement of the target position from the fire point
+		Vector3 pos = transform.position;
+		Vector3 right = transform.right;
+		Vector3 forward = transform.forward;
+		Vector3 up = transform.up;
+
+		Vector3 firePos = pos;
+		float currentMinimum = float.MaxValue;
+
+		for (int i = 0; i < firePoints.Count; i++)
+		{
+			//Make fire point non-local
+			Vector3 calculatedFirePoint =
+				(right * firePoints[i].x) +
+				(forward * firePoints[i].z) +
+				(up * firePoints[i].y);
+
+			Vector3 lookDirection;
+			if (Mathf.Abs(firePoints[i].x) > Mathf.Abs(firePoints[i].z))
+			{
+				//X component is dominant
+				lookDirection = right * (firePoints[i].x / Mathf.Abs(firePoints[i].x));
+			}
+			else
+			{
+				//Z component is dominamt
+				lookDirection = forward * (firePoints[i].z / Mathf.Abs(firePoints[i].z));
+			}
+
+			//Make fire point non local
+			Vector3 calculatedOrigin = calculatedFirePoint + pos;
+
+			Vector3 displacement = targetPos - calculatedOrigin;
+
+			//Angle between 
+			float angle = Mathf.Abs(Vector3.Angle(lookDirection, displacement)) + Random.Range(-firePointsFuzziness, firePointsFuzziness);
+
+			if (angle < currentMinimum)
+			{
+				currentMinimum = angle;
+				firePos = calculatedOrigin;
+			}
+		}
+
+		return firePos;
+	}
+
 	protected override void OnDeath()
 	{
 		if (Linked())
@@ -129,5 +185,31 @@ public class SimObjectBehaviour : BoxDescribedBattleBehaviour
 	public void LogEntityID()
 	{
 		Debug.Log(TryGetEntityID());
+	}
+
+	private void OnDrawGizmosSelected()
+	{
+		Gizmos.color = Color.red;
+
+		Transform transform = GetComponent<Transform>();
+
+		Vector3 pos = transform.position;
+		Vector3 right = transform.right;
+		Vector3 forward = transform.forward;
+		Vector3 up = transform.up;
+
+		foreach (Vector3 firePoint in firePoints)
+		{
+			//Make fire point relative to rotation
+			Vector3 calculatedFirePoint =
+				(right * firePoint.x) +
+				(forward * firePoint.z) +
+				(up * firePoint.y);
+
+			//Make fire point non local
+			Vector3 calculatedOrigin = calculatedFirePoint + pos;
+
+			Gizmos.DrawWireSphere(calculatedOrigin, 0.5f);
+		}
 	}
 }
