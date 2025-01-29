@@ -68,7 +68,7 @@ public class TargetableLocationData : DataBase
 			return target.maxHealth;
 		}
 
-		public override List<WeaponBase> GetWeapons()
+		public override List<StandardSimWeaponProfile> GetWeapons()
 		{
 			return target.weapons;
 		}
@@ -89,7 +89,7 @@ public class TargetableLocationData : DataBase
 	public float maxHealth;
 	public int desirability = 1;
 	public int lastTickTime;
-	public List<WeaponBase> weapons = new List<WeaponBase>();
+	public List<StandardSimWeaponProfile> weapons = new List<StandardSimWeaponProfile>();
 
 	public Func<Transform, GeneratorManagement.Generation> drawFunc;
 

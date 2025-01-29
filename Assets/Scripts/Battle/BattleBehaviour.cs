@@ -100,7 +100,7 @@ public class BattleBehaviour : MonoBehaviour
 	public virtual void DoTicks(int tickCount)
 	{
 		//Apply regen
-		currentHealth = Mathf.Min(currentHealth + (tickCount * GetRegenPerTick()), GetMaxHealth()); 
+		currentHealth = Mathf.Min(currentHealth + (tickCount * GetRegenPerTick() * BalanceManagement.overallBattlePace), GetMaxHealth()); 
 	}
 
 	protected void ToggleTarget(BattleBehaviour target, bool battleReset = true)
@@ -334,7 +334,7 @@ public class BattleBehaviour : MonoBehaviour
 					while (attack.numberOfAttacksSoFar < attack.totalNumberOfAttacks && attackCap > 0)
 					{
 						//Apply damage
-						target.bb.TakeDamage(attack.parentProfile.GetDamage(), this);
+						target.bb.TakeDamage(attack.parentProfile.GetDamage() * BalanceManagement.overallBattlePace, this);
 
 						Vector3 shotTargetPosition = target.bb.GetTargetablePosition();
 						//Draw Attack

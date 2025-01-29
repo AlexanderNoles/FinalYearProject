@@ -69,9 +69,9 @@ public class SimObject : IDisplay
 
 	}
 
-	public virtual List<WeaponBase> GetWeapons()
+	public virtual List<StandardSimWeaponProfile> GetWeapons()
 	{
-		return new List<WeaponBase>();
+		return new List<StandardSimWeaponProfile>();
 	}
 
 	// Interaction System Helpers //

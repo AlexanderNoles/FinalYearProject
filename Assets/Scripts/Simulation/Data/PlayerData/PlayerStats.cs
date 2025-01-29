@@ -7,10 +7,10 @@ public class PlayerStats : DataBase
 	public static readonly Dictionary<string, float> statIdentifierToDefault = new Dictionary<string, float>() 
 	{
 		{Stats.maxHealth.ToString(), 100},
-		{Stats.healthRegen.ToString(), 100},
+		{Stats.healthRegen.ToString(), 1},
 		{Stats.jumpRange.ToString(), 10},
 		{Stats.attackPower.ToString(), 10},
-		{Stats.moveSpeed.ToString(), 100}
+		{Stats.moveSpeed.ToString(), 150}
 	};
 
 	public static float GetDefaultStatValue(string identifier)

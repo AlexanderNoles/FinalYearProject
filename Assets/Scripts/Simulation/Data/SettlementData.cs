@@ -11,8 +11,13 @@ public class SettlementData : DataBase
     {
         public int setID;
 
-		public class SettlementWeapon : WeaponBase
+		public class SettlementWeapon : StandardSimWeaponProfile
 		{
+			public override float ShotsPerAttack()
+			{
+				return 10;
+			}
+
 			public override float GetDamageRaw()
 			{
 				return 1;
@@ -86,9 +91,9 @@ public class SettlementData : DataBase
 				return true;
 			}
 
-			public override List<WeaponBase> GetWeapons()
+			public override List<StandardSimWeaponProfile> GetWeapons()
 			{
-				List<WeaponBase> baseList = base.GetWeapons();
+				List<StandardSimWeaponProfile> baseList = base.GetWeapons();
 				baseList.Add(weapon);
 				return baseList;
 			}

@@ -74,6 +74,11 @@ public class PlayerLocationManagement : MonoBehaviour
 
 	public static VisitableLocation GetWarpLocation()
 	{
+		if (warpLocation == null)
+		{
+			return null;
+		}
+
 		return warpLocation.targetLocation;
 	}
 

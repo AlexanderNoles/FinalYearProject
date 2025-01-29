@@ -9,11 +9,14 @@ public class WarpSimBehaviour : SimObjectBehaviour
 	protected override void Awake()
 	{
 		instance = this;
+		base.Awake();
 	}
 
-	private void Start()
+	protected override void OnEnable()
 	{
-		target = PlayerLocationManagement.GetWarpLocation();
+		Link(PlayerLocationManagement.GetWarpLocation());
+
+		base.OnEnable();
 	}
 
 	public static WarpSimBehaviour GetInstance()

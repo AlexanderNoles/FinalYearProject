@@ -10,7 +10,7 @@ public class PlayerInventory : InventoryBase
 	protected const int inventorySize = 8;
 	private List<ItemBase> itemBases = new List<ItemBase>();
 	private PlayerStats target = null;
-	public float mainCurrency = 0;
+	public float mainCurrency = 5000;
 	public float fuel = 500;
 
 	public void AdjustCurrency(float value)

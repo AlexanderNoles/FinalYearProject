@@ -351,10 +351,9 @@ MonoBehaviour:
   autoRetaliate: 0
   transform: {fileID: 0}
   currentTargets: []
-  maintainedTargets: []
   targetBox:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
+    m_Center: {x: 0, y: 0, z: 1.41}
+    m_Extent: {x: 1, y: 0.75, z: 4.12}
   canBeInteractedWith: 0
   mouseTargetCollider: {fileID: 0}
   firePoints:
@@ -8428,8 +8427,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4290429838
-  m_fontColor: {r: 0.5568628, g: 0.76470596, b: 0.7294118, a: 1}
+    rgba: 4293721997
+  m_fontColor: {r: 0.5518868, g: 1, b: 0.9239053, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -14080,8 +14079,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: f863574708ffacb4db9e28e4a40d7eca, type: 2}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.103773594, g: 0.103773594, b: 0.103773594, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -19430,8 +19429,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: f863574708ffacb4db9e28e4a40d7eca, type: 2}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.103773594, g: 0.103773594, b: 0.103773594, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -20498,7 +20497,7 @@ MonoBehaviour:
   - {fileID: 487778562}
   debugRoutines: []
   simulationRoutinesStorage: {fileID: 487778559}
-  historyLength: 50
+  historyLength: 250
   planetsGenerator: {fileID: 1383595365}
 --- !u!1 &1257894382
 GameObject:
@@ -28683,7 +28682,6 @@ MonoBehaviour:
   autoRetaliate: 1
   transform: {fileID: 0}
   currentTargets: []
-  maintainedTargets: []
   targetBox:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}

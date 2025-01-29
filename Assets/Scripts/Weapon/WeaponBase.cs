@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class WeaponBase
 {
+	public virtual int ShotsPerAttack()
+	{
+		return 1;
+	}
+
 	public virtual float GetDamageRaw()
 	{
 		return 0;

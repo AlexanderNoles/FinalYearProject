@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class FleetShip : Ship
 {
-	public WeaponBase weapon = new FleetWeapon();
+	public StandardSimWeaponProfile weapon = new FleetWeapon();
 
-	public override List<WeaponBase> GetWeapons()
+	public override List<StandardSimWeaponProfile> GetWeapons()
 	{
-		return new List<WeaponBase>
+		return new List<StandardSimWeaponProfile>
 		{
 			weapon
 		};
@@ -21,7 +21,7 @@ public class FleetShip : Ship
 	}
 }
 
-public class FleetWeapon : WeaponBase
+public class FleetWeapon : StandardSimWeaponProfile
 {
 	public override float GetDamageRaw()
 	{

@@ -22,7 +22,7 @@ public class PirateCrew : Faction
 		targetableLocationData.description = "";
 		targetableLocationData.mapColour = Color.red;
 		targetableLocationData.maxHealth = 100;
-		targetableLocationData.weapons = new List<WeaponBase> { new PirateCrewBaseWeapon() };
+		targetableLocationData.weapons = new List<StandardSimWeaponProfile> { new PirateCrewBaseWeapon() };
 
 		targetableLocationData.drawFunc = (parent) =>
 		{
@@ -34,13 +34,23 @@ public class PirateCrew : Faction
 		};
 
 		AddData(DataTags.TargetableLocation, targetableLocationData);
+
+		ContactPolicyData contactPolicyData = new ContactPolicyData();
+		contactPolicyData.openlyHostile = true;
+
+		AddData(DataTags.ContactPolicy, contactPolicyData);
 	}
 
-	public class PirateCrewBaseWeapon : WeaponBase
+	public class PirateCrewBaseWeapon : StandardSimWeaponProfile
 	{
 		public override float GetDamageRaw()
 		{
 			return 0.5f;
+		}
+
+		public override float GetTimeBetweenAttacks()
+		{
+			return 0.25f;
 		}
 	}
 }

@@ -201,6 +201,12 @@ public class BattleManagement : MonoBehaviour
 
 	private void Update()
 	{
+		if (SimulationManagement.RunningHistory())
+		{
+			//Don't run while history is running
+			return;
+		}
+
 		RunEffect(basicBeamFunc, currentBasicBeamEffects, basicBeamIndex);
 		RunEffect(explosionEffectFunc, currentExplosionEffects, explosionIndex);
 

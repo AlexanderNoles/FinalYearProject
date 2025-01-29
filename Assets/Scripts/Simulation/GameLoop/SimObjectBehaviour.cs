@@ -36,11 +36,10 @@ public class SimObjectBehaviour : BoxDescribedBattleBehaviour
 		}
 
 		//Add bb weapons
-		List<WeaponBase> wps = target.GetWeapons();
+		List<StandardSimWeaponProfile> wps = target.GetWeapons();
 
-		foreach (WeaponBase wb in wps)
+		foreach (StandardSimWeaponProfile wp in wps)
 		{
-			ContextLinkedWeaponProfile wp = new ContextLinkedWeaponProfile().SetTarget(wb);
 			wp.MarkLastAttackTime(Time.time);
 			weapons.Add(wp);
 		}
