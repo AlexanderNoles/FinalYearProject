@@ -95,3 +95,13 @@
 	description: "An example of an Exalted item"
 	extra: ""
 }
+{ item
+	//Redo of divine battle logic
+	rarity: "2"
+	icon: "divinebattlelogic"
+	name: "Divine Battle Logic"
+	price: "2"
+	class: "0"
+	description: "Allows the use of a localized <color=*badColour*>'Reality Unsubstantiator'</color> once every 10 years."
+	extra: "Fully removes a target nation from the map."
+}

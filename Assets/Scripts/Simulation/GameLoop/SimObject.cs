@@ -166,6 +166,27 @@ public class SimObject : IDisplay
 		}
 	}
 
+	public float GetPlayerReputation()
+	{
+		if (ReputationEnabled())
+		{
+			if (PlayerManagement.PlayerEntityExists())
+			{
+				int playerID = PlayerManagement.GetTarget().id;
+
+				//If reputation enabled check was passed we should have feelings data
+				Assert.IsTrue(parent.Get().GetData(DataTags.Feelings, out FeelingsData feelingsData));
+
+				if (feelingsData.idToFeelings.ContainsKey(playerID))
+				{
+					return feelingsData.idToFeelings[playerID].favourability;
+				}
+			}
+		}
+
+		return 1.0f;
+	}
+
 	// UI Display Methods //
 	//Part of IDisplay, allows certain ui elements to expect things they can draw from when handed an object
 	public virtual string GetTitle()

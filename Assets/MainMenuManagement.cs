@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -6,10 +6,12 @@ using UnityEngine;
 public class MainMenuManagement : MonoBehaviour
 {
 	public string title = "star and salvation";
+	public char typingString = '|';
 	private int currentCharIndex = 0;
 	public TextMeshProUGUI titleLabel;
 	public float timeBetweenLetters = 0.1f;
 	private float timeTillNextLetter;
+	private bool typingEffectDone;
 	public FadeOnEnable fadeIn;
 
 	private void Awake()
@@ -19,12 +21,13 @@ public class MainMenuManagement : MonoBehaviour
 
 		titleLabel.text = "";
 		timeTillNextLetter = timeBetweenLetters;
-		currentCharIndex = 0;
+		currentCharIndex = -1;
+		typingEffectDone = false;
 	}
 
 	private void Update()
 	{
-		if (fadeIn.Finished() && currentCharIndex != -1)
+		if (fadeIn.Finished() && !typingEffectDone)
 		{
 			if (timeTillNextLetter > 0.0f)
 			{
@@ -33,12 +36,25 @@ public class MainMenuManagement : MonoBehaviour
 			else
 			{
 				timeTillNextLetter = timeBetweenLetters;
-				titleLabel.text += title[currentCharIndex];
+
+				//Within string
+				//Add typing character
+				if (currentCharIndex >= 0)
+				{
+					//Add actual string
+					titleLabel.text = titleLabel.text.Replace(typingString, title[currentCharIndex]);
+				}
+
+				if (currentCharIndex < title.Length - 1)
+				{
+					titleLabel.text += typingString;
+				}
+
 				currentCharIndex++;
 
 				if (currentCharIndex >= title.Length)
 				{
-					currentCharIndex = -1;
+					typingEffectDone = true;
 				}
 			}
 		}
@@ -47,5 +63,14 @@ public class MainMenuManagement : MonoBehaviour
 	public void LoadMainScene()
 	{
 		GameManagement.LoadScene(1);
+	}
+
+	public void Quit()
+	{
+#if UNITY_EDITOR
+		UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
 	}
 }

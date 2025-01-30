@@ -131,6 +131,10 @@ public class SettlementData : DataBase
             location = new SettlementLocation();
             location.actualSettlement = this;
 			location.shop = new Shop();
+			//Limit settlement shops to only basic items, this is to stop players from just jumping around to different shops to try and find
+			//a specific rare item.
+			//That sort of gameplay sound really tedious and boring and I don't want to emp
+			location.shop.SetTargetRarity(ItemDatabase.ItemRarity.Basic);
 
 			location.shop.capacity = 4;
 

@@ -15,6 +15,7 @@ public class ShopUIControl : MonoBehaviour
 	public GameObject slotBaseObject;
 	public RectTransform slotArea;
 	public List<ShopSlotUI> shopSlots;
+	public GameObject cantBuyBlocker;
 
 	[ContextMenu("Generate Shop Slots")]
 	public void GenerateShopSlots()
@@ -59,6 +60,8 @@ public class ShopUIControl : MonoBehaviour
 			{
 				CloseShopUI();
 			}
+
+			cantBuyBlocker.SetActive(target.GetPlayerReputation() <= -0.1f);
 		}
 	}
 

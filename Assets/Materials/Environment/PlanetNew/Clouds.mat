@@ -54,5 +54,6 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
+    - _Offset: {r: 1, g: 0, b: 0, a: 0}
     - _RPS: {r: 5, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
