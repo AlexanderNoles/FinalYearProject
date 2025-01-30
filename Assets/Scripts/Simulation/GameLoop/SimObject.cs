@@ -1,6 +1,8 @@
+using EntityAndDataDescriptor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 //Base class used to represent an "object" in the simulation, very general, mainly used so runtime scripts can correctly interface with the simulation
 public class SimObject : IDisplay
@@ -98,6 +100,70 @@ public class SimObject : IDisplay
 	public virtual float FuelPerMoneyUnit()
 	{
 		return 1.0f;
+	}
+
+	// Reputation System //
+	public bool ReputationEnabled()
+	{
+		//Has a parent and that parent has feelings data
+		return parent != null && parent.Get().HasData(DataTags.Feelings);
+	}
+
+	public void SetPlayerReputation(float newReputation)
+	{
+		if (!ReputationEnabled())
+		{
+			return;
+		}
+
+		//Get player id
+		if (PlayerManagement.PlayerEntityExists())
+		{
+			int playerID = PlayerManagement.GetTarget().id;
+
+			//Clamp reputation to expected range
+			newReputation = Mathf.Clamp(newReputation, -1.0f, 1.0f);
+
+			//If reputation enabled check was passed we should have feelings data
+			Assert.IsTrue(parent.Get().GetData(DataTags.Feelings, out FeelingsData feelingsData));
+
+			//Does this entity know about the player?
+			//If not add it to their feelings data
+			if (!feelingsData.idToFeelings.ContainsKey(playerID))
+			{
+				feelingsData.idToFeelings.Add(playerID, new FeelingsData.Relationship(newReputation));
+			}
+			else 
+			{
+				feelingsData.idToFeelings[playerID].favourability = newReputation;
+			}
+		}
+	} 
+
+	public void AdjustPlayerReputation(float adjustment)
+	{
+		if (!ReputationEnabled())
+		{
+			return;
+		}
+
+		//Get player id
+		if (PlayerManagement.PlayerEntityExists())
+		{
+			int playerID = PlayerManagement.GetTarget().id;
+			//If reputation enabled check was passed we should have feelings data
+			Assert.IsTrue(parent.Get().GetData(DataTags.Feelings, out FeelingsData feelingsData));
+
+			//Do we not know about the player?
+			if (!feelingsData.idToFeelings.ContainsKey(playerID))
+			{
+				feelingsData.idToFeelings.Add(playerID, new FeelingsData.Relationship(Mathf.Clamp(adjustment, -1.0f, 1.0f)));
+			}
+			else
+			{
+				feelingsData.idToFeelings[playerID].favourability = Mathf.Clamp(feelingsData.idToFeelings[playerID].favourability + adjustment, -1.0f, 1.0f);
+			}
+		}
 	}
 
 	// UI Display Methods //

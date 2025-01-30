@@ -37,8 +37,10 @@ public class Player : SimulationEntity
 		interactions.playersInteractions.Add(new AttackInteraction().Init());
 		//
 		AddData(DataTags.Interactions, interactions);
-
-		AddData(DataTags.Feelings, new FeelingsData());
+		
+		FeelingsData feelings = new FeelingsData();
+		feelings.baseFavourability = 0.0f;
+		AddData(DataTags.Feelings, feelings);
 		AddData(DataTags.ContactPolicy, new ContactPolicyData());
 	}
 }

@@ -171,6 +171,20 @@ public class SimObjectBehaviour : BoxDescribedBattleBehaviour
 		return firePos;
 	}
 
+	protected override TakenDamageResult TakeDamage(float rawDamageNumber, BattleBehaviour origin)
+	{
+		if (PlayerSimObjBehaviour.IsPlayerBB(origin))
+		{
+			//Adjust player reputation
+			if (target != null)
+			{
+				target.AdjustPlayerReputation(rawDamageNumber * -BalanceManagement.damageReputationRatio);
+			}
+		}
+
+		return base.TakeDamage(rawDamageNumber, origin);
+	}
+
 	protected override void OnDeath(TakenDamageResult result)
 	{
 		if (Linked())

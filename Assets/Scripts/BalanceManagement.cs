@@ -12,4 +12,8 @@ public static class BalanceManagement
 	//Might include other things in the future
 	//(28/01/2025)
 	public const float overallBattlePace = 0.4f;
+
+	//How much dealing damage to entites affects your reputation?
+	//Realisitcally one attack should make them hate you but I want to give players a bit of leeway
+	public const float damageReputationRatio = 0.05f;
 }
