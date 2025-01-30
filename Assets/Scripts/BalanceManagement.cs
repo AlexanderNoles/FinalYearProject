@@ -5,6 +5,7 @@ using UnityEngine;
 //Static script to help centralize balance
 public static class BalanceManagement
 {
+	public const float killWorthRatio = 1f;
 	public const float mineralDepositWorthRatio = 0.5f;
 
 	//This acts as a general modifier to attack damage and regen basically

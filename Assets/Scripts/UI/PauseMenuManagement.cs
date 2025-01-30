@@ -15,4 +15,9 @@ public class PauseMenuManagement : UIState
 	{
 		target.SetActive(_bool);
 	}
+
+	public void ReturnToStartMenu()
+	{
+		GameManagement.LoadScene(0);
+	}
 }

@@ -7,6 +7,13 @@ public class PlayerCapitalShip : MonoBehaviour
 {
 	public static UnityEvent onPositionReset = new UnityEvent();
 
+	public static State currentState = State.Normal;
+	public enum State
+	{
+		Normal,
+		Debug
+	}
+
 	[HideInInspector]
 	public new Transform transform;
 
@@ -283,6 +290,31 @@ public class PlayerCapitalShip : MonoBehaviour
 
 	private void Update()
 	{
+		if (currentState == State.Debug)
+		{
+			//Get offset for this frame
+			Vector3 orthagonalOffset = InputManagement.WASDInput();
+			//Flip components
+			(orthagonalOffset.x, orthagonalOffset.z) = (orthagonalOffset.z, orthagonalOffset.x);
+			//Make relative to camera
+			Vector3 moveVector = CameraManagement.MakeVectorRelativeToCameraDirection(orthagonalOffset).normalized;
+
+			float speed = WorldManagement.invertedInEngineWorldScaleMultiplier;
+
+			if (InputManagement.GetKey(KeyCode.LeftShift))
+			{
+				speed = 1;
+			}
+			else if (InputManagement.GetKey(KeyCode.LeftControl))
+			{
+				speed = 10;
+			}
+
+			WorldManagement.MoveWorldCenter(moveVector * speed);
+
+			return;
+		}
+
 		if (!PlayerManagement.PlayerEntityExists())
 		{
 			return;
@@ -586,5 +618,21 @@ public class PlayerCapitalShip : MonoBehaviour
 
 		//Invoke event
 		onPositionReset.Invoke();
+	}
+
+	[MonitorBreak.Bebug.ConsoleCMD("DebugMove")]
+	public static void ActivateDebugMovement()
+	{
+		currentState = State.Debug;
+		//Hide model
+		instance.modelTransform.gameObject.SetActive(false);
+	}
+
+	[MonitorBreak.Bebug.ConsoleCMD("NormalMove")]
+	public static void ActivateNormalMovement()
+	{
+		currentState = State.Normal;
+		//Show the model
+		instance.modelTransform.gameObject.SetActive(true);
 	}
 }

@@ -15,6 +15,9 @@ public class Planet : CelestialBody
     public float waterThreshold = 0.6f;
     public Gradient nonWaterColours;
 
+	[Header("Clouds Visual Settings")]
+	public MeshRenderer clouds;
+
     [Header("Atmosphere Visual Settings")]
     public MeshRenderer atmosphere;
     public Vector3 lightWavelengths = new Vector3(700, 530, 440);
@@ -82,10 +85,15 @@ public class Planet : CelestialBody
             Vector3 scatteringCoefficents = new Vector3(scatterR, scatterG, scatterB);
 
             atmosphere.material.SetVector("_ScatteringCoefficents", scatteringCoefficents);
+
+			//Only have clouds if we have atmosphere
+			clouds.gameObject.SetActive(true);
+			clouds.material.SetVector("_RPS", transform.position);
         }
         else
         {
             atmosphere.gameObject.SetActive(false);
+			clouds.gameObject.SetActive(false);
         }
     }
 

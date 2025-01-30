@@ -77,6 +77,11 @@ public class TargetableLocationData : DataBase
 		{
 			return target.parent.Get().id;
 		}
+
+		public override float GetKillReward()
+		{
+			return target.killReward;
+		}
 	}
 
 	public ActualLocation location;
@@ -87,6 +92,7 @@ public class TargetableLocationData : DataBase
 	public Color mapColour;
 
 	public float maxHealth;
+	public float killReward;
 	public int desirability = 1;
 	public int lastTickTime;
 	public List<StandardSimWeaponProfile> weapons = new List<StandardSimWeaponProfile>();

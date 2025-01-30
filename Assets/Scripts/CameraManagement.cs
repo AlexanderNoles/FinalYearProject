@@ -161,9 +161,17 @@ public class CameraManagement : MonoBehaviour
         return instance.backingCamera.position;
     }
 
-    /////
+	/////
 
-    public Transform cameraAxis;
+	public static Vector3 MakeVectorRelativeToCameraDirection(Vector3 input)
+	{
+		return
+			(input.x * instance.mainCamera.transform.right) +
+			(input.y * instance.mainCamera.transform.up) +
+			(input.z * instance.mainCamera.transform.forward);
+	}
+
+	public Transform cameraAxis;
 	public Transform backingCameraAxis;
     private Vector2 cameraRot;
 	private Vector2 cachedCameraRot;
@@ -175,10 +183,7 @@ public class CameraManagement : MonoBehaviour
 	private float cachedZoomTarget;
     private static Vector3 offsetFromTarget;
 	private Vector3 cachedOffsetFromTarget;
-    private const float moveSpeed = 5.0f;
-    private const float sprintSpeed = 15.0f;
     private const float lerpLimit = 0.01f;
-    private const float moveLimit = 250.0f;
 
     private void Awake()
     {
@@ -198,7 +203,7 @@ public class CameraManagement : MonoBehaviour
 
 		if (mainCamera.enabled)
 		{
-			lowerCameraLimit = 0;
+			lowerCameraLimit = PlayerCapitalShip.currentState == PlayerCapitalShip.State.Normal ? 0 : -85f;
 
 			if (actualBackingCameraData.renderPostProcessing)
 			{
@@ -222,7 +227,7 @@ public class CameraManagement : MonoBehaviour
 		{
 			lowerCameraLimit = 5;
 
-			if (MapManagement.FirstFrameMapIntroRunning())
+			if (!actualBackingCameraData.renderPostProcessing)
 			{
 				//cache variables to reapply later
 				cachedZoomTarget = currentCameraZoomTarget;
@@ -233,7 +238,7 @@ public class CameraManagement : MonoBehaviour
 				currentCameraZoomTarget = 50;
 
 				//Set rotation target
-				cameraRot = new Vector2(45, 0);
+				cameraRot = new Vector2(45, cachedCameraRot.y + 180.0f);
 				//Set specifc position so camera plays rotate animation on map opening
 				backingCamera.localPosition = Vector3.back * currentCameraZoomTarget;
 

@@ -21,4 +21,9 @@ public class Ship : SimObject
 	{
 		return 10;
 	}
+
+	public override float GetKillReward()
+	{
+		return GetMaxHealth();
+	}
 }

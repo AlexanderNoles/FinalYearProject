@@ -74,6 +74,11 @@ public class SimObject : IDisplay
 		return new List<StandardSimWeaponProfile>();
 	}
 
+	public virtual float GetKillReward()
+	{
+		return 0.0f;
+	}
+
 	// Interaction System Helpers //
 	public bool HasShop()
 	{

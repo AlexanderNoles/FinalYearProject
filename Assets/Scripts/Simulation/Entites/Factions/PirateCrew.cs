@@ -21,6 +21,7 @@ public class PirateCrew : Faction
 		targetableLocationData.name = "Pirate Crew";
 		targetableLocationData.description = "";
 		targetableLocationData.mapColour = Color.red;
+		targetableLocationData.killReward = 250;
 		targetableLocationData.maxHealth = 100;
 		targetableLocationData.weapons = new List<StandardSimWeaponProfile> { new PirateCrewBaseWeapon() };
 

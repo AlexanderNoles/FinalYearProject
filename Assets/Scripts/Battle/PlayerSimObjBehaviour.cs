@@ -139,7 +139,7 @@ public class PlayerSimObjBehaviour : SimObjectBehaviour
 		return result;
 	}
 
-	protected override void OnDeath()
+	protected override void OnDeath(TakenDamageResult result)
 	{
 		PlayerManagement.KillPlayer();
 	}

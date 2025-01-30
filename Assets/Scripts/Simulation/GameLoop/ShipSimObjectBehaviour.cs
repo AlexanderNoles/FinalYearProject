@@ -9,8 +9,9 @@ public class ShipSimObjectBehaviour : SimObjectBehaviour
 	private int modelPoolIndex;
 	private Transform model;
 
-	protected override void OnDeath()
+	protected override void OnDeath(TakenDamageResult result)
 	{
+		base.OnDeath(result);
 		//Stop drawing ship
 		//Set ship to be destroyed sim side
 
@@ -53,7 +54,7 @@ public class ShipSimObjectBehaviour : SimObjectBehaviour
 		if ((target as Ship).isWreck)
 		{
 			//Destroy rendered ship and place wreck there instead
-			OnDeath();
+			OnDeath(new TakenDamageResult());
 		}
 		else
 		{

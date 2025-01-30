@@ -32,7 +32,7 @@ public class SimObjectBehaviour : BoxDescribedBattleBehaviour
 
 		if (Dead())
 		{
-			OnDeath();
+			OnDeath(new TakenDamageResult());
 		}
 
 		//Add bb weapons
@@ -171,11 +171,17 @@ public class SimObjectBehaviour : BoxDescribedBattleBehaviour
 		return firePos;
 	}
 
-	protected override void OnDeath()
+	protected override void OnDeath(TakenDamageResult result)
 	{
 		if (Linked())
 		{
 			target.OnDeath();
+
+			//Give kill reward if killed by player
+			if (PlayerSimObjBehaviour.IsPlayerBB(result.origin) && PlayerManagement.PlayerEntityExists())
+			{
+				PlayerManagement.GetInventory().AdjustCurrency(target.GetKillReward() * BalanceManagement.killWorthRatio);
+			}
 		}
 	}
 

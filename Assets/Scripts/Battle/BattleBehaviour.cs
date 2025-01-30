@@ -324,12 +324,13 @@ public class BattleBehaviour : MonoBehaviour
 
 			Vector3 targetPosition = target.bb.GetPosition();
 
+			bool targetKilled = false;
 			//Preprocess
 			PreTargetProcess(target);
 
 			//Apply attacks to target
 			//For each weapon we apply this targets share of the attacks rounded up
-			for (int a = 0; a < attackProfiles.Count; a++)
+			for (int a = 0; a < attackProfiles.Count && !targetKilled; a++)
 			{
 				AttackProfile attack = attackProfiles[a];
 
@@ -345,7 +346,7 @@ public class BattleBehaviour : MonoBehaviour
 					while (attack.numberOfAttacksSoFar < attack.totalNumberOfAttacks && attackCap > 0)
 					{
 						//Apply damage
-						target.bb.TakeDamage(attack.parentProfile.GetDamage() * BalanceManagement.overallBattlePace, this);
+						TakenDamageResult result = target.bb.TakeDamage(attack.parentProfile.GetDamage() * BalanceManagement.overallBattlePace, this);
 
 						Vector3 shotTargetPosition = target.bb.GetTargetablePosition();
 						//Draw Attack
@@ -355,6 +356,13 @@ public class BattleBehaviour : MonoBehaviour
 						attackCap--;
 						//Increment number of attacks so far
 						attack.numberOfAttacksSoFar++;
+
+						//Killed target
+						if (result.destroyed)
+						{
+							targetKilled = true;
+							break;
+						}
 					}
 				}
 			}
@@ -411,6 +419,7 @@ public class BattleBehaviour : MonoBehaviour
 
 	public struct TakenDamageResult
 	{
+		public BattleBehaviour origin;
 		public bool destroyed;
 		public float damageTaken;
 	}
@@ -418,6 +427,7 @@ public class BattleBehaviour : MonoBehaviour
 	protected virtual TakenDamageResult TakeDamage(float rawDamageNumber, BattleBehaviour origin)
 	{
 		TakenDamageResult result = new TakenDamageResult();
+		result.origin = origin;
 
 		float finalDamageNumber = rawDamageNumber;
 		//Don't allow attack to count as dealing more damage then we have health
@@ -428,7 +438,7 @@ public class BattleBehaviour : MonoBehaviour
 		if (Dead())
 		{
 			result.destroyed = true;
-			OnDeath();
+			OnDeath(result);
 		}
 		else
 		{
@@ -441,7 +451,7 @@ public class BattleBehaviour : MonoBehaviour
 		return result;
 	}
 
-	protected virtual void OnDeath()
+	protected virtual void OnDeath(TakenDamageResult killResult)
 	{
 		//Do nothing by default
 	}
