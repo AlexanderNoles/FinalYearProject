@@ -40,33 +40,10 @@
 	extra: "Named after the company's founder, this weapons array is the galaxy's bread and butter."
 }
 { item
-	//Dangerous Generator
-	rarity: "0"
-	maxHealth: "-25"
-	healthRegen: "5"
-	icon: "generator"
-	name: "Max-Pulse Generator"
-	price: "0.075"
-	class: "2"
-	description: "Decreases <color=*statColour*>Health</color> slightly but increases <color=*statColour*>Health Regen</color> substantially."
-	extra: "*health* *healthRegen*"
-}
-{ item
-	//Damage increase
-	rarity: "0"
-	attackPower: "10"
-	icon: "divinebattlelogic"
-	name: "Divine Battle Logic"
-	price: "0.4"
-	class: "0"
-	description: "Increases <color=*statColour*>Attack Power</color> dramaitcally."
-	extra: "*attackPower*"
-}
-{ item
 	//Move speed increase
 	moveSpeed: "20"
 	icon: "arcane"
-	name: "Advanced Arcane Theory"
+	name: "Arcane Theory"
 	price: "0.3"
 	class: "1"
 	description: "Increases <color=*statColour*>Move Speed</color>."
@@ -78,14 +55,26 @@
 	rarity: "1"
 	target: "WarpShopItemBase"
 	icon: "whisperDigitalHemi"
-	name: "Whisphers From The Digital Hemisphere"
+	name: "Whispers From The Digital Hemisphere"
 	price: "0.9"
 	class: "0"
 	description: "Allows the purchase of one item from the Warp's Shop, will be consumed upon purchase of an item."
 	extra: "Unlike typical Shops, the Warp's Shop will not refresh until it is empty."
 }
-### Exalted ###
 { item
+	//Dangerous Generator
+	rarity: "1"
+	maxHealth: "-25"
+	healthRegen: "5"
+	icon: "generator"
+	name: "Max-Pulse Generator"
+	price: "0.075"
+	class: "2"
+	description: "Decreases <color=*statColour*>Health</color> slightly but increases <color=*statColour*>Health Regen</color> substantially."
+	extra: "*health* *healthRegen*"
+}
+### Exalted ###
+{ item (debug)
 	//Standin item
 	rarity: "2"
 	icon: "angry"

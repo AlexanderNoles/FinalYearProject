@@ -2,10 +2,27 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MonitorBreak;
 
-public class InputManagement
+[InitializeAtRuntime]
+public class InputManagement : MonoBehaviour
 {
-    public static KeyCode extraInformationKey = KeyCode.T;
+	public static HashSet<KeyCode> consumed = new HashSet<KeyCode>();
+
+	public static void ConsumeKeyCode(KeyCode newlyConsumed)
+	{
+		if (!consumed.Contains(newlyConsumed))
+		{
+			consumed.Add(newlyConsumed);
+		}
+	}
+
+	private void LateUpdate()
+	{
+		consumed.Clear();
+	}
+
+	public static KeyCode extraInformationKey = KeyCode.T;
     public static KeyCode rotateLeftKey = KeyCode.Q;
     public static KeyCode rotateRightKey = KeyCode.E;
     public static KeyCode thrusterUpKey = KeyCode.W;
@@ -17,9 +34,6 @@ public class InputManagement
 	public static KeyCode toggleMapKey = KeyCode.M;
     public static KeyCode toggleInventoryKey = KeyCode.Tab;
     public static KeyCode toggleLocationInfoKey = KeyCode.R;
-
-
-
 
     public static bool InputEnabled = true;
     public static MouseButton cameraMove = MouseButton.Right;
@@ -120,16 +134,16 @@ public class InputManagement
 
     internal static bool GetKeyDown(KeyCode key, bool _override = false)
     {
-        return Input.GetKeyDown(key) && (InputEnabled || _override);
+        return (Input.GetKeyDown(key) && !consumed.Contains(key)) && (InputEnabled || _override);
     }
 
     internal static bool GetKeyUp(KeyCode key, bool _override = false)
     {
-        return Input.GetKeyUp(key) && (InputEnabled || _override);
+        return (Input.GetKeyUp(key) && !consumed.Contains(key)) && (InputEnabled || _override);
     }
 
     internal static bool GetKey(KeyCode key, bool _override = false)
     {
-        return Input.GetKey(key) && (InputEnabled || _override);
+        return (Input.GetKey(key) && !consumed.Contains(key)) && (InputEnabled || _override);
     }
 }

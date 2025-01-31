@@ -5,7 +5,7 @@ using MonitorBreak;
 using System;
 using UnityEngine.UIElements;
 
-[IntializeAtRuntime]
+[InitializeAtRuntime]
 public class WorldManagement : MonoBehaviour
 {
     public const float inEngineWorldScaleMultiplier = 200f;

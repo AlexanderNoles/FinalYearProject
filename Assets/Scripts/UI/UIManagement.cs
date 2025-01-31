@@ -7,8 +7,29 @@ using UnityEngine;
 public class UIManagement : MonoBehaviour
 {
     private static UIManagement instance;
+	private List<StateOverride> currentStateOverrides = new List<StateOverride>();
     private List<UIState> uiStates = new List<UIState>();
     private UIState activeState;
+
+	public static void AddStateOverride(StateOverride stateOverride)
+	{
+		if (instance == null)
+		{
+			return;
+		}
+
+		instance.currentStateOverrides.Add(stateOverride);
+	}
+
+	public static void RemoveStateOverride(StateOverride stateOverride)
+	{
+		if (instance == null) 
+		{ 
+			return; 
+		}
+
+		instance.currentStateOverrides.Remove(stateOverride);
+	}
 
     public static void AddUIState(UIState newState)
     {
@@ -109,6 +130,24 @@ public class UIManagement : MonoBehaviour
 
     private void Update()
     {
+		//Check if a window override wants to be closed
+		for (int i = 0; i < currentStateOverrides.Count;)
+		{
+			StateOverride currentTarget = currentStateOverrides[i];
+			if (InputManagement.GetKeyDown(currentTarget.inputKey))
+			{
+				currentTarget.Process();
+				//Ensure no other scripts use this keycode till next frame
+				InputManagement.ConsumeKeyCode(currentTarget.inputKey);
+			}
+
+			//State override was not removed during process
+			if (currentStateOverrides.Contains(currentTarget))
+			{
+				i++;
+			}
+		}
+
         if (activeState != null)
         {
             //This runs before the ui state is set active
