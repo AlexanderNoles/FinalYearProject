@@ -34,6 +34,7 @@ public class InputManagement : MonoBehaviour
 	public static KeyCode toggleMapKey = KeyCode.M;
     public static KeyCode toggleInventoryKey = KeyCode.Tab;
     public static KeyCode toggleLocationInfoKey = KeyCode.R;
+	public static KeyCode togglePolicyKey = KeyCode.R;
 
     public static bool InputEnabled = true;
     public static MouseButton cameraMove = MouseButton.Right;

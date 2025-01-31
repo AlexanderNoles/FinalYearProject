@@ -42,5 +42,7 @@ public class Player : SimulationEntity
 		feelings.baseFavourability = 0.0f;
 		AddData(DataTags.Feelings, feelings);
 		AddData(DataTags.ContactPolicy, new ContactPolicyData());
+
+		AddData(DataTags.Policies, new PoliciesData().Init());
 	}
 }

@@ -33,6 +33,7 @@ namespace EntityAndDataDescriptor
 		CentralShop,
         Stats,
         Inventory,
+		Policies,
 		Interactions,
         Military,
         Political,

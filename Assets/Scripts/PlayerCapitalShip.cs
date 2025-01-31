@@ -360,7 +360,7 @@ public class PlayerCapitalShip : MonoBehaviour
 
 			transform.rotation = Quaternion.Euler(
 				transform.rotation.eulerAngles.x,
-				transform.rotation.eulerAngles.y + rotationalMovement,
+				transform.rotation.eulerAngles.y + (rotationalMovement * 360.0f * Time.deltaTime),
 				transform.rotation.eulerAngles.z
 				);
 
