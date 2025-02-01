@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HistoryData : DataBase
+public class HistoryData : DataModule
 {
 	public class HistoryCell
 	{

@@ -11,7 +11,7 @@ public class EconomicPowerReductionRoutine : RoutineBase
     public override void Run()
     {
         //Get every economy data
-        List<DataBase> economies = SimulationManagement.GetDataViaTag(DataTags.Economic);
+        List<DataModule> economies = SimulationManagement.GetDataViaTag(DataTags.Economic);
 
         foreach (EconomyData economy in economies.Cast<EconomyData>())
         {

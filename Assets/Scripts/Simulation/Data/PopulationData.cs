@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PopulationData : DataBase
+public class PopulationData : DataModule
 {
     public float currentPopulationCount;
     public float populationNaturalGrowthSpeed;

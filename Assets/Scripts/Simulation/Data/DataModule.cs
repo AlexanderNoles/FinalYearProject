@@ -6,11 +6,11 @@ using UnityEngine;
 //DataBase is the base for all data
 //It is used so different pieces of data can communicate with the simulation
 //effectively.
-public class DataBase
+public class DataModule
 {
     public EntityLink parent;
 
-    public bool TryGetLinkedData<T>(Enum tag, out T target) where T : DataBase
+    public bool TryGetLinkedData<T>(Enum tag, out T target) where T : DataModule
     {
         target = null;
 
@@ -25,7 +25,7 @@ public class DataBase
         return false;
     }
 
-    public T GetLinkedData<T>(Enum tag) where T : DataBase
+    public T GetLinkedData<T>(Enum tag) where T : DataModule
     {
         parent.Get().GetData(tag, out T data);
         return data;

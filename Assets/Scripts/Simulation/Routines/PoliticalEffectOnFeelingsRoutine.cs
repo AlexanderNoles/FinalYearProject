@@ -14,7 +14,7 @@ public class PoliticalEffectOnFeelingsRoutine : RoutineBase
 		//If those entites have political data then alter their feelings about other entites
 		//that have political data
 
-		List<DataBase> feelingsDatas = SimulationManagement.GetDataViaTag(DataTags.Feelings);
+		List<DataModule> feelingsDatas = SimulationManagement.GetDataViaTag(DataTags.Feelings);
 		Dictionary<int, PoliticalData> idToPolitics = SimulationManagement.GetEntityIDToData<PoliticalData>(DataTags.Political);
 
 		foreach (FeelingsData feelingsData in feelingsDatas.Cast<FeelingsData>())

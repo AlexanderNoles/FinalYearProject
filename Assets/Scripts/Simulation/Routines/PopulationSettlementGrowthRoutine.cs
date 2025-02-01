@@ -9,7 +9,7 @@ public class PopulationSettlementGrowthRoutine : RoutineBase
 {
     public override void Run()
     {
-        List<DataBase> populations = SimulationManagement.GetDataViaTag(DataTags.Population);
+        List<DataModule> populations = SimulationManagement.GetDataViaTag(DataTags.Population);
 
         foreach (PopulationData populationData in populations.Cast<PopulationData>())
         {

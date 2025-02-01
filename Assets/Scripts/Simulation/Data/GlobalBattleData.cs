@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using UnityEngine;
 using static GlobalBattleData.Battle.DrawnData;
 
-public class GlobalBattleData : DataBase
+public class GlobalBattleData : DataModule
 {
 	public class Battle : VisitableLocation
 	{

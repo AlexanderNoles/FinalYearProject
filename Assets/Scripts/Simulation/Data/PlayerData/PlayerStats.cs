@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerStats : DataBase
+public class PlayerStats : DataModule
 {
 	public static readonly Dictionary<string, float> statIdentifierToDefault = new Dictionary<string, float>() 
 	{

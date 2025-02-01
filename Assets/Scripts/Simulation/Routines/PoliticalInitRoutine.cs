@@ -16,7 +16,7 @@ public class PoliticalInitRoutine : InitRoutineBase
 	public override void Run()
 	{
 		//Get all political data modules
-		List<DataBase> politicalDatas = SimulationManagement.GetToInitData(DataTags.Political);
+		List<DataModule> politicalDatas = SimulationManagement.GetToInitData(DataTags.Political);
 
 		foreach (PoliticalData politicalData in politicalDatas.Cast<PoliticalData>())
 		{

@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SettlementData : DataBase
+public class SettlementData : DataModule
 {
     private int nextID = 0;
 
-    public class Settlement : DataBase
+    public class Settlement : DataModule
     {
         public int setID;
 

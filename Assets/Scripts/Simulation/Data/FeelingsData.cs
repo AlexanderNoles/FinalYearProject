@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FeelingsData : DataBase
+public class FeelingsData : DataModule
 {
     public class Relationship
     {

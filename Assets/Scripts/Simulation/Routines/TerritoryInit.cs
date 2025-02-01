@@ -18,7 +18,7 @@ public class TerritoryInit : InitRoutineBase
 		//Get all territory data for the contains check
 		List<TerritoryData> territories = SimulationManagement.GetDataViaTag(DataTags.Territory).Cast<TerritoryData>().ToList();
 		//Get territories that need to be initalized
-		List<DataBase> territoriesToInit = SimulationManagement.GetToInitData(DataTags.Territory);
+		List<DataModule> territoriesToInit = SimulationManagement.GetToInitData(DataTags.Territory);
 
 		foreach (TerritoryData territoryData in territoriesToInit.Cast<TerritoryData>())
 		{

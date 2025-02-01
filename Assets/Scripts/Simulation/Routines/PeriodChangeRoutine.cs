@@ -24,7 +24,7 @@ public class PeriodChangeRoutine : RoutineBase
         }
 
         //Get all entites that can fight wars
-        List<DataBase> warDatas = SimulationManagement.GetDataViaTag(DataTags.War);
+        List<DataModule> warDatas = SimulationManagement.GetDataViaTag(DataTags.War);
 
         //Periods can be defined by a few things
         //1. Conflict
@@ -83,7 +83,7 @@ public class PeriodChangeRoutine : RoutineBase
             int currentMax = int.MinValue;
             SimulationEntity currentMaxEntity = null;
             TerritoryData currentDominantPowerData = null;
-            List<DataBase> territories = SimulationManagement.GetDataViaTag(DataTags.Territory);
+            List<DataModule> territories = SimulationManagement.GetDataViaTag(DataTags.Territory);
 
             foreach (TerritoryData territory in territories.Cast<TerritoryData>())
             {

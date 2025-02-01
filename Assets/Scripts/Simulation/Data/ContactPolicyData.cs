@@ -1,4 +1,4 @@
-public class ContactPolicyData : DataBase
+public class ContactPolicyData : DataModule
 {
     public bool visibleToAll = true;
 	public bool openlyHostile = false;

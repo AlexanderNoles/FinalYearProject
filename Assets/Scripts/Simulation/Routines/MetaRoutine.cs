@@ -33,7 +33,7 @@ public class MetaRoutine : RoutineBase
             }
         }
 
-        List<DataBase> allFeelingsData = SimulationManagement.GetDataViaTag(DataTags.Feelings);
+        List<DataModule> allFeelingsData = SimulationManagement.GetDataViaTag(DataTags.Feelings);
 
         //This should arguably be conjoined with the evaluation routine code
         //So cleanup can be implemented in a modularised fashion

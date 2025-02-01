@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Shop : DataBase
+public class Shop : DataModule
 {
 	public int capacity = 8;
 

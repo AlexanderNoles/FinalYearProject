@@ -10,7 +10,7 @@ public class MilitaryPerTickReset : RoutineBase
 	public override void Run()
 	{
 		//Get all military data
-		List<DataBase> militaryDatas = SimulationManagement.GetDataViaTag(DataTags.Military);
+		List<DataModule> militaryDatas = SimulationManagement.GetDataViaTag(DataTags.Military);
 
 		foreach (MilitaryData militaryData in militaryDatas.Cast<MilitaryData>())
 		{

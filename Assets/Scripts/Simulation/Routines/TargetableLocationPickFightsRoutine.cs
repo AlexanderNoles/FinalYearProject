@@ -15,9 +15,9 @@ public class TargetableLocationPickFightsRoutine : RoutineBase
 	public override void Run()
 	{
 		GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattleData);
-		List<DataBase> targetableLocations = SimulationManagement.GetDataViaTag(DataTags.TargetableLocation);
+		List<DataModule> targetableLocations = SimulationManagement.GetDataViaTag(DataTags.TargetableLocation);
 		List<TerritoryData> territoryDatas = SimulationManagement.GetDataViaTag(DataTags.Territory).Cast<TerritoryData>().ToList();
-		List<DataBase> militaries = SimulationManagement.GetDataViaTag(DataTags.Military);
+		List<DataModule> militaries = SimulationManagement.GetDataViaTag(DataTags.Military);
 
 		foreach (TargetableLocationData data in targetableLocations.Cast<TargetableLocationData>())
 		{

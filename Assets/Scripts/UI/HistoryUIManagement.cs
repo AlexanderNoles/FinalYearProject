@@ -143,7 +143,7 @@ public class HistoryUIManagement : UIState
 		//Update map pixels to match
 
 		//Get targets
-		List<DataBase> targets = SimulationManagement.GetDataViaTag(DataTags.Territory);
+		List<DataModule> targets = SimulationManagement.GetDataViaTag(DataTags.Territory);
 		//Get their emblem data
 		List<EmblemData> correspondingEmblemData = SimulationManagement.TryGetDataIntoClone<EmblemData>(DataTags.Emblem, targets);
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-public class PoliciesData : DataBase
+public class PoliciesData : DataModule
 {
 	//Get all policies as type
 	public static List<Type> allPolicies = new List<Type>();

@@ -68,7 +68,7 @@ public class SimulationEntity
     //Data system
     //Data modules are stored with an accesor key, typically a tag
     //these accessor keys are used by routines to get specific sets of data modules
-    protected Dictionary<Enum, DataBase> dataModules;
+    protected Dictionary<Enum, DataModule> dataModules;
 
     public List<Enum> GetDataTags()
     {
@@ -78,7 +78,7 @@ public class SimulationEntity
     public virtual void InitData()
     {
         //Add nothing by default
-        dataModules = new Dictionary<Enum, DataBase>();
+        dataModules = new Dictionary<Enum, DataModule>();
     }
 
 	public bool HasData(Enum tag)
@@ -87,16 +87,16 @@ public class SimulationEntity
 	}
 
     //Get a data module
-    public bool GetData<T>(Enum tag, out T data) where T : DataBase
+    public bool GetData<T>(Enum tag, out T data) where T : DataModule
     {
-        bool toReturn = dataModules.TryGetValue(tag, out DataBase tempData);
+        bool toReturn = dataModules.TryGetValue(tag, out DataModule tempData);
         data = tempData as T;
 
         return toReturn;
     }
 
     //Add a data module
-    public void AddData(Enum tag, DataBase data)
+    public void AddData(Enum tag, DataModule data)
     {
         if (dataModules.ContainsKey(tag))
         {
@@ -114,7 +114,7 @@ public class SimulationEntity
 
     public void RemoveData(Enum tag)
     {
-        DataBase data = dataModules[tag];
+        DataModule data = dataModules[tag];
         dataModules.Remove(tag);
 
         //Remove from simulation management register so routines don't pick it up

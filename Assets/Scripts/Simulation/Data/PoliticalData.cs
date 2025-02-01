@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PoliticalData : DataBase
+public class PoliticalData : DataModule
 {
 	//SQRT OF 8, or sqrt(2^2 + 2^2)
 	public const float maxDistance = 2.82842712475f;

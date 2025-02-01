@@ -19,7 +19,7 @@ public class FeelingsInit : InitRoutineBase
         //(Not just the ones being initalized)
         List<FeelingsData> allFeelingsData = SimulationManagement.GetDataViaTag(DataTags.Feelings).Cast<FeelingsData>().ToList();
         //Then get all feelings data that needs to be initlaized
-        List<DataBase> toInitFeelingsData = SimulationManagement.GetToInitData(DataTags.Feelings);
+        List<DataModule> toInitFeelingsData = SimulationManagement.GetToInitData(DataTags.Feelings);
 
         foreach (FeelingsData feelingsData in toInitFeelingsData.Cast<FeelingsData>())
         {

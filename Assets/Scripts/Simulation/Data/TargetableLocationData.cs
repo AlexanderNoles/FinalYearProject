@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TargetableLocationData : DataBase
+public class TargetableLocationData : DataModule
 {
 	public class ActualLocation : VisitableLocation
 	{

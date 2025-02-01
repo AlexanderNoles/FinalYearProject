@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EmblemData : DataBase
+public class EmblemData : DataModule
 {
     public bool hasCreatedEmblem = false;
     public Color mainColour;

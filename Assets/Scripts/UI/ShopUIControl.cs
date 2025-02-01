@@ -60,8 +60,10 @@ public class ShopUIControl : MonoBehaviour
 			{
 				CloseShopUI();
 			}
-
-			cantBuyBlocker.SetActive(target.GetPlayerReputation() <= -0.1f);
+			else
+			{
+				cantBuyBlocker.SetActive(target.GetPlayerReputation() <= -0.1f);
+			}
 		}
 	}
 

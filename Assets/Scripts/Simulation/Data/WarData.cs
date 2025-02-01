@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WarData : DataBase
+public class WarData : DataModule
 {
 	//Increase based on the number of battles
 	//A higher number means war has a larger negative effect on the country

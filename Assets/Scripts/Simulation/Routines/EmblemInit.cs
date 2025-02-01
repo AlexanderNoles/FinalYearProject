@@ -15,7 +15,7 @@ public class EmblemInit : InitRoutineBase
 
     public override void Run()
     {
-        List<DataBase> dataToInit = SimulationManagement.GetToInitData(DataTags.Emblem);
+        List<DataModule> dataToInit = SimulationManagement.GetToInitData(DataTags.Emblem);
 
         foreach (EmblemData emblemData in dataToInit.Cast<EmblemData>())
         {
@@ -28,7 +28,7 @@ public class EmblemInit : InitRoutineBase
 
 			//Get the next colour from the colour rotation
 			//Apply some small variation to it, so two nations colours are very rarely the same
-			emblemData.mainColour = VisualDatabase.GetNextFactionColour() * (1.0f + (SimulationManagement.random.Next(-100, 101) / 10000.0f));
+			emblemData.mainColour = VisualDatabase.GetNextFactionColour() * (1.0f + (SimulationManagement.random.Next(-100, 101) / 1000.0f));
 			emblemData.mainColourHex = "#" + ColorUtility.ToHtmlStringRGB(emblemData.mainColour);
 
             emblemData.highlightColour = emblemData.mainColour * 2.0f;

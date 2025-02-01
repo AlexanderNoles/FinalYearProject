@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class MilitaryData : DataBase
+public class MilitaryData : DataModule
 {
 	public float totalDamageBuildup = 0;
 

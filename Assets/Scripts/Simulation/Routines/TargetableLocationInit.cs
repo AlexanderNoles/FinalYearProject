@@ -14,7 +14,7 @@ public class TargetableLocationInit : InitRoutineBase
 
     public override void Run()
 	{
-		List<DataBase> toInit = SimulationManagement.GetToInitData(DataTags.TargetableLocation);
+		List<DataModule> toInit = SimulationManagement.GetToInitData(DataTags.TargetableLocation);
 
 		foreach (TargetableLocationData targetableLocation in toInit.Cast<TargetableLocationData>())
 		{

@@ -202,15 +202,15 @@ public class SimulationManagement : MonoBehaviour
     }
     #endregion
 
-    private Dictionary<Enum, List<DataBase>> tagToData = new Dictionary<Enum, List<DataBase>>();
-    private Dictionary<Enum, List<DataBase>> newDataModulesByTag = new Dictionary<Enum, List<DataBase>>();
+    private Dictionary<Enum, List<DataModule>> tagToData = new Dictionary<Enum, List<DataModule>>();
+    private Dictionary<Enum, List<DataModule>> newDataModulesByTag = new Dictionary<Enum, List<DataModule>>();
 
     #region Data Tag Filtering
-    public static void RegisterDataModule(Enum tag, DataBase module)
+    public static void RegisterDataModule(Enum tag, DataModule module)
     {
         if (!instance.tagToData.ContainsKey(tag))
         {
-            instance.tagToData.Add(tag, new List<DataBase>());
+            instance.tagToData.Add(tag, new List<DataModule>());
         }
 
         if (!instance.tagToData[tag].Contains(module))
@@ -220,14 +220,14 @@ public class SimulationManagement : MonoBehaviour
             //Add to new data modules by tag so init routines can run on this new data
             if (!instance.newDataModulesByTag.ContainsKey(tag))
             {
-                instance.newDataModulesByTag.Add(tag, new List<DataBase>());
+                instance.newDataModulesByTag.Add(tag, new List<DataModule>());
             }
 
             instance.newDataModulesByTag[tag].Add(module);
         }
     }
 
-    public static void DeRegisterDataModule(Enum tag, DataBase module)
+    public static void DeRegisterDataModule(Enum tag, DataModule module)
     {
         if (instance.tagToData.ContainsKey(tag))
         {
@@ -235,7 +235,7 @@ public class SimulationManagement : MonoBehaviour
         }
     }
 
-    public static List<DataBase> GetDataViaTag(Enum tag)
+    public static List<DataModule> GetDataViaTag(Enum tag)
     {
         if (instance != null && instance.tagToData.ContainsKey(tag))
         {
@@ -243,10 +243,10 @@ public class SimulationManagement : MonoBehaviour
         }
 
         //Return empty list by default
-        return new List<DataBase>();
+        return new List<DataModule>();
     }
 
-    public static List<DataBase> GetToInitData(Enum tag)
+    public static List<DataModule> GetToInitData(Enum tag)
     {
         if (instance != null && instance.newDataModulesByTag.ContainsKey(tag))
         {
@@ -254,15 +254,15 @@ public class SimulationManagement : MonoBehaviour
         }
 
         //Return empty list by default
-        return new List<DataBase>();
+        return new List<DataModule>();
     }
 
-    public static Dictionary<int, T> GetEntityIDToData<T>(Enum tag) where T : DataBase
+    public static Dictionary<int, T> GetEntityIDToData<T>(Enum tag) where T : DataModule
     {
         Dictionary<int, T> toReturn = new Dictionary<int, T>();
-        List<DataBase> dataTarget = GetDataViaTag(tag);
+        List<DataModule> dataTarget = GetDataViaTag(tag);
 
-        foreach (DataBase dataModule in dataTarget)
+        foreach (DataModule dataModule in dataTarget)
         {
             toReturn.Add(dataModule.parent.Get().id, (T)dataModule);
         }
@@ -270,11 +270,11 @@ public class SimulationManagement : MonoBehaviour
         return toReturn;
     }
 
-    public static List<T> TryGetDataIntoClone<T>(Enum tag, List<DataBase> targets) where T : DataBase
+    public static List<T> TryGetDataIntoClone<T>(Enum tag, List<DataModule> targets) where T : DataModule
     {
         List<T> toReturn = new List<T>();
 
-        foreach (DataBase dataBase in targets)
+        foreach (DataModule dataBase in targets)
         {
             toReturn.Add(dataBase.GetLinkedData<T>(tag));
         }

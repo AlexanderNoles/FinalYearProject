@@ -8,7 +8,7 @@ public class MilitaryCapacityFromPopulationRoutine : RoutineBase
 {
     public override void Run()
     {
-        List<DataBase> militaryDatas = SimulationManagement.GetDataViaTag(DataTags.Military);
+        List<DataModule> militaryDatas = SimulationManagement.GetDataViaTag(DataTags.Military);
 
         foreach (MilitaryData militaryData in militaryDatas.Cast<MilitaryData>())
         {

@@ -10,7 +10,7 @@ public class PoliticalChangeRoutine : RoutineBase
 	public override void Run()
 	{
 		//Get all political data
-		List<DataBase> politicalDatas = SimulationManagement.GetDataViaTag(DataTags.Political);
+		List<DataModule> politicalDatas = SimulationManagement.GetDataViaTag(DataTags.Political);
 
 		foreach (PoliticalData politicalData in politicalDatas.Cast<PoliticalData>())
 		{

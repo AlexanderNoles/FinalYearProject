@@ -10,7 +10,7 @@ public class WarStratergyRoutine : RoutineBase
     public override void Run()
     {
         //Get all war datas
-        List<DataBase> warDatas = SimulationManagement.GetDataViaTag(DataTags.War);
+        List<DataModule> warDatas = SimulationManagement.GetDataViaTag(DataTags.War);
 
         foreach (WarData data in warDatas.Cast<WarData>())
         {

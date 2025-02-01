@@ -250,7 +250,7 @@ public class MapManagement : UIState
 					mapRefreshTime = Time.time + timeTillNextMapUpdate;
 					//We want to draw the current territory borders now cause the intro animation is done
 					//We need to get all the territory data modules and then draw lines based on them
-					List<DataBase> territories = SimulationManagement.GetDataViaTag(DataTags.Territory);
+					List<DataModule> territories = SimulationManagement.GetDataViaTag(DataTags.Territory);
 
 					Vector3 additionalTerrOffset = Vector3.down * 0.1f;
 					//Draw per territory data

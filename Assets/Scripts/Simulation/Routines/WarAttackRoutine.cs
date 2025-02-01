@@ -14,7 +14,7 @@ public class WarAttackRoutine : RoutineBase
 		//If there is already a battle there try to join it
 
 		//Get all war data modules
-		List<DataBase> warDatas = SimulationManagement.GetDataViaTag(DataTags.War);
+		List<DataModule> warDatas = SimulationManagement.GetDataViaTag(DataTags.War);
 		GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattleData);
 
 		foreach (WarData warData in warDatas.Cast<WarData>())

@@ -258,7 +258,7 @@ public class PlayerLocationManagement : MonoBehaviour
 		else if (!setInitalLocation)
 		{
 			//Place player near a settlement
-			List<DataBase> setData = SimulationManagement.GetDataViaTag(DataTags.Settlement);
+			List<DataModule> setData = SimulationManagement.GetDataViaTag(DataTags.Settlement);
 
 			foreach (SettlementData set in setData.Cast<SettlementData>())
 			{

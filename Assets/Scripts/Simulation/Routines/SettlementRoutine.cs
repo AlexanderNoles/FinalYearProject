@@ -9,7 +9,7 @@ public class SettlementRoutine : RoutineBase
 {
     public override void Run()
     {
-        List<DataBase> settlementDatas = SimulationManagement.GetDataViaTag(DataTags.Settlement);
+        List<DataModule> settlementDatas = SimulationManagement.GetDataViaTag(DataTags.Settlement);
 
         foreach (SettlementData settlementData in settlementDatas.Cast<SettlementData>())
         {

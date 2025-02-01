@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TerritoryData : DataBase
+public class TerritoryData : DataModule
 {
     public RealSpacePosition origin = null;
     public HashSet<RealSpacePosition> territoryCenters = new HashSet<RealSpacePosition>();
