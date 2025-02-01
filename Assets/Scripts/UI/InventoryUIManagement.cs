@@ -58,6 +58,11 @@ public class InventoryUIManagement : UIState
     public MultiObjectPool mainSlotPool;
     public MultiObjectPool dictionarySlotPool;
 
+	[Header("Current Stat Readout References")]
+	public RectTransform statReadoutEmpty;
+	public GameObject statReadoutBaseObject;
+	private Dictionary<string, TextMeshProUGUI> statIdentifierToLabel = new Dictionary<string, TextMeshProUGUI>();
+
 
     //This is the area covered by a inventory slot UI component, this includes padding
     //This can be calculated by simply getting the base slot object scale (150), dividing by 2 (75) and adding padding (+15) if need be
@@ -72,6 +77,19 @@ public class InventoryUIManagement : UIState
     {
 		instance = this;
         base.Awake();
+
+		//Create all the neccesary stat readouts
+		statIdentifierToLabel.Clear();
+		foreach (string identifier in PlayerStats.statIdentifierToBaseLevels.Keys)
+		{
+			RectTransform rect = Instantiate(statReadoutBaseObject, statReadoutEmpty).transform as RectTransform;
+			rect.anchoredPosition3D = new Vector3(100, -70 * statIdentifierToLabel.Count, 0.0f);
+
+			rect.GetComponentInChildren<Image>().sprite = VisualDatabase.GetStatSprite((Stats)statIdentifierToLabel.Count);
+			statIdentifierToLabel.Add(identifier, rect.GetComponentInChildren<TextMeshProUGUI>());
+		}
+
+		int count = PlayerStats.statIdentifierToBaseLevels.Count;
     }
 
     private void Update()
@@ -148,8 +166,30 @@ public class InventoryUIManagement : UIState
             //Prune objects
             miniSlotPool.PruneObjectsNotUpdatedThisFrame(0);
             mainSlotPool.PruneObjectsNotUpdatedThisFrame(0);
+
+			if (!mini)
+			{
+				UpdateStatsReadout();
+			}
         }
     }
+
+	private void UpdateStatsReadout()
+	{
+		if (!PlayerManagement.PlayerEntityExists())
+		{
+			return;
+		}
+
+		//Get player stats
+		//And use it to update the stat readout
+		PlayerStats playerStats = PlayerManagement.GetStats();
+
+		foreach (string identifier in PlayerStats.statIdentifierToBaseLevels.Keys)
+		{
+			statIdentifierToLabel[identifier].text = playerStats.GetStat(identifier).ToString();
+		}
+	}
 
 	public void DrawDictionary()
 	{
