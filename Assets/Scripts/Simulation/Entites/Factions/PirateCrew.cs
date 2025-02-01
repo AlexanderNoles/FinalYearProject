@@ -16,24 +16,7 @@ public class PirateCrew : Faction
 		base.InitData();
 		AddData(DataTags.Military, new MilitaryData());
 		AddData(DataTags.Emblem, new EmblemData());
-		TargetableLocationData targetableLocationData = new TargetableLocationData();
-
-		targetableLocationData.name = "Pirate Crew";
-		targetableLocationData.description = "";
-		targetableLocationData.mapColour = Color.red;
-		targetableLocationData.killReward = 250;
-		targetableLocationData.maxHealth = 100;
-		targetableLocationData.weapons = new List<StandardSimWeaponProfile> { new PirateCrewBaseWeapon() };
-
-		targetableLocationData.drawFunc = (parent) =>
-		{
-			GeneratorManagement.StructureGeneration generation = new GeneratorManagement.StructureGeneration();
-			generation.parent = parent;
-
-			generation.SpawnStructure(GeneratorManagement.POOL_INDEXES.PIRATEBASE, Vector3.zero);
-			return generation;
-		};
-
+		TargetableLocationData targetableLocationData = new PirateCrewBaseLocation();
 		AddData(DataTags.TargetableLocation, targetableLocationData);
 
 		ContactPolicyData contactPolicyData = new ContactPolicyData();
@@ -52,6 +35,48 @@ public class PirateCrew : Faction
 		public override float GetTimeBetweenAttacks()
 		{
 			return 0.25f;
+		}
+	}
+
+	public class PirateCrewBaseLocation : TargetableLocationData
+	{
+		private List<StandardSimWeaponProfile> weapons = new List<StandardSimWeaponProfile>()
+		{
+			new PirateCrewBaseWeapon()
+		};
+
+		public override string GetTitle()
+		{
+			return "Pirate Base";
+		}
+
+		public override Color GetMapColour()
+		{
+			return Color.red;
+		}
+
+		public override float GetMaxHealth()
+		{
+			return 100.0f;
+		}
+
+		public override float GetKillReward()
+		{
+			return 250.0f;
+		}
+
+		public override List<StandardSimWeaponProfile> GetWeapons()
+		{
+			return weapons;
+		}
+
+		public override GeneratorManagement.Generation Draw(Transform parent)
+		{
+			GeneratorManagement.StructureGeneration generation = new GeneratorManagement.StructureGeneration();
+			generation.parent = parent;
+
+			generation.SpawnStructure(GeneratorManagement.POOL_INDEXES.PIRATEBASE, Vector3.zero);
+			return generation;
 		}
 	}
 }

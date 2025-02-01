@@ -9,6 +9,7 @@ namespace EntityAndDataDescriptor
 
     public enum EntityTypeTags
     {
+		VoidSwarm,
         Faction,
         Nation,
         Player,

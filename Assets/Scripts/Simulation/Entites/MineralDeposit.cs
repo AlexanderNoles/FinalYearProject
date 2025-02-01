@@ -50,25 +50,10 @@ public class MineralDeposit : SimulationEntity
 		//Allows the mineral depoist to pick fights
 		//It has no military so it cannot fight back
 		AddData(DataTags.Battle, new BattleData());
-		TargetableLocationData targetableLocationData = new TargetableLocationData();
-
-		targetableLocationData.name = "Ore Deposit";
-		targetableLocationData.description = "";
-		targetableLocationData.mapColour = Color.green;
-
-		targetableLocationData.drawFunc = (parent) =>
-		{
-			GeneratorManagement.AsteroidGeneration generation = new GeneratorManagement.AsteroidGeneration();
-			generation.parent = parent;
-			generation.SpawnAsteroid(Vector3.zero);
-
-			return generation;
-		};
-
+		TargetableLocationData targetableLocationData = new MineralDepositLocation();
 		//give this location a random desirability
 		float t = SimulationManagement.random.Next(0, 101) / 100.0f;
 		targetableLocationData.desirability = Mathf.CeilToInt(Mathf.Lerp(1, 31, Mathf.Pow(t, 3)));
-		targetableLocationData.maxHealth = 50.0f * targetableLocationData.desirability;
 
 		AddData(DataTags.TargetableLocation, targetableLocationData);
 
@@ -76,5 +61,32 @@ public class MineralDeposit : SimulationEntity
 		contactPolicyData.openlyHostile = true;
 
 		AddData(DataTags.ContactPolicy, contactPolicyData);
+	}
+}
+
+public class MineralDepositLocation : TargetableLocationData
+{
+	public override string GetTitle()
+	{
+		return "Ore Deposit";
+	}
+
+	public override Color GetMapColour()
+	{
+		return Color.green;
+	}
+
+	public override GeneratorManagement.Generation Draw(Transform parent)
+	{
+		GeneratorManagement.AsteroidGeneration generation = new GeneratorManagement.AsteroidGeneration();
+		generation.parent = parent;
+		generation.SpawnAsteroid(Vector3.zero);
+
+		return generation;
+	}
+
+	public override float GetMaxHealth()
+	{
+		return 50.0f * desirability;
 	}
 }

@@ -450,13 +450,15 @@ public class PlayerLocationManagement : MonoBehaviour
                         }
                     }
 
+					//This scans every single targetable location, every tick, for every cell
+					//This is bad lmao
 					foreach (TargetableLocationData cap in capitalData)
 					{
                         if (cap.cellCenter != null)
                         {
                             if (cap.cellCenter.Equals(currentCellCenter))
                             {
-                                foundLocations.Add(cap.location);
+                                foundLocations.Add(cap);
                             }
                         }
                     }

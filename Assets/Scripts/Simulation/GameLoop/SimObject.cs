@@ -5,11 +5,10 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 //Base class used to represent an "object" in the simulation, very general, mainly used so runtime scripts can correctly interface with the simulation
-public class SimObject : IDisplay
+public class SimObject : DataModule, IDisplay
 {
 	//Optimization method to avoid multiple get component calls for same object
 	private static Dictionary<Transform, SimObjectBehaviour> transToSOB = new Dictionary<Transform, SimObjectBehaviour>();
-	private EntityLink parent;
 
 	public void SetParent(EntityLink newParent)
 	{
