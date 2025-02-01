@@ -23,9 +23,13 @@ public class Warp : SimulationEntity
 	public override void InitData()
 	{
 		base.InitData();
-		
-		Shop warpShop = new WarpShop();
-		warpShop.capacity = 1;
+
+		//Make this an exalted ItemShop with 1 capacity
+		Shop warpShop = new WarpShop
+		{
+			type = Shop.ShopType.ItemShop,
+			capacity = 1
+		};
 		warpShop.SetTargetRarity(ItemDatabase.ItemRarity.Exalted);
 		AddData(DataTags.CentralShop, warpShop);
 	}

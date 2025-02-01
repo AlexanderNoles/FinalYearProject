@@ -66,7 +66,25 @@ public class PlayerInventory : InventoryBase
 		}
 
 		return false;
-    } 
+    }
+
+	public bool AttemptToBuy(float price, bool autoRedrawUI = true)
+	{
+		if (CanAfford(price))
+		{
+			//Auto subtract currency
+			mainCurrency -= price;
+
+			if (autoRedrawUI)
+			{
+				MainInfoUIControl.ForceCurrencyRedraw();
+			}
+
+			return true;
+		}
+
+		return false;
+	}
 
 	public bool CanAfford(float price)
 	{

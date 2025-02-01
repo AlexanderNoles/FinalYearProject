@@ -12,10 +12,19 @@ public class ShopUIControl : MonoBehaviour
 	private Shop targetShop;
 	public DraggableWindow draggableWindowControl;
 	public GameObject mainUI;
+	public GameObject cantBuyBlocker;
+
+	[Header("Item Shop")]
+	public GameObject itemShopParent;
 	public GameObject slotBaseObject;
 	public RectTransform slotArea;
 	public List<ShopSlotUI> shopSlots;
-	public GameObject cantBuyBlocker;
+
+	[Header("Stat Shop")]
+	public GameObject statShopParent;
+	public GameObject statBaseObject;
+	public RectTransform statArea;
+	public List<StatSlotUI> statSlots;
 
 	[ContextMenu("Generate Shop Slots")]
 	public void GenerateShopSlots()
@@ -46,6 +55,28 @@ public class ShopUIControl : MonoBehaviour
 			}
 		}
     }
+
+	[ContextMenu("Generate Stat Slots")]
+	public void GenerateStatSlots()
+	{
+		const int count = 4;
+		statSlots.Clear();
+
+		//Clear old slots
+		for (int i = 0; i < statArea.childCount;)
+		{
+			DestroyImmediate(statArea.GetChild(0).gameObject);
+		}
+
+		for (int i = 0; i < count; i++)
+		{
+			Vector3 anchoredPos = new Vector3(0, -(80 + (i * 135)), 0.0f);
+			StatSlotUI newTarget = Instantiate(statBaseObject, statArea).GetComponent<StatSlotUI>();
+			(newTarget.transform as RectTransform).anchoredPosition3D = anchoredPos;
+
+			statSlots.Add(newTarget);
+		}
+	}
 
 	private void Awake()
 	{
@@ -108,9 +139,27 @@ public class ShopUIControl : MonoBehaviour
 				targetShop.OnShopUIOpened();
 			}
 
-			for (int i = 0; i < shopSlots.Count; i++)
+			itemShopParent.SetActive(false);
+			statShopParent.SetActive(false);
+			//Based on the type of the shop
+			//Set the ui active here
+			//If this shop is an item shop, set the slots active
+			if (targetShop.type == Shop.ShopType.ItemShop)
 			{
-				DrawSlot(i);
+				slotArea.gameObject.SetActive(true);
+				for (int i = 0; i < shopSlots.Count; i++)
+				{
+					DrawSlot(i);
+				}
+			}
+			else if (targetShop.type == Shop.ShopType.StatShop)
+			{
+				PlayerStats playerData = PlayerManagement.GetStats();
+				statShopParent.SetActive(true);
+				for (int i = 0; i < statSlots.Count; i++)
+				{
+					DrawStatSlot(i, playerData);
+				}
 			}
 
 			mainUI.SetActive(true);
@@ -128,6 +177,57 @@ public class ShopUIControl : MonoBehaviour
 
 		shopSlots[index].Draw(targetShop.itemsInShop[index].item, () => { BuyItemAtSlot(index); });
 		shopSlots[index].DrawPrice(targetShop.itemsInShop[index].calculatedPrice);
+	}
+
+	private void DrawStatSlot(int index, PlayerStats targetData)
+	{
+		if (index >= targetShop.soldStats.Count)
+		{
+			//Draw empty slot
+			statSlots[index].Hide();
+			return;
+		}
+
+		statSlots[index].Draw(targetShop.soldStats[index], targetData, () => { UpgradeStat(index, statSlots[index]); });
+	}
+
+	public void UpgradeStat(int index, StatSlotUI origin)
+	{
+		string statIdentifier = targetShop.soldStats[index].ToString();
+
+		//Get player inventory and stats
+		PlayerInventory playerInventory = PlayerManagement.GetInventory();
+		PlayerStats playerStats = PlayerManagement.GetStats();
+
+		//Attempt to subtract cost
+		//First we need to calculate the cost
+		if (playerStats.baseStatValues.ContainsKey(statIdentifier))
+		{
+			//Get current level
+			int currentLevel = playerStats.baseStatValues[statIdentifier].level;
+
+			//Current level is at or above max stat level
+			//This should not happen as the StatSlotUI should disbale the button! So this function is being run 
+			if (currentLevel >= PlayerStats.statIdentifierToBaseLevels[statIdentifier].Count)
+			{
+				Debug.LogWarning("Stat upgrade failed! Are you sure you should be calling this function?");
+				return;
+			}
+
+			//Don't auto redraw because we are gonna redraw the whole ui anyway
+			if (playerInventory.AttemptToBuy(origin.price, false))
+			{
+				//Above function should auto subtract price from currency
+				//Add one to current level
+				playerStats.baseStatValues[statIdentifier].level += 1;
+
+				//Redraw slot
+				statSlots[index].Redraw();
+
+				//Redraw main ui
+				MainInfoUIControl.ForceRedraw();
+			}
+		}
 	}
 
 	public void BuyItemAtSlot(int index)

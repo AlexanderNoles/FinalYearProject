@@ -28,7 +28,7 @@
 	extra: "This is for alias testing: *health* wowee"
 }
 ### Basic ###
-{ item
+{ item (disabled)
 	//Normal guns
 	rarity: "0"
 	attackPower: "2"
@@ -39,7 +39,7 @@
 	description: "Increases <color=*statColour*>Attack Power</color> slightly"
 	extra: "Named after the company's founder, this weapons array is the galaxy's bread and butter."
 }
-{ item
+{ item (disabled)
 	//Move speed increase
 	moveSpeed: "20"
 	icon: "arcane"

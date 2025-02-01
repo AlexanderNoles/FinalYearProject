@@ -1,62 +1,73 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class PlayerStats : DataModule
 {
-	public static readonly Dictionary<string, float> statIdentifierToDefault = new Dictionary<string, float>() 
+	public static readonly Dictionary<string, List<float>> statIdentifierToBaseLevels = new Dictionary<string, List<float>>() 
 	{
-		{Stats.maxHealth.ToString(), 100},
-		{Stats.healthRegen.ToString(), 1},
-		{Stats.jumpRange.ToString(), 10},
-		{Stats.attackPower.ToString(), 10},
-		{Stats.moveSpeed.ToString(), 150}
+		{Stats.maxHealth.ToString(), new List<float>() { 100.0f, 150.0f, 200.0f, 250.0f, 300.0f, 400.0f, 500.0f } },
+		{Stats.healthRegen.ToString(), new List<float>() { 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 4.0f, 5.0f }},
+		{Stats.jumpRange.ToString(), new List<float>() { 10.0f }},
+		{Stats.attackPower.ToString(), new List<float>() { 10.0f, 15.0f, 20.0f, 25.0f, 30.0f, 40.0f, 50.0f }},
+		{Stats.moveSpeed.ToString(), new List<float>() { 150.0f, 175.0f, 200.0f, 225.0f, 250.0f, 350.0f, 500.0f }}
 	};
 
 	public static float GetDefaultStatValue(string identifier)
 	{
-		return statIdentifierToDefault[identifier];
+		return statIdentifierToBaseLevels[identifier][0];
 	}
 
-	public void ResetStatsToDefault()
+	public void Init()
 	{
-		foreach (KeyValuePair<string, float> entry in statIdentifierToDefault)
+		foreach (string key in statIdentifierToBaseLevels.Keys)
 		{
-			ResetStatToDefault(entry.Key);
+			ResetStatToDefault(key);
 		}
 	}
 
 	public void ResetStatToDefault(string identifier)
 	{
-		if (!statToValue.ContainsKey(identifier))
+		//Reset base stat
+		if (!baseStatValues.ContainsKey(identifier))
 		{
-			statToValue.Add(identifier, new List<StatContributor>());
+			baseStatValues.Add(identifier, new BaseStat(identifier));
 		}
 
-		statToValue[identifier].Clear();
-		//Only add the default contributor
-		statToValue[identifier].Add(new StatContributor(GetDefaultStatValue(identifier), identifier));
+		baseStatValues[identifier].level = 0;
+		//
+
+		//Clear extra contributors
+		if (!statToExtraContributors.ContainsKey(identifier))
+		{
+			statToExtraContributors.Add(identifier, new List<StatContributor>());
+		}
+
+		statToExtraContributors[identifier].Clear();
+		//
 	}
 
 	//Stats dictionary
-	public Dictionary<string, List<StatContributor>> statToValue = new Dictionary<string, List<StatContributor>>();
+	public Dictionary<string, BaseStat> baseStatValues = new Dictionary<string, BaseStat>();
+	public Dictionary<string, List<StatContributor>> statToExtraContributors = new Dictionary<string, List<StatContributor>>();
 
 	public void AddContributorToStat(string identifier, StatContributor newValue)
 	{
-		if (!statToValue.ContainsKey(identifier))
+		if (!statToExtraContributors.ContainsKey(identifier))
 		{
 			//Do nothing if we don't have this stat
 			return;
 		}
 
-		statToValue[identifier].Add(newValue);
+		statToExtraContributors[identifier].Add(newValue);
 	}
 
 	public List<StatContributor> GetStatContributors(string identifier)
 	{
-		if (statToValue.ContainsKey(identifier))
+		if (statToExtraContributors.ContainsKey(identifier))
 		{
-			return statToValue[identifier];
+			return statToExtraContributors[identifier];
 		}
 
 		return null;
@@ -65,14 +76,21 @@ public class PlayerStats : DataModule
 	public float GetStat(string identifier)
 	{
 		float toReturn = 0.0f;
-		if (statToValue.ContainsKey(identifier))
+		if (statToExtraContributors.ContainsKey(identifier))
 		{
-			List<StatContributor> contributors = statToValue[identifier];
+			//Get base stat
+			//If we have contributors then we should have a base stat
+			Assert.IsTrue(baseStatValues.ContainsKey(identifier));
 
+			toReturn = statIdentifierToBaseLevels[identifier][baseStatValues[identifier].level];
+
+			//Add up extra stat contributors
+			List<StatContributor> contributors = statToExtraContributors[identifier];
 			foreach (StatContributor contributor in contributors)
 			{
 				toReturn += contributor.value;
 			}
+			//
 		}
 
 		return toReturn;
@@ -86,7 +104,7 @@ public class PlayerStats : DataModule
         //Get player entity
         PlayerStats target = PlayerManagement.GetStats();
 
-        foreach (KeyValuePair<string, List<StatContributor>> entry in target.statToValue)
+        foreach (KeyValuePair<string, List<StatContributor>> entry in target.statToExtraContributors)
         {
             compoundString += $"\n{entry.Key}: {target.GetStat(entry.Key)}";
         }
@@ -115,5 +133,17 @@ public class StatContributor
 	{
 		value = newValue;
 		this.statIdentifier = statIdentifier;
+	}
+}
+
+public class BaseStat
+{
+	public string statIdenttifier;
+	public int level;
+
+	public BaseStat(string identifier)
+	{
+		statIdenttifier = identifier;
+		level = 0;
 	}
 }

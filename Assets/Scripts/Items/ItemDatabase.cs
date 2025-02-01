@@ -174,6 +174,11 @@ public class ItemDatabase
 						inSection = false;
 					}
 				}
+
+				if (sectionKey.Contains("(disabled)"))
+				{
+					inSection = false;
+				}
 			}
 			else if (line.Contains("}"))
 			{

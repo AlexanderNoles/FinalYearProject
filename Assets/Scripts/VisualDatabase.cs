@@ -17,8 +17,10 @@ public class VisualDatabase : MonoBehaviour
     public List<Color> factionColours = new List<Color>();
 
     [Header("Icons")]
-    public string iconsPath = "Assets/Textures/ui/Icons/NationIconSheet.png";
+    public string factionsIconsPath = "Assets/Textures/ui/Icons/NationIconSheet.png";
     public List<Sprite> factionIcons = new List<Sprite>();
+	public string statIconsPath = "Assets/Textures/ui/Icons/StatIconSheet.png";
+	public List<Sprite> statIcons = new List<Sprite>();
 
     private void Awake()
     {
@@ -49,12 +51,24 @@ public class VisualDatabase : MonoBehaviour
 		return iconSprite != null;
 	}
 
+	public static Sprite GetStatSprite(Stats stat)
+	{
+		int index = (int)stat;
+
+		if (index >= instance.statIcons.Count)
+		{
+			return null;
+		}
+
+		return instance.statIcons[index];
+	}
+
 #if UNITY_EDITOR
-    [ContextMenu("Load Icon Images")]
-    public void LoadIconImages()
+    [ContextMenu("Load Faction Icon Images")]
+    public void LoadFactionIconImages()
     {
         factionIcons.Clear();
-        Object[] data = AssetDatabase.LoadAllAssetsAtPath(iconsPath);
+        Object[] data = AssetDatabase.LoadAllAssetsAtPath(factionsIconsPath);
 
         foreach (Object obj in data)
         {
@@ -64,5 +78,20 @@ public class VisualDatabase : MonoBehaviour
             }
         }
     }
+
+	[ContextMenu("Load Stat Icon Images")]
+	public void LoadStatImages()
+	{
+		statIcons.Clear();
+		Object[] data = AssetDatabase.LoadAllAssetsAtPath(statIconsPath);
+
+		foreach (Object obj in data)
+		{
+			if (obj is Sprite)
+			{
+				statIcons.Add(obj as Sprite);
+			}
+		}
+	}
 #endif
 }

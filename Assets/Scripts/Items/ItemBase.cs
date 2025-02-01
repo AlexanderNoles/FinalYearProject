@@ -45,11 +45,11 @@ public class ItemBase : IDisplay
 
 		foreach (KeyValuePair<string, string> entry in cachedItemData.nonPredefinedKeyToValue)
 		{
-			if (target.statToValue.ContainsKey(entry.Key))
+			if (target.statToExtraContributors.ContainsKey(entry.Key))
 			{
 				StatContributor contributor = new StatContributor(float.Parse(entry.Value), entry.Key);
 
-				target.statToValue[entry.Key].Add(contributor);
+				target.statToExtraContributors[entry.Key].Add(contributor);
 				statContributors.Add(contributor);
 			}
 		}
@@ -59,9 +59,9 @@ public class ItemBase : IDisplay
 	{
 		foreach (StatContributor entry in statContributors)
 		{
-			if (target.statToValue.ContainsKey(entry.statIdentifier))
+			if (target.statToExtraContributors.ContainsKey(entry.statIdentifier))
 			{
-				target.statToValue[entry.statIdentifier].Remove(entry);
+				target.statToExtraContributors[entry.statIdentifier].Remove(entry);
 			}
 		}
 

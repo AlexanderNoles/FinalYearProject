@@ -73,7 +73,7 @@ public class PlayerManagement : MonoBehaviour
     {
         PlayerStats stats = instance.playerStatsTarget;
 
-        instance.playerStatsTarget.statToValue[Stats.moveSpeed.ToString()].Clear();
-        instance.playerStatsTarget.statToValue[Stats.moveSpeed.ToString()].Add(new StatContributor(float.Parse(value), "debug"));
+        instance.playerStatsTarget.statToExtraContributors[Stats.moveSpeed.ToString()].Clear();
+        instance.playerStatsTarget.statToExtraContributors[Stats.moveSpeed.ToString()].Add(new StatContributor(float.Parse(value), "debug"));
     }
 }

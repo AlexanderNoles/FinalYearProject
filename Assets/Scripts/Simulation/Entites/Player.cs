@@ -22,7 +22,7 @@ public class Player : SimulationEntity
 		AddData(DataTags.Emblem, new EmblemData());
 
 		PlayerStats stats = new PlayerStats();
-		stats.ResetStatsToDefault();
+		stats.Init();
 		AddData(DataTags.Stats, stats);
 
 		PlayerInventory inventory = new PlayerInventory();

@@ -4,6 +4,16 @@ using UnityEngine;
 
 public class Shop : DataModule
 {
+	//Shops have n number of types
+	//UI needs to change based on the type
+	public enum ShopType
+	{
+		StatShop,
+		ItemShop
+	}
+
+	public ShopType type = ShopType.StatShop;
+
 	public int capacity = 8;
 
 	public bool rarityLimited = false;
@@ -28,6 +38,13 @@ public class Shop : DataModule
 	}
 
 	public List<ShopEntry> itemsInShop = new List<ShopEntry>();
+	public List<Stats> soldStats = new List<Stats>() 
+	{ 
+		//Default sold stats
+		Stats.maxHealth,
+		Stats.attackPower,
+		Stats.moveSpeed
+	};
 
 	//The tick this shop should be updated
 	//If this is behind the current tick we update the shop with new items
@@ -62,7 +79,7 @@ public class Shop : DataModule
 
 	public virtual bool RestockShop()
 	{
-		return nextShopUpdate <= SimulationManagement.currentTickID;
+		return nextShopUpdate <= SimulationManagement.currentTickID && type == ShopType.ItemShop;
 	}
 
 	public virtual bool OnItemBought()
