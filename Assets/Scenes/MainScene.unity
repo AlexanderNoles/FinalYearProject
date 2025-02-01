@@ -221,29 +221,20 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 1.1408932
-      outSlope: 1.1408932
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.8648876
-      value: 0.9867444
-      inSlope: 0.22975107
-      outSlope: 0.22975107
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.9097422
+      inWeight: 0
+      outWeight: 0
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 0.09810791
-      outSlope: 0.09810791
-      tangentMode: 34
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
+      inWeight: 0
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -20249,7 +20240,7 @@ MonoBehaviour:
   - {fileID: 487778562}
   debugRoutines: []
   simulationRoutinesStorage: {fileID: 487778559}
-  historyLength: 50
+  historyLength: 17
   planetsGenerator: {fileID: 1383595365}
 --- !u!1 &1257894382
 GameObject:
@@ -24923,6 +24914,14 @@ MonoBehaviour:
     generateAsNeeded: 1
     currentUpdatedObjectPointer: 0
     automaticallySetParent: 0
+  - name: TerritoryInternalRenderer
+    mode: 1
+    baseObject: {fileID: 950817847748930352, guid: f5c70753fa3284c4295d2ca1f8b5ac3d,
+      type: 3}
+    baseNumberOfObjects: 50
+    generateAsNeeded: 1
+    currentUpdatedObjectPointer: 0
+    automaticallySetParent: 0
 --- !u!1 &1731015944 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: d82712bea68b5954db189ca0aa7fd344,
@@ -28215,6 +28214,25 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 4119234391119492873}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2071338138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2071338133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95a091d035449554697c3fb2c3e30c87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 1414547019}
+  mode: 0
+  lerpSpeed: 0
+  lerpLimit: 0.01
+  maxMove: 1
+  offset: {x: 0, y: 0, z: 0}
+  offsetMode: 0
 --- !u!1 &2075233821
 GameObject:
   m_ObjectHideFlags: 0
@@ -29219,7 +29237,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5912290416445238350, guid: 51507ed1019c8ea4e8aea6833e4aaedf,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2071338138}
   m_SourcePrefab: {fileID: 100100000, guid: 51507ed1019c8ea4e8aea6833e4aaedf, type: 3}
 --- !u!1001 &4285578356317515796
 PrefabInstance:

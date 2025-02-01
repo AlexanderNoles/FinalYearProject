@@ -84,6 +84,11 @@ public class AsteroidRendering : MonoBehaviour
 
 	private void LateUpdate()
 	{
+		if (PlayerCapitalShip.IsJumping())
+		{
+			return;
+		}
+
 		//Clamp current world center to grid
 		//Convert that position to world space by getting it's offset from world center converted to a vector3
 		RealSpacePosition cellCenterRS = WorldManagement.ClampPositionToGrid(WorldManagement.worldCenterPosition, scale * WorldManagement.invertedInEngineWorldScaleMultiplier);

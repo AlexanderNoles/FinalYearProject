@@ -318,11 +318,18 @@ public class GlobalBattleData : DataBase
 
 			drawnData.involvedEntityDifference.Clear();
 
-			//Now we need to draw or undraw ships that have been transfered this frame
+			//Now we need to draw or undraw ships that have been transfered this tick
 			//For each participant
 			foreach (KeyValuePair<int, DrawnData.Participant> entry in drawnData.idToParticipant)
 			{
 				SimulationEntity entity = SimulationManagement.GetEntityByID(entry.Key);
+
+				if (entity == null)
+				{
+					//Participant is dead, so we just need to undraw all their ships, should be handled by the above code next tick
+					continue;
+				}
+
 				//Get this entites military data
 				if (entity.GetData(DataTags.Military, out MilitaryData milData))
 				{

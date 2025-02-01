@@ -238,7 +238,7 @@ Shader"Unlit/Planet"
                 float3 sunDir = CalculateLightDirection(); 
 
                 float3 basicLighting = saturate((dot(normal, normalize(sunDir)) / _SunLightSmoothness) - (_SunLightSmoothness - _SunLightShift));
-                basicLighting = clamp(basicLighting * SunLightIntensity(), 0.01, 100);
+                basicLighting = clamp(basicLighting * SunLightIntensity(), 0.0, 100);
 
                 return basicLighting;
             }
