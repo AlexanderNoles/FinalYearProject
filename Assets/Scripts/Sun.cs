@@ -17,24 +17,18 @@ public class Sun : CelestialBody
         return transform;
     }
 
-	public override void SetObjectVisualScale(float scale)
+	private void Update()
 	{
-		base.SetObjectVisualScale(scale);
+		//Update light intensity
+		//Calculate worldcenter magnitude
+		//Get the max radius of the solar system
 
-		if (shellOffset == -1)
-		{
-			//Shell based system is not currently being used
-			//This means we are in the map
-			return;
-		}
+		double lightPercentage = WorldManagement.worldCenterPosition.Magnitude() / WorldManagement.GetSolarSystemRadius();
 
-		float baseIntensity = WorldManagement.solarSystemScaleModifier * 2.0f;
-
-		//This is not realistic but I think it looks cool :)
-		float modifiedScale = Mathf.Pow(rawScale, 4.0f);
-		//Invert so as sun gets bigger base intensity is divied by less
-		float invertedScale = 1 / (modifiedScale / rawScale);
-
-		dirLight.intensity = baseIntensity / invertedScale;
+		//Intensity at the edge of the solar system
+		const float baseIntensity = 5.0f;
+		Debug.Log(lightPercentage);
+		Debug.Log(1.0f / (float)lightPercentage);
+		dirLight.intensity = (1.0f / (float)lightPercentage) * baseIntensity;
 	}
 }
