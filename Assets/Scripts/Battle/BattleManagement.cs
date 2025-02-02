@@ -294,7 +294,7 @@ public class BattleManagement : MonoBehaviour
 		}
 
 		//Per tick update
-		bbTickTime -= Time.deltaTime;
+		bbTickTime -= Time.deltaTime * SimulationManagement.GetSimulationSpeed();
 
 		if (bbTickTime <=  0.0f)
 		{

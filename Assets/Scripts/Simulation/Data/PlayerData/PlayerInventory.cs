@@ -7,7 +7,7 @@ public class PlayerInventory : InventoryBase
 {
 	//Currently static, could allow inventory size increase as a more controlled form of player power
 	//(Allows for easier balancing!)
-	protected const int inventorySize = 6;
+	public int numberOfWarpDrivesCollected = 0;
 	private List<ItemBase> itemBases = new List<ItemBase>();
 	private PlayerStats target = null;
 	public float mainCurrency = 5000;
@@ -31,7 +31,7 @@ public class PlayerInventory : InventoryBase
 
 	public override int GetInventoryCapacity()
 	{
-		return inventorySize;
+		return 2 + Mathf.Max(0, 2 * (numberOfWarpDrivesCollected - 1));
 	}
 
 	public override ItemBase GetInventoryItemAtPosition(int index)
@@ -47,7 +47,7 @@ public class PlayerInventory : InventoryBase
 	public bool AttemptToBuy(ItemBase target, float price, int inventorySizeBuffer)
 	{
 		//Do we have space?
-		if (itemBases.Count < inventorySize + inventorySizeBuffer)
+		if (itemBases.Count < GetInventoryCapacity() + inventorySizeBuffer)
 		{
 			//Can we afford item?
 			if (CanAfford(price))

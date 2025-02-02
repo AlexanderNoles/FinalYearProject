@@ -27,8 +27,6 @@ public class Sun : CelestialBody
 
 		//Intensity at the edge of the solar system
 		const float baseIntensity = 5.0f;
-		Debug.Log(lightPercentage);
-		Debug.Log(1.0f / (float)lightPercentage);
 		dirLight.intensity = (1.0f / (float)lightPercentage) * baseIntensity;
 	}
 }
