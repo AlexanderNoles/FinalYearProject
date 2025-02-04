@@ -5,7 +5,9 @@ using UnityEngine;
 
 public class MilitaryData : DataModule
 {
+	public RealSpacePosition origin;
 	public float totalDamageBuildup = 0;
+	public int initalCount = 0;
 
 	public float maxMilitaryCapacity;
 	public int currentFleetCount;
@@ -38,7 +40,12 @@ public class MilitaryData : DataModule
 		}
 	}
 
-	public void AddFleet(RealSpacePosition pos, Fleet fleet)
+	public virtual ShipCollection GetNewFleet()
+	{
+		return new Fleet();
+	}
+
+	public void AddFleet(RealSpacePosition pos, ShipCollection fleet)
 	{
 		if (!positionToFleets.ContainsKey(pos))
 		{
@@ -49,12 +56,13 @@ public class MilitaryData : DataModule
 
 		//Mark a transfer
 		MarkTransfer(null, pos, fleet);
+		fleet.OnTransfer(pos);
 		currentFleetCount++;
 	}
 
-	public Fleet RemoveFleet(RealSpacePosition pos, Fleet fleet)
+	public ShipCollection RemoveFleet(RealSpacePosition pos, ShipCollection fleet)
 	{
-		Fleet toReturn = null;
+		ShipCollection toReturn = null;
 
 		if (positionToFleets.ContainsKey(pos))
 		{
@@ -90,7 +98,7 @@ public class MilitaryData : DataModule
 		return toReturn;
 	}
 
-	public Fleet RemoveFleet(RealSpacePosition pos)
+	public ShipCollection RemoveFleet(RealSpacePosition pos)
 	{
 		return RemoveFleet(pos, null);
 	}
@@ -139,7 +147,7 @@ public class MilitaryData : DataModule
 			for (int i = 0; i < entry.Item2; i++)
 			{
 				//Remove any fleet from previous cell
-				Fleet transferredFleet = RemoveFleet(entry.Item1);
+				ShipCollection transferredFleet = RemoveFleet(entry.Item1);
 
 				//Add fleet to new cell
 				AddFleet(target, transferredFleet);

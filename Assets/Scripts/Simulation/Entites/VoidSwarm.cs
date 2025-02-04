@@ -18,7 +18,7 @@ using UnityEngine;
 //Only major differences are that void swarms hold territory (and consequently can't have the insignificant tag) and their unique ship power
 //This model can be reused in tons of places, for example, an excursion team from outside the solar system sent by some larger power
 //We can model ship control off ContactPolicy if we want
-public class VoidSwarm : SimulationEntity
+public class VoidSwarm : Faction
 {
 	public override void InitTags()
 	{
@@ -31,6 +31,10 @@ public class VoidSwarm : SimulationEntity
 	{
 		base.InitData();
 
+		//Alter feelings data to make everyone hate this faction
+		GetData(DataTags.Feelings, out FeelingsData feelingsData);
+		feelingsData.baseFavourability = -2.0f;
+
 		//Add rift
 		VoidRift targetRift = new VoidRift();
 		AddData(DataTags.TargetableLocation, targetRift);
@@ -39,7 +43,8 @@ public class VoidSwarm : SimulationEntity
 		//Give an initial static population
 		PopulationData popData = new PopulationData();
 		popData.variablePopulation = false;
-		popData.currentPopulationCount = 9000.0f;
+		//Set to some arbitrarily high value as their population would be pulled from the void itself 
+		popData.currentPopulationCount = int.MaxValue;
 
 		AddData(DataTags.Population, popData);
 		AddData(DataTags.Territory, new TerritoryData());
@@ -54,9 +59,13 @@ public class VoidSwarm : SimulationEntity
 		AddData(DataTags.Emblem, emblem);
 		//
 
-		AddData(DataTags.Military, new MilitaryData());
-		AddData(DataTags.Refinery, new RefineryData());
+		//Setup some inital military count
+		VoidMilitary milData = new VoidMilitary();
+		milData.initalCount = SimulationManagement.random.Next(30, 40);
+		AddData(DataTags.Military, milData);
+		//
 
+		AddData(DataTags.Refinery, new RefineryData());
 
 		ContactPolicyData contactPolicyData = new ContactPolicyData();
 		contactPolicyData.openlyHostile = true;
@@ -69,6 +78,16 @@ public class VoidSwarm : SimulationEntity
 	public static void SpawnVoidCMD()
 	{
 		new VoidSwarm().Simulate();
+	}
+}
+
+public class VoidMilitary : MilitaryData
+{
+	public override ShipCollection GetNewFleet()
+	{
+		VoidFleet newFleet = new VoidFleet();
+		newFleet.origin = origin;
+		return newFleet;
 	}
 }
 

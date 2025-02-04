@@ -26,6 +26,11 @@ public class ShipCollection
 		recordedUpdates.Add((type, target));
 	}
 
+	public virtual void OnTransfer(RealSpacePosition newPos)
+	{
+
+	}
+
 	public virtual List<Ship> GetShips()
 	{
 		return null;

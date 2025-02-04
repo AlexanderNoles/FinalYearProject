@@ -57,8 +57,11 @@ public class TargetableLocationData : VisitableLocation
 		//Call draw function
 		generation = Draw(parent);
 
-		//Apply simulation context
-		LinkToBehaviour(generation.targets[^1].Item2);
+		if (generation.targets.Count > 0)
+		{
+			//Apply simulation context
+			LinkToBehaviour(generation.targets[^1].Item2);
+		}
 
 		//Finalize
 		generation.FinalizeGeneration();

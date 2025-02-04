@@ -156,7 +156,7 @@ public class MilitaryTroopManagementRoutine : RoutineBase
                     {
                         for (int i = 0; i < target.Item2; i++)
                         {
-                            Fleet transferTarget = militaryData.RemoveFleet(target.Item1);
+                            ShipCollection transferTarget = militaryData.RemoveFleet(target.Item1);
                             militaryData.AddFleet(targetPos, transferTarget);
                         }
                     }

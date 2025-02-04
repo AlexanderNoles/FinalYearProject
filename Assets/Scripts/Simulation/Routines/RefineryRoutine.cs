@@ -83,7 +83,7 @@ public class RefineryRoutine : RoutineBase
 				{
 					if (SimulationManagement.random.Next(0, 101) / 100.0f < refinery.productionSpeed)
 					{
-						militaryData.AddFleet(refinery.refineryPosition, new Fleet());
+						militaryData.AddFleet(refinery.refineryPosition, militaryData.GetNewFleet());
 					}
 				}
 			}

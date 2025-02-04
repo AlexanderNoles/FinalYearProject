@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using EntityAndDataDescriptor;
 
-public class PirateCrew : Faction
+public class PirateCrew : SimulationEntity
 {
 	public override void InitTags()
 	{
@@ -14,6 +14,8 @@ public class PirateCrew : Faction
 	public override void InitData()
 	{
 		base.InitData();
+
+		AddData(DataTags.Battle, new BattleData());
 
 		//Give pirate crew population so they can have a military (i.e., have people to put into the military)
 		PopulationData populationData = new PopulationData();
