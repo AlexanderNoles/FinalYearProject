@@ -24,7 +24,7 @@ public class MilitaryTroopManagementRoutine : RoutineBase
             MilitaryData militaryData = entry.Value;
 
             bool hasBattleData = militaryData.TryGetLinkedData(DataTags.Battle, out BattleData battleData);
-            bool hasSettlements = militaryData.TryGetLinkedData(DataTags.Settlement, out SettlementData setData);
+            bool hasSettlements = militaryData.TryGetLinkedData(DataTags.Settlements, out SettlementsData setData);
             bool hasFeelings = militaryData.TryGetLinkedData(DataTags.Feelings, out FeelingsData feelingsData);
 
             //Currently static

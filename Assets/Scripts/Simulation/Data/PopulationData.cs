@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PopulationData : DataModule
 {
+	public bool variablePopulation = true;
+
     public float currentPopulationCount;
     public float populationNaturalGrowthSpeed;
     public float populationNaturalDeathSpeed;

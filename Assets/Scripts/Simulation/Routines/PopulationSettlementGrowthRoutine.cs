@@ -13,7 +13,7 @@ public class PopulationSettlementGrowthRoutine : RoutineBase
 
         foreach (PopulationData populationData in populations.Cast<PopulationData>())
         {
-            if (populationData.TryGetLinkedData(DataTags.Settlement, out SettlementData settlementData))
+            if (populationData.TryGetLinkedData(DataTags.Settlements, out SettlementsData settlementData))
             {
                 populationData.populationNaturalGrowthLimt = 0;
 

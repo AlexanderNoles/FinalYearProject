@@ -31,6 +31,21 @@ public class ShipCollection
 		return null;
 	}
 
+	public virtual int GetCapacity()
+	{
+		return 3;
+	}
+
+	public virtual Ship GetNewShip()
+	{
+		return new Ship();
+	}
+
+	public virtual void AddShip(Ship newShip)
+	{
+		//Do nothing by default
+	}
+
 	public virtual bool TakeDamage(float damage)
 	{
 		List<Ship> ships = GetShips();

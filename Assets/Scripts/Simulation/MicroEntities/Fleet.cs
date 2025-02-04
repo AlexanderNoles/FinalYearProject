@@ -10,4 +10,14 @@ public class Fleet : ShipCollection
 	{
 		return ships;
 	}
+
+	public override Ship GetNewShip()
+	{
+		return new FleetShip();
+	}
+
+	public override void AddShip(Ship newShip)
+	{
+		ships.Add(newShip);
+	}
 }

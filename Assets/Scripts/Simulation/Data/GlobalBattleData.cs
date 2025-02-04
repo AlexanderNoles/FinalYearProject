@@ -194,7 +194,7 @@ public class GlobalBattleData : DataModule
 						}
 
 						//Destroy any settlement in this area
-						if (lostEntity.GetData(DataTags.Settlement, out SettlementData setData))
+						if (lostEntity.GetData(DataTags.Settlements, out SettlementsData setData))
 						{
 							setData.settlements.Remove(cellCenterOfPos);
 						}

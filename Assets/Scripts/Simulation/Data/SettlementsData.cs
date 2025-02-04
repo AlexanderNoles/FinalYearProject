@@ -3,13 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SettlementData : DataModule
+public class SettlementsData : DataModule
 {
     private int nextID = 0;
 
     public class Settlement : DataModule
     {
         public int setID;
+		public int maxPop = 100;
+		public RealSpacePosition setCellCenter;
+		public RealSpacePosition actualSettlementPos = new RealSpacePosition(0, 0, 0);
+		public SettlementLocation location;
+		public RefineryData settlementRefinery;
+
+		public class TradeFleet
+		{
+			public int tradeFleetCapacity = 3;
+			public List<TradeShip> ships = new List<TradeShip>();
+		}
+
+		public int tradeFleetCapacity = 0;
+		public List<TradeFleet> tradeFleets = new List<TradeFleet>();
 
 		public class SettlementWeapon : StandardSimWeaponProfile
 		{
@@ -100,27 +114,12 @@ public class SettlementData : DataModule
 
 			public override void OnDeath()
 			{
-				if(actualSettlement.parent.Get().GetData(DataTags.Settlement, out SettlementData setData))
+				if(actualSettlement.parent.Get().GetData(DataTags.Settlements, out SettlementsData setData))
 				{
 					setData.settlements.Remove(actualSettlement.setCellCenter);
 				}
 			}
 		}
-
-        public int maxPop = 100;
-		public RealSpacePosition setCellCenter;
-        public RealSpacePosition actualSettlementPos = new RealSpacePosition(0, 0, 0);
-        public SettlementLocation location;
-
-        public class TradeFleet
-        {
-            public int tradeFleetCapacity = 3;
-            public List<TradeShip> ships = new List<TradeShip>();
-        }
-
-        public int tradeFleetCapacity = 0;
-        public List<TradeFleet> tradeFleets = new List<TradeFleet>();
-
 
         public Settlement(RealSpacePosition pos, EntityLink parent)
         {
@@ -128,7 +127,11 @@ public class SettlementData : DataModule
 			//Set parent
 			this.parent = parent;
 
-            location = new SettlementLocation();
+			settlementRefinery = new RefineryData();
+			settlementRefinery.parent = parent;
+			settlementRefinery.refineryPosition = actualSettlementPos;
+
+			location = new SettlementLocation();
             location.actualSettlement = this;
 			location.shop = new Shop();
 			//Limit settlement shops to only basic items, this is to stop players from just jumping around to different shops to try and find

@@ -14,7 +14,17 @@ public class PirateCrew : Faction
 	public override void InitData()
 	{
 		base.InitData();
+
+		//Give pirate crew population so they can have a military (i.e., have people to put into the military)
+		PopulationData populationData = new PopulationData();
+		populationData.variablePopulation = false; //Don't allow population change
+		populationData.currentPopulationCount = 100.0f;
+
+		AddData(DataTags.Population, populationData);
+		//
+
 		AddData(DataTags.Military, new MilitaryData());
+		AddData(DataTags.Refinery, new RefineryData());
 		AddData(DataTags.Emblem, new EmblemData());
 		TargetableLocationData targetableLocationData = new PirateCrewBaseLocation();
 		TargetableLocationDesirabilityData desirabilityData = new TargetableLocationDesirabilityData();
@@ -42,7 +52,7 @@ public class PirateCrew : Faction
 		}
 	}
 
-	public class PirateCrewBaseLocation : TargetableLocationData
+	public class PirateCrewBaseLocation : CentralBaseData
 	{
 		private List<StandardSimWeaponProfile> weapons = new List<StandardSimWeaponProfile>()
 		{

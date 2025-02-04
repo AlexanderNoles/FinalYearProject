@@ -18,7 +18,7 @@ public class MetaRoutine : RoutineBase
 
             if (!deadEntity.HasTag(EntityStateTags.Unkillable))
             {
-                //Remove this entity from the simulation
+				//Remove this entity from the simulation
                 SimulationManagement.RemoveEntityFromSimulation(deadEntity);
                 idsOfRemovedEntities.Add(deadEntity.id);
                 //Perform nothing else for this entity as it is now dead (including incrementing the index)

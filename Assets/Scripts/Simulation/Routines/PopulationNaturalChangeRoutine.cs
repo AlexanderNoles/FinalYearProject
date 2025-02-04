@@ -6,7 +6,7 @@ using EntityAndDataDescriptor;
 using System.Linq;
 
 [SimulationManagement.SimulationRoutine(25)]
-public class PopulationGrowthRoutine : RoutineBase
+public class PopulationNaturalChangeRoutine : RoutineBase
 {
     public override void Run()
     {
@@ -14,8 +14,8 @@ public class PopulationGrowthRoutine : RoutineBase
 
         foreach (PopulationData populationData in populationDatas.Cast<PopulationData>())
         {
-            //Grow the population
-            if (populationData.currentPopulationCount < populationData.populationNaturalGrowthLimt)
+            //Change the population
+            if (populationData.variablePopulation)
             {
                 populationData.currentPopulationCount = 
                     Mathf.Clamp(

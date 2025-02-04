@@ -79,7 +79,7 @@ public class WarAttackRoutine : RoutineBase
                                 //If this is a brand new battle
                                 if (!globalBattleData.cellCenterToBattles.ContainsKey(attackCell))
                                 {
-                                    if (enemy.GetData(DataTags.Settlement, out SettlementData setData) && setData.settlements.ContainsKey(attackCell))
+                                    if (enemy.GetData(DataTags.Settlements, out SettlementsData setData) && setData.settlements.ContainsKey(attackCell))
                                     {
                                         //If target has a settlement in this cell target that settlement specifically
                                         actualPos = setData.settlements[attackCell].actualSettlementPos;

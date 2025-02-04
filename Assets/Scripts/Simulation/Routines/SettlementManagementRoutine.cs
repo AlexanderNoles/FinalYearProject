@@ -10,9 +10,9 @@ public class SettlementManagementRoutine : RoutineBase
 {
     public override void Run()
     {
-		List<SettlementData> settlementDatas = SimulationManagement.GetDataViaTag(DataTags.Settlement).Cast<SettlementData>().ToList();
+		List<SettlementsData> settlementDatas = SimulationManagement.GetDataViaTag(DataTags.Settlements).Cast<SettlementsData>().ToList();
 
-		foreach (SettlementData settlementData in settlementDatas)
+		foreach (SettlementsData settlementData in settlementDatas)
 		{
 			//Get data for this entity
 			EconomyData economyData = null;
@@ -32,9 +32,9 @@ public class SettlementManagementRoutine : RoutineBase
 			//
 
             //Iterate through each settlement
-            foreach (KeyValuePair<RealSpacePosition, SettlementData.Settlement> settlePair in settlementData.settlements)
+            foreach (KeyValuePair<RealSpacePosition, SettlementsData.Settlement> settlePair in settlementData.settlements)
             {
-                SettlementData.Settlement currentSettlement = settlePair.Value;
+                SettlementsData.Settlement currentSettlement = settlePair.Value;
                 //Get inverted settlement index
 				//This is used to estimate the relative level of this settlements
 				//As older settlements (with lower ids) will have higher purchasing power etc.
@@ -57,10 +57,10 @@ public class SettlementManagementRoutine : RoutineBase
                 //Increase current trade fleets if not at capacity
                 if (currentSettlement.tradeFleets.Count() < currentSettlement.tradeFleetCapacity)
                 {
-                    currentSettlement.tradeFleets.Add(new SettlementData.Settlement.TradeFleet());
+                    currentSettlement.tradeFleets.Add(new SettlementsData.Settlement.TradeFleet());
                 }
 
-                foreach (SettlementData.Settlement.TradeFleet tradeFleet in currentSettlement.tradeFleets)
+                foreach (SettlementsData.Settlement.TradeFleet tradeFleet in currentSettlement.tradeFleets)
                 {
                     //If not at trade fleet capacity...
                     if (tradeFleet.tradeFleetCapacity > tradeFleet.ships.Count)
@@ -96,7 +96,7 @@ public class SettlementManagementRoutine : RoutineBase
                         while (loopClamp < 25 && ship.tradeTarget == null)
                         {
                             //Get random target settlement data
-                            SettlementData targetSettlementData = settlementDatas[SimulationManagement.random.Next(0, settlementDatas.Count)];
+                            SettlementsData targetSettlementData = settlementDatas[SimulationManagement.random.Next(0, settlementDatas.Count)];
 							int targetID = targetSettlementData.parent.Get().id;
 
                             //Are we on good terms with that entity?
@@ -109,7 +109,7 @@ public class SettlementManagementRoutine : RoutineBase
                                 if (targetSettlementData.settlements.Count > 0)
                                 {
 									//Element at is not a very performant function!
-                                    SettlementData.Settlement targetSettlement = 
+                                    SettlementsData.Settlement targetSettlement = 
 										targetSettlementData.settlements.ElementAt(
 											SimulationManagement.random.Next(0, targetSettlementData.settlements.Count)).Value;
 
@@ -127,87 +127,32 @@ public class SettlementManagementRoutine : RoutineBase
                 }
 				#endregion
 
-				#region Military Generation Control
-				if (hasMilitary)
+				#region Refinery
+				//Setup refinery data to be processed
+				RefineryData refinery = settlePair.Value.settlementRefinery;
+
+				//Produciton Speed
+				refinery.productionSpeed = MathHelper.ValueTanhFalloff(invertedSettlementIndex, 1, 10);
+
+				if (!hasWarData || warData.atWarWith.Count == 0 || warData.globalStratergy == WarData.GlobalStratergy.Defensive)
 				{
-                    float currentRemaingFleetCapacityNationWide = militaryData.maxMilitaryCapacity - militaryData.currentFleetCount;
+					//Reduce military production speed outside of war time, or if stratergy is currently defensive
+					refinery.productionSpeed *= 0.1f;
+				}
+				//
 
-                    if (currentRemaingFleetCapacityNationWide >= 1)
-                    {
-                        //Calculate how many units this can produce this tick
-                        //And then max units that can be stored for this settlement this tick
+				//Storage Capacity
+				//Max units for this settlement using inverted settlement id, this means older sets will have a higher capacity
+				refinery.refineryCollectionStorageCapacity = MathHelper.ValueTanhFalloff(invertedSettlementIndex, 5);
+				//
 
-                        //Then add new ships if there is capacity
+				//Disable production if ongoing battle
+				refinery.productionActive = !(hasBattleData && battleData.positionToOngoingBattles.ContainsKey(refinery.refineryPosition));
+				//
 
-                        //Max units for this settlement using inverted settlement id, this means older sets will have a higher capacity
-                        float maxUnitStorageCapacity = MathHelper.ValueTanhFalloff(invertedSettlementIndex, 5);
-                        int fleetShipLimitForSettlement = Mathf.RoundToInt(MathHelper.ValueTanhFalloff(invertedSettlementIndex, 3));
-                        fleetShipLimitForSettlement = Mathf.Max(1, fleetShipLimitForSettlement);
-                        int fleetCountInCell = 0;
-                        RealSpacePosition settlementPosition = settlePair.Value.actualSettlementPos;
-                        if (militaryData.positionToFleets.ContainsKey(settlementPosition))
-                        {
-                            fleetCountInCell = militaryData.positionToFleets[settlementPosition].Count;
-
-							//Don't repair or add new ships if ongoing battle in this settlement
-							if (!(hasBattleData && battleData.positionToOngoingBattles.ContainsKey(settlementPosition)))
-							{
-								//Add ships to fleet or repair ships if they have damage taken
-								foreach (ShipCollection collection in militaryData.positionToFleets[settlementPosition])
-								{
-									Fleet current = collection as Fleet;
-
-									if (current.ships.Count < fleetShipLimitForSettlement)
-									{
-										//Add new ship
-										FleetShip newShip = new FleetShip();
-										//Set the parent so this ship can know things about its faction
-										newShip.SetParent(settlementData.parent);
-										current.ships.Add(newShip);
-										//Mark the collection as having been updated
-										//So we need to draw more ships
-										current.MarkCollectionUpdate(ShipCollection.UpdateType.Add, newShip);
-									}
-
-									List<Ship> ships = current.GetShips();
-									foreach (Ship ship in ships)
-									{
-										//Just restore 20% of health each tick
-										ship.health = Mathf.Clamp(ship.health + (ship.GetMaxHealth() * 0.2f), 0, ship.GetMaxHealth());
-
-										//Undestroy a ship
-										if (ship.isWreck)
-										{
-											ship.isWreck = false;
-										}
-									}
-								}
-							}
-                        }
-
-                        float maxAmountToAdd = Mathf.Min(currentRemaingFleetCapacityNationWide, maxUnitStorageCapacity - fleetCountInCell);
-
-                        if (maxAmountToAdd >= 1)
-                        {
-                            float productionSpeed = MathHelper.ValueTanhFalloff(invertedSettlementIndex, 1, 10);
-
-                            if (!hasWarData || warData.atWarWith.Count == 0 || warData.globalStratergy == WarData.GlobalStratergy.Defensive)
-                            {
-								//Reduce military production speed outside of war time, or if stratergy is currently defensive
-                                productionSpeed *= 0.1f;
-                            }
-
-                            for (int i = 0; i < maxAmountToAdd; i++)
-                            {
-                                if (SimulationManagement.random.Next(0, 101) / 100.0f < productionSpeed)
-                                {
-                                    militaryData.AddFleet(settlementPosition, new Fleet());
-                                }
-                            }
-                        }
-                    }
-                }
-                #endregion
+				//Manually process refinery as lookup for main refinery routine ignores nested data
+				RefineryRoutine.ProcessRefinery(refinery, militaryData);
+				#endregion
             }
         }
     }

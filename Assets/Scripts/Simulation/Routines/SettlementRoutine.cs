@@ -9,9 +9,9 @@ public class SettlementRoutine : RoutineBase
 {
     public override void Run()
     {
-        List<DataModule> settlementDatas = SimulationManagement.GetDataViaTag(DataTags.Settlement);
+        List<DataModule> settlementDatas = SimulationManagement.GetDataViaTag(DataTags.Settlements);
 
-        foreach (SettlementData settlementData in settlementDatas.Cast<SettlementData>())
+        foreach (SettlementsData settlementData in settlementDatas.Cast<SettlementsData>())
         {
             int calculatedSettlementCapacity = Mathf.Max((int)(5 * Mathf.Log10(settlementData.rawSettlementCapacity)), 1);
 
@@ -54,8 +54,8 @@ public class SettlementRoutine : RoutineBase
                     //If position has been found
                     if (pos != null && !settlementData.settlements.ContainsKey(pos))
                     {
-                        SettlementData.Settlement newSettlement =
-                            new SettlementData.Settlement(WorldManagement.RandomPositionInCell(pos, SimulationManagement.random), settlementData.parent);
+                        SettlementsData.Settlement newSettlement =
+                            new SettlementsData.Settlement(WorldManagement.RandomPositionInCell(pos, SimulationManagement.random), settlementData.parent);
 
                         settlementData.AddSettlement(pos, newSettlement);
                     }
@@ -68,7 +68,7 @@ public class SettlementRoutine : RoutineBase
             {
                 //Destroy
                 //Right now we just destroy one at random 
-                KeyValuePair<RealSpacePosition, SettlementData.Settlement> keyValuePair = settlementData.settlements.ElementAt(SimulationManagement.random.Next(0, settlementData.settlements.Count));
+                KeyValuePair<RealSpacePosition, SettlementsData.Settlement> keyValuePair = settlementData.settlements.ElementAt(SimulationManagement.random.Next(0, settlementData.settlements.Count));
                 settlementData.settlements.Remove(keyValuePair.Key);
             }
         }

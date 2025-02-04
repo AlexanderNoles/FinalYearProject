@@ -28,11 +28,8 @@ public class EmblemInit : InitRoutineBase
 
 			//Get the next colour from the colour rotation
 			//Apply some small variation to it, so two nations colours are very rarely the same
-			emblemData.mainColour = VisualDatabase.GetNextFactionColour() * (1.0f + (SimulationManagement.random.Next(-100, 101) / 1000.0f));
-			emblemData.mainColourHex = "#" + ColorUtility.ToHtmlStringRGB(emblemData.mainColour);
-
-            emblemData.highlightColour = emblemData.mainColour * 2.0f;
-            emblemData.shadowColour = emblemData.mainColour * 0.25f;
+			emblemData.mainColour = VisualDatabase.GetNextFactionColour();
+			emblemData.SetColoursBasedOnMainColour();
 
             //Get icons
             (Sprite, Sprite) icons = VisualDatabase.GetFactionIcons();

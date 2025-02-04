@@ -258,9 +258,9 @@ public class PlayerLocationManagement : MonoBehaviour
 		else if (!setInitalLocation)
 		{
 			//Place player near a settlement
-			List<DataModule> setData = SimulationManagement.GetDataViaTag(DataTags.Settlement);
+			List<DataModule> setData = SimulationManagement.GetDataViaTag(DataTags.Settlements);
 
-			foreach (SettlementData set in setData.Cast<SettlementData>())
+			foreach (SettlementsData set in setData.Cast<SettlementsData>())
 			{
 				if (set.settlements.Count > 0)
 				{
@@ -392,7 +392,7 @@ public class PlayerLocationManagement : MonoBehaviour
 	public static void PerformOperationOnNearbyLocations(RealSpacePosition pos, Func<VisitableLocation, int> operation, int chunkRange = 1, int buffer = 1, double distanceClamp = -1)
 	{
 		//Grab data needed to compute
-		List<SettlementData> setData = SimulationManagement.GetDataViaTag(DataTags.Settlement).Cast<SettlementData>().ToList();
+		List<SettlementsData> setData = SimulationManagement.GetDataViaTag(DataTags.Settlements).Cast<SettlementsData>().ToList();
 		List<TargetableLocationData> capitalData = SimulationManagement.GetDataViaTag(DataTags.TargetableLocation).Cast<TargetableLocationData>().ToList();
 		GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattle);
 
@@ -442,7 +442,7 @@ public class PlayerLocationManagement : MonoBehaviour
 						}
 					}
 
-					foreach (SettlementData set in setData)
+					foreach (SettlementsData set in setData)
 					{
                         if (set.settlements.ContainsKey(currentCellCenter))
                         {

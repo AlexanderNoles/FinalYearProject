@@ -16,7 +16,7 @@ public class Nation : Faction
         base.InitData();
         AddData(DataTags.Territory, new TerritoryData());
         AddData(DataTags.Emblem, new EmblemData());
-        AddData(DataTags.Settlement, new SettlementData());
+        AddData(DataTags.Settlements, new SettlementsData());
         AddData(DataTags.Population, new PopulationData());
 		AddData(DataTags.Political, new PoliticalData());
 		AddData(DataTags.Military, new MilitaryData());

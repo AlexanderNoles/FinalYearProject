@@ -1,3 +1,4 @@
+using EntityAndDataDescriptor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,10 +20,79 @@ using UnityEngine;
 //We can model ship control off ContactPolicy if we want
 public class VoidSwarm : SimulationEntity
 {
+	public override void InitTags()
+	{
+		base.InitTags();
+
+		AddTag(EntityTypeTags.VoidSwarm);
+	}
+
 	public override void InitData()
 	{
 		base.InitData();
 
+		//Add rift
+		VoidRift targetRift = new VoidRift();
+		AddData(DataTags.TargetableLocation, targetRift);
 		//
+
+		//Give an initial static population
+		PopulationData popData = new PopulationData();
+		popData.variablePopulation = false;
+		popData.currentPopulationCount = 9000.0f;
+
+		AddData(DataTags.Population, popData);
+		AddData(DataTags.Territory, new TerritoryData());
+		//
+
+		//Create pre coloured emblem data
+		EmblemData emblem = new EmblemData();
+		emblem.hasCreatedEmblem = true;
+		emblem.mainColour = Color.magenta;
+		emblem.SetColoursBasedOnMainColour();
+
+		AddData(DataTags.Emblem, emblem);
+		//
+
+		AddData(DataTags.Military, new MilitaryData());
+		AddData(DataTags.Refinery, new RefineryData());
+
+
+		ContactPolicyData contactPolicyData = new ContactPolicyData();
+		contactPolicyData.openlyHostile = true;
+
+		AddData(DataTags.ContactPolicy, contactPolicyData);
+	}
+
+	//Testing functions
+	[MonitorBreak.Bebug.ConsoleCMD("SpawnVoid", "Spawn a VoidSwarm Entity")]
+	public static void SpawnVoidCMD()
+	{
+		new VoidSwarm().Simulate();
 	}
 }
+
+public class VoidRift : CentralBaseData
+{
+	public override Color GetMapColour()
+	{
+		return Color.magenta;
+	}
+
+	public override string GetTitle()
+	{
+		return "Void Rift";
+	}
+
+	public override Color GetFlashColour()
+	{
+		return Color.magenta;
+	}
+
+	public override bool FlashOnMap()
+	{
+		return true;
+	}
+}
+
+

@@ -295,7 +295,7 @@ public class MapManagement : UIState
 						if (hasEmblemData)
 						{
 							//If this entity has settlements set iconPos to be placed ontop of their oldest one instead
-							if (territoryData.TryGetLinkedData(DataTags.Settlement, out SettlementData setData))
+							if (territoryData.TryGetLinkedData(DataTags.Settlements, out SettlementsData setData))
 							{
 								if (setData.settlements.Count > 0)
 								{
