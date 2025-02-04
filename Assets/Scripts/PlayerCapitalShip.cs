@@ -62,6 +62,13 @@ public class PlayerCapitalShip : MonoBehaviour
 		return pos.Equals(GetTargetPosition());
 	}
 
+	[MonitorBreak.Bebug.ConsoleCMD("quickjump", "Instantly jump to target location")]
+	public static void ActivateDebugJumpMovementCMD()
+	{
+		debugJumpMovement = !debugJumpMovement;
+	}
+
+	private static bool debugJumpMovement = false;
 	private static RealSpacePosition jumpEnd;
 	private static RealSpacePosition jumpStart;
 	private static Quaternion lookAtTargetRot;
@@ -204,6 +211,14 @@ public class PlayerCapitalShip : MonoBehaviour
 
 	public static void StartJump(VisitableLocation newJumpTarget)
 	{
+		if (debugJumpMovement)
+		{
+			RealSpacePosition newWCP = new RealSpacePosition(newJumpTarget.GetPosition());
+			newWCP.Add(Vector3.forward * (newJumpTarget.GetEntryOffset() * WorldManagement.invertedInEngineWorldScaleMultiplier));
+			WorldManagement.worldCenterPosition = newWCP;
+			return;
+		}
+
 		if (jumping || nextJumpAllowedTime > Time.time)
 		{
 			return;
@@ -228,6 +243,7 @@ public class PlayerCapitalShip : MonoBehaviour
 		instance.normalEnginesIntensity = 0;
 		instance.UpdateEngineIntensityVisuallyAuto();
 
+		//Clone both below positions so we can edit them however we want
 		//Get start position
 		jumpStart = new RealSpacePosition(WorldManagement.worldCenterPosition);
 

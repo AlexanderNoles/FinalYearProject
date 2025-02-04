@@ -15,14 +15,14 @@ public class WarEffectRoutine : RoutineBase
 		{
 			if (militaryData.TryGetLinkedData(DataTags.War, out WarData warData))
 			{
-                if (warData.atWarWith.Count > 0 && warData.globalStratergy == WarData.GlobalStratergy.Aggresive)
-                {
-                    warData.warExhaustion += militaryData.totalDamageBuildup * warData.warExhaustionGrowthMultiplier;
-                }
-                else
-                {
-                    warData.warExhaustion = Mathf.Max(0, warData.warExhaustion - (1f / (warData.warExhaustionGrowthMultiplier * 20.0f)));
-                }
+				if (warData.atWarWith.Count == 0 || (warData.TryGetLinkedData(DataTags.Strategy, out StrategyData strat) && strat.globalStrategy == StrategyData.GlobalStrategy.Defensive))
+				{
+					warData.warExhaustion = Mathf.Max(0, warData.warExhaustion - (1f / (warData.warExhaustionGrowthMultiplier * 20.0f)));
+				}
+				else
+				{
+					warData.warExhaustion += militaryData.totalDamageBuildup * warData.warExhaustionGrowthMultiplier;
+				}
             }
 		}
 	}

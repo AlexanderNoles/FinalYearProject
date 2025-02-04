@@ -29,10 +29,13 @@ public class SettlementManagementRoutine : RoutineBase
 
 			WarData warData = null;
 			bool hasWarData = settlementData.TryGetLinkedData(DataTags.War, out warData);
+
+			StrategyData stratData = null;
+			bool hasStratData = settlementData.TryGetLinkedData(DataTags.Strategy, out stratData);
 			//
 
-            //Iterate through each settlement
-            foreach (KeyValuePair<RealSpacePosition, SettlementsData.Settlement> settlePair in settlementData.settlements)
+			//Iterate through each settlement
+			foreach (KeyValuePair<RealSpacePosition, SettlementsData.Settlement> settlePair in settlementData.settlements)
             {
                 SettlementsData.Settlement currentSettlement = settlePair.Value;
                 //Get inverted settlement index
@@ -134,7 +137,7 @@ public class SettlementManagementRoutine : RoutineBase
 				//Produciton Speed
 				refinery.productionSpeed = MathHelper.ValueTanhFalloff(invertedSettlementIndex, 1, 10);
 
-				if (!hasWarData || warData.atWarWith.Count == 0 || warData.globalStratergy == WarData.GlobalStratergy.Defensive)
+				if (!hasWarData || warData.atWarWith.Count == 0 || (hasStratData && stratData.globalStrategy == StrategyData.GlobalStrategy.Defensive))
 				{
 					//Reduce military production speed outside of war time, or if stratergy is currently defensive
 					refinery.productionSpeed *= 0.1f;

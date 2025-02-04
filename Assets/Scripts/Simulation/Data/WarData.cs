@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WarData : DataModule
 {
-	//Increase based on the number of battles
+	//Increase based on the number of lost battles
 	//A higher number means war has a larger negative effect on the country
 	public float warExhaustion = 0;
 	//This value should be made higher or lower based on how susceptible a faction is to war exhaustion
@@ -12,13 +12,4 @@ public class WarData : DataModule
 	public float warExhaustionGrowthMultiplier = 0.05f;
 
 	public List<int> atWarWith = new List<int>();
-
-	public enum GlobalStratergy
-	{
-		Aggresive,
-		Defensive
-	}
-
-	public GlobalStratergy globalStratergy = GlobalStratergy.Aggresive;
-	public float defensivePropensity = 3.0f;
 }
