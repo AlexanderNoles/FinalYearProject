@@ -89,6 +89,14 @@ public class GlobalBattleData : DataModule
 			{
 				SimulationEntity current = SimulationManagement.GetEntityByID(id);
 
+				if (current == null)
+				{
+					//This entity has just been removed from the simulation, so we are trying to remove it from this battle
+					//but that means we won't be able to find it!
+					//So just continue to the next iteration
+					continue;
+				}
+
 				if (current.GetData(DataTags.Battle, out BattleData data))
 				{
 					if (!data.positionToOngoingBattles.Remove(pos))
