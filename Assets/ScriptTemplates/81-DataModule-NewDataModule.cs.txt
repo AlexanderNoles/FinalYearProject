@@ -1,5 +1,5 @@
 
-public class #SCRIPTNAME# : DataBase
+public class #SCRIPTNAME# : DataModule
 {
     #NOTRIM#
 }

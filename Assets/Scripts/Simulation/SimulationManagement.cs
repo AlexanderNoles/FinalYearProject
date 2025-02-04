@@ -326,9 +326,10 @@ public class SimulationManagement : MonoBehaviour
         currentYear = 3004;
 
 		MineralDeposit.totalMineralCount = 0;
-        //
+		TargetableLocationData.targetableLocationLookup.Clear(); //Make sure this is empty!
+		//
 
-        simulationSeed = UnityEngine.Random.Range(-10000, 10000);
+		simulationSeed = UnityEngine.Random.Range(-10000, 10000);
         random = new System.Random(simulationSeed);
 
         planetsGenerator.GeneratePlanets(random);

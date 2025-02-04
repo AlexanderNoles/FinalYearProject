@@ -6,11 +6,41 @@ using UnityEngine;
 
 public class TargetableLocationData : VisitableLocation
 {
+	public static Dictionary<RealSpacePosition, List<TargetableLocationData>> targetableLocationLookup = new Dictionary<RealSpacePosition, List<TargetableLocationData>>();
+
 	public RealSpacePosition cellCenter = null;
 	public RealSpacePosition actualPosition;
 	public GeneratorManagement.Generation generation;
-	public int desirability = 1;
-	public int lastTickTime;
+
+	public void OnPositionSet()
+	{
+		//Add to lookup
+		if (cellCenter == null)
+		{
+			return;
+		}
+
+		if (!targetableLocationLookup.ContainsKey(cellCenter))
+		{
+			targetableLocationLookup[cellCenter] = new List<TargetableLocationData>();
+		}
+
+		targetableLocationLookup[cellCenter].Add(this);
+	}
+
+	public override void OnRemove()
+	{
+		//Remove from lookup
+		if (targetableLocationLookup.ContainsKey(cellCenter))
+		{
+			targetableLocationLookup[cellCenter].Remove(this);
+
+			if (targetableLocationLookup[cellCenter].Count == 0)
+			{
+				targetableLocationLookup.Remove(cellCenter);
+			}
+		}
+	}
 
 	public override RealSpacePosition GetPosition()
 	{

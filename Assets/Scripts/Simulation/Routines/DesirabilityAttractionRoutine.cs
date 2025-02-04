@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 [SimulationManagement.SimulationRoutine(40)]
-public class TargetableLocationPickFightsRoutine : RoutineBase
+public class DesirabilityAttractionRoutine : RoutineBase
 {
 	//Each tick this routine will cause targetable locations to try and pick fights
 	//with other entites
@@ -15,11 +15,11 @@ public class TargetableLocationPickFightsRoutine : RoutineBase
 	public override void Run()
 	{
 		GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattleData);
-		List<DataModule> targetableLocations = SimulationManagement.GetDataViaTag(DataTags.TargetableLocation);
+		List<DataModule> desirabilityModules = SimulationManagement.GetDataViaTag(DataTags.Desirability);
 		List<TerritoryData> territoryDatas = SimulationManagement.GetDataViaTag(DataTags.Territory).Cast<TerritoryData>().ToList();
 		List<DataModule> militaries = SimulationManagement.GetDataViaTag(DataTags.Military);
 
-		foreach (TargetableLocationData data in targetableLocations.Cast<TargetableLocationData>())
+		foreach (DesirabilityData data in desirabilityModules.Cast<DesirabilityData>())
 		{
 			//Only run every 10 ticks
 			if (SimulationManagement.currentTickID < data.lastTickTime + 10 || data.parent.Get().HasTag(EntityStateTags.Dead))
@@ -44,7 +44,7 @@ public class TargetableLocationPickFightsRoutine : RoutineBase
 			//First check if we are in a territory data;
 			foreach (TerritoryData territory in territoryDatas)
 			{
-				if (territory.Contains(data.cellCenter))
+				if (territory.Contains(data.GetCellCenter()))
 				{
 					//We've found one!
 					target = territory.parent.Get();
@@ -63,7 +63,7 @@ public class TargetableLocationPickFightsRoutine : RoutineBase
 			//Start a battle with target
 			if (target != null)
 			{
-				globalBattleData.StartOrJoinBattle(data.cellCenter, data.actualPosition, target.id, data.parent.Get().id, false);
+				globalBattleData.StartOrJoinBattle(data.GetCellCenter(), data.GetActualPosition(), target.id, data.parent.Get().id, false);
 			}
 		}
 	}

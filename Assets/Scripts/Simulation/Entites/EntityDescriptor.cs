@@ -30,6 +30,7 @@ namespace EntityAndDataDescriptor
         Territory,
         Settlement,
         Population,
+		Desirability,
         Emblem, 
 		CentralShop,
         Stats,

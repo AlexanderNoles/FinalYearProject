@@ -50,11 +50,16 @@ public class MineralDeposit : SimulationEntity
 		//Allows the mineral depoist to pick fights
 		//It has no military so it cannot fight back
 		AddData(DataTags.Battle, new BattleData());
-		TargetableLocationData targetableLocationData = new MineralDepositLocation();
+
+		MineralDepositLocation targetableLocationData = new MineralDepositLocation();
+		TargetableLocationDesirabilityData desirabilityData = new TargetableLocationDesirabilityData();
+		desirabilityData.target = targetableLocationData;
 		//give this location a random desirability
 		float t = SimulationManagement.random.Next(0, 101) / 100.0f;
-		targetableLocationData.desirability = Mathf.CeilToInt(Mathf.Lerp(1, 31, Mathf.Pow(t, 3)));
+		desirabilityData.desirability = Mathf.CeilToInt(Mathf.Lerp(1, 31, Mathf.Pow(t, 3)));
+		AddData(DataTags.Desirability, desirabilityData);
 
+		targetableLocationData.maxHealth = 50.0f * desirabilityData.desirability;
 		AddData(DataTags.TargetableLocation, targetableLocationData);
 
 		ContactPolicyData contactPolicyData = new ContactPolicyData();
@@ -66,6 +71,8 @@ public class MineralDeposit : SimulationEntity
 
 public class MineralDepositLocation : TargetableLocationData
 {
+	public float maxHealth;
+
 	public override string GetTitle()
 	{
 		return "Ore Deposit";
@@ -87,6 +94,6 @@ public class MineralDepositLocation : TargetableLocationData
 
 	public override float GetMaxHealth()
 	{
-		return 50.0f * desirability;
+		return maxHealth;
 	}
 }

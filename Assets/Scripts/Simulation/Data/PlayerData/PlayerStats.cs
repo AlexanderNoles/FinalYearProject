@@ -10,7 +10,7 @@ public class PlayerStats : DataModule
 		{Stats.maxHealth.ToString(), new List<float>() { 100.0f, 150.0f, 200.0f, 250.0f, 300.0f, 400.0f, 500.0f } },
 		{Stats.healthRegen.ToString(), new List<float>() { 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 4.0f, 5.0f }},
 		{Stats.jumpRange.ToString(), new List<float>() { 10.0f }},
-		{Stats.attackPower.ToString(), new List<float>() { 10.0f, 15.0f, 20.0f, 25.0f, 30.0f, 40.0f, 50.0f }},
+		{Stats.attackPower.ToString(), new List<float>() { 0.5f, 1f, 1.5f, 2f, 2.5f, 3f, 3.5f }},
 		{Stats.moveSpeed.ToString(), new List<float>() { 150.0f, 175.0f, 200.0f, 225.0f, 250.0f, 350.0f, 500.0f }}
 	};
 

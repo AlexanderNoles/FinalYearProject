@@ -17,6 +17,10 @@ public class PirateCrew : Faction
 		AddData(DataTags.Military, new MilitaryData());
 		AddData(DataTags.Emblem, new EmblemData());
 		TargetableLocationData targetableLocationData = new PirateCrewBaseLocation();
+		TargetableLocationDesirabilityData desirabilityData = new TargetableLocationDesirabilityData();
+		desirabilityData.target = targetableLocationData;
+
+		AddData(DataTags.Desirability, desirabilityData);
 		AddData(DataTags.TargetableLocation, targetableLocationData);
 
 		ContactPolicyData contactPolicyData = new ContactPolicyData();

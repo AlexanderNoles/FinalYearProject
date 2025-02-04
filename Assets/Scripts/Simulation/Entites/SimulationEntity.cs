@@ -106,6 +106,7 @@ public class SimulationEntity
         //Set data parent so it can access it later
         data.parent = link;
 
+		data.OnAdd();
         dataModules.Add(tag, data);
 
         //Add to simulation manamgement register, so routines can access this data module
@@ -115,7 +116,9 @@ public class SimulationEntity
     public void RemoveData(Enum tag)
     {
         DataModule data = dataModules[tag];
-        dataModules.Remove(tag);
+
+		data.OnRemove();
+		dataModules.Remove(tag);
 
         //Remove from simulation management register so routines don't pick it up
         SimulationManagement.DeRegisterDataModule(tag, data);

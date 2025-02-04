@@ -30,4 +30,16 @@ public class DataModule
         parent.Get().GetData(tag, out T data);
         return data;
     }
+
+
+
+	public virtual void OnAdd()
+	{
+
+	}
+
+	public virtual void OnRemove()
+	{
+
+	}
 }

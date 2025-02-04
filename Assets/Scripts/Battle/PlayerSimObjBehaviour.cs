@@ -63,9 +63,8 @@ public class PlayerSimObjBehaviour : SimObjectBehaviour
 		currentHealth = 100.0f;
 		base.Awake();
 
-		//DEBUG
-		//Add test weapon
-		weapons.Add(new WeaponProfile());
+		//Add weapon
+		weapons.Add(new PlayerWeaponProfile());
 		lastRecordedSalvoPercentage = -1;
     }
 
@@ -151,5 +150,18 @@ public class PlayerSimObjBehaviour : SimObjectBehaviour
 		{
 			OnRemoveTarget(bb);
 		}
+	}
+}
+
+public class PlayerWeaponProfile : WeaponProfile
+{
+	public override float GetDamage()
+	{
+		if (PlayerManagement.PlayerEntityExists())
+		{
+			return PlayerManagement.GetStats().GetStat(Stats.attackPower.ToString());
+		}
+
+		return base.GetDamage();
 	}
 }

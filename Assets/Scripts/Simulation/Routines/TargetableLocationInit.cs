@@ -48,6 +48,9 @@ public class TargetableLocationInit : InitRoutineBase
 
 				//Move on map position to be off grid
 				targetableLocation.actualPosition = WorldManagement.RandomPositionInCell(targetableLocation.cellCenter, SimulationManagement.random);
+
+				//This function will add this entity to the lookup table
+				targetableLocation.OnPositionSet();
 			}
         }
 	}
