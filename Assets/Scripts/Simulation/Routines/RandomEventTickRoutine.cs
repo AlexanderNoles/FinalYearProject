@@ -53,25 +53,5 @@ public class RandomEventTickRoutine : RoutineBase
 				}
 			}
 		}
-
-		if (SimulationManagement.GetEntityCount(EntityTypeTags.Player) > 0)
-		{
-			//Past player spawn
-
-			//At regular intervals have something dramatic happen to the world
-			//This means over time the world will get increasingly insane!
-			if (SimulationManagement.currentTickID % SimulationManagement.MonthToTickNumberCount(6) == 0)
-			{
-				//Should pick some random interesting thing to happen
-				MonitorBreak.Bebug.Console.Log("Major Event Occured!");
-
-				//If no VoidSwarms
-				if (SimulationManagement.GetEntityCount(EntityTypeTags.VoidSwarm) < 1)
-				{
-					//Spawn new void swarm
-					new VoidSwarm().Simulate();
-				}
-			}
-		}
 	}
 }

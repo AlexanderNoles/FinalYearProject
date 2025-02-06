@@ -35,5 +35,7 @@ public class GameWorld : SimulationEntity
 		historyData.AddPeriod(originPeriod);
 		//
 		AddData(DataTags.Historical, historyData);
+
+		AddData(DataTags.Calamity, new CalamityData());
 	}
 }

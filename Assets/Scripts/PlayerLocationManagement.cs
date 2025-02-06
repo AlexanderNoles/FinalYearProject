@@ -207,7 +207,7 @@ public class PlayerLocationManagement : MonoBehaviour
 			{
 				if (drawnLocations[i].targetLocation.Equals(visitableLocation))
 				{
-					if (visitableLocation.parent.Get().HasTag(EntityStateTags.Dead))
+					if (visitableLocation.parent != null && visitableLocation.parent.Get().HasTag(EntityStateTags.Dead))
 					{
 						//Never draw something that is meant to be dead
 						continue;

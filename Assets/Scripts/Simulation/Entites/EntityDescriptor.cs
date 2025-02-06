@@ -34,6 +34,7 @@ namespace EntityAndDataDescriptor
 		Desirability,
         Emblem, 
 		CentralShop,
+		Calamity,
         Stats,
         Inventory,
 		Policies,
