@@ -63,12 +63,11 @@ public class TerritoryInit : InitRoutineBase
 								//So just take it from them
 
 								//Find the owner
-								foreach (TerritoryData territory in territories)
+								foreach (TerritoryData otherTerritory in territories)
 								{
-									if (territory.territoryCenters.Contains(territory.origin))
+									if (otherTerritory.territoryCenters.Contains(territoryData.origin))
 									{
-										territory.RemoveTerritory(territory.origin);
-										break;
+										otherTerritory.RemoveTerritory(territoryData.origin);
 									}
 								}
 							}
@@ -78,10 +77,6 @@ public class TerritoryInit : InitRoutineBase
 								territoryData.origin = null;
 							}
                         }
-
-						if (territoryData.origin != null)
-						{
-						}
 
 						loopClamp--;
                     }
