@@ -20,8 +20,7 @@ public class Nation : Faction
         AddData(DataTags.Population, new PopulationData());
 		AddData(DataTags.Political, new PoliticalData());
 		AddData(DataTags.Military, new MilitaryData());
-		AddData(DataTags.War, new WarData());
-		AddData(DataTags.Strategy, new StrategyData());
+		AddData(DataTags.Strategy, new WarStrategyData());
 		AddData(DataTags.Economic, new EconomyData());
 		AddData(DataTags.ContactPolicy, new ContactPolicyData());
     }

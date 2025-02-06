@@ -46,6 +46,22 @@ public class ShipCollection
 		return new Ship();
 	}
 
+	public void Fill(EntityLink parent)
+	{
+		int count = GetShips().Count;
+
+		int remaningSpace = GetCapacity() - count;
+
+		for (int i = 0; i < remaningSpace; i++)
+		{
+			//Fill the empty slots in the fleet
+			Ship newShip = GetNewShip();
+			newShip.SetParent(parent);
+
+			AddShip(newShip);
+		}
+	}
+
 	public virtual void AddShip(Ship newShip)
 	{
 		//Do nothing by default

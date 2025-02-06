@@ -24,7 +24,7 @@ public class PeriodChangeRoutine : RoutineBase
         }
 
         //Get all entites that can fight wars
-        List<DataModule> warDatas = SimulationManagement.GetDataViaTag(DataTags.War);
+        List<DataModule> strategyDatas = SimulationManagement.GetDataViaTag(DataTags.Strategy);
 
         //Periods can be defined by a few things
         //1. Conflict
@@ -42,22 +42,31 @@ public class PeriodChangeRoutine : RoutineBase
         //(This is done to avoid flickering between two similarly large powers, if they coexist they have similar beliefs anyway)
         //If this power undergoes some political shift than the period could also change
 
-        float percentageAtWar = 0.0f;
+        float percentageFighting = 0.0f;
+		int totalCount = 0;
 
-        foreach (WarData warData in warDatas.Cast<WarData>())
+        foreach (StrategyData strat in strategyDatas)
         {
-            if (warData.atWarWith.Count > 0)
+			if (strat.parent.Get().HasTag(EntityStateTags.Insignificant))
+			{
+				//Don't count unimportant things
+				continue;
+			}
+
+			totalCount++;
+
+            if (strat.GetTargets().Count > 0)
             {
-                percentageAtWar += 1.0f;
+                percentageFighting += 1.0f;
             }
         }
 
-        percentageAtWar /= warDatas.Count;
+        percentageFighting /= totalCount;
 
         //Lower limit for conflict period, to avoid period flickering
-        bool metLowerConflictThreshold = percentageAtWar >= 0.45f;
+        bool metLowerConflictThreshold = percentageFighting >= 0.45f;
         //Actual threshold for starting conflict period
-        bool metProperConflictThreshold = percentageAtWar >= 0.5f;
+        bool metProperConflictThreshold = percentageFighting >= 0.5f;
 
         if (metProperConflictThreshold) 
         {

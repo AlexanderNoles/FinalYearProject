@@ -13,4 +13,9 @@ public class DesirabilityData : DataModule
 	{
 		return GetCellCenter();
 	}
+
+	public virtual void UpdateDesirability()
+	{
+
+	}
 }

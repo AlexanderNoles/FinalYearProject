@@ -10,4 +10,9 @@ public class PopulationData : DataModule
     public float populationNaturalGrowthSpeed;
     public float populationNaturalDeathSpeed;
     public float populationNaturalGrowthLimt;
+
+	public override string Read()
+	{
+		return $"	Population Count: {currentPopulationCount}";
+	}
 }

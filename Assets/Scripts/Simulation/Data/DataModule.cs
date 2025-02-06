@@ -42,4 +42,14 @@ public class DataModule
 	{
 
 	}
+
+	public bool ReadImplemented()
+	{
+		return Read() != null;
+	}
+
+	public virtual string Read()
+	{
+		return null;
+	}
 }

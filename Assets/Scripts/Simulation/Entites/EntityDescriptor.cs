@@ -43,7 +43,6 @@ namespace EntityAndDataDescriptor
         Political,
         Economic, 
         TargetableLocation,
-        War,
         Feelings,
         ContactPolicy,
         Historical

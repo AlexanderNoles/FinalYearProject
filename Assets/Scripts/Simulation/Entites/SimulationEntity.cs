@@ -124,6 +124,10 @@ public class SimulationEntity
         SimulationManagement.DeRegisterDataModule(tag, data);
     }
 
+	public List<DataModule> GetAllDataModules()
+	{
+		return dataModules.Values.ToList();
+	}
 
 
 	public virtual void OnDeath()

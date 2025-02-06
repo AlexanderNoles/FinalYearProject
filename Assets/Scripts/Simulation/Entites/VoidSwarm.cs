@@ -47,7 +47,14 @@ public class VoidSwarm : Faction
 		popData.currentPopulationCount = int.MaxValue;
 
 		AddData(DataTags.Population, popData);
-		AddData(DataTags.Territory, new TerritoryData());
+		TerritoryData territoryData = new TerritoryData();
+		territoryData.forceClaimInital = true;
+		AddData(DataTags.Territory, territoryData);
+
+		VoidDesirabilityData desirabilityData = new VoidDesirabilityData();
+		desirabilityData.target = targetRift;
+		desirabilityData.desirabilityBasis = territoryData;
+		AddData(DataTags.Desirability, desirabilityData);
 		//
 
 		//Create pre coloured emblem data
@@ -61,8 +68,10 @@ public class VoidSwarm : Faction
 
 		//Setup some inital military count
 		VoidMilitary milData = new VoidMilitary();
-		milData.initalCount = SimulationManagement.random.Next(30, 40);
+		milData.initalCount = Mathf.RoundToInt(SimulationManagement.random.Next(90, 100) * BalanceManagement.voidSwarmStartTroopMultiplier);
 		AddData(DataTags.Military, milData);
+
+		AddData(DataTags.Strategy, new GenocidalStrategyData());
 		//
 
 		AddData(DataTags.Refinery, new RefineryData());
@@ -77,7 +86,10 @@ public class VoidSwarm : Faction
 	[MonitorBreak.Bebug.ConsoleCMD("SpawnVoid", "Spawn a VoidSwarm Entity")]
 	public static void SpawnVoidCMD()
 	{
-		new VoidSwarm().Simulate();
+		VoidSwarm swarm = new VoidSwarm();
+		swarm.Simulate();
+
+		MonitorBreak.Bebug.Console.Log($"Void Swarm with id {swarm.id} spawned!");
 	}
 }
 
@@ -88,6 +100,17 @@ public class VoidMilitary : MilitaryData
 		VoidFleet newFleet = new VoidFleet();
 		newFleet.origin = origin;
 		return newFleet;
+	}
+}
+
+public class VoidDesirabilityData : TargetableLocationDesirabilityData
+{
+	public TerritoryData desirabilityBasis;
+
+	public override void UpdateDesirability()
+	{
+		//If less then 20 cells held desirability is zero
+		desirability = Mathf.Max(0, desirabilityBasis.territoryCenters.Count - 20);
 	}
 }
 

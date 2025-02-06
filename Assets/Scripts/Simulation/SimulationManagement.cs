@@ -99,7 +99,7 @@ public class SimulationManagement : MonoBehaviour
     public List<RoutineBase> debugRoutines = new List<RoutineBase>();
     [HideInInspector]
     public Dictionary<string, RoutineBase> absentRoutines = new Dictionary<string, RoutineBase>();
-	public const int attackRoutineStandardPrio = -25; 
+	public const int attackRoutineStandardPrio = 150; 
 	public const int defendRoutineStandardPrio = -30;
 	public const int evaluationRoutineStandardPrio = -3010;
 
@@ -164,9 +164,19 @@ public class SimulationManagement : MonoBehaviour
 
     private Dictionary<Enum, List<SimulationEntity>> tagToEntities = new Dictionary<Enum, List<SimulationEntity>>();
 
-    #region Entity Tag Filtering
+	public static int GetEntityCount(Enum tag)
+	{
+		if (instance.tagToEntities.ContainsKey(tag))
+		{
+			return instance.tagToEntities[tag].Count;
+		}
 
-    public static void RegisterEntityHasTag(Enum tag, SimulationEntity entity)
+		return 0;
+	}
+
+	#region Entity Tag Filtering
+
+	public static void RegisterEntityHasTag(Enum tag, SimulationEntity entity)
     {
         if (!instance.tagToEntities.ContainsKey(tag))
         {
@@ -245,6 +255,20 @@ public class SimulationManagement : MonoBehaviour
         //Return empty list by default
         return new List<DataModule>();
     }
+
+	public static List<T> CastFilter<T>(List<DataModule> source) where T : DataModule
+	{
+		List<T> result = new List<T>();
+		foreach (DataModule module in source)
+		{
+			if (module is T)
+			{
+				result.Add((T)module);
+			}
+		}
+
+		return result;
+	}
 
     public static List<DataModule> GetToInitData(Enum tag)
     {
@@ -717,6 +741,44 @@ public class SimulationManagement : MonoBehaviour
 		{
 			InitSimulationTick(true);
 		}
+	}
+
+	[MonitorBreak.Bebug.ConsoleCMD("READ", "Read data from entity")]
+	public static void ReadEntity(string id)
+	{
+		int ID = int.Parse(id);
+
+		MonitorBreak.Bebug.Console.Log($"Entity {id}:", 0, false);
+		MonitorBreak.Bebug.Console.Log("----", 0, false);
+
+		if (instance.idToEntity.ContainsKey(ID))
+		{
+			SimulationEntity entity = instance.idToEntity[ID];
+
+			List<DataModule> modules = entity.GetAllDataModules();
+
+			foreach (DataModule module in modules) 
+			{
+				MonitorBreak.Bebug.Console.Log(module.ToString(), 0, false);
+
+				if (module.ReadImplemented())
+				{
+					MonitorBreak.Bebug.Console.Log(module.Read(), 0, false);
+				}
+			}
+		}
+		MonitorBreak.Bebug.Console.Log("----", 0, false);
+	}
+
+	[MonitorBreak.Bebug.ConsoleCMD("ENTITIES", "List All entities and ids")]
+	public static void OutputAllEntitiesAndIDs()
+	{
+		MonitorBreak.Bebug.Console.Log("----", 0, false);
+		foreach (KeyValuePair<int, SimulationEntity> entry in instance.idToEntity)
+		{
+			MonitorBreak.Bebug.Console.Log($"{entry.Value}: {entry.Key}", 0, false);
+		}
+		MonitorBreak.Bebug.Console.Log("----", 0, false);
 	}
 
 	[ContextMenu("Refresh Routines")]

@@ -207,8 +207,16 @@ public class PlayerLocationManagement : MonoBehaviour
 			{
 				if (drawnLocations[i].targetLocation.Equals(visitableLocation))
 				{
+					if (visitableLocation.parent.Get().HasTag(EntityStateTags.Dead))
+					{
+						//Never draw something that is meant to be dead
+						continue;
+					}
+
 					newDrawnLocation = drawnLocations[i];
 
+					//Drawn locations will have all elements in it undrawn after this operation is done
+					//So confusingly removing this from drawnLoactions means it will keep being drawn
 					drawnLocations.RemoveAt(i);
 					currentlyDrawing = true;
 					break;

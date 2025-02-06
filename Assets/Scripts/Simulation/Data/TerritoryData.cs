@@ -8,12 +8,21 @@ using UnityEngine;
 public class TerritoryData : DataModule
 {
     public RealSpacePosition origin = null;
-    public HashSet<RealSpacePosition> territoryCenters = new HashSet<RealSpacePosition>();
+	public bool forceClaimInital = false;
+	public HashSet<RealSpacePosition> territoryCenters = new HashSet<RealSpacePosition>();
     public HashSet<RealSpacePosition> borders = new HashSet<RealSpacePosition>();
 	public float growthRate;
 	public float territoryClaimUpperLimit;
 
-    public bool Contains(RealSpacePosition postion)
+	public override string Read()
+	{
+		return $"	Territory Count: {territoryCenters.Count}\n" +
+			$"	Territory Origin: {origin}\n" +
+			$"	Claim Upper Limit: {territoryClaimUpperLimit}\n" +
+			$"	Growth Rate: {growthRate}";
+	}
+
+	public bool Contains(RealSpacePosition postion)
     {
         return territoryCenters.Contains(postion);
     }

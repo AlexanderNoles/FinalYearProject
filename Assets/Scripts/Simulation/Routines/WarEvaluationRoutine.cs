@@ -12,9 +12,9 @@ public class WarEvaluationRoutine : RoutineBase
 		//For every entity that can fight wars, evaluate whether those wars should be over
 		//If they should be then end them
 
-		List<DataModule> warDatas = SimulationManagement.GetDataViaTag(DataTags.War);
+		List<WarStrategyData> warDatas = SimulationManagement.CastFilter<WarStrategyData>(SimulationManagement.GetDataViaTag(DataTags.Strategy));
 
-		foreach (WarData warData in warDatas.Cast<WarData>())
+		foreach (WarStrategyData warData in warDatas)
 		{
             //Iterate through each war
             for (int i = 0; i < warData.atWarWith.Count;)

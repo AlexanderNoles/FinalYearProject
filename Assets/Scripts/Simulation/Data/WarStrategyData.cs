@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WarData : DataModule
+public class WarStrategyData : StrategyData
 {
 	//Increase based on the number of lost battles
 	//A higher number means war has a larger negative effect on the country
@@ -12,4 +12,15 @@ public class WarData : DataModule
 	public float warExhaustionGrowthMultiplier = 0.05f;
 
 	public List<int> atWarWith = new List<int>();
+
+	public override List<int> GetTargets()
+	{
+		return atWarWith;
+	}
+
+	public override float GetDefensivePropensity()
+	{
+		//Increase defensive propensity with war exhaustion
+		return base.GetDefensivePropensity() * warExhaustion;
+	}
 }

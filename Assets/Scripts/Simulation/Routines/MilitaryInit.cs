@@ -32,7 +32,9 @@ public class MilitaryInit : InitRoutineBase
 
 				for (int i = 0; i < module.initalCount; i++)
 				{
-					module.AddFleet(initalPos, module.GetNewFleet());
+					ShipCollection newFleet = module.GetNewFleet();
+					newFleet.Fill(module.parent);
+					module.AddFleet(initalPos, newFleet);
 				}
 			}
 		}

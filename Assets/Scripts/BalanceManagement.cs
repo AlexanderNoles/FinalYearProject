@@ -16,4 +16,8 @@ public static class BalanceManagement
 	//How much dealing damage to entites affects your reputation?
 	//Realisitcally one attack should make them hate you but I want to give players a bit of leeway
 	public const float damageReputationRatio = 0.05f;
+
+
+	public const float voidSwarmStartTroopMultiplier = 0.25f;
+	public const float voidSwarmDamageFalloff = 10;
 }

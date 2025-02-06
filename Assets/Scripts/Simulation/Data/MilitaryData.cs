@@ -158,4 +158,20 @@ public class MilitaryData : DataModule
 
 		return fleetTransferredCount;
 	}
+
+	public override string Read()
+	{
+		int shipCount = 0;
+
+		foreach (List<ShipCollection> shipCollections in positionToFleets.Values)
+		{
+			foreach (ShipCollection collection in shipCollections)
+			{
+				shipCount += collection.GetShips().Count;
+			}
+		}
+
+		return $"	Fleet Count: {currentFleetCount}\n" +
+			$"	Ship Count: {shipCount}";
+	}
 }

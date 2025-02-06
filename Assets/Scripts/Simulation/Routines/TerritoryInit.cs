@@ -25,20 +25,16 @@ public class TerritoryInit : InitRoutineBase
             //If this territoryData doesn't have an origin, give it one.
             if (territoryData.origin == null)
             {
-                //Nations should try to grab a planet
+                //Try to grab a planet
                 //If all are claimed then just get a random position
                 for (int i = 0; i < Planet.availablePlanetPositions.Count && territoryData.origin == null; i++)
                 {
                     territoryData.origin = Planet.availablePlanetPositions[i];
 
-                    if (!RoutineHelper.AnyContains(territories, territoryData.origin))
+                    if (RoutineHelper.AnyContains(territories, territoryData.origin))
                     {
-                        //No one owns this planet
-                        territoryData.AddTerritory(territoryData.origin);
-                    }
-                    else
-                    {
-                        territoryData.origin = null;
+						//Someone owns this planet
+						territoryData.origin = null;
                     }
                 }
 
@@ -58,14 +54,34 @@ public class TerritoryInit : InitRoutineBase
 							break;
 						}
 
-                        if (!RoutineHelper.AnyContains(territories, territoryData.origin))
+                        if (RoutineHelper.AnyContains(territories, territoryData.origin))
                         {
-                            territoryData.AddTerritory(territoryData.origin);
+							//Someone else holds this territory
+							if (territoryData.forceClaimInital)
+							{
+								//Even though someone owns this we still want it
+								//So just take it from them
+
+								//Find the owner
+								foreach (TerritoryData territory in territories)
+								{
+									if (territory.territoryCenters.Contains(territory.origin))
+									{
+										territory.RemoveTerritory(territory.origin);
+										break;
+									}
+								}
+							}
+							else
+							{
+								//Reset origin so loop doesn't stop
+								territoryData.origin = null;
+							}
                         }
-                        else
-                        {
-                            territoryData.origin = null;
-                        }
+
+						if (territoryData.origin != null)
+						{
+						}
 
 						loopClamp--;
                     }
@@ -76,6 +92,10 @@ public class TerritoryInit : InitRoutineBase
 				if (territoryData.origin == null)
 				{
 					territoryData.parent.Get().AddTag(EntityStateTags.Dead);
+				}
+				else
+				{
+					territoryData.AddTerritory(territoryData.origin);
 				}
             }
         }

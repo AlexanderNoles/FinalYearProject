@@ -27,9 +27,6 @@ public class SettlementManagementRoutine : RoutineBase
 			BattleData battleData = null;
 			bool hasBattleData = settlementData.TryGetLinkedData(DataTags.Battle, out battleData);
 
-			WarData warData = null;
-			bool hasWarData = settlementData.TryGetLinkedData(DataTags.War, out warData);
-
 			StrategyData stratData = null;
 			bool hasStratData = settlementData.TryGetLinkedData(DataTags.Strategy, out stratData);
 			//
@@ -137,7 +134,7 @@ public class SettlementManagementRoutine : RoutineBase
 				//Produciton Speed
 				refinery.productionSpeed = MathHelper.ValueTanhFalloff(invertedSettlementIndex, 1, 10);
 
-				if (!hasWarData || warData.atWarWith.Count == 0 || (hasStratData && stratData.globalStrategy == StrategyData.GlobalStrategy.Defensive))
+				if (hasStratData && (stratData.GetTargets().Count == 0 || stratData.globalStrategy == StrategyData.GlobalStrategy.Defensive))
 				{
 					//Reduce military production speed outside of war time, or if stratergy is currently defensive
 					refinery.productionSpeed *= 0.1f;

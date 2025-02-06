@@ -27,6 +27,8 @@ public class DesirabilityAttractionRoutine : RoutineBase
 				continue;
 			}
 
+			//Update desirability
+			data.UpdateDesirability();
 			data.lastTickTime = SimulationManagement.currentTickID;
 
 			//Before anything we need to check whether this location is going to even try to pick a fight this tick

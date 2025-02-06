@@ -24,9 +24,9 @@ public class EconomicPowerReductionRoutine : RoutineBase
 
             int randomCeilingRaise = 0;
 
-            if (economy.TryGetLinkedData(DataTags.War, out WarData warData))
+            if (economy.TryGetLinkedData(DataTags.Strategy, out StrategyData strategyData) && strategyData is WarStrategyData)
             {
-                randomCeilingRaise = Mathf.FloorToInt(warData.warExhaustion * 0.1f);
+                randomCeilingRaise = Mathf.FloorToInt((strategyData as WarStrategyData).warExhaustion * 0.1f);
             }
 
             modifier *= (SimulationManagement.random.Next(-10, 51 + randomCeilingRaise) / 100.0f);

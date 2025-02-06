@@ -76,7 +76,10 @@ public class TargetableLocationData : VisitableLocation
 	public override void OnDeath()
 	{
 		//Remove from simulation
-		SimulationManagement.RemoveEntityFromSimulation(parent.Get());
+
+		//This causes death to happen with no delay but causes an issue where cleanup is not done correctly!
+		//SimulationManagement.RemoveEntityFromSimulation(parent.Get());
+		parent.Get().AddTag(EntityStateTags.Dead);
 	}
 
 	public override void Cleanup()
