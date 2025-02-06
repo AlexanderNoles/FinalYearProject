@@ -201,6 +201,8 @@ public class CameraManagement : MonoBehaviour
 		Transform targetCamearAxis = null;
 		float lowerCameraLimit = -85f;
 
+		float zoomLowerLimit = 17.5f;
+
 		if (mainCamera.enabled)
 		{
 			lowerCameraLimit = PlayerCapitalShip.currentState == PlayerCapitalShip.State.Normal ? 0 : -85f;
@@ -226,6 +228,7 @@ public class CameraManagement : MonoBehaviour
 		else if (MapManagement.MapActive())
 		{
 			lowerCameraLimit = 5;
+			zoomLowerLimit = 5;
 
 			if (!actualBackingCameraData.renderPostProcessing)
 			{
@@ -283,7 +286,7 @@ public class CameraManagement : MonoBehaviour
 			//Move camera out
 			float scrollInput = InputManagement.ScrollWheelInput();
 
-			currentCameraZoomTarget = Mathf.Clamp(currentCameraZoomTarget - scrollInput, 17.5f, 130);
+			currentCameraZoomTarget = Mathf.Clamp(currentCameraZoomTarget - scrollInput, zoomLowerLimit, 130);
 			targetCamera.localPosition = Vector3.Lerp(targetCamera.localPosition, Vector3.back * currentCameraZoomTarget, Time.deltaTime * 5.0f);
 		}
 
