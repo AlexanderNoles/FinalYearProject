@@ -277,12 +277,12 @@ public class PlayerMapInteraction : PostTickUpdate
 
 		//If they click then start jump to that position
 
-		Vector3 pos = -WorldManagement.worldCenterPosition.AsTruncatedVector3(MapManagement.mapRelativeScaleModifier);
-		rangeIndicator.position = pos + Vector3.up * 0.05f;
-		Shader.SetGlobalVector("_WCMapPos", pos);
+		Vector3 playerPosOnMap = -WorldManagement.worldCenterPosition.AsTruncatedVector3(MapManagement.mapRelativeScaleModifier);
+		rangeIndicator.position = playerPosOnMap + Vector3.up * 0.05f;
+		Shader.SetGlobalVector("_WCMapPos", playerPosOnMap);
 
-		playerDirectionIndicator.position = pos;
-		playerDirectionIndicator.LookAt(pos - PlayerCapitalShip.GetForward());
+		playerDirectionIndicator.position = playerPosOnMap;
+		playerDirectionIndicator.LookAt(playerPosOnMap - PlayerCapitalShip.GetForward());
 
 		if (MapManagement.MapIntroRunning())
 		{
@@ -438,22 +438,39 @@ public class PlayerMapInteraction : PostTickUpdate
 				underMouseData.baseLocation = null;
 				underMouseData.simulationEntity = null;
 
-				//Find if over any territory
-				//Convert mouse position back to simulation space
-				Vector3 onMapPosition = -hitPoint;
-				RealSpacePosition simPos = new RealSpacePosition(onMapPosition.x, onMapPosition.y, onMapPosition.z).Multiply(MapManagement.mapRelativeScaleModifier);
-				//Clamp to a cell center
-				simPos = WorldManagement.ClampPositionToGrid(simPos);
+				//Check if territory is within range, shouldn't allow player to select things outside their jump range
+				bool withinInteractionRange = true;
 
-				List<TerritoryData> territories = SimulationManagement.GetDataViaTag(DataTags.Territory).Cast<TerritoryData>().ToList();
 
-				foreach (TerritoryData territoryData in territories)
+				if (PlayerManagement.PlayerEntityExists())
 				{
-					if (territoryData.territoryCenters.Contains(simPos))
+					const float rangeCheckBuffer = 1;
+
+					float distanceToPlayer = Vector3.Distance(playerPosOnMap, hitPoint);
+					float maxRangeOnMap = (density * PlayerManagement.GetStats().GetStat(Stats.jumpRange.ToString())) + rangeCheckBuffer;
+
+					withinInteractionRange = distanceToPlayer <= maxRangeOnMap;
+				}
+
+				if (withinInteractionRange)
+				{
+					//Find if over any territory
+					//Convert mouse position back to simulation space
+					Vector3 onMapPosition = -hitPoint;
+					RealSpacePosition simPos = new RealSpacePosition(onMapPosition.x, onMapPosition.y, onMapPosition.z).Multiply(MapManagement.mapRelativeScaleModifier);
+					//Clamp to a cell center
+					simPos = WorldManagement.ClampPositionToGrid(simPos);
+
+					List<TerritoryData> territories = SimulationManagement.GetDataViaTag(DataTags.Territory).Cast<TerritoryData>().ToList();
+
+					foreach (TerritoryData territoryData in territories)
 					{
-						underMouseData.simulationEntity = territoryData.parent.Get();
-						entityFound = true;
-						break;
+						if (territoryData.territoryCenters.Contains(simPos))
+						{
+							underMouseData.simulationEntity = territoryData.parent.Get();
+							entityFound = true;
+							break;
+						}
 					}
 				}
 			}
