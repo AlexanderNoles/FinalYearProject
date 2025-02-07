@@ -48,12 +48,20 @@ public class CurrentTargetsUI : MonoBehaviour
 
 	private void Update()
 	{
+		bool inPureNeutral = UIManagement.InPureNeutral();
+
 		//Hide all objects, this function is probably misnamed for it's use case
 		//it should go before objects updating for the inital "any active to hide" check to work
 		//without "force" being set to true.
 		//MulitObjectPool is a ship of thesus type system at this point and should be refactored
 		//(12/01/2025)
-		targetObjectsPool.PruneObjectsNotUpdatedThisFrame(0);
+		targetObjectsPool.PruneObjectsNotUpdatedThisFrame(0, !inPureNeutral);
+
+		if (!inPureNeutral)
+		{
+			//Don't want to enable in coenable
+			return;
+		}
 
 		//Each frame iterate over targets and update
 		foreach (BattleBehaviour target in displayedTargets)

@@ -68,7 +68,7 @@
 	healthRegen: "5"
 	icon: "generator"
 	name: "Max-Pulse Generator"
-	price: "0.075"
+	price: "0.75"
 	class: "2"
 	description: "Decreases <color=*statColour*>Health</color> slightly but increases <color=*statColour*>Health Regen</color> substantially."
 	extra: "*health* *healthRegen*"

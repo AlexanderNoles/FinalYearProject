@@ -63,7 +63,7 @@ public class PoliticalEffectOnFeelingsRoutine : RoutineBase
                     const float changePerTickModifier = 0.2f;
                     relationship.favourability = Mathf.MoveTowards(relationship.favourability, difference, newInstability * changePerTickModifier);
 
-                    if (relationship.favourability < -0.9f && canStartWars)
+                    if (relationship.favourability < BalanceManagement.oppositionThreshold && canStartWars)
                     {
                         if (!personalWarData.atWarWith.Contains(entry.Key))
                         {

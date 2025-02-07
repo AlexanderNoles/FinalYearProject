@@ -282,7 +282,7 @@ public class BattleManagement : MonoBehaviour
 							//Also add it if it is openly hostile or we are openly hostile
 							bb.AddTarget(otherBB, false);
 						}
-						else if (feelingsData.idToFeelings[otherID].inConflict || feelingsData.idToFeelings[otherID].favourability < -0.9f)
+						else if (feelingsData.idToFeelings[otherID].inConflict || feelingsData.idToFeelings[otherID].favourability < BalanceManagement.oppositionThreshold)
 						{
 							//Hostile, whether in marked conflict or low favourability
 							//(30/01/2025) in conflict should ideally be removed at some point

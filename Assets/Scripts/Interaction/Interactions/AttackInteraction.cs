@@ -4,14 +4,24 @@ using UnityEngine;
 
 public class AttackInteraction : Interaction
 {
-	public override bool Validate(SimObjectBehaviour interactable)
+	public override bool ValidateEntity(SimulationEntity target)
+	{
+		return InteractionValidationHelper.AttackOnMapValidation(target);
+	}
+
+	public override bool ValidateBehaviour(SimObjectBehaviour interactable)
 	{
 		return InteractionValidationHelper.AttackValidation(interactable);
 	}
 
-	public override void Process(SimObjectBehaviour interactable)
+	public override void ProcessBehaviour(SimObjectBehaviour interactable)
 	{
 		PlayerSimObjBehaviour.ToggleTargetExternal(interactable);
+	}
+
+	public override InteractionMapCursor GetMapCursorData()
+	{
+		return basicSquare;
 	}
 
 	protected override string GetIconPath()

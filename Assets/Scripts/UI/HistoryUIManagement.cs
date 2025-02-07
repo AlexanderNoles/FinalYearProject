@@ -120,7 +120,7 @@ public class HistoryUIManagement : UIState
 	{
         if (value >= 1.0f)
         {
-            UIManagement.ReturnToNeutral();
+            UIManagement.ReturnToPureNeutral();
         }
 		else
         {

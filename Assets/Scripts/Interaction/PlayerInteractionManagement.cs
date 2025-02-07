@@ -38,10 +38,11 @@ public class PlayerInteractionManagement : MonoBehaviour
 		}
 	}
 
+	public static Interaction lastSuccesfullyValidatedInteraction;
 	private static Interaction currentInteraction;
 	private static bool smartInteractionEnabled = false;
 
-	public UIState uiStateWithInteractions;
+	public List<UIState> uiStatesWithInteractions;
 	public Sprite interactionValFailed;
 
 	private void Awake()
@@ -59,92 +60,143 @@ public class PlayerInteractionManagement : MonoBehaviour
 
 		//Each frame check if we are over an interactable object
 		//if so be check if that one can be interacted with
-		//If player is not hovering over UI (or in a ui state) try to find any targets that are under mouse
+		//If player is not hovering over UI (or in a ui state that is not coenabled) try to find any targets that are under mouse
 
-		if (!UIManagement.InNeutral())
+		if (!UIManagement.NeutralEnabled())
 		{
 			return;
 		}
 
 		PerformInteraction(out Sprite mouseTagAlongSprite);
 
-		if (uiStateWithInteractions.mouseState.tagALongImage != mouseTagAlongSprite)
+		foreach (UIState targetState in uiStatesWithInteractions)
 		{
-			uiStateWithInteractions.mouseState.tagALongImage = mouseTagAlongSprite;
-			MouseManagement.ReloadMouseState();
+			if (targetState.mouseState.tagALongImage != mouseTagAlongSprite)
+			{
+				targetState.mouseState.tagALongImage = mouseTagAlongSprite;
+
+				if (UIManagement.IsCurrentState(targetState))
+				{
+					MouseManagement.ReloadMouseState();
+				}
+			}
 		}
+
+
 	}
 
 	private void PerformInteraction(out Sprite interactionIcon)
 	{
 		interactionIcon = null;
+		lastSuccesfullyValidatedInteraction = null;
 
 		if (UIHelper.ElementsUnderMouse().Count <= 0)
 		{
-			//Get mouse view ray
-			Ray mouseViewRay = CameraManagement.GetMainCamera().ScreenPointToRay(InputManagement.GetMousePosition());
+			List<Interaction> targetInteractions = new List<Interaction>();
 
-			float range = Mathf.Infinity;
-			if (currentInteraction != null)
+			if (smartInteractionEnabled)
 			{
-				range = currentInteraction.GetRange();
+				targetInteractions = PlayerManagement.GetInteractions().playersInteractions;
+			}
+			else
+			{
+				targetInteractions.Add(currentInteraction);
 			}
 
-			RaycastHit[] hits = Physics.RaycastAll(mouseViewRay, range);
-
-			//Get target control
-			SimObjectBehaviour target = null;
-			float currentLowestRange = float.MaxValue;
-
-			foreach (RaycastHit hit in hits)
+			//If in pure neutral (not coenabled) shoot out a raycast to find a potential target
+			if (UIManagement.InPureNeutral())
 			{
-				if (interactables.TryGetValue(hit.collider, out SimObjectBehaviour outTarget))
+				//Get target control
+				SimObjectBehaviour target = null;
+				float currentLowestRange = float.MaxValue;
+				bool careAboutRange = true;
+
+				//Get mouse view ray
+				Ray mouseViewRay = CameraManagement.GetMainCamera().ScreenPointToRay(InputManagement.GetMousePosition());
+
+				float range = Mathf.Infinity;
+				if (currentInteraction != null)
 				{
-					if (hit.distance < currentLowestRange)
+					range = currentInteraction.GetRange();
+				}
+
+				//Shoot raycast
+				RaycastHit[] hits = Physics.RaycastAll(mouseViewRay, range);
+				foreach (RaycastHit hit in hits)
+				{
+					if (interactables.TryGetValue(hit.collider, out SimObjectBehaviour outTarget))
 					{
-						currentLowestRange = hit.distance;
-						target = outTarget;
+						if (hit.distance < currentLowestRange)
+						{
+							currentLowestRange = hit.distance;
+							target = outTarget;
+						}
+					}
+				}
+
+				//Fallbacks, incase no object is found
+				if (target == null)
+				{
+					//Warp fallback
+					if (PlayerCapitalShip.InJumpTravelStage() && PlayerManagement.GetInventory().HasItemOfType(typeof(WarpShopItemBase)))
+					{
+						target = WarpSimBehaviour.GetInstance();
+
+						//Ensure we can always interact with the warp while jumping
+						careAboutRange = false;
+					}
+				}
+
+				//If we have found a target
+				if (target != null)
+				{
+					foreach (Interaction targetInteraction in targetInteractions)
+					{
+						//Validate normally and ensure target is within range (when using smart interaction we can't pre limit the range on the raycast check)
+						bool validationResult = targetInteraction.ValidateBehaviour(target) && (currentLowestRange <= targetInteraction.GetRange() || !careAboutRange);
+
+						if (validationResult)
+						{
+							lastSuccesfullyValidatedInteraction = targetInteraction;
+
+							//On mouse over
+							if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
+							{
+								//On Interact button pressed
+								targetInteraction.ProcessBehaviour(target);
+							}
+
+							interactionIcon = targetInteraction.GetIcon();
+							return;
+						}
 					}
 				}
 			}
-
-			if (target == null)
+			else if (MapManagement.MapActive())
 			{
-				//Warp fallback
-				if (PlayerCapitalShip.InJumpTravelStage() && PlayerManagement.GetInventory().HasItemOfType(typeof(WarpShopItemBase)))
-				{
-					target = WarpSimBehaviour.GetInstance();
-				}
-			}
+				//If in map ask player map interaction for a target
+				PlayerMapInteraction.UnderMouseData underMouseData = PlayerMapInteraction.GetUnderMouseData();
 
-			if (target != null)
-			{
-				List<Interaction> targetInteractions = new List<Interaction>();
-
-				if (smartInteractionEnabled)
+				//Currently just blanket saying "no" when a location is under the mouse
+				//Perhaps travel should also be an interaction? Not sure how much I like that
+				if (underMouseData.simulationEntity != null && underMouseData.baseLocation == null)
 				{
-					targetInteractions = PlayerManagement.GetInteractions().playersInteractions;
-				}
-				else
-				{
-					targetInteractions.Add(currentInteraction);
-				}
-
-				foreach (Interaction targetInteraction in targetInteractions)
-				{
-					bool validationResult = targetInteraction.Validate(target);
-
-					if (validationResult)
+					foreach (Interaction targetInteraction in targetInteractions)
 					{
-						//On mouse over
-						if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
-						{
-							//On Interact button pressed
-							targetInteraction.Process(target);
-						}
+						bool validationResult = targetInteraction.ValidateEntity(underMouseData.simulationEntity);
 
-						interactionIcon = targetInteraction.GetIcon();
-						return;
+						if (validationResult)
+						{
+							lastSuccesfullyValidatedInteraction = targetInteraction;
+
+							if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
+							{
+								targetInteraction.ProcessEntity(underMouseData.simulationEntity);
+							}
+
+							interactionIcon = targetInteraction.GetIcon();
+							return;
+						}
 					}
 				}
 			}

@@ -42,7 +42,7 @@ namespace EntityAndDataDescriptor
         Military,
 		Strategy,
         Political,
-        Economic, 
+        Economic,
         TargetableLocation,
         Feelings,
         ContactPolicy,

@@ -9,7 +9,7 @@ using System.Linq;
 /// The fundamental entity script, describes only the most basic information
 /// Includes systems for expansion to better describe an entity
 /// </summary>
-public class SimulationEntity
+public class SimulationEntity : SimObject
 {
     private static int currentNextID = 0;
     public int id = -1;
@@ -129,9 +129,15 @@ public class SimulationEntity
 		return dataModules.Values.ToList();
 	}
 
-
-	public virtual void OnDeath()
+	public override Shop GetShop()
 	{
-		//Do nothing by default
+		if (!HasData(DataTags.Economic))
+		{
+			return null;
+		}
+
+		GetData(DataTags.Economic, out EconomyData data);
+
+		return data.market;
 	}
 }

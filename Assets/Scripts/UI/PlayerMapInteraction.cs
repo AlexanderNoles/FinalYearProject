@@ -1,13 +1,38 @@
+using EntityAndDataDescriptor;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static PlayerMapInteraction;
 
 public class PlayerMapInteraction : PostTickUpdate
 {
+	public static PlayerMapInteraction instance;
+
+	//Used primarily for hover checks for ui elements, a.k.a if this is set inactive stop displaying an on hover element
+	public static GameObject GetGameObject()
+	{
+		return instance.gameObject;
+	}
+
+	public Transform selectionIndicator;
 	public MultiObjectPool mapPools;
+
+	public class UnderMouseData
+	{
+		public VisitableLocation baseLocation;
+		public SimulationEntity simulationEntity;
+	}
+
+	private static UnderMouseData underMouseData = new UnderMouseData();
+
+	public static UnderMouseData GetUnderMouseData()
+	{
+		return underMouseData;
+	}
 
 	private static bool viewRangeOverride = false;
 	private const bool mergeEnabled = false;
@@ -58,7 +83,14 @@ public class PlayerMapInteraction : PostTickUpdate
 		}
 	}
 
+	public enum HighlightMode
+	{
+		Square,
+		Border
+	}
+
 	private bool doneInitialDraw;
+	private bool freezeInteractionCursor;
 	private Dictionary<Vector3, List<LOMCompound>> cellCenterToLocations = new Dictionary<Vector3, List<LOMCompound>>();
 	private Dictionary<Transform, SpriteRenderer> transformToLocationRenderer = new Dictionary<Transform, SpriteRenderer>();
 
@@ -66,6 +98,7 @@ public class PlayerMapInteraction : PostTickUpdate
 
 	private void Awake()
 	{
+		instance = this;
 		//Create operations
 		getPositionsOperation = delegate (VisitableLocation location) 
 		{
@@ -77,6 +110,8 @@ public class PlayerMapInteraction : PostTickUpdate
 
 		canvasRect = canvas.transform as RectTransform;
 		rangeIndicatorMat = rangeIndicator.GetComponent<MeshRenderer>().material;
+
+		underMouseData = new UnderMouseData();
 	}
 
 	protected override void OnEnable()
@@ -86,6 +121,7 @@ public class PlayerMapInteraction : PostTickUpdate
 		targetIcon.gameObject.SetActive(false);
 		Shader.SetGlobalFloat("_ShipRange", 0.0f);
 		doneInitialDraw = false;
+		selectionIndicator.gameObject.SetActive(false);
 		mapPools.HideAllObjects(4);
 		mapPools.HideAllObjects(9);
 	}
@@ -307,10 +343,25 @@ public class PlayerMapInteraction : PostTickUpdate
 			}));
 
 			bool foundLocation = targetLocation != null;
+			bool entityFound = false;
 			targetIcon.gameObject.SetActive(foundLocation);
 
 			if (foundLocation)
 			{
+				//Update global target information
+				underMouseData.baseLocation = targetLocation.primaryLocation.actualLocationData;
+
+				EntityLink link = underMouseData.baseLocation.parent;
+				if (link != null)
+				{
+					underMouseData.simulationEntity = underMouseData.baseLocation.parent.Get();
+					entityFound = true;
+				}
+				else
+				{
+					underMouseData.simulationEntity = null;
+				}
+
 				//Disaply target information
 				//Currently just displaying the primary locations information
 				targetIcon.position = targetLocation.primaryLocation.worldPos;
@@ -381,6 +432,68 @@ public class PlayerMapInteraction : PostTickUpdate
                     fuelCostLabel.color = Color.red;
                 }
             }
+			else
+			{
+				//Reset
+				underMouseData.baseLocation = null;
+				underMouseData.simulationEntity = null;
+
+				//Find if over any territory
+				//Convert mouse position back to simulation space
+				Vector3 onMapPosition = -hitPoint;
+				RealSpacePosition simPos = new RealSpacePosition(onMapPosition.x, onMapPosition.y, onMapPosition.z).Multiply(MapManagement.mapRelativeScaleModifier);
+				//Clamp to a cell center
+				simPos = WorldManagement.ClampPositionToGrid(simPos);
+
+				List<TerritoryData> territories = SimulationManagement.GetDataViaTag(DataTags.Territory).Cast<TerritoryData>().ToList();
+
+				foreach (TerritoryData territoryData in territories)
+				{
+					if (territoryData.territoryCenters.Contains(simPos))
+					{
+						underMouseData.simulationEntity = territoryData.parent.Get();
+						entityFound = true;
+						break;
+					}
+				}
+			}
+
+			if (!freezeInteractionCursor)
+			{
+				//Decide on highlight mode based on interaction
+				Interaction lastSVI = PlayerInteractionManagement.lastSuccesfullyValidatedInteraction;
+				Interaction.InteractionMapCursor mapCursorData = Interaction.basicBorder;
+
+				//Don't display highlight effect if over location or no interaction
+				entityFound = entityFound && underMouseData.baseLocation == null && lastSVI != null;
+
+				if (lastSVI != null)
+				{
+					mapCursorData = lastSVI.GetMapCursorData();
+				}
+
+				//Square Highlight
+				bool showSquare = entityFound && mapCursorData.highlightMode == HighlightMode.Square;
+				selectionIndicator.gameObject.SetActive(showSquare);
+
+				if (showSquare)
+				{
+					//Convert sim pos to map pos
+					selectionIndicator.position = ClampPositionToGridMap(hitPoint);
+				}
+				//
+
+				//Border Highlight
+				bool colourBorder = entityFound && mapCursorData.highlightMode == HighlightMode.Border;
+				if (colourBorder)
+				{
+					int id = underMouseData.simulationEntity.id;
+					//Adds an override for this frame only
+					//Meaning it handles any potential desync from map refresh
+					MapManagement.CreateBorderColourOverride(id, Color.white);
+				}
+				//
+			}
 		}
 	}
 

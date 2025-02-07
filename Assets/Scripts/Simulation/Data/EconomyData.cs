@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EconomyData : DataModule
 {
+	public Shop market = new Shop();
 	public float purchasingPower;
 
 	public float EstimatedEconomyState()

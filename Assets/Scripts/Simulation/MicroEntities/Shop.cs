@@ -91,4 +91,16 @@ public class Shop : DataModule
 	{
 		return 0;
 	}
+
+	public virtual string GetShopTitle()
+	{
+		if (type == ShopType.StatShop)
+		{
+			return "Foundry";
+		}
+		else
+		{
+			return "Market";
+		}
+	}
 }

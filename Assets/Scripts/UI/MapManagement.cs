@@ -90,6 +90,12 @@ public class MapManagement : UIState
 		}
 	}
 
+	public class BorderRender
+	{
+		public List<LineRenderer> targets = new List<LineRenderer>();
+		public Color baseColor;
+	}
+
 	protected override GameObject GetTargetObject()
 	{
 		return target;
@@ -113,6 +119,22 @@ public class MapManagement : UIState
 	private Dictionary<Transform, SpriteRenderer> cachedTransformToNationIconRenderers = new Dictionary<Transform, SpriteRenderer>();
 	private Dictionary<Transform, Material> cachedTransformToMaterial = new Dictionary<Transform, Material>();
 	private List<TroopTransferEffect> ttEffects = new List<TroopTransferEffect>();
+	private static Dictionary<int, BorderRender> idToBorderRender = new Dictionary<int, BorderRender>();
+	private static Dictionary<int, Color> borderColourOverridesLastFrame = new Dictionary<int, Color>();
+	private static Dictionary<int, Color> borderColourOverridesThisFrame = new Dictionary<int, Color>();
+
+	public static void CreateBorderColourOverride(int id, Color color)
+	{
+		if (!borderColourOverridesThisFrame.ContainsKey(id))
+		{
+			borderColourOverridesThisFrame.Add(id, color);
+		}
+		else
+		{
+			borderColourOverridesThisFrame[id] = color;
+		}
+	}
+
 
 	public AnimationCurve troopTransferCurve;
 
@@ -125,7 +147,10 @@ public class MapManagement : UIState
     private void Start()
     {
         mapRingMeshRenderes = mapElementsPools.GetComponentsOnAllActiveObjects<MeshRenderer>(0);
-    }
+
+		borderColourOverridesThisFrame.Clear();
+		borderColourOverridesLastFrame.Clear();
+	}
 
     private void Update()
     {
@@ -252,6 +277,9 @@ public class MapManagement : UIState
 					//We need to get all the territory data modules and then draw lines based on them
 					List<DataModule> territories = SimulationManagement.GetDataViaTag(DataTags.Territory);
 
+					//Reset lookupt table
+					idToBorderRender.Clear();
+
 					Vector3 additionalTerrOffset = Vector3.down * 0.1f;
 					//Draw per territory data
 					foreach (TerritoryData territoryData in territories.Cast<TerritoryData>())
@@ -290,6 +318,15 @@ public class MapManagement : UIState
 
 								lineRenderer.loop = true;
 							}
+
+							//Add line renderer to lookup table so it can be used for effects
+							if (!idToBorderRender.ContainsKey(id))
+							{
+								idToBorderRender.Add(id, new BorderRender());
+								idToBorderRender[id].baseColor = color;
+							}
+
+							idToBorderRender[id].targets.Add(lineRenderer);
 						}
 
 						if (hasEmblemData)
@@ -335,6 +372,7 @@ public class MapManagement : UIState
 					mapElementsPools.PruneObjectsNotUpdatedThisFrame(internalTerritoryIndicatorPool);
 				}
 
+				//Update troop transfer effects
 				for (int i = 0; i < ttEffects.Count;)
 				{
 					if(ttEffects[i].Update(troopTransferCurve) >= 1.0f)
@@ -346,6 +384,52 @@ public class MapManagement : UIState
 						i++;
 					}
 				}
+
+				//Border colour overrides
+				//Each frame apply the colour overrides
+				//If exists in last frames, remove it from last frames
+				//Should be left with all the last frames not updated this frame
+				//Replace last frame with this frames
+				//Repeat
+				foreach (KeyValuePair<int, Color> entry in borderColourOverridesThisFrame)
+				{
+					int id = entry.Key;
+					if (idToBorderRender.ContainsKey(id))
+					{
+						if (borderColourOverridesLastFrame.ContainsKey(id))
+						{
+							borderColourOverridesLastFrame.Remove(id);
+						}
+
+						foreach (LineRenderer lr in idToBorderRender[id].targets)
+						{
+#pragma warning disable CS0618 // Type or member is obsolete
+							lr.SetColors(entry.Value, entry.Value);
+#pragma warning restore CS0618 // Type or member is obsolete
+						}
+					}
+				}
+
+				//Any entry left in last frame was updated last frame but not this one, meaning the override has dissappeard
+				foreach (KeyValuePair<int, Color> entry in borderColourOverridesLastFrame)
+				{
+					int id = entry.Key;
+					if (idToBorderRender.ContainsKey(id))
+					{
+						Color baseColour = idToBorderRender[id].baseColor;
+						foreach (LineRenderer lr in idToBorderRender[id].targets)
+						{
+#pragma warning disable CS0618 // Type or member is obsolete
+							lr.SetColors(baseColour, baseColour);
+#pragma warning restore CS0618 // Type or member is obsolete
+						}
+					}
+				}
+
+				//Overwrite
+				borderColourOverridesLastFrame = borderColourOverridesThisFrame;
+				//Clear
+				borderColourOverridesThisFrame = new Dictionary<int, Color>();
             }
         }
     }

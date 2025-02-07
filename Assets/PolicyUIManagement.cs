@@ -114,7 +114,7 @@ public class PolicyUIManagement : UIState
 		}
 
 		//Close the policies ui automatically
-		UIManagement.ReturnToNeutral();
+		UIManagement.ReturnToPureNeutral();
 	}
 }
 

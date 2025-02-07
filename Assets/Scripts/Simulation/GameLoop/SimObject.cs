@@ -105,7 +105,7 @@ public class SimObject : DataModule, IDisplay
 	public bool ReputationEnabled()
 	{
 		//Has a parent and that parent has feelings data
-		return parent != null && parent.Get().HasData(DataTags.Feelings);
+		return (parent != null && parent.Get().HasData(DataTags.Feelings)) || (this is SimulationEntity && (this as SimulationEntity).HasData(DataTags.Feelings));
 	}
 
 	public void SetPlayerReputation(float newReputation)
@@ -124,7 +124,7 @@ public class SimObject : DataModule, IDisplay
 			newReputation = Mathf.Clamp(newReputation, -1.0f, 1.0f);
 
 			//If reputation enabled check was passed we should have feelings data
-			Assert.IsTrue(parent.Get().GetData(DataTags.Feelings, out FeelingsData feelingsData));
+			FeelingsData feelingsData = GetFeelingsData();
 
 			//Does this entity know about the player?
 			//If not add it to their feelings data
@@ -151,7 +151,7 @@ public class SimObject : DataModule, IDisplay
 		{
 			int playerID = PlayerManagement.GetTarget().id;
 			//If reputation enabled check was passed we should have feelings data
-			Assert.IsTrue(parent.Get().GetData(DataTags.Feelings, out FeelingsData feelingsData));
+			FeelingsData feelingsData = GetFeelingsData();
 
 			//Do we not know about the player?
 			if (!feelingsData.idToFeelings.ContainsKey(playerID))
@@ -174,7 +174,7 @@ public class SimObject : DataModule, IDisplay
 				int playerID = PlayerManagement.GetTarget().id;
 
 				//If reputation enabled check was passed we should have feelings data
-				Assert.IsTrue(parent.Get().GetData(DataTags.Feelings, out FeelingsData feelingsData));
+				FeelingsData feelingsData = GetFeelingsData();
 
 				if (feelingsData.idToFeelings.ContainsKey(playerID))
 				{
@@ -184,6 +184,25 @@ public class SimObject : DataModule, IDisplay
 		}
 
 		return 1.0f;
+	}
+
+	private FeelingsData GetFeelingsData()
+	{
+		FeelingsData feelingsData = null;
+
+		//Is the parent
+		if (parent == null && this is SimulationEntity)
+		{
+			SimulationEntity simulationEntity = (SimulationEntity)this;
+
+			simulationEntity.GetData(DataTags.Feelings, out feelingsData);
+		}
+		else
+		{
+			parent.Get().GetData(DataTags.Feelings, out feelingsData);
+		}
+
+		return feelingsData;
 	}
 
 	// UI Display Methods //

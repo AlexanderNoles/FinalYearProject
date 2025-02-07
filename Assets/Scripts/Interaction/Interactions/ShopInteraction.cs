@@ -1,15 +1,26 @@
+using EntityAndDataDescriptor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ShopInteraction : Interaction
 {
-	public override bool Validate(SimObjectBehaviour interactable)
+	public override bool ValidateEntity(SimulationEntity target)
+	{
+		return target.HasData(DataTags.Economic);
+	}
+
+	public override void ProcessEntity(SimulationEntity target)
+	{
+		ShopUIControl.ToggleShopUI(target, null);
+	}
+
+	public override bool ValidateBehaviour(SimObjectBehaviour interactable)
 	{
 		return InteractionValidationHelper.ShopValidation(interactable);
 	}
 
-	public override void Process(SimObjectBehaviour interactable)
+	public override void ProcessBehaviour(SimObjectBehaviour interactable)
 	{
 		SimObject targetObject = interactable.target;
 

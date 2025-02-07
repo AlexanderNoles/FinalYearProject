@@ -264,7 +264,7 @@ public class CameraManagement : MonoBehaviour
 		#region Camera Control
 
 		//Rotate camera
-		if (UIManagement.InNeutral() || MapManagement.MapActive())
+		if (UIManagement.InPureNeutral() || MapManagement.MapActive())
 		{
 			//In neutral or map
 			Vector2 cameraInput = Vector2.zero;

@@ -28,8 +28,21 @@ public class OnHoverInformationDisplay : MonoBehaviour
 		cachedAnchoredPosition = anchorRect.anchoredPosition;
 	}
 
+	public static void RemoveIfSource(GameObject potentialSource)
+	{
+		if (instance.hoverSource == potentialSource)
+		{
+			instance.Hide();
+		}
+	}
+
 	public static void SetCurrentTarget(IDisplay newTarget, GameObject hoverSource)
 	{
+		if (instance.currentTarget == newTarget)
+		{
+			return;
+		}
+
 		instance.currentTarget = newTarget;
 		instance.hoverSource = hoverSource;
 		instance.Draw();
@@ -56,6 +69,10 @@ public class OnHoverInformationDisplay : MonoBehaviour
 	private void Hide()
 	{
 		mainUI.SetActive(false);
+
+		//Reset data
+		currentTarget = null;
+		hoverSource = null;
 	}
 
 	private void LateUpdate()

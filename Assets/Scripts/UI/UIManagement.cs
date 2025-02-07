@@ -41,6 +41,11 @@ public class UIManagement : MonoBehaviour
         instance.uiStates.Add(newState);
     }
 
+	public static bool IsCurrentState(UIState state)
+	{
+		return instance.activeState.Equals(state);
+	}
+
 	public static void RefreshUIState()
 	{
 		instance.activeState.SetActive(false);
@@ -54,14 +59,9 @@ public class UIManagement : MonoBehaviour
             return false;
         }
 
-        if (!InNeutral() && !instance.neutral.Equals(newState))
+        if (!InPureNeutral() && !instance.neutral.Equals(newState))
         {
             //If not in neutral and not trying to return to neutral
-            return false;
-        }
-
-        if (!newState.enabled)
-        {
             return false;
         }
 
@@ -102,16 +102,26 @@ public class UIManagement : MonoBehaviour
 		{
 			MouseManagement.ResetMouseState();
 		}
+
+		if (instance.activeState.coenableNeutral && !instance.activeState.Equals(instance.neutral))
+		{
+			instance.neutral.SetActive(true);
+		}
 	}
 
     public UIState neutral;
 
-    public static bool InNeutral()
+    public static bool InPureNeutral()
     {
         return instance.activeState != null && instance.activeState.Equals(instance.neutral);
     }
 
-    public static void ReturnToNeutral()
+	public static bool NeutralEnabled()
+	{
+		return instance.neutral.gameObject.activeSelf;
+	}
+
+    public static void ReturnToPureNeutral()
     {
         LoadUIState(instance.neutral);
     }

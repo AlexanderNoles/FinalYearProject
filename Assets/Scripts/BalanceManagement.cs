@@ -20,4 +20,6 @@ public static class BalanceManagement
 
 	public const float voidSwarmStartTroopMultiplier = 0.25f;
 	public const float voidSwarmDamageFalloff = 10;
+
+	public const float oppositionThreshold = -0.7f;
 }

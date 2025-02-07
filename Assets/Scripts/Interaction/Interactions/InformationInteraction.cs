@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class InformationInteraction : Interaction
 {
-	public override bool Validate(SimObjectBehaviour interactable)
+	public override bool ValidateBehaviour(SimObjectBehaviour interactable)
 	{
 		return false;
 	}

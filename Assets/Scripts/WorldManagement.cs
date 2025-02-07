@@ -285,6 +285,15 @@ public class RealSpacePosition
 			);
 	}
 
+	public RealSpacePosition Multiply(double value)
+	{
+		x *= value;
+		y *= value;
+		z *= value;
+
+		return this;
+	}
+
 	public RealSpacePosition Divide(float value)
 	{
 		x /= value;

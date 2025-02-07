@@ -342,7 +342,7 @@ public class PlayerCapitalShip : MonoBehaviour
 			float moveSpeedPercentage = Mathf.Max(0.0f, PlayerManagement.GetStats().GetStat(Stats.moveSpeed.ToString())) / 100.0f;
 
 			//Not jumping
-			bool inUINeutral = UIManagement.InNeutral();
+			bool inUINeutral = UIManagement.InPureNeutral();
 
 			//Rotational Movement
 			const float rotationalModifier = 0.01f;

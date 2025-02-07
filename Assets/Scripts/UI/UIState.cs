@@ -8,8 +8,8 @@ public class UIState : MonoBehaviour
 	public bool useCutsomMouseState;
 	public MouseManagement.MouseState mouseState;
 
-    [Header("UI State Settings")]
-    public new bool enabled = true;
+	[Header("UI State Settings")]
+	public bool coenableNeutral = false;
     public bool autoSetup = true;
 	protected bool autoSetupDone = false;
     public bool lockout = false;

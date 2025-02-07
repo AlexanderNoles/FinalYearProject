@@ -8,6 +8,14 @@ using System.Linq;
 [SimulationManagement.SimulationRoutine(25)]
 public class PopulationNaturalChangeRoutine : RoutineBase
 {
+	//fishing...
+	//Religion
+	//lean planet
+	//Diseases
+	//Arena
+	//no big women
+	//stock market
+
     public override void Run()
     {
         List<DataModule> populationDatas = SimulationManagement.GetDataViaTag(DataTags.Population);

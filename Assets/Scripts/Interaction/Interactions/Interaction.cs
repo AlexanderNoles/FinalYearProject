@@ -4,6 +4,21 @@ using UnityEngine;
 
 public class Interaction : IDisplay
 {
+	public class InteractionMapCursor
+	{
+		public PlayerMapInteraction.HighlightMode highlightMode = PlayerMapInteraction.HighlightMode.Border;
+	}
+
+	public static readonly InteractionMapCursor basicBorder = new InteractionMapCursor() 
+	{
+		highlightMode = PlayerMapInteraction.HighlightMode.Border
+	};
+
+	public static readonly InteractionMapCursor basicSquare = new InteractionMapCursor()
+	{
+		highlightMode = PlayerMapInteraction.HighlightMode.Square
+	};
+
 	public static class Ranges
 	{
 		public const float standard = 500;
@@ -12,12 +27,27 @@ public class Interaction : IDisplay
 
 	protected Sprite sprite;
 
-	public virtual bool Validate(SimObjectBehaviour interactable)
+	public virtual bool ValidateEntity(SimulationEntity target)
 	{
-		return true;
+		return false;
 	}
 
-	public virtual void Process(SimObjectBehaviour interactable)
+	public virtual void ProcessEntity(SimulationEntity target)
+	{
+
+	}
+
+	public virtual InteractionMapCursor GetMapCursorData()
+	{
+		return basicBorder;
+	}
+
+	public virtual bool ValidateBehaviour(SimObjectBehaviour interactable)
+	{
+		return false;
+	}
+
+	public virtual void ProcessBehaviour(SimObjectBehaviour interactable)
 	{
 		//Do nothing by default
 	}
@@ -62,9 +92,15 @@ public class Interaction : IDisplay
 
 	protected static class InteractionValidationHelper
 	{
+		public static bool AttackOnMapValidation(SimulationEntity entity)
+		{
+			//Should replace with proper can attack check when infrastructure exists
+			return true;
+		}
+
 		public static bool AttackValidation(SimObjectBehaviour interactable)
 		{
-			return interactable is BattleBehaviour &&!PlayerSimObjBehaviour.IsPlayerBB(interactable as BattleBehaviour);
+			return !PlayerSimObjBehaviour.IsPlayerBB(interactable) && interactable.battleEnabled;
 		}
 
 		public static bool ShopValidation(SimObjectBehaviour interactable)

@@ -331,7 +331,7 @@ public class PlayerLocationManagement : MonoBehaviour
 			Vector3 worldPos = location.GetWorldPosition();
 			Vector3 viewPortPos = mainCamera.WorldToViewportPoint(worldPos);
 
-			if (viewPortPos.z > 0.0f)
+			if (viewPortPos.z > 0.0f && CameraManagement.GetMainCamera().enabled)
 			{
 				RectTransform uiIndicator = uiPool.UpdateNextObjectPosition(drawnLocationTargetIndex, Vector3.zero).transform as RectTransform;
 

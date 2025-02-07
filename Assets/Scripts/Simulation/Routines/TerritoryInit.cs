@@ -51,6 +51,7 @@ public class TerritoryInit : InitRoutineBase
 						//This means the solar system is likely full!
 						if (loopClamp <= 0 || territoryData.origin == null)
 						{
+							territoryData.origin = null;
 							break;
 						}
 

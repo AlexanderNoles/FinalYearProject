@@ -10,6 +10,9 @@ public class ShopUIControl : MonoBehaviour
 	private SimObject target;
 	private Transform targetsTransform;
 	private Shop targetShop;
+
+	public TextMeshProUGUI titleLabel;
+
 	public DraggableWindow draggableWindowControl;
 	public GameObject mainUI;
 	public GameObject cantBuyBlocker;
@@ -87,7 +90,7 @@ public class ShopUIControl : MonoBehaviour
 	{
 		if (target != null)
 		{
-			if (Vector3.Distance(targetsTransform.position, CameraManagement.GetMainCameraPosition()) > Interaction.Ranges.standard)
+			if (targetsTransform != null && Vector3.Distance(targetsTransform.position, CameraManagement.GetMainCameraPosition()) > Interaction.Ranges.standard)
 			{
 				CloseShopUI();
 			}
@@ -137,6 +140,7 @@ public class ShopUIControl : MonoBehaviour
 			if (!redraw)
 			{
 				targetShop.OnShopUIOpened();
+				titleLabel.text = targetShop.GetShopTitle();
 			}
 
 			itemShopParent.SetActive(false);
