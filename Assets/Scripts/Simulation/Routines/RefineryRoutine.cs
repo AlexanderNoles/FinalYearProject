@@ -33,13 +33,28 @@ public class RefineryRoutine : RoutineBase
 
 			//Repair any ships in this chunk
 			//Or add any ships to a collection with empty space in this chunk
-			if (militaryData.positionToFleets.ContainsKey(refinery.refineryPosition))
+			if (refinery.putInReserves || militaryData.positionToFleets.ContainsKey(refinery.refineryPosition))
 			{
-				amountOfFleetsAtRefinery = militaryData.positionToFleets[refinery.refineryPosition].Count;
+				if (!refinery.putInReserves)
+				{
+					//If ships are being put in reserves we don't care if any ships are at the refinery
+					amountOfFleetsAtRefinery = militaryData.positionToFleets[refinery.refineryPosition].Count;
+				}
 
 				if (refinery.productionActive)
 				{
-					foreach (ShipCollection collection in militaryData.positionToFleets[refinery.refineryPosition])
+					List<ShipCollection> shipCollectionAtRefinery;
+
+					if (refinery.putInReserves)
+					{
+						shipCollectionAtRefinery = militaryData.reserveFleets;
+					}
+					else
+					{
+						shipCollectionAtRefinery = militaryData.positionToFleets[refinery.refineryPosition];
+					}
+
+					foreach (ShipCollection collection in shipCollectionAtRefinery)
 					{
 						if (collection.GetShips().Count < collection.GetCapacity())
 						{
@@ -73,17 +88,42 @@ public class RefineryRoutine : RoutineBase
 			}
 
 			//Do we have any ship capacity left at all
-			if (overallRemainingMilitaryCapacity >= 1)
+			if (overallRemainingMilitaryCapacity >= 1.0f)
 			{
 				//create new ships
 				//Limit the amount of ships we can add based on the amount of ships already in the cell
-				float maxAmountToAdd = Mathf.Min(overallRemainingMilitaryCapacity, refinery.refineryCollectionStorageCapacity - amountOfFleetsAtRefinery);
+				float maxAmountToAdd = Mathf.Min(Mathf.Floor(overallRemainingMilitaryCapacity), refinery.refineryCollectionStorageCapacity - amountOfFleetsAtRefinery);
+
+				float chanceModifier = 1.0f;
+
+				if (!refinery.productionAffectedBySimSpeed)
+				{
+					float simSpeed = SimulationManagement.GetSimulationSpeed();
+
+					if (simSpeed > 0.0f)
+					{
+						//Can't divide by zero!
+						chanceModifier = 1.0f / simSpeed;
+					}
+				}
 
 				for (int i = 0; i < maxAmountToAdd; i++)
 				{
-					if (SimulationManagement.random.Next(0, 101) / 100.0f < refinery.productionSpeed)
+					if (SimulationManagement.random.Next(0, 101) / 100.0f < refinery.productionSpeed * chanceModifier)
 					{
-						militaryData.AddFleet(refinery.refineryPosition, militaryData.GetNewFleet());
+						//Create new fleet
+						ShipCollection collection = militaryData.GetNewFleet();
+
+						if (refinery.putInReserves)
+						{
+							//Add to reserves, don't place anywhere on the map
+							militaryData.AddFleetToReserves(collection);
+						}
+						else
+						{
+							//Place at refinery position on map
+							militaryData.AddFleet(refinery.refineryPosition, collection);
+						}
 					}
 				}
 			}

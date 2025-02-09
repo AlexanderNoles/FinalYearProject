@@ -5,6 +5,7 @@ using UnityEngine;
 public class PopulationData : DataModule
 {
 	public bool variablePopulation = true;
+	public bool growthAffectedBySimSpeed = true;
 
     public float currentPopulationCount;
     public float populationNaturalGrowthSpeed;

@@ -44,5 +44,28 @@ public class Player : SimulationEntity
 		AddData(DataTags.ContactPolicy, new ContactPolicyData());
 
 		AddData(DataTags.Policies, new PoliciesData().Init());
+
+		//Give the player population
+		//This is a very important balancing statistic
+		PopulationData population = new PopulationData();
+		population.currentPopulationCount = BalanceManagement.playerPopulationStartValue;
+		population.populationNaturalGrowthLimt = BalanceManagement.intialPlayerPopulationMax;
+		population.populationNaturalGrowthSpeed = BalanceManagement.playerPopulationChangePerTick;
+		//Because the player will be traveling in the warp their population growth shouldn't be affected by the increased speed
+		population.growthAffectedBySimSpeed = false;
+		AddData(DataTags.Population, population);
+
+		//Give the player a military
+		MilitaryData militaryData = new MilitaryData();
+		militaryData.initalCount = BalanceManagement.initalMilitaryCount;
+		militaryData.selfControlled = true;
+		AddData(DataTags.Military, militaryData);
+
+		//Give the player a refinery
+		RefineryData refineryData = new RefineryData();
+		refineryData.putInReserves = true;
+		refineryData.productionAffectedBySimSpeed = false;
+		refineryData.productionSpeed = 0.5f; //The player has a super fast refinery!
+		AddData(DataTags.Refinery, refineryData);
 	}
 }

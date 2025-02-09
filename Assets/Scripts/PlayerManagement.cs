@@ -11,8 +11,10 @@ public class PlayerManagement : MonoBehaviour
     private PlayerStats playerStatsTarget = null;
     private PlayerInventory playerInventoryTarget = null;
 	private PlayerInteractions playerInteractionsTarget = null;
+	private PopulationData playerPopulationTarget = null;
+	private MilitaryData playerMilitaryTarget = null;
 
-    private void Awake()
+	private void Awake()
     {
         instance = this;
 
@@ -32,6 +34,8 @@ public class PlayerManagement : MonoBehaviour
         instance.playerEntity.GetData(DataTags.Stats, out instance.playerStatsTarget);
         instance.playerEntity.GetData(DataTags.Inventory, out instance.playerInventoryTarget);
 		instance.playerEntity.GetData(DataTags.Interactions, out instance.playerInteractionsTarget);
+		instance.playerEntity.GetData(DataTags.Population, out instance.playerPopulationTarget);
+		instance.playerEntity.GetData(DataTags.Military, out instance.playerMilitaryTarget);
 	}
 
     public static bool PlayerEntityExists()
@@ -57,6 +61,16 @@ public class PlayerManagement : MonoBehaviour
 	public static PlayerInteractions GetInteractions()
 	{
 		return instance.playerInteractionsTarget;
+	}
+
+	public static PopulationData GetPopulation()
+	{
+		return instance.playerPopulationTarget;
+	}
+
+	public static MilitaryData GetMilitary()
+	{
+		return instance.playerMilitaryTarget;
 	}
 
 	public static void KillPlayer()

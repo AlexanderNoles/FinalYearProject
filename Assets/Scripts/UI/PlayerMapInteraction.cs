@@ -323,7 +323,7 @@ public class PlayerMapInteraction : PostTickUpdate
 			LOMCompound targetLocation = null;
 			float currentShortestDistance = float.MaxValue;
 
-			const float mouseDistanceBuffer = 2;
+			const float mouseDistanceBuffer = 1;
 
 			PerformOperationOnSurroundingCells(hitPoint, new Func<Vector3, int>((Vector3 cellCenter) => 
 			{
@@ -440,7 +440,6 @@ public class PlayerMapInteraction : PostTickUpdate
 
 				//Check if territory is within range, shouldn't allow player to select things outside their jump range
 				bool withinInteractionRange = true;
-
 
 				if (PlayerManagement.PlayerEntityExists())
 				{

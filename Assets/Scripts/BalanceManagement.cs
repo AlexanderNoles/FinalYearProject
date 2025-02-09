@@ -17,9 +17,20 @@ public static class BalanceManagement
 	//Realisitcally one attack should make them hate you but I want to give players a bit of leeway
 	public const float damageReputationRatio = 0.05f;
 
-
+	//Void Swarm balancing, controls how much effect they have on the solar system
+	//If these values are overtuned all other factions could be wiped out too easily
+	//If they are too low the void swarm has zero impact
 	public const float voidSwarmStartTroopMultiplier = 0.25f;
 	public const float voidSwarmDamageFalloff = 10;
 
+	//Used by entites to determine when they hate each other
 	public const float oppositionThreshold = -0.7f;
+
+	//Player population balancing
+	public const float playerPopulationStartValue = 25;
+	public const float intialPlayerPopulationMax = 100;
+	public const float playerPopulationChangePerTick = 0.243f; //Arbitrarly randomized number to unsync population count from exact ticks
+
+	//Military balancing
+	public const int initalMilitaryCount = 5;
 }

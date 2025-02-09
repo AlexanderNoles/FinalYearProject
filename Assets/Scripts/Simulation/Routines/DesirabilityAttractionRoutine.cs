@@ -58,6 +58,22 @@ public class DesirabilityAttractionRoutine : RoutineBase
 			{
 				//Not within territory
 				//Pick random military
+				int loopClamp = 100;
+
+				do 
+				{
+					loopClamp--;
+
+					MilitaryData targetMilData = militaries[SimulationManagement.random.Next(0, militaries.Count)] as MilitaryData;
+
+					//Don't want to force a self controlled military to attack us
+					if (!targetMilData.selfControlled)
+					{
+						target = targetMilData.parent.Get();
+					}
+				}
+				while (loopClamp > 0 && target == null);
+
 				target = militaries[SimulationManagement.random.Next(0, militaries.Count)].parent.Get();
 			}
 

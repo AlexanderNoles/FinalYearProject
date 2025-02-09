@@ -185,7 +185,7 @@ public class PlayerLocationManagement : MonoBehaviour
 		}
 
 		//Set inital world center position
-		WorldManagement.SetWorldCenterPosition(new RealSpacePosition(0, 0, 20000));
+		WorldManagement.SetWorldCenterPosition(new RealSpacePosition(0, 0, 2000000));
 		setInitalLocation = false;
 
 		instance = this;

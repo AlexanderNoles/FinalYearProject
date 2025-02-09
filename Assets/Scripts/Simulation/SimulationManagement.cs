@@ -18,6 +18,7 @@ public class SimulationManagement : MonoBehaviour
     }
 
     private static int simulationSeed;
+	private static int seedOverride = int.MaxValue;
 
 	public static int GetSimulationSeed()
 	{
@@ -351,9 +352,17 @@ public class SimulationManagement : MonoBehaviour
 
 		MineralDeposit.totalMineralCount = 0;
 		TargetableLocationData.targetableLocationLookup.Clear(); //Make sure this is empty!
-		//
+																 
+		if (seedOverride <= 10000)
+		{
+			simulationSeed = seedOverride;
+			seedOverride = int.MaxValue;
+		}
+		else
+		{
+			simulationSeed = UnityEngine.Random.Range(-10000, 10000);
+		}
 
-		simulationSeed = UnityEngine.Random.Range(-10000, 10000);
         random = new System.Random(simulationSeed);
 
         planetsGenerator.GeneratePlanets(random);
@@ -690,6 +699,15 @@ public class SimulationManagement : MonoBehaviour
         }
     }
 
+	[MonitorBreak.Bebug.ConsoleCMD("LOADSEED", "Load a solar system with specific seed")]
+	public static void LoadSeed(string seed)
+	{
+		int parsedSeed = int.Parse(seed);
+		seedOverride = parsedSeed;
+
+		GameManagement.ReloadScene();
+	}
+
 	[MonitorBreak.Bebug.ConsoleCMD("SIMSEED", "Get the current simulation's seed")]
 	public static void OutputSimSeedToConsoleCMD()
 	{
@@ -774,10 +792,30 @@ public class SimulationManagement : MonoBehaviour
 	public static void OutputAllEntitiesAndIDs()
 	{
 		MonitorBreak.Bebug.Console.Log("----", 0, false);
+		const int countPerRow = 1; //Disabled essentially
+		int currentCount = countPerRow;
+		string outputString = "";
 		foreach (KeyValuePair<int, SimulationEntity> entry in instance.idToEntity)
 		{
-			MonitorBreak.Bebug.Console.Log($"{entry.Value}: {entry.Key}", 0, false);
+			if (currentCount <= 0)
+			{
+				MonitorBreak.Bebug.Console.Log(outputString, 0, false);
+				currentCount = countPerRow;
+				outputString = "";
+			}
+			else
+			{
+				outputString += $"{entry.Value}: {entry.Key}";
+				currentCount--;
+			}
 		}
+
+		if (currentCount != countPerRow)
+		{
+			//Half way through a row
+			MonitorBreak.Bebug.Console.Log(outputString, 0, false);
+		}
+
 		MonitorBreak.Bebug.Console.Log("----", 0, false);
 	}
 

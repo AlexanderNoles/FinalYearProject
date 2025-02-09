@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using EntityAndDataDescriptor;
+using System;
 
 public class MainInfoUIControl : PostTickUpdate
 {
@@ -28,7 +29,13 @@ public class MainInfoUIControl : PostTickUpdate
     [Header("Currency")]
     public TextMeshProUGUI currencyLabel;
 
-    [Header("Emblem")]
+	[Header("Population")]
+	public TextMeshProUGUI populationLabel;
+
+	[Header("Military")]
+	public TextMeshProUGUI militaryLabel;
+
+	[Header("Emblem")]
     public EmblemRenderer emblemRenderer;
     private bool emblemDrawn = false;
 
@@ -95,6 +102,8 @@ public class MainInfoUIControl : PostTickUpdate
         if (PlayerManagement.PlayerEntityExists())
         {
 			RedrawCurrencyLabel();
+			RedrawPopulationLabel();
+			RedrawMilitaryLabel();
 
 			if (!emblemDrawn)
             {
@@ -108,10 +117,29 @@ public class MainInfoUIControl : PostTickUpdate
 
 	private void RedrawCurrencyLabel()
 	{
-		currencyLabel.text = PlayerManagement.GetInventory().mainCurrency.ToString();
+		double value = Math.Round(PlayerManagement.GetInventory().mainCurrency, 1);
+		string text = value.ToString();
+
+		//No remainder
+		if (value % 1.0f == 0.0f)
+		{
+			text += ".0";
+		}
+
+		currencyLabel.text = text;
 	}
 
-    private void DrawHealthAuto()
+	private void RedrawPopulationLabel()
+	{
+		populationLabel.text = Mathf.RoundToInt(PlayerManagement.GetPopulation().currentPopulationCount).ToString();
+	}
+
+	private void RedrawMilitaryLabel()
+	{
+		militaryLabel.text = $"(     {PlayerManagement.GetMilitary().currentFleetCount}/{Mathf.FloorToInt(PlayerManagement.GetMilitary().maxMilitaryCapacity)})";
+	}
+
+	private void DrawHealthAuto()
     {
 		if (!PlayerManagement.PlayerEntityExists())
 		{

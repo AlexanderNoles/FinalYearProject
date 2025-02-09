@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[SimulationManagement.SimulationRoutine(0, SimulationManagement.SimulationRoutine.RoutineTypes.Init)]
+[SimulationManagement.SimulationRoutine(10, SimulationManagement.SimulationRoutine.RoutineTypes.Init)]
 public class EconomyInit : InitRoutineBase
 {
 	public override bool IsDataToInit(HashSet<Enum> tags)

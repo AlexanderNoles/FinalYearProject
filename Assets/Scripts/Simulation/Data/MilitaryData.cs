@@ -5,12 +5,20 @@ using UnityEngine;
 
 public class MilitaryData : DataModule
 {
+	//Can this military be controlled by other entites? i.e., can other entites force it to start battles (this is specifically towards forcing them to inititate a battle
+	//NOT making them join a battle as defence). Currently (07/02/2025) this is only used by the player because we don't want the player's military randomly joining battles the player
+	//doesn't know about. In the future this could also be used by a pacifist faction to avoid conflict for example (but still be able to act in defence)
+	public bool selfControlled = false;
+
 	public RealSpacePosition origin;
 	public float totalDamageBuildup = 0;
 	public int initalCount = 0;
 
 	public float maxMilitaryCapacity;
 	public int currentFleetCount;
+	//Fleets that don't neccesarily have a defined position
+	//A key example is the player's faction that keeps ships onboard it's moving vessel
+	public List<ShipCollection> reserveFleets = new List<ShipCollection>();
 	public Dictionary<RealSpacePosition, List<ShipCollection>> positionToFleets = new Dictionary<RealSpacePosition, List<ShipCollection>>();
 	public Dictionary<RealSpacePosition, List<ShipCollection>> fromTransfer = new Dictionary<RealSpacePosition, List<ShipCollection>>();
 	public Dictionary<RealSpacePosition, List<ShipCollection>> toTransfer = new Dictionary<RealSpacePosition, List<ShipCollection>>();
@@ -43,6 +51,23 @@ public class MilitaryData : DataModule
 	public virtual ShipCollection GetNewFleet()
 	{
 		return new Fleet();
+	}
+
+	public void AddFleetToReserves(ShipCollection fleet)
+	{
+		reserveFleets.Add(fleet);
+		currentFleetCount++;
+	}
+
+	public bool RemoveFleetFromReserves(ShipCollection fleet)
+	{
+		if (reserveFleets.Remove(fleet))
+		{
+			currentFleetCount--;
+			return true;
+		}
+
+		return false;
 	}
 
 	public void AddFleet(RealSpacePosition pos, ShipCollection fleet)
