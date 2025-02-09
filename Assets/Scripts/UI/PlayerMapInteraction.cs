@@ -24,6 +24,7 @@ public class PlayerMapInteraction : PostTickUpdate
 	public class UnderMouseData
 	{
 		public VisitableLocation baseLocation;
+		public RealSpacePosition cellCenter;
 		public SimulationEntity simulationEntity;
 		public float fuelCostToLocation;
 	}
@@ -50,6 +51,7 @@ public class PlayerMapInteraction : PostTickUpdate
 	private Material rangeIndicatorMat;
 	private float cachedRange;
 	public Transform playerDirectionIndicator;
+	public LineRenderer indicatorLine;
 
 	[Header("Location Information Disaply")]
 	public Canvas canvas;
@@ -59,6 +61,7 @@ public class PlayerMapInteraction : PostTickUpdate
 	public TextMeshProUGUI locationDescLabel;
 	public TextMeshProUGUI fuelCostLabel;
 	public TextMeshProUGUI compoundLabel;
+	public GameObject matchbookDisplay;
 
 	private class LocationOnMap
 	{
@@ -82,6 +85,16 @@ public class PlayerMapInteraction : PostTickUpdate
 
 			return locations;
 		}
+	}
+
+	public static void FreeezeInteractionCursor(bool active)
+	{
+		instance.freezeInteractionCursor = active;
+	}
+
+	public static void SetActiveMatchBookDisplay(bool active)
+	{
+		instance.matchbookDisplay.SetActive(active);
 	}
 
 	public enum HighlightMode
@@ -120,14 +133,25 @@ public class PlayerMapInteraction : PostTickUpdate
 	{
 		base.OnEnable();
 		rangeIndicator.gameObject.SetActive(false);
-		targetIcon.gameObject.SetActive(false);
 		Shader.SetGlobalFloat("_ShipRange", 0.0f);
 		doneInitialDraw = false;
-		selectionIndicator.gameObject.SetActive(false);
+
+		if (!freezeInteractionCursor)
+		{
+			selectionIndicator.gameObject.SetActive(false);
+			targetIcon.gameObject.SetActive(false);
+			indicatorLine.positionCount = 0;
+		}
+
 		mapPools.HideAllObjects(4);
 		mapPools.HideAllObjects(9);
 
 		PlayerCapitalShip.onJumpStart.AddListener(OnJumpStart);
+	}
+
+	private void OnDisable()
+	{
+		PlayerCapitalShip.onJumpStart.RemoveListener(OnJumpStart);
 	}
 
 	public void OnJumpStart()
@@ -138,6 +162,8 @@ public class PlayerMapInteraction : PostTickUpdate
 
 		mapPools.HideAllObjects(4);
 		mapPools.HideAllObjects(9);
+
+		indicatorLine.positionCount = 0;
 	}
 
 	protected override void PostTick()
@@ -317,7 +343,7 @@ public class PlayerMapInteraction : PostTickUpdate
 			Shader.SetGlobalFloat("_ShipRange", viewRangeOverride ? 10000.0f : cachedRange);
 		}
 
-		if (PlayerCapitalShip.IsJumping() || UIHelper.ElementsUnderMouse().Count > 0)
+		if (PlayerCapitalShip.IsJumping() || (UIHelper.ElementsUnderMouse().Count > 0 && !freezeInteractionCursor))
 		{
 			//Don't let them set a new position if we are jumping or if we are currently  moused over a ui object
 			targetIcon.gameObject.SetActive(false);
@@ -356,10 +382,27 @@ public class PlayerMapInteraction : PostTickUpdate
 				return 0;
 			}));
 
+			if (freezeInteractionCursor)
+			{
+				underMouseData.baseLocation = null;
+				underMouseData.simulationEntity = null;
+				return;
+			}
+
 			bool foundLocation = targetLocation != null;
 			bool entityFound = false;
 			targetIcon.gameObject.SetActive(foundLocation);
 			underMouseData.fuelCostToLocation = 0.0f;
+
+			//Calculate cell center
+			//Convert mouse position back to simulation space
+			Vector3 onMapPosition = -hitPoint;
+			RealSpacePosition simPos = new RealSpacePosition(onMapPosition.x, onMapPosition.y, onMapPosition.z).Multiply(MapManagement.mapRelativeScaleModifier);
+			//Clamp to a cell center
+			simPos = WorldManagement.ClampPositionToGrid(simPos);
+
+			underMouseData.cellCenter = simPos;
+			//
 
 			if (foundLocation)
 			{
@@ -452,14 +495,8 @@ public class PlayerMapInteraction : PostTickUpdate
 				if (withinInteractionRange)
 				{
 					//Find if over any territory
-					//Convert mouse position back to simulation space
-					Vector3 onMapPosition = -hitPoint;
-					RealSpacePosition simPos = new RealSpacePosition(onMapPosition.x, onMapPosition.y, onMapPosition.z).Multiply(MapManagement.mapRelativeScaleModifier);
-					//Clamp to a cell center
-					simPos = WorldManagement.ClampPositionToGrid(simPos);
 
 					List<TerritoryData> territories = SimulationManagement.GetDataViaTag(DataTags.Territory).Cast<TerritoryData>().ToList();
-
 					foreach (TerritoryData territoryData in territories)
 					{
 						if (territoryData.territoryCenters.Contains(simPos))
@@ -472,41 +509,80 @@ public class PlayerMapInteraction : PostTickUpdate
 				}
 			}
 
-			if (!freezeInteractionCursor)
+			//Decide on highlight mode based on interaction
+			Interaction lastSVI = PlayerInteractionManagement.lastSuccesfullyValidatedInteraction;
+			Interaction.InteractionMapCursor mapCursorData = Interaction.basicBorder;
+
+			//Don't display highlight effect if over location or no interaction
+			entityFound = entityFound && underMouseData.baseLocation == null && lastSVI != null;
+
+			if (lastSVI != null)
 			{
-				//Decide on highlight mode based on interaction
-				Interaction lastSVI = PlayerInteractionManagement.lastSuccesfullyValidatedInteraction;
-				Interaction.InteractionMapCursor mapCursorData = Interaction.basicBorder;
+				mapCursorData = lastSVI.GetMapCursorData();
+			}
 
-				//Don't display highlight effect if over location or no interaction
-				entityFound = entityFound && underMouseData.baseLocation == null && lastSVI != null;
+			//Square Highlight
+			bool showSquare = entityFound && mapCursorData.highlightMode == HighlightMode.Square;
+			selectionIndicator.gameObject.SetActive(showSquare);
 
-				if (lastSVI != null)
+			if (showSquare)
+			{
+				//Convert sim pos to map pos
+				selectionIndicator.position = ClampPositionToGridMap(hitPoint);
+			}
+			//
+
+			//Border Highlight
+			bool colourBorder = entityFound && mapCursorData.highlightMode == HighlightMode.Border;
+			if (colourBorder)
+			{
+				int id = underMouseData.simulationEntity.id;
+				//Adds an override for this frame only
+				//Meaning it handles any potential desync from map refresh
+				MapManagement.CreateBorderColourOverride(id, Color.white);
+			}
+			//
+
+			//Indicator line
+			if (mapCursorData.showLineIndicator && (entityFound || foundLocation))
+			{
+				Vector3 targetPos;
+
+				if (foundLocation)
 				{
-					mapCursorData = lastSVI.GetMapCursorData();
+					targetPos = targetLocation.primaryLocation.worldPos;
+				}
+				else
+				{
+					targetPos = -underMouseData.cellCenter.AsTruncatedVector3(MapManagement.mapRelativeScaleModifier);
 				}
 
-				//Square Highlight
-				bool showSquare = entityFound && mapCursorData.highlightMode == HighlightMode.Square;
-				selectionIndicator.gameObject.SetActive(showSquare);
 
-				if (showSquare)
+				//Generate a spline from player pos to target
+				PathHelper.SimplePath spline = PathHelper.GenerateSimplePathStatic(targetPos, playerPosOnMap, new PathHelper.SimplePathParameters()
 				{
-					//Convert sim pos to map pos
-					selectionIndicator.position = ClampPositionToGridMap(hitPoint);
-				}
-				//
+					forwardVector = Vector3.up,
+					rightVector = Vector3.zero
+				});
 
-				//Border Highlight
-				bool colourBorder = entityFound && mapCursorData.highlightMode == HighlightMode.Border;
-				if (colourBorder)
+				float rawDistance = Vector3.Distance(targetPos, playerPosOnMap);
+				int res = Mathf.CeilToInt(Mathf.Max(10, 2 * rawDistance));
+
+				Vector3[] positions = new Vector3[res + 1];
+				for (int i = 0; i <= res; i++)
 				{
-					int id = underMouseData.simulationEntity.id;
-					//Adds an override for this frame only
-					//Meaning it handles any potential desync from map refresh
-					MapManagement.CreateBorderColourOverride(id, Color.white);
+					float percentage = i / (float)res;
+					positions[i] = spline.GetPosition(percentage);
+
+					positions[i].y += Mathf.Sin(percentage * Mathf.PI) * (Mathf.Max(rawDistance, 1.0f) * 0.25f); //Make shape more exagerated
 				}
-				//
+
+				indicatorLine.positionCount = res + 1;
+				indicatorLine.SetPositions(positions);
+			}
+			else
+			{
+				indicatorLine.positionCount = 0;
 			}
 		}
 	}

@@ -35,4 +35,20 @@ public class EmblemRenderer : MonoBehaviour
 
         return false;
     }
+
+	public void SetPureColor(Color color)
+	{
+		foreach (Image outline in outlines)
+		{
+			outline.color = color;
+		}
+
+		foreach (Image backing in backing)
+		{
+			backing.color = color;
+		}
+
+		mainIcon.color = color;
+		backingIcon.color = color;
+	}
 }

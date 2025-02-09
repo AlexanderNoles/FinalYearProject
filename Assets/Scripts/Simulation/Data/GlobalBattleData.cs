@@ -462,6 +462,12 @@ public class GlobalBattleData : DataModule
 
 	public bool StartOrJoinBattle(RealSpacePosition key, RealSpacePosition actualPos, int originID, int targetID, bool mergeToExisting)
 	{
+		if (!SimulationManagement.EntityExists(originID) || !SimulationManagement.EntityExists(targetID))
+		{
+			//If eithier don't exist, don't allow battle to happen
+			return false;
+		}
+
 		if (!cellCenterToBattles.ContainsKey(key))
 		{
 			//Create list
@@ -490,6 +496,7 @@ public class GlobalBattleData : DataModule
 
 		if (battle == null)
 		{
+			//Start brand new battle
 			battle = new Battle(actualPos);
 			battle.startTickID = SimulationManagement.currentTickID;
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using EntityAndDataDescriptor;
 
-public class PirateCrew : SimulationEntity
+public class PirateCrew : Faction
 {
 	public override void InitTags()
 	{
@@ -15,8 +15,6 @@ public class PirateCrew : SimulationEntity
 	{
 		base.InitData();
 
-		AddData(DataTags.Battle, new BattleData());
-
 		//Give pirate crew population so they can have a military (i.e., have people to put into the military)
 		PopulationData populationData = new PopulationData();
 		populationData.variablePopulation = false; //Don't allow population change
@@ -27,7 +25,6 @@ public class PirateCrew : SimulationEntity
 
 		AddData(DataTags.Military, new MilitaryData());
 		AddData(DataTags.Refinery, new RefineryData());
-		AddData(DataTags.Emblem, new EmblemData());
 		TargetableLocationData targetableLocationData = new PirateCrewBaseLocation();
 		TargetableLocationDesirabilityData desirabilityData = new TargetableLocationDesirabilityData();
 		desirabilityData.target = targetableLocationData;
@@ -36,9 +33,18 @@ public class PirateCrew : SimulationEntity
 		AddData(DataTags.TargetableLocation, targetableLocationData);
 
 		ContactPolicyData contactPolicyData = new ContactPolicyData();
+		contactPolicyData.visibleToAll = false;
 		contactPolicyData.openlyHostile = true;
 
 		AddData(DataTags.ContactPolicy, contactPolicyData);
+
+		//Set predetermined emblem colour
+		EmblemData emblem = new EmblemData();
+		emblem.hasCreatedEmblem = true;
+		emblem.mainColour = Color.red * 0.9f;
+		emblem.SetColoursBasedOnMainColour();
+
+		AddData(DataTags.Emblem, emblem);
 	}
 
 	public class PirateCrewBaseWeapon : StandardSimWeaponProfile

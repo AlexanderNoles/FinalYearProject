@@ -7,6 +7,7 @@ public class Interaction : IDisplay
 	public class InteractionMapCursor
 	{
 		public PlayerMapInteraction.HighlightMode highlightMode = PlayerMapInteraction.HighlightMode.Border;
+		public bool showLineIndicator = false;
 	}
 
 	public static readonly InteractionMapCursor basicBorder = new InteractionMapCursor() 
@@ -19,9 +20,21 @@ public class Interaction : IDisplay
 		highlightMode = PlayerMapInteraction.HighlightMode.Square
 	};
 
+	public static readonly InteractionMapCursor basicSquareWithLine = new InteractionMapCursor()
+	{
+		highlightMode = PlayerMapInteraction.HighlightMode.Square,
+		showLineIndicator = true
+	};
+
 	public static readonly InteractionMapCursor none = new InteractionMapCursor()
 	{
 		highlightMode = PlayerMapInteraction.HighlightMode.None
+	};
+
+	public static readonly InteractionMapCursor noneWithLine = new InteractionMapCursor()
+	{
+		highlightMode = PlayerMapInteraction.HighlightMode.None,
+		showLineIndicator = true
 	};
 
 	public static class Ranges

@@ -196,7 +196,13 @@ public class MilitaryData : DataModule
 			}
 		}
 
+		foreach (ShipCollection reserve in reserveFleets)
+		{
+			shipCount += reserve.GetShips().Count;
+		}
+
 		return $"	Fleet Count: {currentFleetCount}\n" +
+			$"	In Reserves Count: {reserveFleets.Count}\n" +
 			$"	Ship Count: {shipCount}";
 	}
 }

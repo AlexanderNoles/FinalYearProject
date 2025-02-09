@@ -31,7 +31,10 @@ public class InteractionSelectionUIManagement : MonoBehaviour
 		//Number key inputs
 		int input = InputManagement.GetAlphaNumberDown();
 
-		if (input != -1)
+		//Because the troop transfer has an input field we don't want to change interaction when a number is input to it
+		//Ideally we would have the input field consume the input but can't figure out how to do that
+		//Mainly because there is no way to insure the input field will go first in the frame and take prio over the interaction change
+		if (input != -1 && !TroopTransferUIControl.IsActive())
 		{
 			int index = input - 1;
 

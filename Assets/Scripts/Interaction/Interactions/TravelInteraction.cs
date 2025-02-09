@@ -6,7 +6,7 @@ public class TravelInteraction : Interaction
 {
 	public override bool ValidateOnMap(PlayerMapInteraction.UnderMouseData target)
 	{
-		return target.baseLocation != null && PlayerManagement.PlayerEntityExists();
+		return target.baseLocation != null && PlayerManagement.PlayerEntityExists() && !PlayerCapitalShip.IsJumping();
 	}
 
 	public override void ProcessOnMap(PlayerMapInteraction.UnderMouseData target)
@@ -33,6 +33,6 @@ public class TravelInteraction : Interaction
 
 	public override InteractionMapCursor GetMapCursorData()
 	{
-		return none;
+		return noneWithLine;
 	}
 }

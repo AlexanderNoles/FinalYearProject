@@ -1,3 +1,4 @@
+using EntityAndDataDescriptor;
 using MonitorBreak;
 using System;
 using System.Collections;
@@ -116,6 +117,11 @@ public class SimulationManagement : MonoBehaviour
 
     public static void RemoveEntityFromSimulation(SimulationEntity entity)
     {
+		if (entity.HasTag(EntityStateTags.Unkillable))
+		{
+			return;
+		}
+
         HashSet<Enum> entityTags = entity.GetEntityTags();
 
         foreach (Enum tag in entityTags)
@@ -146,6 +152,11 @@ public class SimulationManagement : MonoBehaviour
 
         return null;
     }
+
+	public static bool EntityExists(int id)
+	{
+		return instance.idToEntity.ContainsKey(id);
+	}
 
 	public static int GetEntityCount()
 	{
@@ -803,11 +814,9 @@ public class SimulationManagement : MonoBehaviour
 				currentCount = countPerRow;
 				outputString = "";
 			}
-			else
-			{
-				outputString += $"{entry.Value}: {entry.Key}";
-				currentCount--;
-			}
+
+			outputString += $"{entry.Value}: {entry.Key}";
+			currentCount--;
 		}
 
 		if (currentCount != countPerRow)
@@ -817,6 +826,12 @@ public class SimulationManagement : MonoBehaviour
 		}
 
 		MonitorBreak.Bebug.Console.Log("----", 0, false);
+	}
+
+	[MonitorBreak.Bebug.ConsoleCMD("ENTITYCOUNT")]
+	public static void OutputEntityCount()
+	{
+		MonitorBreak.Bebug.Console.Log(instance.idToEntity.Count);
 	}
 
 	[ContextMenu("Refresh Routines")]

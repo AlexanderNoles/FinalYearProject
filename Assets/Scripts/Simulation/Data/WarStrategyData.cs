@@ -23,4 +23,9 @@ public class WarStrategyData : StrategyData
 		//Increase defensive propensity with war exhaustion
 		return base.GetDefensivePropensity() * warExhaustion;
 	}
+
+	public override string Read()
+	{
+		return $"	War Exhaustion: {warExhaustion}";
+	}
 }
