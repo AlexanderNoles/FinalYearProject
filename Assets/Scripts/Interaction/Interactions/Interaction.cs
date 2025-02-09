@@ -19,6 +19,11 @@ public class Interaction : IDisplay
 		highlightMode = PlayerMapInteraction.HighlightMode.Square
 	};
 
+	public static readonly InteractionMapCursor none = new InteractionMapCursor()
+	{
+		highlightMode = PlayerMapInteraction.HighlightMode.None
+	};
+
 	public static class Ranges
 	{
 		public const float standard = 500;
@@ -27,12 +32,12 @@ public class Interaction : IDisplay
 
 	protected Sprite sprite;
 
-	public virtual bool ValidateEntity(SimulationEntity target)
+	public virtual bool ValidateOnMap(PlayerMapInteraction.UnderMouseData target)
 	{
 		return false;
 	}
 
-	public virtual void ProcessEntity(SimulationEntity target)
+	public virtual void ProcessOnMap(PlayerMapInteraction.UnderMouseData target)
 	{
 
 	}
@@ -41,6 +46,8 @@ public class Interaction : IDisplay
 	{
 		return basicBorder;
 	}
+
+	//
 
 	public virtual bool ValidateBehaviour(SimObjectBehaviour interactable)
 	{
@@ -92,10 +99,10 @@ public class Interaction : IDisplay
 
 	protected static class InteractionValidationHelper
 	{
-		public static bool AttackOnMapValidation(SimulationEntity entity)
+		public static bool AttackOnMapValidation(PlayerMapInteraction.UnderMouseData target)
 		{
 			//Should replace with proper can attack check when infrastructure exists
-			return true;
+			return target.simulationEntity != null || target.baseLocation != null;
 		}
 
 		public static bool AttackValidation(SimObjectBehaviour interactable)

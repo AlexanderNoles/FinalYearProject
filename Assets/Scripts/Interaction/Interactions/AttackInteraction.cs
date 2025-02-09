@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class AttackInteraction : Interaction
 {
-	public override bool ValidateEntity(SimulationEntity target)
+	public override bool ValidateOnMap(PlayerMapInteraction.UnderMouseData target)
 	{
 		return InteractionValidationHelper.AttackOnMapValidation(target);
+	}
+
+	public override void ProcessOnMap(PlayerMapInteraction.UnderMouseData target)
+	{
+		//Open attack ui
+
 	}
 
 	public override bool ValidateBehaviour(SimObjectBehaviour interactable)

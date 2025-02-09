@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class ShopInteraction : Interaction
 {
-	public override bool ValidateEntity(SimulationEntity target)
+	public override bool ValidateOnMap(PlayerMapInteraction.UnderMouseData target)
 	{
-		return target.HasData(DataTags.Economic);
+		return target.baseLocation == null && target.simulationEntity != null && target.simulationEntity.HasData(DataTags.Economic);
 	}
 
-	public override void ProcessEntity(SimulationEntity target)
+	public override void ProcessOnMap(PlayerMapInteraction.UnderMouseData target)
 	{
-		ShopUIControl.ToggleShopUI(target, null);
+		ShopUIControl.ToggleShopUI(target.simulationEntity, null);
 	}
 
 	public override bool ValidateBehaviour(SimObjectBehaviour interactable)

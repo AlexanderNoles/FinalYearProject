@@ -25,6 +25,7 @@ public class PlayerMapInteraction : PostTickUpdate
 	{
 		public VisitableLocation baseLocation;
 		public SimulationEntity simulationEntity;
+		public float fuelCostToLocation;
 	}
 
 	private static UnderMouseData underMouseData = new UnderMouseData();
@@ -85,6 +86,7 @@ public class PlayerMapInteraction : PostTickUpdate
 
 	public enum HighlightMode
 	{
+		None,
 		Square,
 		Border
 	}
@@ -122,6 +124,18 @@ public class PlayerMapInteraction : PostTickUpdate
 		Shader.SetGlobalFloat("_ShipRange", 0.0f);
 		doneInitialDraw = false;
 		selectionIndicator.gameObject.SetActive(false);
+		mapPools.HideAllObjects(4);
+		mapPools.HideAllObjects(9);
+
+		PlayerCapitalShip.onJumpStart.AddListener(OnJumpStart);
+	}
+
+	public void OnJumpStart()
+	{
+		//Set initial draw back to false so when the player arrives the inital draw is done again
+		//Otherwise locations won't show up till next post tick call
+		doneInitialDraw = false;
+
 		mapPools.HideAllObjects(4);
 		mapPools.HideAllObjects(9);
 	}
@@ -345,6 +359,7 @@ public class PlayerMapInteraction : PostTickUpdate
 			bool foundLocation = targetLocation != null;
 			bool entityFound = false;
 			targetIcon.gameObject.SetActive(foundLocation);
+			underMouseData.fuelCostToLocation = 0.0f;
 
 			if (foundLocation)
 			{
@@ -362,7 +377,7 @@ public class PlayerMapInteraction : PostTickUpdate
 					underMouseData.simulationEntity = null;
 				}
 
-				//Disaply target information
+				//Display target information
 				//Currently just displaying the primary locations information
 				targetIcon.position = targetLocation.primaryLocation.worldPos;
 				locationTitleLabel.text = targetLocation.primaryLocation.actualLocationData.GetTitle();
@@ -391,6 +406,8 @@ public class PlayerMapInteraction : PostTickUpdate
 					fuelCostLabel.text = $"~{dayEstimate} Days";
 				}
 
+				underMouseData.fuelCostToLocation = fuelCost;
+
 				//Display number of locations compounded into this one
 				string compoundLabelText = string.Empty;
 
@@ -407,25 +424,6 @@ public class PlayerMapInteraction : PostTickUpdate
                 if (!PlayerManagement.fuelEnabled || playerInventory.fuel >= fuelCost)
                 {
                     fuelCostLabel.color = Color.green;
-
-                    if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
-                    {
-                        PlayerCapitalShip.StartJump(targetLocation.primaryLocation.actualLocationData);
-
-                        if (PlayerManagement.fuelEnabled)
-                        {
-                            //Remove fuel and have player ship change the ui label over the course of the jump
-                            PlayerCapitalShip.HaveFuelChangeOverJump(playerInventory.fuel, playerInventory.fuel - fuelCost);
-                            playerInventory.fuel -= fuelCost;
-                        }
-
-                        //Set initial draw back to false so when the player arrives the inital draw is done again
-                        //Otherwise locations won't show up till next post tick call
-                        doneInitialDraw = false;
-
-                        mapPools.HideAllObjects(4);
-                        mapPools.HideAllObjects(9);
-					}
                 }
                 else
                 {

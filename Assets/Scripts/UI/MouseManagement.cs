@@ -104,6 +104,7 @@ public class MouseManagement : MonoBehaviour
 			tagRect.sizeDelta *= currentMouseState.tagALongScale;
 
 			tagRect.anchoredPosition = new Vector2(tagRect.sizeDelta.x, -tagRect.sizeDelta.y) / 2.0f;
+			tagRect.anchoredPosition += new Vector2(-10, 0);
 		}
 
 		Cursor.visible = false;

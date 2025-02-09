@@ -177,26 +177,21 @@ public class PlayerInteractionManagement : MonoBehaviour
 				//If in map ask player map interaction for a target
 				PlayerMapInteraction.UnderMouseData underMouseData = PlayerMapInteraction.GetUnderMouseData();
 
-				//Currently just blanket saying "no" when a location is under the mouse
-				//Perhaps travel should also be an interaction? Not sure how much I like that
-				if (underMouseData.simulationEntity != null && underMouseData.baseLocation == null)
+				foreach (Interaction targetInteraction in targetInteractions)
 				{
-					foreach (Interaction targetInteraction in targetInteractions)
+					bool validationResult = targetInteraction.ValidateOnMap(underMouseData);
+
+					if (validationResult)
 					{
-						bool validationResult = targetInteraction.ValidateEntity(underMouseData.simulationEntity);
+						lastSuccesfullyValidatedInteraction = targetInteraction;
 
-						if (validationResult)
+						if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
 						{
-							lastSuccesfullyValidatedInteraction = targetInteraction;
-
-							if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
-							{
-								targetInteraction.ProcessEntity(underMouseData.simulationEntity);
-							}
-
-							interactionIcon = targetInteraction.GetIcon();
-							return;
+							targetInteraction.ProcessOnMap(underMouseData);
 						}
+
+						interactionIcon = targetInteraction.GetIcon();
+						return;
 					}
 				}
 			}

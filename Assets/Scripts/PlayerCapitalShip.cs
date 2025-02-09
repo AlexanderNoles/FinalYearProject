@@ -6,6 +6,7 @@ using UnityEngine.Events;
 public class PlayerCapitalShip : MonoBehaviour
 {
 	public static UnityEvent onPositionReset = new UnityEvent();
+	public static UnityEvent onJumpStart = new UnityEvent();
 
 	public static State currentState = State.Normal;
 	public enum State
@@ -149,6 +150,9 @@ public class PlayerCapitalShip : MonoBehaviour
 		instance = this;
 		jumping = false;
 
+		onPositionReset.RemoveAllListeners();
+		onJumpStart.RemoveAllListeners();
+
 		transform = base.transform;
 		lastRecordedPos = Vector3.zero;
 
@@ -273,6 +277,8 @@ public class PlayerCapitalShip : MonoBehaviour
 		jumpT = 0.0f;
 		rotateT = 0.0f;
 		jumpBuildupBuffer = jumpBuildupMax;
+
+		onJumpStart.Invoke();
 	}
 
 	public static void HaveFuelChangeOverJump(float startValue, float endValue)
