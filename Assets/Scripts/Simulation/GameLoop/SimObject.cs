@@ -188,7 +188,7 @@ public class SimObject : DataModule, IDisplay
 
 	private FeelingsData GetFeelingsData()
 	{
-		FeelingsData feelingsData = null;
+		FeelingsData feelingsData;
 
 		//Is the parent
 		if (parent == null && this is SimulationEntity)

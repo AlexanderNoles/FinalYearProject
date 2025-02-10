@@ -67,6 +67,7 @@ public class Player : SimulationEntity
 		refineryData.putInReserves = true;
 		refineryData.productionAffectedBySimSpeed = false;
 		refineryData.productionSpeed = 0.5f; //The player has a super fast refinery!
+		refineryData.autoFillFleets = true;
 		AddData(DataTags.Refinery, refineryData);
 	}
 }

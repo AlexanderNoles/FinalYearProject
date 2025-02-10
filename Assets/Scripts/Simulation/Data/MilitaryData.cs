@@ -59,6 +59,20 @@ public class MilitaryData : DataModule
 		currentFleetCount++;
 	}
 
+	public ShipCollection RemoveFleetFromReserves()
+	{
+		if (reserveFleets.Count > 0)
+		{
+			ShipCollection toReturn = reserveFleets[0];
+			reserveFleets.RemoveAt(0);
+			currentFleetCount--;
+
+			return toReturn;
+		}
+
+		return null;
+	}
+
 	public bool RemoveFleetFromReserves(ShipCollection fleet)
 	{
 		if (reserveFleets.Remove(fleet))

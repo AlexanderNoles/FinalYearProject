@@ -243,7 +243,7 @@ public class CameraManagement : MonoBehaviour
 				//Set rotation target
 				cameraRot = new Vector2(45, cachedCameraRot.y + 180.0f);
 				//Set specifc position so camera plays rotate animation on map opening
-				backingCamera.localPosition = Vector3.back * currentCameraZoomTarget;
+				backingCamera.localPosition = Vector3.back * 25;
 
 				//Set offset from center to zero
 				offsetFromTarget = Vector3.zero;
@@ -287,7 +287,11 @@ public class CameraManagement : MonoBehaviour
 			float scrollInput = InputManagement.ScrollWheelInput();
 
 			currentCameraZoomTarget = Mathf.Clamp(currentCameraZoomTarget - scrollInput, zoomLowerLimit, 130);
-			targetCamera.localPosition = Vector3.Lerp(targetCamera.localPosition, Vector3.back * currentCameraZoomTarget, Time.deltaTime * 5.0f);
+
+			if (!(MapManagement.MapActive() && MapManagement.MapIntroRunning()))
+			{
+				targetCamera.localPosition = Vector3.Lerp(targetCamera.localPosition, Vector3.back * currentCameraZoomTarget, Time.deltaTime * 5.0f);
+			}
 		}
 
 		Vector3 newTargetPosition = GetTargetPosition() + offsetFromTarget;

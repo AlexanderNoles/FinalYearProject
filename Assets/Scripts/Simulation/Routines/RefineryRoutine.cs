@@ -124,6 +124,17 @@ public class RefineryRoutine : RoutineBase
 							//Place at refinery position on map
 							militaryData.AddFleet(refinery.refineryPosition, collection);
 						}
+
+						if (refinery.autoFillFleets)
+						{
+							//Fill fleet
+							for (int s = 0; s < collection.GetCapacity(); s++)
+							{
+								Ship newShip = collection.GetNewShip();
+								collection.AddShip(newShip);
+								collection.MarkCollectionUpdate(ShipCollection.UpdateType.Add, newShip); 
+							}
+						}
 					}
 				}
 			}

@@ -18,7 +18,7 @@ public class PirateCrew : Faction
 		//Give pirate crew population so they can have a military (i.e., have people to put into the military)
 		PopulationData populationData = new PopulationData();
 		populationData.variablePopulation = false; //Don't allow population change
-		populationData.currentPopulationCount = 100.0f;
+		populationData.currentPopulationCount = SimulationManagement.random.Next(20, 51);
 
 		AddData(DataTags.Population, populationData);
 		//

@@ -264,7 +264,14 @@ public class GlobalBattleData : DataModule
 				//This means entites such as mineral deposits won't show up
 				if (SimulationManagement.GetEntityByID(involvedEntities[i]).GetData(DataTags.Emblem, out EmblemData emblemData))
 				{
-					descString += $"<color={emblemData.mainColourHex}>{Mathf.RoundToInt(100.0f * (involvedEntitiesProgress[i] / winLimit))}%</color>\n";
+					descString += $"<color={emblemData.mainColourHex}>{Mathf.RoundToInt(100.0f * (involvedEntitiesProgress[i] / winLimit))}%</color>";
+
+					if (involvedEntities[i].Equals(PlayerManagement.GetTarget().id))
+					{
+						descString += " (You)";
+					}
+
+					descString += "\n";
 				}
 			}
 
@@ -460,7 +467,7 @@ public class GlobalBattleData : DataModule
 	public Dictionary<RealSpacePosition, List<Battle>> cellCenterToBattles = new Dictionary<RealSpacePosition, List<Battle>>();
 	public static int totalBattlesCount = 0;
 
-	public bool StartOrJoinBattle(RealSpacePosition key, RealSpacePosition actualPos, int originID, int targetID, bool mergeToExisting)
+	public bool StartOrJoinBattle(RealSpacePosition key, RealSpacePosition actualPos, int originID, int targetID, bool autoMergeToExisting)
 	{
 		if (!SimulationManagement.EntityExists(originID) || !SimulationManagement.EntityExists(targetID))
 		{
@@ -481,11 +488,11 @@ public class GlobalBattleData : DataModule
 		foreach (Battle storedBattle in cellCenterToBattles[key])
 		{
 			//If merge is enabled we simply join a battle if any exist already
-			if (mergeToExisting || storedBattle.postion.Equals(actualPos))
+			if (autoMergeToExisting || storedBattle.postion.Equals(actualPos))
 			{
 				battle = storedBattle;
 
-				if (mergeToExisting)
+				if (autoMergeToExisting)
 				{
 					actualPos = storedBattle.postion;
 				}
