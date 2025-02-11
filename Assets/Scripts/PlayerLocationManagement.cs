@@ -272,8 +272,9 @@ public class PlayerLocationManagement : MonoBehaviour
 			{
 				if (set.settlements.Count > 0)
 				{
-					RealSpacePosition initalPos = set.settlements.ElementAt(0).Value.actualSettlementPos.Clone();
-					initalPos.Add(Vector3.back * (100.0f * WorldManagement.invertedInEngineWorldScaleMultiplier));
+					SettlementsData.Settlement actualSet = set.settlements.ElementAt(0).Value;
+					RealSpacePosition initalPos = actualSet.actualSettlementPos.Clone();
+					initalPos.Add(Vector3.back * (actualSet.location.GetEntryOffset() * WorldManagement.invertedInEngineWorldScaleMultiplier));
 
 					WorldManagement.SetWorldCenterPosition(initalPos);
 					setInitalLocation = true;

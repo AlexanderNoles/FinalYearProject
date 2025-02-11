@@ -6,7 +6,7 @@ public class AttackInteraction : Interaction
 {
 	public override bool ValidateOnMap(PlayerMapInteraction.UnderMouseData target)
 	{
-		return InteractionValidationHelper.AttackOnMapValidation(target);
+		return InteractionValidationHelper.AttackOnMapValidation(target) && !PlayerCapitalShip.IsJumping();
 	}
 
 	public override void ProcessOnMap(PlayerMapInteraction.UnderMouseData target)
