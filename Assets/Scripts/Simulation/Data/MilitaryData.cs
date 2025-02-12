@@ -53,6 +53,39 @@ public class MilitaryData : DataModule
 		return new Fleet();
 	}
 
+	public int FullyRepairedFleetsCount(List<ShipCollection> input)
+	{
+		//Dirty, wasteful but ensures number calculated always matches (even if we change the code)
+		return GetFullyRepairedFleets(input).Count;
+	}
+
+	public List<ShipCollection> GetFullyRepairedFleets(List<ShipCollection> input)
+	{
+		List<ShipCollection> toReturn = new List<ShipCollection>();
+
+		foreach (ShipCollection fleet in input)
+		{
+			List<Ship> ships = fleet.GetShips();
+
+			bool validFleet = true;
+			foreach (Ship sh in ships)
+			{
+				if (sh.health < sh.GetMaxHealth())
+				{
+					validFleet = false;
+					break;
+				}
+			}
+
+			if (validFleet)
+			{
+				toReturn.Add(fleet);
+			}
+		}
+
+		return toReturn;
+	}
+
 	public void AddFleetToReserves(ShipCollection fleet)
 	{
 		reserveFleets.Add(fleet);

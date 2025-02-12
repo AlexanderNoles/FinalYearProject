@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class TroopTransferUIControl : MonoBehaviour
+public class TroopTransferUIControl : PostTickUpdate
 {
 	private static TroopTransferUIControl instance;
 	public GameObject target;
@@ -101,6 +101,12 @@ public class TroopTransferUIControl : MonoBehaviour
 		OnUpdate(false);
 	}
 
+	protected override void PostTick()
+	{
+		//In case reserve fleets was changed during the tick
+		OnUpdate(false);
+	}
+
 	public void OnUpdate(bool autoRetrieve = true)
 	{
 		if (autoRetrieve)
@@ -116,7 +122,7 @@ public class TroopTransferUIControl : MonoBehaviour
 		}
 
 		//Only allow transfer out of reserves
-		currentTransferAmount = Mathf.Clamp(currentTransferAmount, 0, cachedMilitaryData.reserveFleets.Count);
+		currentTransferAmount = Mathf.Clamp(currentTransferAmount, 0, cachedMilitaryData.FullyRepairedFleetsCount(cachedMilitaryData.reserveFleets));
 		inputField.SetTextWithoutNotify(currentTransferAmount.ToString());
 	}
 
@@ -127,12 +133,21 @@ public class TroopTransferUIControl : MonoBehaviour
 		data.StartOrJoinBattle(WorldManagement.ClampPositionToGrid(troopTargetPos), troopTargetPos, controlledID, targetID, false);
 
 		//Transfer the amount of troops to the position
-		for (int i = 0; i < currentTransferAmount; i++)
-		{
-			ShipCollection fleet = cachedMilitaryData.RemoveFleetFromReserves();
 
-			if (fleet != null)
+		//Only get fleets with full health
+		//There could be some incongriety with this and the current transfer amount if something removed a reserve for another reason (before amount was reclamped)
+		//So we get the max transfer amount as a Min between those two values
+		List<ShipCollection> avaliableFleets = cachedMilitaryData.GetFullyRepairedFleets(cachedMilitaryData.reserveFleets);
+
+		int toTransferCount = Mathf.Min(currentTransferAmount, avaliableFleets.Count);
+
+		for (int i = 0; i < toTransferCount; i++)
+		{
+			ShipCollection fleet = avaliableFleets[i];
+			if (cachedMilitaryData.RemoveFleetFromReserves(fleet))
 			{
+				//Fleet was in the reserves (given avaliable fleets has just been created based on reserve fleet this check should always pass)
+				//Unless there is some future removal error
 				cachedMilitaryData.AddFleet(troopTargetPos, fleet);
 			}
 		}

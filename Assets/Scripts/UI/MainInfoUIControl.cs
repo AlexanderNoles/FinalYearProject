@@ -136,7 +136,8 @@ public class MainInfoUIControl : PostTickUpdate
 
 	private void RedrawMilitaryLabel()
 	{
-		militaryLabel.text = $"(     {PlayerManagement.GetMilitary().currentFleetCount}/{Mathf.FloorToInt(PlayerManagement.GetMilitary().maxMilitaryCapacity)})";
+		MilitaryData mil = PlayerManagement.GetMilitary();
+		militaryLabel.text = $"(     {mil.FullyRepairedFleetsCount(mil.reserveFleets)}/{Mathf.FloorToInt(mil.maxMilitaryCapacity)})";
 	}
 
 	private void DrawHealthAuto()
