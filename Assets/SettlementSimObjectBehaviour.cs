@@ -90,12 +90,13 @@ public class SettlementSimObjectBehaviour : SimObjectBehaviour
 
 				generatedPositions.Add(newMatrix);
 
-				if (highUpChance > 0.95f)
-				{
-					//Add a decoration above this block
-					pos += Vector3.up * Random.Range(90.0f, 110.0f);
-					additionalDecorationsPool.UpdateNextObjectPosition(0, pos);
-				}
+				//Disabled add banners because I don't like how they look
+				//if (highUpChance > 0.95f)
+				//{
+				//	//Add a decoration above this block
+				//	pos += Vector3.up * Random.Range(90.0f, 110.0f);
+				//	additionalDecorationsPool.UpdateNextObjectPosition(0, pos);
+				//}
 			}
 		}
 
