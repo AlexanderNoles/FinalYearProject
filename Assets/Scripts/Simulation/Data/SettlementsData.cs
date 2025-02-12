@@ -75,7 +75,7 @@ public class SettlementsData : DataModule
 
 			public override float GetEntryOffset()
 			{
-				return 200.0f;
+				return 300.0f;
 			}
 
 			//UI DRAW FUNCTIONS

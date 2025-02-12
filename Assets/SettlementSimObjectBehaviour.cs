@@ -35,23 +35,28 @@ public class SettlementSimObjectBehaviour : SimObjectBehaviour
 	private Matrix4x4[] cityBlockData;
 	private Matrix4x4[] updatedCityBlockData;
 	public Transform lowerCityBase;
+	public Transform atmosphere;
+	public MeshRenderer atmosphereRenderer;
+	public MultiObjectPool additionalDecorationsPool;
 
 	public override void OnLink()
 	{
 		base.OnLink();
 
-		RegenerateCityBlocks();
+		RegenerateSurroundings();
 	}
 
-	private void RegenerateCityBlocks()
+	private void RegenerateSurroundings()
 	{
 		//Set to a specific state so settlements are generated consistently
 		SettlementsData.Settlement.SettlementLocation set = (SettlementsData.Settlement.SettlementLocation)target;
 		Random.InitState(set.GetPosition().GetHashCode());
+		atmosphereRenderer.material.SetVector("_RealSpacePosition", set.GetPosition().AsTruncatedVector3(10000.0f));
 
 		//Generate scale
 		float size = Random.Range(175, 300);
 		lowerCityBase.localScale = new Vector3(size, 250.0f, size);
+		atmosphere.localScale = new Vector3(size + 50, 65.0f, size + 50);
 
 		//Generate city scape positions
 		Vector3 constantOffset = Vector3.down * 60;
@@ -78,15 +83,23 @@ public class SettlementSimObjectBehaviour : SimObjectBehaviour
 
 				float highUpChance = Mathf.Pow(Random.Range(0.0f, 1.0f), 6.0f);
 
-				pos += Vector3.down * (Random.Range(0.0f, 5.0f) + Mathf.Lerp(1.0f, 25.0f, i / (float)count) + (highUpChance * -25.0f));
+				pos += Vector3.down * (Random.Range(0.0f, 5.0f) + Mathf.Lerp(1.0f, 25.0f, i / (float)count) + (highUpChance * -15.0f));
 				pos += constantOffset;
 
 				Matrix4x4 newMatrix = Matrix4x4.Translate(pos);
 
 				generatedPositions.Add(newMatrix);
+
+				if (highUpChance > 0.95f)
+				{
+					//Add a decoration above this block
+					pos += Vector3.up * Random.Range(90.0f, 110.0f);
+					additionalDecorationsPool.UpdateNextObjectPosition(0, pos);
+				}
 			}
 		}
 
+		additionalDecorationsPool.PruneObjectsNotUpdatedThisFrame(0, true);
 		cityBlockData = generatedPositions.ToArray();
 		updatedCityBlockData = new Matrix4x4[cityBlockData.Length];
 	}
