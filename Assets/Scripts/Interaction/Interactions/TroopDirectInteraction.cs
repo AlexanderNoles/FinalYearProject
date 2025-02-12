@@ -71,6 +71,11 @@ public class TroopDirectInteraction : Interaction
 		}
 	}
 
+	public override int GetDrawPriority()
+	{
+		return 85;
+	}
+
 	protected override string GetIconPath()
 	{
 		return "troopDirection";

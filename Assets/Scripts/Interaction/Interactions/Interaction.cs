@@ -88,6 +88,11 @@ public class Interaction : IDisplay
 		return "";
 	}
 
+	public virtual int GetDrawPriority()
+	{
+		return 0;
+	}
+
 	//IDisplay
 
 	public virtual string GetTitle()

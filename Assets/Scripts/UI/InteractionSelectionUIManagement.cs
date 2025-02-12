@@ -52,14 +52,15 @@ public class InteractionSelectionUIManagement : MonoBehaviour
 			return;
 		}
 
+		List<Interaction> sortedInteractions = targetData.GetInteractionsSortedByDrawPriority();
 		int count = interactionSlots.Count;
 
 		for (int i = 0; i < count; i++)
 		{
 			Interaction interaction = null;
-			if (i < targetData.playersInteractions.Count)
+			if (i < sortedInteractions.Count)
 			{
-				interaction = targetData.playersInteractions[i];
+				interaction = sortedInteractions[i];
 			}
 
 			DrawSlot(i, interaction);

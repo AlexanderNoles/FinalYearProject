@@ -19,6 +19,11 @@ public class AttackInteraction : Interaction
 		return "attackInteraction";
 	}
 
+	public override int GetDrawPriority()
+	{
+		return 100;
+	}
+
 	public override float GetRange()
 	{
 		//Infinite target get range

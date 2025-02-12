@@ -85,6 +85,11 @@ public class RetreatInteraction : Interaction
 		RetreatFromBattle(battle);
 	}
 
+	public override int GetDrawPriority()
+	{
+		return 80;
+	}
+
 	protected override string GetIconPath()
 	{
 		return "retreatInteraction";

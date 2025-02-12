@@ -32,6 +32,11 @@ public class ShopInteraction : Interaction
 		}
 	}
 
+	public override int GetDrawPriority()
+	{
+		return 90;
+	}
+
 	protected override string GetIconPath()
 	{
 		return "shopInteraction";

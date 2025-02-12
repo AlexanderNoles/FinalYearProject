@@ -9,6 +9,11 @@ public class TravelInteraction : Interaction
 		return target.baseLocation != null && PlayerManagement.PlayerEntityExists() && !PlayerCapitalShip.IsJumping();
 	}
 
+	public override int GetDrawPriority()
+	{
+		return 95;
+	}
+
 	public override void ProcessOnMap(PlayerMapInteraction.UnderMouseData target)
 	{
 		//Grab player inventory
