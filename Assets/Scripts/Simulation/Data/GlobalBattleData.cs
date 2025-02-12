@@ -289,6 +289,7 @@ public class GlobalBattleData : DataModule
 		public class DrawnData
 		{
 			public Transform parent;
+			public Transform battlefieldObject;
 			public List<int> involvedEntityDifference = new List<int>();
 
 			public class Participant
@@ -305,6 +306,12 @@ public class GlobalBattleData : DataModule
 		{
 			drawnData = new DrawnData();
 			drawnData.parent = parent;
+			//Create the battlefield object that will be used to process interactions
+			drawnData.battlefieldObject = GeneratorManagement.GetStructure((int)GeneratorManagement.POOL_INDEXES.BATTLEFIELD);
+			drawnData.battlefieldObject.parent = parent;
+			drawnData.battlefieldObject.localPosition = Vector3.zero;
+			drawnData.battlefieldObject.gameObject.SetActive(true);
+			drawnData.battlefieldObject.GetComponent<SimObjectBehaviour>().target = this;
 			//Iterate through all active participants in this battle
 			//Generate inital drawn data for them
 			//This drawn data will then be updated based on differences per tick
@@ -457,6 +464,11 @@ public class GlobalBattleData : DataModule
 			foreach (DrawnData.Participant participant in drawnData.idToParticipant.Values)
 			{
 				UndrawAll(participant);
+			}
+
+			if (drawnData.battlefieldObject != null)
+			{
+				GeneratorManagement.ReturnStructure((int)GeneratorManagement.POOL_INDEXES.BATTLEFIELD, drawnData.battlefieldObject);
 			}
 
 			//Remove drawn data

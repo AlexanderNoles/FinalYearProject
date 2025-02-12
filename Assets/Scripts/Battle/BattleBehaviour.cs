@@ -14,6 +14,9 @@ public class BattleBehaviour : MonoBehaviour
 	public new Transform transform;
 
 	[HideInInspector]
+	public new GameObject gameObject;
+
+	[HideInInspector]
 	public List<WeaponProfile> weapons = new List<WeaponProfile>();
 
 	[System.Serializable]
@@ -51,6 +54,7 @@ public class BattleBehaviour : MonoBehaviour
     protected virtual void Awake()
 	{
 		transform = base.transform;
+		gameObject = base.gameObject;
 	}
 
 	protected virtual void OnEnable()
@@ -267,6 +271,20 @@ public class BattleBehaviour : MonoBehaviour
 
 	protected void ProcessTargets()
 	{
+		//Prune targets if their object is set inactive
+		for (int i = 0; i < currentTargets.Count;)
+		{
+			if (currentTargets[i].bb.gameObject == null || !currentTargets[i].bb.gameObject.activeSelf)
+			{
+				currentTargets.RemoveAt(i);
+			}
+			else
+			{
+				i++;
+			}
+		}
+		//
+
 		int count = currentTargets.Count;
 		if(count <= 0)
 		{

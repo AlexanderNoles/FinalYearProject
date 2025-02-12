@@ -107,8 +107,8 @@ public class PlayerInteractionManagement : MonoBehaviour
 			if (UIManagement.InPureNeutral())
 			{
 				//Get target control
-				SimObjectBehaviour target = null;
-				float currentLowestRange = float.MaxValue;
+				List<SimObjectBehaviour> foundTargets = new List<SimObjectBehaviour>();
+				List<float> ranges = new List<float>();
 				bool careAboutRange = true;
 
 				//Get mouse view ray
@@ -126,21 +126,32 @@ public class PlayerInteractionManagement : MonoBehaviour
 				{
 					if (interactables.TryGetValue(hit.collider, out SimObjectBehaviour outTarget))
 					{
-						if (hit.distance < currentLowestRange)
+						//Iterate through ranges until you find one you are less than
+						//Insert at that index
+						int index = 0;
+						for (index = 0; index < ranges.Count;)
 						{
-							currentLowestRange = hit.distance;
-							target = outTarget;
+							if (ranges[0] > hit.distance)
+							{
+								//Found one larger than us
+								break;
+							}
+
+							index++;
 						}
+
+						foundTargets.Insert(index, outTarget);
+						ranges.Insert(index, hit.distance);
 					}
 				}
 
 				//Fallbacks, incase no object is found
-				if (target == null)
+				if (foundTargets.Count == 0)
 				{
 					//Warp fallback
 					if (PlayerCapitalShip.InJumpTravelStage() && PlayerManagement.GetInventory().HasItemOfType(typeof(WarpShopItemBase)))
 					{
-						target = WarpSimBehaviour.GetInstance();
+						foundTargets.Add(WarpSimBehaviour.GetInstance());
 
 						//Ensure we can always interact with the warp while jumping
 						careAboutRange = false;
@@ -148,12 +159,14 @@ public class PlayerInteractionManagement : MonoBehaviour
 				}
 
 				//If we have found a target
-				if (target != null)
+				foreach (Interaction targetInteraction in targetInteractions)
 				{
-					foreach (Interaction targetInteraction in targetInteractions)
+					//For each found target, closest first, test this interaction. If a valid one is found then execute on that, otherwise move to next interaction
+					for (int i = 0; i < foundTargets.Count; i++)
 					{
+						SimObjectBehaviour target = foundTargets[i];
 						//Validate normally and ensure target is within range (when using smart interaction we can't pre limit the range on the raycast check)
-						bool validationResult = targetInteraction.ValidateBehaviour(target) && (currentLowestRange <= targetInteraction.GetRange() || !careAboutRange);
+						bool validationResult = targetInteraction.ValidateBehaviour(target) && (ranges[i] <= targetInteraction.GetRange() || !careAboutRange);
 
 						if (validationResult)
 						{

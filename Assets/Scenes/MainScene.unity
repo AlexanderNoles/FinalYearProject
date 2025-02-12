@@ -706,11 +706,19 @@ MonoBehaviour:
     generateAsNeeded: 1
     currentUpdatedObjectPointer: 0
     automaticallySetParent: 1
-  - name: PirateBase
+  - name: PIRATEBASE
     mode: 0
     baseObject: {fileID: 8031708224019238251, guid: ff995aeeec490894589431ef0ca9e60f,
       type: 3}
     baseNumberOfObjects: 10
+    generateAsNeeded: 1
+    currentUpdatedObjectPointer: 0
+    automaticallySetParent: 1
+  - name: BATTLEFIELD
+    mode: 0
+    baseObject: {fileID: 5491606364100501900, guid: 990d165af4c20ed45bf55e9986300836,
+      type: 3}
+    baseNumberOfObjects: 2
     generateAsNeeded: 1
     currentUpdatedObjectPointer: 0
     automaticallySetParent: 1

@@ -96,7 +96,7 @@ public class ShopUIControl : MonoBehaviour
 			}
 			else
 			{
-				cantBuyBlocker.SetActive(target.GetPlayerReputation() <= -0.1f);
+				cantBuyBlocker.SetActive(target.GetPlayerReputation() <= BalanceManagement.purchaseAllowedThreshold);
 			}
 		}
 	}
@@ -124,6 +124,11 @@ public class ShopUIControl : MonoBehaviour
 		instance.mainUI.SetActive(false);
 		instance.target = null;
 		instance.targetShop = null;
+	}
+
+	public static bool ShopUIOpen()
+	{
+		return instance.mainUI.activeSelf;
 	}
 
 	private void Draw(bool redraw)

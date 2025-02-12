@@ -127,7 +127,8 @@ public class Interaction : IDisplay
 		{
 			if (interactable.Linked())
 			{
-				return interactable.target.HasShop();
+				//Need to have shop and player needs to have a accepetable rep (or if the shop is open so we can click to close it)
+				return interactable.target.HasShop() && (interactable.target.GetPlayerReputation() > BalanceManagement.purchaseAllowedThreshold || ShopUIControl.ShopUIOpen());
 			}
 
 			return false;

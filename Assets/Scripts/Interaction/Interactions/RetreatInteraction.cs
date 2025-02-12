@@ -62,6 +62,29 @@ public class RetreatInteraction : Interaction
 		}
 	}
 
+	public override bool ValidateBehaviour(SimObjectBehaviour interactable)
+	{
+		//Is this a battle?
+		if (interactable.target == null || interactable.target is not GlobalBattleData.Battle || PlayerCapitalShip.InJumpTravelStage())
+		{
+			return false;
+		}
+
+		//Is the player in this battle?
+		if ((interactable.target as GlobalBattleData.Battle).GetInvolvedEntities().Contains(PlayerManagement.GetTarget().id))
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	public override void ProcessBehaviour(SimObjectBehaviour interactable)
+	{
+		GlobalBattleData.Battle battle = interactable.target as GlobalBattleData.Battle;
+		RetreatFromBattle(battle);
+	}
+
 	protected override string GetIconPath()
 	{
 		return "retreatInteraction";

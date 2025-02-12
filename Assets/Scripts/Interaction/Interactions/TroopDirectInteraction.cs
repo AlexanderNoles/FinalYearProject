@@ -49,7 +49,7 @@ public class TroopDirectInteraction : Interaction
 	public override bool ValidateBehaviour(SimObjectBehaviour interactable)
 	{
 		//Currently only allowing attacking visitable locations
-		return InteractionValidationHelper.AttackValidation(interactable) && interactable.target is VisitableLocation;
+		return InteractionValidationHelper.AttackValidation(interactable) && interactable.target is VisitableLocation && interactable.target.parent != null;
 	}
 
 	public override void ProcessBehaviour(SimObjectBehaviour interactable)

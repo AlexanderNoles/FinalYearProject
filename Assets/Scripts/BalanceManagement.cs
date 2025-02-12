@@ -21,10 +21,11 @@ public static class BalanceManagement
 	//If these values are overtuned all other factions could be wiped out too easily
 	//If they are too low the void swarm has zero impact
 	public const float voidSwarmStartTroopMultiplier = 0.25f;
-	public const float voidSwarmDamageFalloff = 10;
+	public const float voidSwarmDamageFalloff = 1;
 
 	//Used by entites to determine when they hate each other
 	public const float oppositionThreshold = -0.7f;
+	public const float purchaseAllowedThreshold = -0.1f;
 
 	//Player population balancing
 	public const float playerPopulationStartValue = 25;
