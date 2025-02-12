@@ -128,12 +128,6 @@ public class TroopTransferUIControl : PostTickUpdate
 
 	public void Apply()
 	{
-		//Get global battle data
-		GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData data);
-		data.StartOrJoinBattle(WorldManagement.ClampPositionToGrid(troopTargetPos), troopTargetPos, controlledID, targetID, false);
-
-		//Transfer the amount of troops to the position
-
 		//Only get fleets with full health
 		//There could be some incongriety with this and the current transfer amount if something removed a reserve for another reason (before amount was reclamped)
 		//So we get the max transfer amount as a Min between those two values
@@ -141,22 +135,31 @@ public class TroopTransferUIControl : PostTickUpdate
 
 		int toTransferCount = Mathf.Min(currentTransferAmount, avaliableFleets.Count);
 
-		for (int i = 0; i < toTransferCount; i++)
+		//If sending no troops don't start a battle
+		if (toTransferCount > 0)
 		{
-			ShipCollection fleet = avaliableFleets[i];
-			if (cachedMilitaryData.RemoveFleetFromReserves(fleet))
-			{
-				//Fleet was in the reserves (given avaliable fleets has just been created based on reserve fleet this check should always pass)
-				//Unless there is some future removal error
-				cachedMilitaryData.AddFleet(troopTargetPos, fleet);
-			}
-		}
+			//Get global battle data
+			GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData data);
+			data.StartOrJoinBattle(WorldManagement.ClampPositionToGrid(troopTargetPos), troopTargetPos, controlledID, targetID, false);
 
-		//If the target is an entity and they have relationship data
-		//Lower it
-		if (SimulationManagement.EntityExists(targetID))
-		{
-			SimulationManagement.GetEntityByID(targetID).AdjustPlayerReputation(-2.0f);
+			//Transfer the amount of troops to the position
+			for (int i = 0; i < toTransferCount; i++)
+			{
+				ShipCollection fleet = avaliableFleets[i];
+				if (cachedMilitaryData.RemoveFleetFromReserves(fleet))
+				{
+					//Fleet was in the reserves (given avaliable fleets has just been created based on reserve fleet this check should always pass)
+					//Unless there is some future removal error
+					cachedMilitaryData.AddFleet(troopTargetPos, fleet);
+				}
+			}
+
+			//If the target is an entity and they have relationship data
+			//Lower it
+			if (SimulationManagement.EntityExists(targetID))
+			{
+				SimulationManagement.GetEntityByID(targetID).AdjustPlayerReputation(-2.0f);
+			}
 		}
 
 		Close();

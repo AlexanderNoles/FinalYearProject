@@ -36,6 +36,8 @@ public class Player : SimulationEntity
 		interactions.playersInteractions.Add(new TravelInteraction().Init());
 		interactions.playersInteractions.Add(new ShopInteraction().Init());
 		interactions.playersInteractions.Add(new AttackInteraction().Init());
+		interactions.playersInteractions.Add(new TroopDirectInteraction().Init());
+		interactions.playersInteractions.Add(new RetreatInteraction().Init());
 		//
 		AddData(DataTags.Interactions, interactions);
 		

@@ -173,7 +173,7 @@ public class SimObjectBehaviour : BoxDescribedBattleBehaviour
 
 	protected override TakenDamageResult TakeDamage(float rawDamageNumber, BattleBehaviour origin)
 	{
-		if (PlayerSimObjBehaviour.IsPlayerBB(origin))
+		if ((origin is SimObjectBehaviour && PlayerSimObjBehaviour.IsPlayerSimObjectBehaviour(origin as SimObjectBehaviour)))
 		{
 			//Adjust player reputation
 			if (target != null)
@@ -192,7 +192,7 @@ public class SimObjectBehaviour : BoxDescribedBattleBehaviour
 			target.OnDeath();
 
 			//Give kill reward if killed by player
-			if (PlayerSimObjBehaviour.IsPlayerBB(result.origin) && PlayerManagement.PlayerEntityExists())
+			if (PlayerManagement.PlayerEntityExists() && (result.origin is SimObjectBehaviour && PlayerSimObjBehaviour.IsPlayerSimObjectBehaviour(result.origin as SimObjectBehaviour)))
 			{
 				PlayerManagement.GetInventory().AdjustCurrency(target.GetKillReward() * BalanceManagement.killWorthRatio);
 			}

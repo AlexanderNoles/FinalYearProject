@@ -49,7 +49,7 @@ public class ShipSimObjectBehaviour : SimObjectBehaviour
 		newShipPosition.y = 0.0f;
 		newShipPosition.Normalize();
 
-		transform.position = newShipPosition * Random.Range(10.0f, 100.0f);
+		transform.localPosition = newShipPosition * Random.Range(10.0f, 100.0f);
 
 		if ((target as Ship).isWreck)
 		{

@@ -131,6 +131,7 @@ public class RefineryRoutine : RoutineBase
 							for (int s = 0; s < collection.GetCapacity(); s++)
 							{
 								Ship newShip = collection.GetNewShip();
+								newShip.SetParent(refinery.parent);
 								collection.AddShip(newShip);
 								collection.MarkCollectionUpdate(ShipCollection.UpdateType.Add, newShip); 
 							}

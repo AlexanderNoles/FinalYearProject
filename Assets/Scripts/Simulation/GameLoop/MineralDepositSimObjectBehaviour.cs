@@ -8,7 +8,7 @@ public class MineralDepositSimObjectBehaviour : SimObjectBehaviour
 	{
 		TakenDamageResult result = base.TakeDamage(rawDamageNumber, origin);
 
-		if (PlayerSimObjBehaviour.IsPlayerBB(origin) && PlayerManagement.PlayerEntityExists())
+		if ((origin is SimObjectBehaviour && PlayerSimObjBehaviour.IsPlayerSimObjectBehaviour(origin as SimObjectBehaviour)) && PlayerManagement.PlayerEntityExists())
 		{
 			//Give player currency correlated to damage dealt
 			//This means mining ability scales with attack power

@@ -10,7 +10,7 @@ public class MetaRoutine : RoutineBase
     public override void Run()
     {
         List<SimulationEntity> deadEntities = SimulationManagement.GetEntitiesViaTag(EntityStateTags.Dead);
-        List<int> idsOfRemovedEntities = new List<int>();
+        List<(int, SimulationEntity)> removedEntites = new List<(int, SimulationEntity)>();
 
         for (int i = 0; i < deadEntities.Count;)
         {
@@ -20,7 +20,7 @@ public class MetaRoutine : RoutineBase
             {
 				//Remove this entity from the simulation
                 SimulationManagement.RemoveEntityFromSimulation(deadEntity);
-                idsOfRemovedEntities.Add(deadEntity.id);
+                removedEntites.Add((deadEntity.id, deadEntity));
                 //Perform nothing else for this entity as it is now dead (including incrementing the index)
                 continue;
             }
@@ -38,7 +38,7 @@ public class MetaRoutine : RoutineBase
         //This should arguably be conjoined with the evaluation routine code
         //So cleanup can be implemented in a modularised fashion
         //Perhaps a new specific type of routine?
-        if (idsOfRemovedEntities.Count > 0)
+        if (removedEntites.Count > 0)
         {
             //Removed entities this tick
 
@@ -47,9 +47,9 @@ public class MetaRoutine : RoutineBase
             //But the nature of feelings data requires this data to be removed (otherwise it would just sit there taking up space)
             foreach (FeelingsData feelingsData in allFeelingsData.Cast<FeelingsData>())
             {
-                foreach (int id in idsOfRemovedEntities)
+                foreach ((int, SimulationEntity) entry in removedEntites)
                 {
-                    feelingsData.idToFeelings.Remove(id);
+                    feelingsData.idToFeelings.Remove(entry.Item1);
                 }
             }
 
@@ -58,14 +58,18 @@ public class MetaRoutine : RoutineBase
             //Remove from battles if they were partaking
             foreach (KeyValuePair<RealSpacePosition, List<GlobalBattleData.Battle>> battleEntry in globalBattleData.cellCenterToBattles)
             {
-                foreach (int id in idsOfRemovedEntities)
+                foreach ((int, SimulationEntity) entry in removedEntites)
                 {
+					//We should have battle data that tells us what battle we are in?
+					//Why is this done this way instead past me?
 					foreach (GlobalBattleData.Battle battle in battleEntry.Value) 
 					{
-						battle.RemoveInvolvedEntity(id);
+						battle.RemoveInvolvedEntity(entry.Item1);
 					}
                 }
             }
+
+			removedEntites.Clear();
         }
     }
 }

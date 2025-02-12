@@ -7,9 +7,13 @@ public class PlayerSimObjBehaviour : SimObjectBehaviour
 {
 	private static PlayerSimObjBehaviour instance;
 
-	public static bool IsPlayerBB(BattleBehaviour bb)
+	public static bool IsPlayerSimObjectBehaviour(SimObjectBehaviour bb)
 	{
-		return instance != null && instance.Equals(bb);
+		//Is literally the player ship or shares it's id
+
+		return 
+			(instance != null && instance.Equals(bb)) ||
+			(bb.target != null && bb.target.parent != null && bb.target.parent.Get().id.Equals(PlayerManagement.GetTarget().id));
 	}
 
 	public static void ToggleTargetExternal(BattleBehaviour target)

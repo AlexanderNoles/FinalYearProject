@@ -277,6 +277,7 @@ public class MilitaryData : DataModule
 		}
 
 		return
+			$"	Max Military Capacity: {maxMilitaryCapacity}\n" +
 			$"	Total Damage Buildup: {totalDamageBuildup}\n" +
 			$"	Fleet Count: {currentFleetCount}\n" +
 			$"	In Reserves Count: {reserveFleets.Count}\n" +
