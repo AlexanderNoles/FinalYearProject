@@ -27,4 +27,17 @@ public class FeelingsData : DataModule
 
     public Dictionary<int, Relationship> idToFeelings = new Dictionary<int, Relationship>();
     public float baseFavourability = 0.5f; //What other entities inherently think of this one (For a murderous swarm for example this should be zero)
+	public bool matching = false; //Auto match relationships? 
+
+	public override string Read()
+	{
+		string output = "";
+
+        foreach (KeyValuePair<int, Relationship> entry in idToFeelings)
+        {
+			output += $"	{entry.Key}: {entry.Value.favourability} ({entry.Value.inConflict})\n";
+        }
+
+        return output;
+	}
 }

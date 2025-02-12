@@ -12,6 +12,7 @@ public class BattleResolutionRoutine : RoutineBase
 	public override void Run()
 	{
 		const float battleLengthMultiplier = 100.0f;
+		const float damagePerTickApproximater = 0.01f;
 
 		//Each tick the battle system runs over every created battle (stored in the global battle data)
 		//and processes it
@@ -24,8 +25,11 @@ public class BattleResolutionRoutine : RoutineBase
 		gameworld.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattleData);
 		gameworld.GetData(DataTags.Historical, out HistoryData historyData);
 
-        //Get all feelings data
-        Dictionary<int, FeelingsData> idToFeelingsData = SimulationManagement.GetEntityIDToData<FeelingsData>(DataTags.Feelings);
+		//Get all contact policy data
+		Dictionary<int, ContactPolicyData> idToContactData = SimulationManagement.GetEntityIDToData<ContactPolicyData>(DataTags.ContactPolicy);
+
+		//Get all feelings data
+		Dictionary<int, FeelingsData> idToFeelingsData = SimulationManagement.GetEntityIDToData<FeelingsData>(DataTags.Feelings);
 
         //Get all military data
         Dictionary<int, MilitaryData> idToMilitaryData = SimulationManagement.GetEntityIDToData<MilitaryData>(DataTags.Military);
@@ -42,25 +46,49 @@ public class BattleResolutionRoutine : RoutineBase
 
 				//Compute opposition matrix for this battle
 				//Computed even if battle is not lazy as outside systems may want to use it
-				battle.opositionMatrix.Clear();
+				battle.oppositionMatrix.Clear();
 				//For every entity in the battle
+				//Something about this is wrong, not sure what but def something. Battle is saying it is over before it is, and oppositon matrix looks empty
+				//(even when I can verify that two entities are in conflict)
 				foreach (int id in involvedEntities)
 				{
-					battle.opositionMatrix.Add(id, new List<int>());
+					battle.oppositionMatrix.Add(id, new List<int>());
 
-					if (idToFeelingsData.ContainsKey(id))
+					if (idToContactData.ContainsKey(id) && idToContactData[id].openlyHostile)
+					{
+						foreach (int otherID in involvedEntities)
+						{
+							if (otherID != id)
+							{
+								battle.oppositionMatrix[id].Add(otherID);
+							}
+						}
+					}
+					else if (idToFeelingsData.ContainsKey(id))
 					{
 						FeelingsData feelingsData = idToFeelingsData[id];
 						//For every entity in the battle
 						foreach (int otherID in involvedEntities)
 						{
-							if (otherID != id && feelingsData.idToFeelings.ContainsKey(id))
+							//If not this entity
+							if (otherID == id)
 							{
-								//If not this entity and in conflict with this entity...
+								continue;
+							}
+
+							if (idToContactData.ContainsKey(otherID) && idToContactData[otherID].openlyHostile)
+							{
+								//If other entity is outwardly hostile
+								//add to opposition matrix
+								battle.oppositionMatrix[id].Add(otherID);
+							}
+							else if (feelingsData.idToFeelings.ContainsKey(otherID))
+							{
+								//In conflict with this entity...
 								if (feelingsData.idToFeelings[otherID].inConflict)
 								{
 									//...add to opposition matrix
-									battle.opositionMatrix[id].Add(otherID);
+									battle.oppositionMatrix[id].Add(otherID);
 								}
 							}
 						}
@@ -142,17 +170,15 @@ public class BattleResolutionRoutine : RoutineBase
 					{
 						for (int c = a + 1; c < shipCollections.Count && battleOver; c++)
 						{
-							if (battle.opositionMatrix[shipCollections[a].Item1].Contains(shipCollections[c].Item1))
+							if (battle.oppositionMatrix[shipCollections[a].Item1].Contains(shipCollections[c].Item1))
 							{
 								battleOver = false;
 							}
 						}
 					}
 
-					//Calculate how much damage each entity in chunk should take
-					//Or if the battle is over we should use the number of ships to add to win progress
+					//If the battle is over we should use the number of ships to add to win progress
 					Dictionary<int, float> idToDamageToTake = new Dictionary<int, float>();
-					float amountToAddToWinProgress = 0.0f;
 
 					for (int i = 0; i < shipCollections.Count; i++)
 					{
@@ -162,7 +188,7 @@ public class BattleResolutionRoutine : RoutineBase
 							//Just use total number of ships to add to win progress
 							int totalShips = shipCollections[i].Item3;
 
-							amountToAddToWinProgress = Mathf.Max(totalShips / (10f * battleLengthMultiplier), 0.001f);
+							float amountToAddToWinProgress = Mathf.Max(totalShips / (10f * battleLengthMultiplier), 0.001f);
 							//Apply win progress
 							battle.AddToWinProgress(involvedEntities.IndexOf(id), amountToAddToWinProgress);
 						}
@@ -184,13 +210,15 @@ public class BattleResolutionRoutine : RoutineBase
 
 									foreach (StandardSimWeaponProfile weapon in weapons)
 									{
-										totalDamage += weapon.GetDamageLazy();
+										//Damage is reduced by an approximater value, this is because in reality ships won't always be able to attack each other
+										//plus numerous other factors if we are being honest
+										totalDamage += weapon.GetDamageLazy() * damagePerTickApproximater;
 									}
 								}
 							}
 
 							//Add damage that needs to be taken by other factions
-							List<int> opposition = battle.opositionMatrix[id];
+							List<int> opposition = battle.oppositionMatrix[id];
 							float damagePerEnemy = totalDamage / opposition.Count;
 
 							foreach (int enemyID in opposition)
@@ -215,7 +243,7 @@ public class BattleResolutionRoutine : RoutineBase
 						//Apply damage to all involved entities
 						foreach (int id in involvedEntities)
 						{
-							if (idToDamageToTake.ContainsKey(id))
+							if (idToDamageToTake.ContainsKey(id) && idToMilitaryData.ContainsKey(id))
 							{
 								float damageToTake = idToDamageToTake[id];
 
@@ -227,7 +255,7 @@ public class BattleResolutionRoutine : RoutineBase
 
 									float damagePerFleet = damageToTake / collections.Count;
 
-									for (int i = 0; i < collections.Count;)
+									for (int i = 0; i < collections.Count; i++)
 									{
 										//Each time damage is taken
 										//Add to total damage buildup

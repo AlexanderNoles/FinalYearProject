@@ -41,6 +41,7 @@ public class Player : SimulationEntity
 		
 		FeelingsData feelings = new FeelingsData();
 		feelings.baseFavourability = 0.0f;
+		feelings.matching = true;
 		AddData(DataTags.Feelings, feelings);
 		AddData(DataTags.ContactPolicy, new ContactPolicyData());
 

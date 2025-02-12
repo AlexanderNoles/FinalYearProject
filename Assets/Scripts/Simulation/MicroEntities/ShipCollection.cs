@@ -43,7 +43,9 @@ public class ShipCollection
 
 	public virtual Ship GetNewShip()
 	{
-		return new Ship();
+		Ship ship = new Ship();
+		ship.health = ship.GetMaxHealth();
+		return ship;
 	}
 
 	public void Fill(EntityLink parent)

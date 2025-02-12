@@ -22,7 +22,7 @@ public class GlobalBattleData : DataModule
 		private List<float> involvedEntitiesProgress = new List<float>();
 		public bool anyShipsInBattle = true;
 
-		public Dictionary<int, List<int>> opositionMatrix = new Dictionary<int, List<int>>();
+		public Dictionary<int, List<int>> oppositionMatrix = new Dictionary<int, List<int>>();
 
 		public List<int> GetInvolvedEntities()
 		{
@@ -568,5 +568,42 @@ public class GlobalBattleData : DataModule
 		}
 
 		return false;
+	}
+
+	[MonitorBreak.Bebug.ConsoleCMD("PBattles", "Display player battle information")]
+	public static void DisplayPlayerBattleInformation()
+	{
+		//Iterate through every single battle
+		//If the player is a part of it then add to the output string
+		string outputString = "";
+
+		GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData data);
+
+		foreach (KeyValuePair<RealSpacePosition, List<Battle>> entry in data.cellCenterToBattles)
+		{
+			foreach (Battle b in entry.Value)
+			{
+				if (b.GetInvolvedEntities().Contains(PlayerManagement.GetTarget().id))
+				{
+					outputString += $"\nOpposition Matrix ({b.oppositionMatrix.Count}):\n";
+
+					foreach (KeyValuePair<int, List<int>> line in b.oppositionMatrix)
+					{
+						string tempString = $"	{line.Key}: ";
+
+						foreach (int opposition in line.Value)
+						{
+							tempString += $"{opposition}, ";
+						}
+
+						outputString += tempString + "\n";
+					}
+
+					outputString += "\n";
+				}
+			}
+		}
+
+		MonitorBreak.Bebug.Console.Log(outputString);
 	}
 }

@@ -201,22 +201,53 @@ public class MilitaryData : DataModule
 	public override string Read()
 	{
 		int shipCount = 0;
+		int wreckCount = 0;
+		string healthReadouts = "";
+		healthReadouts += "		Normal:\n";
 
 		foreach (List<ShipCollection> shipCollections in positionToFleets.Values)
 		{
 			foreach (ShipCollection collection in shipCollections)
 			{
 				shipCount += collection.GetShips().Count;
+
+				foreach (Ship ship in collection.GetShips())
+				{
+					if (ship.isWreck)
+					{
+						wreckCount++;
+					}
+					else
+					{
+						healthReadouts += $"		Health: {ship.health}\n";
+					}
+				}
 			}
 		}
 
+		healthReadouts += "		Reserve:\n";
 		foreach (ShipCollection reserve in reserveFleets)
 		{
 			shipCount += reserve.GetShips().Count;
+
+			foreach (Ship ship in reserve.GetShips())
+			{
+				if (ship.isWreck)
+				{
+					wreckCount++;
+				}
+				else
+				{
+					healthReadouts += $"		Health: {ship.health}\n";
+				}
+			}
 		}
 
-		return $"	Fleet Count: {currentFleetCount}\n" +
+		return
+			$"	Total Damage Buildup: {totalDamageBuildup}\n" +
+			$"	Fleet Count: {currentFleetCount}\n" +
 			$"	In Reserves Count: {reserveFleets.Count}\n" +
-			$"	Ship Count: {shipCount}";
+			$"	Ship Count: {shipCount} | Wreck Count: {wreckCount}\n";// +
+			//ealthReadouts;
 	}
 }
