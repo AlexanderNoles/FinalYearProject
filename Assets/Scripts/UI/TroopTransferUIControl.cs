@@ -159,18 +159,22 @@ public class TroopTransferUIControl : PostTickUpdate
 			SimulationManagement.GetEntityByID(targetID).AdjustPlayerReputation(-2.0f);
 		}
 
-		//Should create a recorded battle here so we can determine when the player is allowed to retreat
-		//And also to auto add ships back to reserves after battles are over
-
 		Close();
 	}
 
-	private void Update()
+	protected override void Update()
 	{
-		if (target.activeSelf && ((!SimulationManagement.EntityExists(targetID) && targetID != -1) || !SimulationManagement.EntityExists(controlledID)))
+		if (!target.activeSelf)
+		{
+			return;
+		}
+
+		if ((!SimulationManagement.EntityExists(targetID) && targetID != -1) || !SimulationManagement.EntityExists(controlledID))
 		{
 			//If eithier entity stops existing close
 			Close();
 		}
+
+		base.Update();
 	}
 }
