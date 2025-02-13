@@ -165,6 +165,12 @@ public class PlayerLocationManagement : MonoBehaviour
 		location.Cleanup();
 	}
 
+	public static void SetInitalLocationExternal(RealSpacePosition pos)
+	{
+		WorldManagement.SetWorldCenterPosition(pos);
+		instance.setInitalLocation = true;
+	}
+
 	public MultiObjectPool uiPool;
 	public RectTransform uiPoolTargetRect;
 	private const int drawnLocationTargetIndex = 0;
@@ -185,7 +191,7 @@ public class PlayerLocationManagement : MonoBehaviour
 		}
 
 		//Set inital world center position
-		WorldManagement.SetWorldCenterPosition(new RealSpacePosition(0, 0, 2000000));
+		WorldManagement.SetWorldCenterPosition(new RealSpacePosition(0, 0, 0));
 		setInitalLocation = false;
 
 		instance = this;

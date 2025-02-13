@@ -52,16 +52,17 @@ public class UIManagement : MonoBehaviour
 		SetupUIStateInternal();
 	}
 
-    public static bool LoadUIState(UIState newState)
+    public static bool LoadUIState(UIState newState, bool bypassTreeStructure = false)
     {
         if (instance.activeState != null && instance.activeState.Equals(newState))
         {
             return false;
         }
 
-        if (!InPureNeutral() && !instance.neutral.Equals(newState))
+        if (!InPureNeutral() && !instance.neutral.Equals(newState) && !bypassTreeStructure)
         {
             //If not in neutral and not trying to return to neutral
+			//(unless we are bypassing the tree structure and want to jump to a new ui state)
             return false;
         }
 

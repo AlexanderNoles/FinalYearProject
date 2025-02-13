@@ -345,7 +345,6 @@ public class SimulationManagement : MonoBehaviour
     }
 
 	private const bool batchHistory = false;
-    private const bool runHistory = true;
 
     [Header("External References")]
     public PlanetsGenerator planetsGenerator;
@@ -398,43 +397,35 @@ public class SimulationManagement : MonoBehaviour
 	}
 
 	private void Start()
-	{        
+	{
 		//It is important this is run in Start so OnEnable can run on objects before this goes off
-		if (runHistory)
-        {
-			int tickCount = YearsToTickNumberCount(historyLength);
+		int tickCount = YearsToTickNumberCount(historyLength);
 
-			if (!batchHistory)
-			{
-				//Setup async history run
-				//First active History running ui
-				HistoryUIManagement.SetHistoryUIActive();
+		if (!batchHistory)
+		{
+			//Setup async history run
+			//First active History running ui
+			HistoryUIManagement.SetHistoryUIActive();
 
-                //Then we need to disable player input till the history burst is over
-                InputManagement.InputEnabled = false;
+			//Then we need to disable player input till the history burst is over
+			InputManagement.InputEnabled = false;
 
-				//Then we need to set a tick burst count
-				historyTicksLeft = tickCount;
-				maxHistoryTicks = tickCount;
-				InitSimulationTick(false, tickCount);
-			}
-			else
-			{
-				//Run history ticks
-				//Simulation is run for a period of years before player arrives to get more dynamic results
-
-				for (int i = 0; i < tickCount; i++)
-				{
-					InitSimulationTick(true);
-				}
-			}
-        }
+			//Then we need to set a tick burst count
+			historyTicksLeft = tickCount;
+			maxHistoryTicks = tickCount;
+			InitSimulationTick(false, tickCount);
+		}
 		else
 		{
-			//Not running history so just init player faction
-			PlayerManagement.InitPlayerFaction();
+			//Run history ticks
+			//Simulation is run for a period of years before player arrives to get more dynamic results
+
+			for (int i = 0; i < tickCount; i++)
+			{
+				InitSimulationTick(true);
+			}
 		}
-    }
+	}
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class SimulationRoutine : Attribute 
@@ -612,7 +603,7 @@ public class SimulationManagement : MonoBehaviour
 
     public static void EndSimulationTick()
     {
-		if (runHistory && instance.historyTicksLeft > 0)
+		if (instance.historyTicksLeft > 0)
 		{
 			return;
 		}
@@ -668,25 +659,19 @@ public class SimulationManagement : MonoBehaviour
     //End of scripts
     private void LateUpdate()
     {
-        //Check enought time has passed before we do the next tick
-        //We also have a minimum frame count so a spiked frame won't cause quick ticks
-        //(This is an imperfect system but works more than well enough for the use case)
-        if ((
-            (Time.time > nextTickTime 
-            && (Time.frameCount > tickInitFrame + minimumFrameLength)
-            && (tickTask == null || tickTask.IsCompleted))
-			
-			&&
+		//Evaluate whether to init a tick this frame
+		bool shouldRunTick =
+			Time.time > nextTickTime &&                                 //Time between tick inits
+			(Time.frameCount > tickInitFrame + minimumFrameLength) &&   //Minimum frame time incase of large fps spikes
+			(tickTask == null || tickTask.IsCompleted);                 //Previous tick is done
 
-			!(runHistory && historyTicksLeft > 0)
-			)
+		shouldRunTick = shouldRunTick && !(historyTicksLeft > 0);		//Don't run ticks if history sim is running
+		//
 
-			||
-
-			forceTick
-			)
+		//Run
+		if (shouldRunTick || forceTick)
         {
-			//Init player faction
+			//Init player faction if history just ended
 			if (historyJustEnded)
 			{
 				historyJustEnded = false;
@@ -694,19 +679,23 @@ public class SimulationManagement : MonoBehaviour
 				//Re-enable player input
 				InputManagement.InputEnabled = true;
 
-				//Init player faction
-				PlayerManagement.InitPlayerFaction();
+				//Set active map in nation selection mode
+				MapManagement.SetActiveAsNationSelection();
 			}
 
+			//Only run subsequent ticks when the player faction has been created
+			//(Unless we are forcing a tick)
+			if (PlayerManagement.PlayerEntityExists() || forceTick)
+			{
+				forceTick = false;
 
-			forceTick = false;
+				if (simulatioSpeedModifier > 0)
+				{
+					nextTickTime = (Time.time + (TICK_MAX_LENGTH / simulatioSpeedModifier));
+				}
 
-            if (simulatioSpeedModifier > 0)
-            {
-                nextTickTime = (Time.time + (TICK_MAX_LENGTH / simulatioSpeedModifier));
-            }
-
-            InitSimulationTick(false, typicallyTickBatchCount);
+				InitSimulationTick(false, typicallyTickBatchCount);
+			}
         }
     }
 

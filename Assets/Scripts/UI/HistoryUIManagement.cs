@@ -38,6 +38,14 @@ public class HistoryUIManagement : UIState
 		}
     }
 
+	public static void SetHistoryUIInactive()
+	{
+		if (instance != null)
+		{
+			instance.SetActive(false);
+		}
+	}
+
     public static void SetHistoryUIActive()
     {
 		if (instance != null)
@@ -118,11 +126,7 @@ public class HistoryUIManagement : UIState
 
 	private void UpdateProgressBar(float value)
 	{
-        if (value >= 1.0f)
-        {
-            UIManagement.ReturnToPureNeutral();
-        }
-		else
+		if (value < 1.0f)
         {
 			if (historyTarget.GetCurrentPeriod().periodID != cachedPeriodID)
 			{

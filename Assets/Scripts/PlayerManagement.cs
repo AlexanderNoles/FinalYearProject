@@ -45,6 +45,11 @@ public class PlayerManagement : MonoBehaviour
 
     public static Player GetTarget()
     {
+		if (instance == null || instance.playerEntity == null)
+		{
+			return null;
+		}
+
         return instance.playerEntity;
     }
 

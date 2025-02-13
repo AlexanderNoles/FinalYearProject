@@ -62,7 +62,7 @@ public class PlayerInteractionManagement : MonoBehaviour
 		//if so be check if that one can be interacted with
 		//If player is not hovering over UI (or in a ui state that is not coenabled) try to find any targets that are under mouse
 
-		if (!UIManagement.NeutralEnabled())
+		if (!UIManagement.NeutralEnabled() && (currentInteraction == null || !currentInteraction.OverrideUIState()))
 		{
 			return;
 		}

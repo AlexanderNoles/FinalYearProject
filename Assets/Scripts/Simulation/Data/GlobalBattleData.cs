@@ -281,7 +281,7 @@ public class GlobalBattleData : DataModule
 				{
 					descString += $"<color={emblemData.mainColourHex}>{Mathf.RoundToInt(100.0f * (involvedEntitiesProgress[i] / winLimit))}%</color>";
 
-					if (involvedEntities[i].Equals(PlayerManagement.GetTarget().id))
+					if (PlayerManagement.PlayerEntityExists() && involvedEntities[i].Equals(PlayerManagement.GetTarget().id))
 					{
 						descString += " (You)";
 					}

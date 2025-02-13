@@ -45,6 +45,21 @@ public class PlayerMapInteraction : PostTickUpdate
 		viewRangeOverride = !viewRangeOverride;
 	}
 
+	public static void SetViewRange(float value)
+	{
+		Shader.SetGlobalFloat("_ShipRange", viewRangeOverride ? 10000.0f : value);
+	}
+
+	public static void SetCachedRangeExternal(float value)
+	{
+		instance.cachedRange = value;
+	}
+
+	public static void SetActiveDirectionIndicator(bool _bool)
+	{
+		instance.playerDirectionIndicator.gameObject.SetActive(_bool);
+	}
+
 	[Header("Effects")]
 	public Transform targetIcon;
 	public Transform rangeIndicator;
@@ -133,7 +148,7 @@ public class PlayerMapInteraction : PostTickUpdate
 	{
 		base.OnEnable();
 		rangeIndicator.gameObject.SetActive(false);
-		Shader.SetGlobalFloat("_ShipRange", 0.0f);
+		SetViewRange(0.0f);
 		doneInitialDraw = false;
 
 		if (!freezeInteractionCursor)
@@ -335,12 +350,14 @@ public class PlayerMapInteraction : PostTickUpdate
 		}
 		else
 		{
-			if (!doneInitialDraw)
+			//Only do inital draw if the player exists (so not during nation selection)
+			if (!doneInitialDraw && PlayerManagement.PlayerEntityExists())
 			{
 				doneInitialDraw = true;
 				DrawAvaliableLocations();
 			}
-			Shader.SetGlobalFloat("_ShipRange", viewRangeOverride ? 10000.0f : cachedRange);
+
+			SetViewRange(cachedRange);
 		}
 
 		if (PlayerCapitalShip.IsJumping() || (UIHelper.ElementsUnderMouse().Count > 0 && !freezeInteractionCursor))

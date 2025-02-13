@@ -190,6 +190,11 @@ public class PlayerCapitalShip : MonoBehaviour
 
 	public static RealSpacePosition GetPCSPosition()
 	{
+		if (instance == null || instance.pcsRSP == null)
+		{
+			return WorldManagement.worldCenterPosition;
+		}
+
 		return instance.pcsRSP;
 	}
 
@@ -289,6 +294,11 @@ public class PlayerCapitalShip : MonoBehaviour
 
 	public static double CalculateDistance(RealSpacePosition to)
 	{
+		if (instance == null || instance.pcsRSP == null)
+		{
+			return 0;
+		}
+
 		return new RealSpacePosition(to).Subtract(instance.pcsRSP).Magnitude();
 	}
 

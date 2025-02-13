@@ -4,10 +4,80 @@ using UnityEngine;
 using TMPro;
 using System.Linq;
 using EntityAndDataDescriptor;
-using static UnityEngine.EventSystems.EventTrigger;
 
 public class MapManagement : UIState
 {
+	public static void SetActiveAsNationSelection()
+	{
+		if (instance == null)
+		{
+			throw new System.Exception("No Map Instance Set!");
+		}
+
+		//Setup ui state variables so we get the behaviour we want
+		instance.coenableNeutral = false;
+		instance.lockout = true;
+		instance.toggleable = false;
+
+		//Set inactive ui elements that should be disabled
+		//Primarily this is the return to neutral button
+		instance.disableInMapSelection.SetActive(false);
+		instance.enableInMapSelection.SetActive(true);
+		SetPlayerIndicatorActive(false);
+
+		//Set player view range to show whole map
+		//Setting cached range instead of effect directly so it is mainted when player map interaction is set active
+		const float buffer = 10;
+		PlayerMapInteraction.SetCachedRangeExternal((float)(WorldManagement.GetSolarSystemRadius() / MapManagement.mapRelativeScaleModifier) + buffer);
+
+		//Set current player interaction to be nation selection
+		PlayerInteractionManagement.SetCurrentInteraction(new NationSelectionInteraction());
+
+		//Activate the map ui state
+		//(Bypassing the tree structure as we are jumping from history ui to map ui directly)
+		UIManagement.LoadUIState(instance, true);
+	}
+
+	public static void ClosePostNationSelection()
+	{
+		if (instance == null)
+		{
+			throw new System.Exception("No Map Instance Set!");
+		}
+
+		//Return ui state variables to normal
+		instance.coenableNeutral = true;
+		instance.lockout = false;
+		instance.toggleable = true;
+
+		//Reenable ui elements
+		instance.disableInMapSelection.SetActive(true);
+		instance.enableInMapSelection.SetActive(false);
+		SetPlayerIndicatorActive(true);
+
+		//Set back to smart interaction
+		PlayerInteractionManagement.EnableSmartInteraction(true);
+
+		//Return to pure neutral
+		//a.k.a start the game proper
+		UIManagement.ReturnToPureNeutral();
+	}
+
+	private static void SetPlayerIndicatorActive(bool _bool)
+	{
+		//Get first element of ship indicator pool
+		//Have to directly access the pool and get the element because the typical mode we have this pool set in does not allow accessing the transform directly
+		Transform element = instance.mapElementsPools.pools[shipIndicatorPool].activeObjectsList[0].transform;
+
+		foreach (Transform child in element)
+		{
+			child.gameObject.SetActive(_bool);
+		}
+
+		//Tell player map interaction to hide their player indicator as well
+		PlayerMapInteraction.SetActiveDirectionIndicator(_bool);
+	}
+
 	/// UI STATE IMPLEMENTATION
 	private static MapManagement instance;
     public const float mapRelativeScaleModifier = 1000.0f;
@@ -102,6 +172,8 @@ public class MapManagement : UIState
 	}
 
 	public GameObject target;
+	public GameObject disableInMapSelection;
+	public GameObject enableInMapSelection;
 	[Header("Map Settings")]
 	public FadeOnEnable fadeInEffect;
     public MultiObjectPool mapElementsPools;
@@ -159,6 +231,8 @@ public class MapManagement : UIState
 			Vector3 playerPos = -PlayerCapitalShip.GetPCSPosition().AsTruncatedVector3(mapRelativeScaleModifier);
 			mapElementsPools.UpdateNextObjectPosition(shipIndicatorPool, playerPos);
 			mapElementsPools.PruneObjectsNotUpdatedThisFrame(shipIndicatorPool);
+
+
 
 			if (MapIntroRunning())
             {

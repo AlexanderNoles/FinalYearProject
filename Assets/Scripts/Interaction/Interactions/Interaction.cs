@@ -93,6 +93,11 @@ public class Interaction : IDisplay
 		return 0;
 	}
 
+	public virtual bool OverrideUIState()
+	{
+		return false;
+	}
+
 	//IDisplay
 
 	public virtual string GetTitle()
