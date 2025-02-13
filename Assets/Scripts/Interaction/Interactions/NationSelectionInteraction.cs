@@ -13,22 +13,23 @@ public class NationSelectionInteraction : Interaction
 
 	public override void ProcessOnMap(PlayerMapInteraction.UnderMouseData target)
 	{
-		//Should maybe display a "are you sure?" ui here first
-		//but for now lets just create the faction
+		NationInformationDisplayUI.SetActive(!NationInformationDisplayUI.IsTarget(target.simulationEntity), target.simulationEntity);
+	}
 
+	public static void FinalizeNationSelect(SimulationEntity entity)
+	{
 		PlayerManagement.InitPlayerFaction();
 
 		//Set to first set
-		SimulationEntity simEntity = target.simulationEntity;
 		RealSpacePosition rps = null;
 
-		if (simEntity.GetData(DataTags.Settlements, out SettlementsData setData) && setData.settlements.Count > 0)
+		if (entity.GetData(DataTags.Settlements, out SettlementsData setData) && setData.settlements.Count > 0)
 		{
 			SettlementsData.Settlement actualSet = setData.settlements.ElementAt(0).Value;
 			rps = actualSet.actualSettlementPos.Clone();
 			rps.Add(Vector3.back * (actualSet.location.GetEntryOffset() * WorldManagement.invertedInEngineWorldScaleMultiplier));
 		}
-		else if (simEntity.GetData(DataTags.Territory, out TerritoryData terrData) && terrData.territoryCenters.Count > 0) 
+		else if (entity.GetData(DataTags.Territory, out TerritoryData terrData) && terrData.territoryCenters.Count > 0)
 		{
 			rps = terrData.territoryCenters.ElementAt(0).Clone();
 		}

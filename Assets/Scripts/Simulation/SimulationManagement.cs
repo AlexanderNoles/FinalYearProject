@@ -59,6 +59,11 @@ public class SimulationManagement : MonoBehaviour
     private const float MONTH_TO_YEAR = 13;
     private static float currentYear;
 
+	public static float GetCurrentYear()
+	{
+		return currentYear;
+	}
+
     private static void IncrementDay()
     {
         currentDay++;

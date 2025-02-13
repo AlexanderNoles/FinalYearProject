@@ -14,13 +14,18 @@ public class SimulationEntity : SimObject
     private static int currentNextID = 0;
     public int id = -1;
     private EntityLink link;
+	public int createdTick;
+	public string createdYear;
 
     public virtual void Simulate()
     {
         id = currentNextID;
         currentNextID++;
 
-        SimulationManagement.RegisterEntityToIDDict(this);
+		createdTick = SimulationManagement.currentTickID;
+		createdYear = SimulationManagement.GetCurrentYear().ToString();
+
+		SimulationManagement.RegisterEntityToIDDict(this);
 
         link = new EntityLink(this);
 

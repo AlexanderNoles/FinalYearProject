@@ -5,7 +5,96 @@ using EntityAndDataDescriptor;
 
 public class Nation : Faction
 {
-    public override void InitTags()
+	private readonly static List<string> primaryWords = new List<string>() 
+	{
+		"Western",
+		"Eastern",
+		"Northen",
+		"Southern",
+		"United",
+		"Kyrda",
+		"Gronka",
+		"Seyto",
+		"Landngo",
+		"New",
+		"Old",
+		"Waldan",
+		"Central",
+		"Kyrtoku",
+		"Miri",
+		"Eria",
+		"Roonnew",
+		"Maco",
+		"Bralmo",
+		"Honsouth",
+		"Honeast",
+		"Honwest",
+		"Honnorth",
+		"Lagui",
+		"Nesland",
+		"True",
+		"Lunarian",
+		"Ruby",
+		"Emerald",
+		"Diamond",
+		"First",
+		"Sixth",
+		"Tenth",
+		"Sovereign"
+	};
+
+	private readonly static List<string> secondaryWords = new List<string>()
+	{
+		"Kingdom",
+		"Dominion",
+		"Empire",
+		"Conglomerate",
+		"Militia",
+		"Union",
+		"Democracy",
+		"Republic"
+	};
+
+
+
+	public string name;
+
+	public override void Simulate()
+	{
+		base.Simulate();
+
+		//Generate name
+
+		//First primary word
+		name = primaryWords[SimulationManagement.random.Next(0, primaryWords.Count)];
+
+		//Should this have a grander feel?
+		bool grander = SimulationManagement.random.Next(0, 101) > 70;
+		
+		if (grander)
+		{
+			name = "The " + name;
+		}
+
+		//Add a second primary word?
+		bool secondWord = SimulationManagement.random.Next(0, 101) > 50;
+
+		if (secondWord)
+		{
+			name += " ";
+			name += primaryWords[SimulationManagement.random.Next(0, primaryWords.Count)];
+		}
+
+		//Then have a chance to give a secondary word
+		bool hasSecondary = SimulationManagement.random.Next(0, 101) > 50;
+		if (hasSecondary)
+		{
+			name += " ";
+			name += secondaryWords[SimulationManagement.random.Next(0, secondaryWords.Count)];
+		}
+	}
+
+	public override void InitTags()
     {
         base.InitTags();
         AddTag(EntityTypeTags.Nation);
