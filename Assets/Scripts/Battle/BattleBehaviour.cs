@@ -276,7 +276,7 @@ public class BattleBehaviour : MonoBehaviour
 		{
 			if (currentTargets[i].bb.gameObject == null || !currentTargets[i].bb.gameObject.activeSelf)
 			{
-				currentTargets.RemoveAt(i);
+				RemoveTarget(currentTargets[i]);
 			}
 			else
 			{

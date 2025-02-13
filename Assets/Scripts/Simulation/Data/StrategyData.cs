@@ -22,4 +22,9 @@ public class StrategyData : DataModule
 	{
 		return defensivePropensity;
 	}
+
+	public virtual void OnBattleEnd(RealSpacePosition battlePos)
+	{
+		//Do nothing by default
+	}
 }

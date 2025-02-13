@@ -19,6 +19,9 @@ public class Player : SimulationEntity
 	{
 		base.InitData();
 
+		//Give player battle data so they can track their battles (mainly so they can auto retreat when they end)
+		AddData(DataTags.Battle, new BattleData());
+
 		AddData(DataTags.Emblem, new EmblemData());
 
 		PlayerStats stats = new PlayerStats();
@@ -52,8 +55,6 @@ public class Player : SimulationEntity
 		//Give the player population
 		//This is a very important balancing statistic
 		PopulationData population = new PopulationData();
-		population.currentPopulationCount = BalanceManagement.playerPopulationStartValue;
-		population.populationNaturalGrowthLimt = BalanceManagement.intialPlayerPopulationMax;
 		population.populationNaturalGrowthSpeed = BalanceManagement.playerPopulationChangePerTick;
 		//Because the player will be traveling in the warp their population growth shouldn't be affected by the increased speed
 		population.growthAffectedBySimSpeed = false;
@@ -61,9 +62,11 @@ public class Player : SimulationEntity
 
 		//Give the player a military
 		MilitaryData militaryData = new MilitaryData();
-		militaryData.initalCount = BalanceManagement.initalMilitaryCount;
 		militaryData.selfControlled = true;
 		AddData(DataTags.Military, militaryData);
+
+		//Give them strategy data so they immediately retreat to reserves after a battle ends
+		AddData(DataTags.Strategy, new RetreatToReservesStrategy());
 
 		//Give the player a refinery
 		RefineryData refineryData = new RefineryData();

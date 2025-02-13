@@ -274,10 +274,9 @@ public class BattleResolutionRoutine : RoutineBase
 				//not in the above if(!battleOver) scope so if an outside force removes a entity battles don't freeze in place
 				if (battle.BattleWon(out int winnerID))
 				{
-					battle.ResolveTerritory(entry.Key, historyData, winnerID);
-
-					//For all remaing factions we need to remove their ongoing battle
-					battle.End(battle.postion);
+					//End this battle properly
+					//Will be removed from the global battle data later as to not disrupt the loop
+					battle.End(battle.postion, entry.Key, historyData, winnerID);
 
 					//We remove battle from global battle data
 					//So add to the toRemove data structure
@@ -294,23 +293,9 @@ public class BattleResolutionRoutine : RoutineBase
 		//Prune battle data of battles that have been finished
 		foreach (KeyValuePair<RealSpacePosition, List<GlobalBattleData.Battle>> entry in finishedBattlesToRemove)
 		{
-			if (!globalBattleData.cellCenterToBattles.ContainsKey(entry.Key))
-			{
-				throw new System.Exception("Trying to remove a battle that doesn't exist! Likely that lookup key is wrong!");
-			}
-
-			//Get reference to list
-			List<GlobalBattleData.Battle> target = globalBattleData.cellCenterToBattles[entry.Key];
-			//Remove all battles from list
 			foreach (GlobalBattleData.Battle battle in entry.Value)
 			{
-				target.Remove(battle);
-			}
-
-			//If list is now empty
-			if (target.Count == 0)
-			{
-				globalBattleData.cellCenterToBattles.Remove(entry.Key);
+				globalBattleData.RemoveBattle(entry.Key, battle);
 			}
 		}
 	}

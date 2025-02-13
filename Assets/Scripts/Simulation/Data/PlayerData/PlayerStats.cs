@@ -11,7 +11,8 @@ public class PlayerStats : DataModule
 		{Stats.healthRegen.ToString(), new List<float>() { 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 4.0f, 5.0f }},
 		{Stats.jumpRange.ToString(), new List<float>() { 10.0f }},
 		{Stats.attackPower.ToString(), new List<float>() { 0.5f, 1f, 1.5f, 2f, 2.5f, 3f, 3.5f }},
-		{Stats.moveSpeed.ToString(), new List<float>() { 150.0f, 175.0f, 200.0f, 225.0f, 250.0f, 350.0f, 500.0f }}
+		{Stats.moveSpeed.ToString(), new List<float>() { 150.0f, 175.0f, 200.0f, 225.0f, 250.0f, 350.0f, 500.0f }},
+		{Stats.populationCap.ToString(), new List<float>() { 0.0f, 50.0f, 150.0f, 200.0f, 400.0f, 450.0f, 900.0f }}
 	};
 
 	public static float GetDefaultStatValue(string identifier)
@@ -121,7 +122,8 @@ public enum Stats
 	healthRegen,
 	jumpRange,
 	attackPower,
-	moveSpeed
+	moveSpeed,
+	populationCap
 }
 
 public class StatContributor

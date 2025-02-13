@@ -43,7 +43,8 @@ public class Shop : DataModule
 		//Default sold stats
 		Stats.maxHealth,
 		Stats.attackPower,
-		Stats.moveSpeed
+		Stats.moveSpeed,
+		Stats.populationCap
 	};
 
 	//The tick this shop should be updated

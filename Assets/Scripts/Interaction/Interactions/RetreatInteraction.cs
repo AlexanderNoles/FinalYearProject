@@ -85,6 +85,11 @@ public class RetreatInteraction : Interaction
 		RetreatFromBattle(battle);
 	}
 
+	public override float GetRange()
+	{
+		return Ranges.infinity;
+	}
+
 	public override int GetDrawPriority()
 	{
 		return 80;

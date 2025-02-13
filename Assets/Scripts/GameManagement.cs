@@ -75,4 +75,11 @@ public class GameManagement : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+
+	[MonitorBreak.Bebug.ConsoleCMD("TIMESCALE")]
+	public static void SetTimeScaleCMD(string newTimeScale)
+	{
+		int timeScale = int.Parse(newTimeScale);
+		TimeManagement.AddTimeScale(timeScale, 100000, newTimeScale);
+	}
 }

@@ -3,9 +3,22 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class BattleManagement : MonoBehaviour
 {
+	//Event run after global reset is done
+	public static UnityEvent postGlobalRefresh = new UnityEvent();
+
+	//Data generated post global reset
+	public class PostGlobalRefreshStats
+	{
+		public List<Vector3> positionsOfBBsThatFoundTargets = new List<Vector3>();
+		public Dictionary<int, int> idToCount = new Dictionary<int, int>();
+	}
+
+	public static PostGlobalRefreshStats refreshStats;
+
 	//Lookup battle behaviour system
 	private static Dictionary<Collider, BattleBehaviour> colliderToBattleBehaviour = new Dictionary<Collider, BattleBehaviour>();
 
@@ -98,6 +111,8 @@ public class BattleManagement : MonoBehaviour
     private void Awake()
 	{
 		instance = this;
+		postGlobalRefresh.RemoveAllListeners();
+		refreshStats = new PostGlobalRefreshStats();
 
 		basicBeamFunc = new Func<BasicEffectData, float, int>((BasicEffectData effectData, float percentage) =>
 		{
@@ -226,6 +241,9 @@ public class BattleManagement : MonoBehaviour
 		//For each battle behaviour
 		if (Time.frameCount > nextGlobalRefresh)
 		{
+			//During the global refresh we want to generate some data so other routines can tell stuff about the current battle state
+			refreshStats = new PostGlobalRefreshStats();
+
 			//Every 100 to 200 frames refresh the targets
 			//Randomized to reduce chance of syncing up with frame spikes
 			//without having a complicated execution priority system
@@ -238,59 +256,85 @@ public class BattleManagement : MonoBehaviour
 
 			foreach (BattleBehaviour bb in colliderToBattleBehaviour.Values)
 			{
-				if (bb.autoFindTargets && SimObjectBehaviour.IsSimObj(bb.GetType()))
+				if (SimObjectBehaviour.IsSimObj(bb.GetType()))
 				{
-					//First clear the targets, (unless they are maintained)
-					bb.ClearNonMaintainedTargets();
-
 					SimObjectBehaviour simObjectBehaviour = (SimObjectBehaviour)bb;
 
-					//Get feelings data for this bb
 					int entityID = simObjectBehaviour.TryGetEntityID();
 
-					if (entityID == -1 || !idToFeelingsData.ContainsKey(entityID))
+					//Add to refresh stats count for this entity
+					if (!refreshStats.idToCount.ContainsKey(entityID))
 					{
-						continue;
+						refreshStats.idToCount.Add(entityID, 0);
 					}
 
-					FeelingsData feelingsData = idToFeelingsData[entityID];
-					//Now iterate over all other bbs in the scene and get ones that we could be aggressive towards
-					foreach (BattleBehaviour otherBB in colliderToBattleBehaviour.Values)
+					//Increment count
+					refreshStats.idToCount[entityID]++;
+
+					//Process
+					if (bb.autoFindTargets)
 					{
-						int otherID = -1;
+						//First clear the targets, (unless they are maintained)
+						bb.ClearNonMaintainedTargets();
 
-						if (SimObjectBehaviour.IsSimObj(otherBB.GetType()))
-						{
-							otherID = (otherBB as SimObjectBehaviour).TryGetEntityID();
-						}
+						//Base on whether any target was found, not neccesarily added. (As a found target might already be a maintained target)
+						bool foundAnyTargets = false;
 
-						if (otherID == entityID)
+						//Get feelings data for this bb
+						if (entityID == -1 || !idToFeelingsData.ContainsKey(entityID))
 						{
-							//Can't attack our own ships!
 							continue;
 						}
-						else if (
-							otherID == -1 || 
-							!feelingsData.idToFeelings.ContainsKey(otherID) ||
-							(idToContactData.ContainsKey(otherID) && idToContactData[otherID].openlyHostile) ||
-							(idToContactData.ContainsKey(entityID) && idToContactData[entityID].openlyHostile)
-							)
-						{
-							//Add target if it doesn't have an entity, or we have no feelings about this entity
-							//So by default things attack each other
 
-							//Also add it if it is openly hostile or we are openly hostile
-							bb.AddTarget(otherBB, false);
-						}
-						else if (feelingsData.idToFeelings[otherID].inConflict || feelingsData.idToFeelings[otherID].favourability < BalanceManagement.oppositionThreshold)
+						FeelingsData feelingsData = idToFeelingsData[entityID];
+						//Now iterate over all other bbs in the scene and get ones that we could be aggressive towards
+						foreach (BattleBehaviour otherBB in colliderToBattleBehaviour.Values)
 						{
-							//Hostile, whether in marked conflict or low favourability
-							//(30/01/2025) in conflict should ideally be removed at some point
-							bb.AddTarget(otherBB, false);
+							int otherID = -1;
+
+							if (SimObjectBehaviour.IsSimObj(otherBB.GetType()))
+							{
+								otherID = (otherBB as SimObjectBehaviour).TryGetEntityID();
+							}
+
+							if (otherID == entityID)
+							{
+								//Can't attack our own ships!
+								continue;
+							}
+							else if (
+								otherID == -1 ||
+								!feelingsData.idToFeelings.ContainsKey(otherID) ||
+								(idToContactData.ContainsKey(otherID) && idToContactData[otherID].openlyHostile) ||
+								(idToContactData.ContainsKey(entityID) && idToContactData[entityID].openlyHostile)
+								)
+							{
+								//Add target if it doesn't have an entity, or we have no feelings about this entity
+								//So by default things attack each other
+
+								//Also add it if it is openly hostile or we are openly hostile
+								bb.AddTarget(otherBB, false);
+								foundAnyTargets = true;
+							}
+							else if (feelingsData.idToFeelings[otherID].inConflict || feelingsData.idToFeelings[otherID].favourability < BalanceManagement.oppositionThreshold)
+							{
+								//Hostile, whether in marked conflict or low favourability
+								//(30/01/2025) in conflict should ideally be removed at some point
+								bb.AddTarget(otherBB, false);
+								foundAnyTargets = true;
+							}
+						}
+
+						if (foundAnyTargets)
+						{
+							refreshStats.positionsOfBBsThatFoundTargets.Add(bb.transform.position);
 						}
 					}
 				}
 			}
+
+			//Invoke post event
+			postGlobalRefresh.Invoke();
 		}
 
 		//Per tick update

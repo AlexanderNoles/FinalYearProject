@@ -214,6 +214,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: StatIconSheet_5
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 48
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: feb7ee869b363cb44b80b7778616972f
+      internalID: -536700986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -230,6 +251,7 @@ TextureImporter:
       StatIconSheet_2: 1205188285
       StatIconSheet_3: 262524793
       StatIconSheet_4: -1251424750
+      StatIconSheet_5: -536700986
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

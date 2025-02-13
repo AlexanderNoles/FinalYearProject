@@ -166,7 +166,7 @@ public class PlayerInteractionManagement : MonoBehaviour
 					{
 						SimObjectBehaviour target = foundTargets[i];
 						//Validate normally and ensure target is within range (when using smart interaction we can't pre limit the range on the raycast check)
-						bool validationResult = targetInteraction.ValidateBehaviour(target) && (ranges[i] <= targetInteraction.GetRange() || !careAboutRange);
+						bool validationResult = targetInteraction.ValidateBehaviour(target) && (!careAboutRange || ranges[i] <= targetInteraction.GetRange());
 
 						if (validationResult)
 						{

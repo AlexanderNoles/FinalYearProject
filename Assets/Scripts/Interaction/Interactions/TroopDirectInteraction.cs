@@ -71,6 +71,11 @@ public class TroopDirectInteraction : Interaction
 		}
 	}
 
+	public override float GetRange()
+	{
+		return Ranges.infinity;
+	}
+
 	public override int GetDrawPriority()
 	{
 		return 85;

@@ -3,7 +3,9 @@ using MonitorBreak.Bebug;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Unity.VisualScripting;
 using UnityEngine;
+using static GlobalBattleData;
 using static GlobalBattleData.Battle.DrawnData;
 
 public class GlobalBattleData : DataModule
@@ -83,8 +85,12 @@ public class GlobalBattleData : DataModule
 			return false;
 		}
 
-		public void End(RealSpacePosition pos)
+		public void End(RealSpacePosition actualPos, RealSpacePosition cellCenter, HistoryData historyData, int winnerID)
 		{
+			//Reslove the territory loss
+			ResolveTerritory(cellCenter, historyData, winnerID);
+
+			//For all remaing factions we need to remove their ongoing battle
 			foreach (int id in involvedEntities)
 			{
 				SimulationEntity current = SimulationManagement.GetEntityByID(id);
@@ -99,9 +105,18 @@ public class GlobalBattleData : DataModule
 
 				if (current.GetData(DataTags.Battle, out BattleData data))
 				{
-					if (!data.positionToOngoingBattles.Remove(pos))
+					if (!data.positionToOngoingBattles.Remove(actualPos))
 					{
 						Debug.LogWarning("Entity was unaware of battle it was in!");
+					}
+					else
+					{
+						//Battle ended succesfully
+						if (data.TryGetLinkedData(DataTags.Strategy, out StrategyData strategyData))
+						{
+							//Need to ask strategy data what to do on a battle end
+							strategyData.OnBattleEnd(actualPos);
+						}
 					}
 				}
 			}
@@ -307,11 +322,11 @@ public class GlobalBattleData : DataModule
 			drawnData = new DrawnData();
 			drawnData.parent = parent;
 			//Create the battlefield object that will be used to process interactions
-			drawnData.battlefieldObject = GeneratorManagement.GetStructure((int)GeneratorManagement.POOL_INDEXES.BATTLEFIELD);
-			drawnData.battlefieldObject.parent = parent;
-			drawnData.battlefieldObject.localPosition = Vector3.zero;
-			drawnData.battlefieldObject.gameObject.SetActive(true);
-			drawnData.battlefieldObject.GetComponent<SimObjectBehaviour>().target = this;
+			Transform battlefieldObject = GeneratorManagement.GetStructure((int)GeneratorManagement.POOL_INDEXES.BATTLEFIELD);
+			battlefieldObject.parent = parent;
+			battlefieldObject.localPosition = Vector3.zero;
+			battlefieldObject.gameObject.SetActive(true);
+			LinkToBehaviour(battlefieldObject);
 			//Iterate through all active participants in this battle
 			//Generate inital drawn data for them
 			//This drawn data will then be updated based on differences per tick
@@ -580,6 +595,29 @@ public class GlobalBattleData : DataModule
 		}
 
 		return false;
+	}
+
+	public bool RemoveBattle(RealSpacePosition cellCenter, Battle battle)
+	{
+		if (!cellCenterToBattles.ContainsKey(cellCenter))
+		{
+			Debug.LogWarning("Trying to remove a battle that doesn't exist! Likely that lookup key is wrong!");
+			return false;
+		}
+
+		if (!cellCenterToBattles[cellCenter].Remove(battle))
+		{
+			//Nothing removed
+			return false;
+		}
+
+		if (cellCenterToBattles[cellCenter].Count == 0)
+		{
+			//Remove the list as it is now empty
+			cellCenterToBattles.Remove(cellCenter);
+		}
+
+		return true;
 	}
 
 	[MonitorBreak.Bebug.ConsoleCMD("PBattles", "Display player battle information")]

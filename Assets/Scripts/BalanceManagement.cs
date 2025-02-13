@@ -28,10 +28,5 @@ public static class BalanceManagement
 	public const float purchaseAllowedThreshold = -0.1f;
 
 	//Player population balancing
-	public const float playerPopulationStartValue = 25;
-	public const float intialPlayerPopulationMax = 100;
-	public const float playerPopulationChangePerTick = 0.243f; //Arbitrarly randomized number to unsync population count from exact ticks
-
-	//Military balancing
-	public const int initalMilitaryCount = 5;
+	public const float playerPopulationChangePerTick = 2.243f; //Arbitrarly randomized number to unsync population count from exact ticks
 }
