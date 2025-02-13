@@ -67,4 +67,9 @@ public class NationInformationDisplayUI : MonoBehaviour
 	{
 		NationSelectionInteraction.FinalizeNationSelect(simulationEntity);
 	}
+
+	public void CloseUIButtonCallback()
+	{
+		SetActive(false, null);
+	}
 }

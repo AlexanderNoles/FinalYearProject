@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NeutralUIState : UIState
 {
-    public override KeyCode GetSetActiveKey()
+	public override KeyCode GetSetActiveKey()
     {
         return InputManagement.returnToNeutral;
     }
