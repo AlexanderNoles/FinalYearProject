@@ -9,6 +9,19 @@ public class ShipSimObjectBehaviour : SimObjectBehaviour
 	private int modelPoolIndex;
 	private Transform model;
 
+	protected override TakenDamageResult TakeDamage(float rawDamageNumber, BattleBehaviour origin)
+	{
+		TakenDamageResult result = base.TakeDamage(rawDamageNumber, origin);
+
+		if (target != null)
+		{
+			//Match health of ship and sim object
+			(target as Ship).health = currentHealth;
+		}
+
+		return result;
+	}
+
 	protected override void OnDeath(TakenDamageResult result)
 	{
 		base.OnDeath(result);
@@ -58,6 +71,9 @@ public class ShipSimObjectBehaviour : SimObjectBehaviour
 		}
 		else
 		{
+			//Match health
+			currentHealth = (target as Ship).health;
+
 			//If we are holding onto a model give it back
 			//This can't be done in OnDisable because we can't set parents when activating or deactivating
 			if (model != null)
