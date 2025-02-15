@@ -24,6 +24,7 @@ public class PirateCrew : Faction
 		//
 
 		AddData(DataTags.Military, new MilitaryData());
+		AddData(DataTags.Strategy, new TargetEntityTypeStrategy());
 		AddData(DataTags.Refinery, new RefineryData());
 		TargetableLocationData targetableLocationData = new PirateCrewBaseLocation();
 		TargetableLocationDesirabilityData desirabilityData = new TargetableLocationDesirabilityData();

@@ -41,7 +41,7 @@ public class RandomEventTickRoutine : RoutineBase
 					//
 
 					int chance = SimulationManagement.random.Next(0, 101) + (modifier / 5);
-					if (chance > 75)
+					if (chance > 110)
 					{
 						//Take the highest chance to not give preference to the first nations
 						if (chance > highestChance)
@@ -92,7 +92,13 @@ public class RandomEventTickRoutine : RoutineBase
 				if (SimulationManagement.random.Next(0, 101) < 1)
 				{
 					//Spawn some pirates
-					new PirateCrew().Simulate();
+					PirateCrew pirateCrew = new PirateCrew();
+					pirateCrew.Simulate();
+
+					//Get the new pirate crews strategy and make them target their original nation
+					TargetEntityTypeStrategy targetEntityTypeStrategy = pirateCrew.GetDataDirect<TargetEntityTypeStrategy>(DataTags.Strategy);
+					targetEntityTypeStrategy.targetEntityID = nation.id;
+					targetEntityTypeStrategy.entityTypeTarget = EntityTypeTags.Nation;
 				}
 			}
 

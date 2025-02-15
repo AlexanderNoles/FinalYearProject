@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class NationInformationDisplayUI : MonoBehaviour
 {
+	public TextMeshProUGUI subtitle;
+
 	private static Dictionary<int, int> entityIDtoResourceCount = new Dictionary<int, int>();
 	private static NationInformationDisplayUI instance;
 	private static SimulationEntity simulationEntity;
@@ -35,6 +37,11 @@ public class NationInformationDisplayUI : MonoBehaviour
 		(target.transform as RectTransform).anchoredPosition = new Vector3(250, -375, 0.0f);
 
 		SetActive(false, null);
+	}
+
+	private void OnEnable()
+	{
+		subtitle.text = $"// Year: {SimulationManagement.GetCurrentYear()}U //";
 	}
 
 	public static bool IsActive()

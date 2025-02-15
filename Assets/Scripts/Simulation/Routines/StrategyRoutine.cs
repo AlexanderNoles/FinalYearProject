@@ -51,7 +51,7 @@ public class StrategyRoutine : RoutineBase
 			
 			//The maximum allowed attacks to do, this means eithier joining an existing battle or creating one
 			//Joining an existing battle could mean just transferring more troops to a battle we are already in
-			int maxAllowedAttacks = Mathf.RoundToInt(milData.currentFleetCount / 10.0f);
+			int maxAllowedAttacks = Mathf.CeilToInt(milData.currentFleetCount / 10.0f);
 
 			//How many attacks left
 			int attackBudget = maxAllowedAttacks - batData.positionToOngoingBattles.Count;
@@ -59,7 +59,7 @@ public class StrategyRoutine : RoutineBase
 			//Higher modifier than maxAllowedAttacks to help prevent some of the entity's overcomitting
 			//(This isn't a huge problem because it doesn't matter a huge amount if an entity is destroyed, only if
 			//that destruction is interesting for the player)
-			int fleetBudgetPerAttack = Mathf.RoundToInt(milData.currentFleetCount / 20.0f);
+			int fleetBudgetPerAttack = Mathf.CeilToInt(milData.currentFleetCount / 20.0f);
 
 			if (fleetBudgetPerAttack <= 0)
 			{
@@ -122,11 +122,6 @@ public class StrategyRoutine : RoutineBase
 						//If we actually sent any fleets...
 						if (amountTransferred > 0)
 						{
-							if (data.parent.Get() is VoidSwarm)
-							{
-								Debug.DrawRay(-actualPos.AsTruncatedVector3(MapManagement.mapRelativeScaleModifier), Vector3.up * amountTransferred, Color.yellow, 3.0f / SimulationManagement.GetSimulationSpeed());
-							}
-
 							//Join battle via battle data
 							globalBattleData.StartOrJoinBattle(cellCenter, actualPos, milData.parent.Get().id, enemyID, true);
 							//Lower remaining attack budget for all targetse
