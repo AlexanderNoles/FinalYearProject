@@ -16,6 +16,10 @@ public class NationInformationDisplayUI : MonoBehaviour
 	private void Awake()
 	{
 		instance = this;
+		//Set target to position, this is done because during testing it is typically elsewhere
+		//so it can be adjusted outside of the context of other ui elements
+		(target.transform as RectTransform).anchoredPosition = new Vector3(250, -375, 0.0f);
+
 		SetActive(false, null);
 	}
 

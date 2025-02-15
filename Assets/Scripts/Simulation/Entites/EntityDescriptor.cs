@@ -13,6 +13,7 @@ namespace EntityAndDataDescriptor
         Faction,
         Nation,
         Player,
+		MineralDeposit,
         GameWorld
     }
 

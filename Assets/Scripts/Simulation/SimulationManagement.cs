@@ -256,10 +256,17 @@ public class SimulationManagement : MonoBehaviour
 
     public static void DeRegisterDataModule(Enum tag, DataModule module)
     {
+		//Remove from regular data
         if (instance.tagToData.ContainsKey(tag))
         {
             instance.tagToData[tag].Remove(module);
         }
+
+		//Remove from to init data
+		if (instance.newDataModulesByTag.ContainsKey(tag))
+		{
+			instance.newDataModulesByTag[tag].Remove(module);
+		}
     }
 
     public static List<DataModule> GetDataViaTag(Enum tag)
@@ -365,7 +372,6 @@ public class SimulationManagement : MonoBehaviour
         currentMonth = 3;
         currentYear = 3004;
 
-		MineralDeposit.totalMineralCount = 0;
 		TargetableLocationData.targetableLocationLookup.Clear(); //Make sure this is empty!
 																 
 		if (seedOverride <= 10000)

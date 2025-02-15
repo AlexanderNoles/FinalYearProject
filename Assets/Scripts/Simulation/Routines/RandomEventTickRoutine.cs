@@ -14,12 +14,69 @@ public class RandomEventTickRoutine : RoutineBase
 		{
 			//Every 5 years
 
-			float newEntityChance = 25 + (Mathf.Max(4 - SimulationManagement.GetEntityCount(), 0) * 26);
-			if (SimulationManagement.random.Next(0, 101) < newEntityChance)
+			//Try to spawn new nations
+			//By default have a low chance of each nation trying to spawn a new sub nation
+			//(but limit to only one per tick)
+
+			//Otherwise just spawn a brand new nation
+
+			//Inital chance
+			float newNationChance = 25 + (Mathf.Max(4 - SimulationManagement.GetEntityCount(EntityTypeTags.Nation), 0) * 26);
+
+			if (SimulationManagement.random.Next(0, 101) < newNationChance)
 			{
-				//Spawn random entity
-				//Right now we just make a nation
-				new Nation().Simulate();
+				Nation parent = null;
+				int highestChance = int.MinValue;
+				List<SimulationEntity> entities = SimulationManagement.GetEntitiesViaTag(EntityTypeTags.Nation);
+					
+				//Iterate through nations
+				foreach (SimulationEntity entity in entities)
+				{
+					//Give a higher preference to nations that own more territory
+					int modifier = 0;
+					if (entity.GetData(DataTags.Territory, out TerritoryData territoryData))
+					{
+						modifier = territoryData.territoryCenters.Count;
+					}
+					//
+
+					int chance = SimulationManagement.random.Next(0, 101) + (modifier / 5);
+					if (chance > 75)
+					{
+						//Take the highest chance to not give preference to the first nations
+						if (chance > highestChance)
+						{
+							highestChance = chance;
+							parent = entity as Nation;
+						}
+					}
+				}
+				//
+
+				//Create the new nation
+				Nation newNation = new Nation();
+				newNation.Simulate(); //Begin simulating
+
+				//If a parent nation was found then copy political and emblem data
+				if (parent != null)
+				{
+					//Emblem data
+					newNation.ReplaceData(DataTags.Emblem, DataModule.ShallowCopy<EmblemData>(parent.GetDataDirect<EmblemData>(DataTags.Emblem)));
+
+					EmblemData newEmblem = newNation.GetDataDirect<EmblemData>(DataTags.Emblem);
+					newEmblem.SlightlyRandomize();
+					//
+
+					//Political data
+					newNation.ReplaceData(DataTags.Political, DataModule.ShallowCopy<PoliticalData>(parent.GetDataDirect<PoliticalData>(DataTags.Political)));
+					//
+
+					//Give random feelings towards parent
+					FeelingsData feelingsData = newNation.GetDataDirect<FeelingsData>(DataTags.Feelings);
+					feelingsData.idToFeelings[parent.GetEntityID()] = new FeelingsData.Relationship(parent.GetDataDirect<FeelingsData>(DataTags.Feelings).baseFavourability);
+					feelingsData.idToFeelings[parent.GetEntityID()].favourability += SimulationManagement.random.Next(-50, 51) / 50.0f;
+					//
+				}
 			}
 		}
 
@@ -40,7 +97,7 @@ public class RandomEventTickRoutine : RoutineBase
 			}
 
 			const int maxMineralCount = 75;
-			if (MineralDeposit.totalMineralCount < maxMineralCount)
+			if (SimulationManagement.GetEntityCount(EntityTypeTags.MineralDeposit) < maxMineralCount)
 			{
 				int mineralDepositCountPerMonth = 5;
 				for (int i = 0; i < mineralDepositCountPerMonth; i++)

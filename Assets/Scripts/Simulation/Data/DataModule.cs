@@ -31,8 +31,6 @@ public class DataModule
         return data;
     }
 
-
-
 	public virtual void OnAdd()
 	{
 
@@ -51,5 +49,12 @@ public class DataModule
 	public virtual string Read()
 	{
 		return null;
+	}
+
+	//STATIC
+
+	public static T ShallowCopy<T>(DataModule input) where T : DataModule
+	{
+		return (T)input.MemberwiseClone();
 	}
 }

@@ -100,6 +100,16 @@ public class SimulationEntity : SimObject
         return toReturn;
     }
 
+	public T GetDataDirect<T>(Enum tag) where T : DataModule
+	{
+		if (HasData(tag))
+		{
+			return dataModules[tag] as T;
+		}
+
+		return null;
+	}
+
     //Add a data module
     public void AddData(Enum tag, DataModule data)
     {
@@ -117,6 +127,15 @@ public class SimulationEntity : SimObject
         //Add to simulation manamgement register, so routines can access this data module
         SimulationManagement.RegisterDataModule(tag, data);
     }
+
+	public void ReplaceData(Enum tag, DataModule data)
+	{
+		if (dataModules.ContainsKey(tag))
+		{
+			RemoveData(tag);
+			AddData(tag, data);
+		}
+	}
 
     public void RemoveData(Enum tag)
     {

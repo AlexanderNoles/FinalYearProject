@@ -9842,7 +9842,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 90000
+  far clip plane: 50000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -13766,7 +13766,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 250, y: -375}
+  m_AnchoredPosition: {x: -249.99997, y: -375}
   m_SizeDelta: {x: 400, y: 650}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &520418222
@@ -18258,7 +18258,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -502, y: 482}
+  m_AnchoredPosition: {x: -501.99997, y: 482}
   m_SizeDelta: {x: 400, y: 655}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &732551031
@@ -25661,7 +25661,7 @@ MonoBehaviour:
   - {fileID: 487778561}
   debugRoutines: []
   simulationRoutinesStorage: {fileID: 487778559}
-  historyLength: 500
+  historyLength: 50
   planetsGenerator: {fileID: 1383595365}
 --- !u!1 &1253005082
 GameObject:
@@ -28541,7 +28541,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 75, y: -45.291016}
-  m_SizeDelta: {x: 225.28, y: 59.419}
+  m_SizeDelta: {x: 225.28, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1485663725
 MonoBehaviour:
@@ -28563,7 +28563,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Aldem Dominion
+  m_text: Aldem Democratic Dominion
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -28590,11 +28590,11 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
+  m_fontSize: 19.75
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 18
+  m_fontSizeMin: 15
   m_fontSizeMax: 24
   m_fontStyle: 17
   m_HorizontalAlignment: 2
@@ -32907,7 +32907,6 @@ MonoBehaviour:
   lockout: 0
   toggleable: 0
   pause: 0
-  fadeOnEnable: {fileID: 0}
 --- !u!1001 &1817726271
 PrefabInstance:
   m_ObjectHideFlags: 0
