@@ -100,7 +100,7 @@ public class NationInformationDisplayUI : MonoBehaviour
 		founded.text = $"// Founded {entity.createdYear}U //";
 
 		Nation nation = entity as Nation;
-		title.text = nation.name;
+		title.text = nation.GetDataDirect<NameData>(DataTags.Name).GetName();
 
 		if (entity.GetData(DataTags.Political, out PoliticalData politicalData))
 		{
@@ -131,8 +131,6 @@ public class NationInformationDisplayUI : MonoBehaviour
 			indicator.anchoredPosition3D = Vector3.Lerp(startingIndicatorPos, targetIndicatorPos, politicalIndicatorAnimationCurve.Evaluate(onDrawAnimT * politicalIndicatorAnimSpeed));
 		}
 	}
-
-
 
 	public void SelectButtonCallback()
 	{

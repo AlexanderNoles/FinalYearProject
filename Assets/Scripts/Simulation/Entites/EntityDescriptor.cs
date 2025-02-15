@@ -41,6 +41,7 @@ namespace EntityAndDataDescriptor
 		Policies,
 		Interactions,
         Military,
+		Name,
 		Strategy,
         Political,
         Economic,
