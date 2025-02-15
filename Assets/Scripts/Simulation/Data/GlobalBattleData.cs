@@ -165,7 +165,10 @@ public class GlobalBattleData : DataModule
 				{
 					if (lostEntity.GetData(DataTags.Territory, out TerritoryData lossData))
 					{
-						lossData.RemoveTerritory(cellCenterOfPos);
+						if (wonEntity.GetData(DataTags.Strategy, out StrategyData wonStratData) && wonStratData.removeTerritory)
+						{
+							lossData.RemoveTerritory(cellCenterOfPos);
+						}
 
 						float modifier = 1.0f;
 

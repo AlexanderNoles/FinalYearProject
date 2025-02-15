@@ -24,7 +24,9 @@ public class PirateCrew : Faction
 		//
 
 		AddData(DataTags.Military, new MilitaryData());
-		AddData(DataTags.Strategy, new TargetEntityTypeStrategy());
+		TargetEntityTypeStrategy strats = new TargetEntityTypeStrategy();
+		strats.removeTerritory = false; //Pirate crews don't take territory
+		AddData(DataTags.Strategy, strats);
 		AddData(DataTags.Refinery, new RefineryData());
 		TargetableLocationData targetableLocationData = new PirateCrewBaseLocation();
 		TargetableLocationDesirabilityData desirabilityData = new TargetableLocationDesirabilityData();

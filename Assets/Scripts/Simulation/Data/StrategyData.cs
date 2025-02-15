@@ -10,6 +10,7 @@ public class StrategyData : DataModule
 	}
 
 	public GlobalStrategy globalStrategy = GlobalStrategy.Aggresive;
+	public bool removeTerritory = true;
 	public float defensivePropensity = 3.0f;
 	public float attackPositionUncertainty = 0.0f;
 
