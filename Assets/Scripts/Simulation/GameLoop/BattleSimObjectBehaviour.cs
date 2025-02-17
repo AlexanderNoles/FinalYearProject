@@ -31,7 +31,6 @@ public class BattleSimObjectBehaviour : SimObjectBehaviour
 	{
 		//Check if any bbs found targets within battle range
 		//If not then verify who is still here to pick the winner
-
 		foreach (Vector3 recordedPos in BattleManagement.refreshStats.positionsOfBBsThatFoundTargets)
 		{
 			if (Vector3.Distance(transform.position, recordedPos) < battleRange)

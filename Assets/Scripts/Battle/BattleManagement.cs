@@ -22,6 +22,11 @@ public class BattleManagement : MonoBehaviour
 	//Lookup battle behaviour system
 	private static Dictionary<Collider, BattleBehaviour> colliderToBattleBehaviour = new Dictionary<Collider, BattleBehaviour>();
 
+	public static int BattleBehaviourCount()
+	{
+		return colliderToBattleBehaviour.Count;
+	}
+
 	public static void RegisterBattleBehaviour(Collider collider, BattleBehaviour target)
 	{
 		if (colliderToBattleBehaviour.ContainsKey(collider))
@@ -278,7 +283,7 @@ public class BattleManagement : MonoBehaviour
 						bb.ClearNonMaintainedTargets();
 
 						//Base on whether any target was found, not neccesarily added. (As a found target might already be a maintained target)
-						bool foundAnyTargets = false;
+						bool hasAnyTargets = bb.currentTargets.Count > 0; //All targets left would be maintained so if we have any that means battle is still going on
 
 						//Get feelings data for this bb
 						if (entityID == -1 || !idToFeelingsData.ContainsKey(entityID))
@@ -312,7 +317,7 @@ public class BattleManagement : MonoBehaviour
 
 								//Also add it if it is openly hostile or we are openly hostile
 								bb.AddTarget(otherBB, false);
-								foundAnyTargets = true;
+								hasAnyTargets = true;
 							}
 							else if (feelingsData.idToFeelings.ContainsKey(otherID) && 
 								(feelingsData.idToFeelings[otherID].inConflict || feelingsData.idToFeelings[otherID].favourability < BalanceManagement.oppositionThreshold))
@@ -320,11 +325,11 @@ public class BattleManagement : MonoBehaviour
 								//Hostile, whether in marked conflict or low favourability
 								//(30/01/2025) in conflict should ideally be removed at some point
 								bb.AddTarget(otherBB, false);
-								foundAnyTargets = true;
+								hasAnyTargets = true;
 							}
 						}
 
-						if (foundAnyTargets)
+						if (hasAnyTargets)
 						{
 							refreshStats.positionsOfBBsThatFoundTargets.Add(bb.transform.position);
 						}
