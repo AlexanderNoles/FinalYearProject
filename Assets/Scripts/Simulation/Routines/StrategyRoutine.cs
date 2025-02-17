@@ -117,7 +117,7 @@ public class StrategyRoutine : RoutineBase
 						}
 
 						//Make sure to send units to the actual pos and not the cell center (this is a bug that happened in the past)
-						int amountTransferred = milData.TransferFreeUnits(fleetBudgetPerAttack, actualPos, batData);
+						int amountTransferred = milData.TransferFreeUnits(fleetBudgetPerAttack, actualPos);
 
 						//If we actually sent any fleets...
 						if (amountTransferred > 0)

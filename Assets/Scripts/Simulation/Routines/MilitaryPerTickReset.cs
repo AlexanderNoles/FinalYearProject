@@ -17,7 +17,7 @@ public class MilitaryPerTickReset : RoutineBase
             militaryData.toTransfer.Clear();
 			militaryData.fromTransfer.Clear();
 
-            militaryData.totalDamageBuildup = 0.0f;
+			militaryData.totalDamageBuildup = 0.0f;
         }
 	}
 }

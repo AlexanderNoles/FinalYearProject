@@ -625,6 +625,27 @@ public class GlobalBattleData : DataModule
 		return true;
 	}
 
+	public bool BattleExists(RealSpacePosition pos)
+	{
+		//Generate lookup key
+		RealSpacePosition cellCenter = WorldManagement.ClampPositionToGrid(pos);
+
+		if (cellCenterToBattles.ContainsKey(cellCenter))
+		{
+			List<Battle> battles = cellCenterToBattles[cellCenter];
+
+			foreach (Battle battle in battles)
+			{
+				if (battle.postion.Equals(pos))
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	[MonitorBreak.Bebug.ConsoleCMD("PBattles", "Display player battle information")]
 	public static void DisplayPlayerBattleInformation()
 	{

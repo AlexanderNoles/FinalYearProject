@@ -212,6 +212,12 @@ public class WorldManagement : MonoBehaviour
             Gizmos.DrawWireSphere(position, debugSize);
         }
     }
+
+	[MonitorBreak.Bebug.ConsoleCMD("ZEROWORLDPOS")]
+	public static void ZeroWorldCenter()
+	{
+		worldCenterPosition = new RealSpacePosition(0, 0, 0);
+	}
 }
 
 [System.Serializable]

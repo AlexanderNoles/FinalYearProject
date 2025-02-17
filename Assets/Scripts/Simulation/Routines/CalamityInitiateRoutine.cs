@@ -10,6 +10,8 @@ public class CalamityInitiateRoutine : RoutineBase
 
 	public override void Run()
 	{
+		return;
+
 		//Get calamity data
 		GameWorld.main.GetData(DataTags.Calamity, out CalamityData calamityData);
 

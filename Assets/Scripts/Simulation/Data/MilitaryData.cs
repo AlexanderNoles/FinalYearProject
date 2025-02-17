@@ -1,3 +1,4 @@
+using EntityAndDataDescriptor;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,8 @@ public class MilitaryData : DataModule
 	public Dictionary<RealSpacePosition, List<ShipCollection>> positionToFleets = new Dictionary<RealSpacePosition, List<ShipCollection>>();
 	public Dictionary<RealSpacePosition, List<ShipCollection>> fromTransfer = new Dictionary<RealSpacePosition, List<ShipCollection>>();
 	public Dictionary<RealSpacePosition, List<ShipCollection>> toTransfer = new Dictionary<RealSpacePosition, List<ShipCollection>>();
+
+	public List<ShipCollection> retreatBuffer = new List<ShipCollection>();
 
 	public void MarkTransfer(RealSpacePosition from, RealSpacePosition to, ShipCollection target)
 	{
@@ -175,37 +178,86 @@ public class MilitaryData : DataModule
 		return RemoveFleet(pos, null);
 	}
 
-	public int TransferFreeUnits(int budget, RealSpacePosition target, BattleData battleData, int budgetMinimum = 0, bool allowRetreat = false)
+	public void AddFleetToRetreatBuffer(ShipCollection fleet)
 	{
-		int fleetTransferredCount = 0;
+		retreatBuffer.Add(fleet);
+		currentFleetCount++;
+	}
 
+	public ShipCollection RemoveNextFleetFromRetreatBuffer()
+	{
+		if (retreatBuffer.Count > 0)
+		{
+			ShipCollection toReturn = retreatBuffer[0];
+			retreatBuffer.RemoveAt(0);
+			currentFleetCount--;
+
+			return toReturn;
+		}
+
+		return null;
+	}
+
+	public int TransferFreeUnits(int budget, RealSpacePosition target)
+	{
 		//Reduce budget if we already have ships there
 		if (positionToFleets.ContainsKey(target))
 		{
 			budget -= positionToFleets[target].Count;
 		}
 
-		budget = Mathf.Max(budget, budgetMinimum);
+		budget = Mathf.Max(budget, 0);
 
 		//Move an amount of ships to this cell
 
-		//We need to identify which ships are not currently engaged in a battle
-		//So we scan through the current avliable military and check if their are already positioned at a battle, if they are not we move them to 
-		//the new cell until they we meet our expected fleet amount (or we run out of fleets to send)
-		List<(RealSpacePosition, int)> fromPositions = new List<(RealSpacePosition, int)>();
+		//Find troops that are currently avaliable
+		//This means ships at refineries that are fully repaired
+		//If we have direct refinery we can just pull from there
+		//Otherwise we should scan through settlements as those each have a refinery attached
 
-		foreach (KeyValuePair<RealSpacePosition, List<ShipCollection>> fleet in positionToFleets)
+		List<RealSpacePosition> fromPositions = GetSafetyPositions();
+
+		//These are all the fleets we want to transfer
+		List<ShipCollection> foundFleets = new List<ShipCollection>();
+
+		foreach (RealSpacePosition pos in fromPositions)
 		{
-			if (!battleData.positionToOngoingBattles.ContainsKey(fleet.Key) || allowRetreat)
+			//I think this can happen when 
+			if (pos == null)
 			{
-				//Not currently in a battle (or we are allowed to retreat)
-				//Transfer ships out to new target cell
+				continue;
+			}
 
-				//How many do we want to transfer
-				//Don't want to exceed budget or amount of ships stored at this cell
-				int transferLimit = Mathf.Min(budget, fleet.Value.Count);
-				fromPositions.Add((fleet.Key, transferLimit));
-				budget -= transferLimit;
+			if (positionToFleets.ContainsKey(pos))
+			{
+				//Iterate over all fleets, finding fully repaired ones up to budget cap
+				List<ShipCollection> ships = positionToFleets[pos];
+
+				int shipsRemoved = 0;
+				for (int i = 0; i < ships.Count && budget > 0;)
+				{
+					if (ships[i].FullyRepaired())
+					{
+						foundFleets.Add(ships[i]);
+						ships.RemoveAt(i);
+
+						shipsRemoved++;
+						budget--;
+					}
+					else
+					{
+						i++;
+					}
+				}
+
+				//Because we don't directly use the remove function we must adjust some things here
+				currentFleetCount -= shipsRemoved;
+
+				//no ships left at position
+				if (ships.Count == 0)
+				{
+					positionToFleets.Remove(pos);
+				}
 			}
 
 			if (budget <= 0)
@@ -214,28 +266,14 @@ public class MilitaryData : DataModule
 			}
 		}
 
-		foreach ((RealSpacePosition, int) entry in fromPositions)
+		//Add all the found ships to the desired position
+		int fleetTransferredCount = foundFleets.Count;
+		for (int i = 0; i < fleetTransferredCount; i++)
 		{
-			for (int i = 0; i < entry.Item2; i++)
-			{
-				//Remove any fleet from previous cell
-				ShipCollection transferredFleet = RemoveFleet(entry.Item1);
-
-				//Can't transfer a fully destroyed ship
-				if (transferredFleet.IsFullyDestroyed())
-				{
-					//Add fleet back to previous cell
-					AddFleet(entry.Item1, transferredFleet);
-				}
-				else
-				{               
-					//Add fleet to new cell
-					AddFleet(target, transferredFleet);
-
-					fleetTransferredCount++;
-				}
-			}
+			AddFleet(target, foundFleets[i]);
 		}
+
+		foundFleets.Clear();
 
 		return fleetTransferredCount;
 	}

@@ -1,3 +1,4 @@
+using EntityAndDataDescriptor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -175,10 +176,22 @@ public class SimObjectBehaviour : BoxDescribedBattleBehaviour
 	{
 		if ((origin is SimObjectBehaviour && PlayerSimObjBehaviour.IsPlayerSimObjectBehaviour(origin as SimObjectBehaviour)))
 		{
-			//Adjust player reputation
 			if (target != null)
 			{
+				//Adjust player reputation
 				target.AdjustPlayerReputation(rawDamageNumber * -BalanceManagement.damageReputationRatio);
+
+				//If target is a visitable location, then we need to start a battle here
+				if (target is VisitableLocation && GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattleData))
+				{
+					//Position
+					RealSpacePosition pos = (target as VisitableLocation).GetPosition();
+
+					if (!globalBattleData.BattleExists(pos))
+					{
+						globalBattleData.StartOrJoinBattle(WorldManagement.ClampPositionToGrid(pos), pos, PlayerManagement.GetTarget().id, target.GetEntityID(), false);
+					}
+				}
 			}
 		}
 

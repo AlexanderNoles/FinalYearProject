@@ -79,6 +79,21 @@ public class ShipCollection
 		return true;
 	}
 
+	public bool FullyRepaired()
+	{
+		List<Ship> ships = GetShips();
+
+		foreach (Ship ship in ships)
+		{
+			if (ship.GetMaxHealth() > ship.health)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public virtual void AddShip(Ship newShip)
 	{
 		//Do nothing by default

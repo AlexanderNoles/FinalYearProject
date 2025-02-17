@@ -1,4 +1,5 @@
 
+using EntityAndDataDescriptor;
 using System.Collections.Generic;
 
 public class StrategyData : DataModule
@@ -26,6 +27,26 @@ public class StrategyData : DataModule
 
 	public virtual void OnBattleEnd(RealSpacePosition battlePos)
 	{
-		//Do nothing by default
+		//Any troops left in the battle position
+		//Add them to the retreat buffer
+		if (TryGetLinkedData(DataTags.Military, out MilitaryData milData))
+		{
+			if (milData.positionToFleets.ContainsKey(battlePos))
+			{
+				int count = milData.positionToFleets[battlePos].Count;
+
+				for (int i = 0; i < count; i++)
+				{
+					ShipCollection fleet = milData.RemoveFleet(battlePos);
+
+					if (fleet == null)
+					{
+						continue;
+					}
+
+					milData.AddFleetToRetreatBuffer(fleet);
+				}
+			}
+		}
 	}
 }

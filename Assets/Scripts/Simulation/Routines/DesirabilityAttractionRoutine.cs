@@ -73,8 +73,6 @@ public class DesirabilityAttractionRoutine : RoutineBase
 					}
 				}
 				while (loopClamp > 0 && target == null);
-
-				target = militaries[SimulationManagement.random.Next(0, militaries.Count)].parent.Get();
 			}
 
 			//Final null check

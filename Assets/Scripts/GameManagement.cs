@@ -82,4 +82,12 @@ public class GameManagement : MonoBehaviour
 		int timeScale = int.Parse(newTimeScale);
 		TimeManagement.AddTimeScale(timeScale, 100000, newTimeScale);
 	}
+
+	[ConsoleCMD("OBSERVATION", "Switch To Observation mode")]
+	public static void ObservationMode()
+	{
+		Console.Execute("TRUESIGHT");
+		Console.Execute("ZEROWORLDPOS");
+		Console.Execute("SIMLIGHTSPEED");
+	}
 }

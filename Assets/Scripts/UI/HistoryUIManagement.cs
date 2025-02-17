@@ -10,6 +10,8 @@ using System.Linq;
 
 public class HistoryUIManagement : UIState
 {
+	private const bool mapDisplayEnabled = false;
+
 	public static HistoryUIManagement instance;
 	public MultiObjectPool pixelPool;
 	public GameObject mainUI;
