@@ -158,8 +158,8 @@ public class MainInfoUIControl : PostTickUpdate
         float percentage = Mathf.Clamp01(currentHealth / maxHealth);
 
         healthBarImage.fillAmount = percentage;
-        currentHealthLabel.text = Mathf.Max(0.0f, Mathf.Round(currentHealth)).ToString();
-        maxHealthLabel.text = maxHealth.ToString();
+		currentHealthLabel.text = UIHelper.ConvertToNiceNumberString(Mathf.Max(0.0f, Mathf.Round(currentHealth)), 0);
+        maxHealthLabel.text = UIHelper.ConvertToNiceNumberString(maxHealth, 0);
     }
 
     private float SmartExpMove(float start, float target, float moveSpeedModifier = 10.0f)

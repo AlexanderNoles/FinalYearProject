@@ -112,6 +112,15 @@ public class PlayerStats : DataModule
 
 		MonitorBreak.Bebug.Console.Log(compoundString);
 	}
+
+	[MonitorBreak.Bebug.ConsoleCMD("GODMODE")]
+	public static void GodModeStats()
+	{
+		PlayerStats target = PlayerManagement.GetStats();
+
+		target.AddContributorToStat(Stats.maxHealth.ToString(), new StatContributor(10000, Stats.maxHealth.ToString()));
+		target.AddContributorToStat(Stats.healthRegen.ToString(), new StatContributor(10000, Stats.healthRegen.ToString()));
+	}
 }
 
 //Defined stat keys

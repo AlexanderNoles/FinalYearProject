@@ -450,7 +450,8 @@ public class PlayerLocationManagement : MonoBehaviour
 						{
 							//Don't include any battles that don't have any active participants, this helps to remove potential confusion for the player
 							//as sim entities will sometimes open up a battle as a front but not send any ships there immediately
-							if (battle.anyShipsInBattle)
+							//EXCEPT, if the player is in the battle. This is mainly for when the player starts a battle solo with no ships
+							if (battle.anyShipsInBattle || battle.GetInvolvedEntities().Contains(PlayerManagement.GetTarget().id))
 							{
 								foundLocations.Add(battle);
 							}

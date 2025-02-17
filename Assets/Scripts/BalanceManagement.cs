@@ -14,8 +14,8 @@ public static class BalanceManagement
 	public const float overallBattlePace = 0.4f;
 
 	//How much dealing damage to entites affects your reputation?
-	//Realisitcally one attack should make them hate you but I want to give players a bit of leeway
-	public const float damageReputationRatio = 0.05f;
+	//Realisitcally one attack should make them hate you
+	public const float damageReputationRatio = 0.3f;
 
 	//Void Swarm balancing, controls how much effect they have on the solar system
 	//If these values are overtuned all other factions could be wiped out too easily

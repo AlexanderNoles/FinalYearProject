@@ -5,6 +5,20 @@ using UnityEngine.EventSystems;
 
 public static class UIHelper
 {
+	public static string ConvertToNiceNumberString(float input, int numberOfDecimalPlaces = 2)
+	{
+		if (input >= 1000000)
+		{
+			return System.Math.Round(input / 1000000, numberOfDecimalPlaces).ToString() + "M";
+		}
+		else if (input >= 1000)
+		{
+			return System.Math.Round(input / 1000, numberOfDecimalPlaces).ToString() + "K";
+		}
+
+		return Mathf.RoundToInt(input).ToString();
+	}
+
 	public static List<RaycastResult> ElementsUnderMouse()
 	{
 		PointerEventData pointerData = new PointerEventData(EventSystem.current)
