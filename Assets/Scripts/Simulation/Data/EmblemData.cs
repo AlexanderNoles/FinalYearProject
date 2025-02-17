@@ -5,6 +5,7 @@ using UnityEngine;
 public class EmblemData : DataModule
 {
     public bool hasCreatedEmblem = false;
+	public bool hasSetColours = false;
     public Color mainColour;
 	public string mainColourHex;
     public Color highlightColour;
@@ -53,6 +54,8 @@ public class EmblemData : DataModule
 
 		highlightColour = mainColour * 2.0f;
 		shadowColour = mainColour * 0.25f;
+
+		hasSetColours = true;
 	}
 
 	public override string Read()

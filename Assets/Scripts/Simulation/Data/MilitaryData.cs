@@ -185,7 +185,7 @@ public class MilitaryData : DataModule
 			budget -= positionToFleets[target].Count;
 		}
 
-		budget = Mathf.Max(budget, 0);
+		budget = Mathf.Max(budget, budgetMinimum);
 
 		//Move an amount of ships to this cell
 
@@ -221,10 +221,19 @@ public class MilitaryData : DataModule
 				//Remove any fleet from previous cell
 				ShipCollection transferredFleet = RemoveFleet(entry.Item1);
 
-				//Add fleet to new cell
-				AddFleet(target, transferredFleet);
+				//Can't transfer a fully destroyed ship
+				if (transferredFleet.IsFullyDestroyed())
+				{
+					//Add fleet back to previous cell
+					AddFleet(entry.Item1, transferredFleet);
+				}
+				else
+				{               
+					//Add fleet to new cell
+					AddFleet(target, transferredFleet);
 
-				fleetTransferredCount++;
+					fleetTransferredCount++;
+				}
 			}
 		}
 

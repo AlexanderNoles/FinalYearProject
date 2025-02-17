@@ -304,19 +304,18 @@ public class BattleManagement : MonoBehaviour
 							}
 							else if (
 								otherID == -1 ||
-								!feelingsData.idToFeelings.ContainsKey(otherID) ||
 								(idToContactData.ContainsKey(otherID) && idToContactData[otherID].openlyHostile) ||
 								(idToContactData.ContainsKey(entityID) && idToContactData[entityID].openlyHostile)
 								)
 							{
-								//Add target if it doesn't have an entity, or we have no feelings about this entity
-								//So by default things attack each other
+								//Add target if it doesn't have an entity
 
 								//Also add it if it is openly hostile or we are openly hostile
 								bb.AddTarget(otherBB, false);
 								foundAnyTargets = true;
 							}
-							else if (feelingsData.idToFeelings[otherID].inConflict || feelingsData.idToFeelings[otherID].favourability < BalanceManagement.oppositionThreshold)
+							else if (feelingsData.idToFeelings.ContainsKey(otherID) && 
+								(feelingsData.idToFeelings[otherID].inConflict || feelingsData.idToFeelings[otherID].favourability < BalanceManagement.oppositionThreshold))
 							{
 								//Hostile, whether in marked conflict or low favourability
 								//(30/01/2025) in conflict should ideally be removed at some point

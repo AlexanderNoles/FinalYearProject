@@ -16,16 +16,4 @@ public class VoidFleet : Fleet
 	{
 		return new VoidShip();
 	}
-
-	public override void OnTransfer(RealSpacePosition newPos)
-	{
-		float distancePercentage = 1.0f - (float)(origin.SubtractToClone(newPos).Magnitude() / WorldManagement.GetSolarSystemRadius());
-
-		distancePercentage = Mathf.Clamp01(Mathf.Pow(distancePercentage, BalanceManagement.voidSwarmDamageFalloff));
-
-		foreach (VoidShip ship in ships.Cast<VoidShip>())
-		{
-			ship.SetDamage(Mathf.Max(distancePercentage * 5.0f, 0.005f));
-		}
-	}
 }

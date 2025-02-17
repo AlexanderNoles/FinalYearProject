@@ -14,7 +14,9 @@ namespace EntityAndDataDescriptor
         Nation,
         Player,
 		MineralDeposit,
-        GameWorld
+        GameWorld,
+		PirateCrew,
+		AntiVoidKnights
     }
 
     public enum EntityStateTags
@@ -34,6 +36,8 @@ namespace EntityAndDataDescriptor
         Population,
 		Desirability,
         Emblem, 
+		EntitySpawner,
+		SpawnSource,
 		CentralShop,
 		Calamity,
         Stats,

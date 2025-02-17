@@ -147,6 +147,8 @@ public class SettlementsData : DataModule
 
 			//Create weapon
 			location.weapon = new SettlementWeapon();
+
+			maxPop = SimulationManagement.random.Next(95, 106);
         }
     }
 

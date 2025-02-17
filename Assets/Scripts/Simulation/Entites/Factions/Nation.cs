@@ -6,6 +6,30 @@ using MonitorBreak.Bebug;
 
 public class Nation : Faction
 {
+	public readonly EntitySpawnData nationEntitySpawnData = new EntitySpawnData() 
+	{
+		targets = new List<EntitySpawnData.EntityToSpawn>()
+		{
+			//Mineral deposits
+			new EntitySpawnData.EntityToSpawn()
+			{
+				entityTag = EntityTypeTags.MineralDeposit,
+				countPer = 2,
+				totalMax = 45,
+				chance = 20
+			},
+
+			//Pirate crews
+			new EntitySpawnData.EntityToSpawn()
+			{
+				entityTag = EntityTypeTags.PirateCrew,
+				entityClassType = typeof(PirateCrew),
+				countPer = 1,
+				chance = 1
+			}
+		}
+	};
+
 	public override void InitTags()
     {
         base.InitTags();
@@ -25,6 +49,7 @@ public class Nation : Faction
 		AddData(DataTags.Strategy, new WarStrategyData());
 		AddData(DataTags.Economic, new EconomyData());
 		AddData(DataTags.ContactPolicy, new ContactPolicyData());
+		AddData(DataTags.EntitySpawner, nationEntitySpawnData);
     }
 }
 

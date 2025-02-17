@@ -8,7 +8,7 @@ public class NationSelectionInteraction : Interaction
 {
 	public override bool ValidateOnMap(PlayerMapInteraction.UnderMouseData target)
 	{
-		return target.simulationEntity != null;
+		return target.simulationEntity != null && target.simulationEntity.HasData(DataTags.Name);
 	}
 
 	public override void ProcessOnMap(PlayerMapInteraction.UnderMouseData target)

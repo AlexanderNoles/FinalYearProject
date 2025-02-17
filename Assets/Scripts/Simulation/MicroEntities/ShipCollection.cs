@@ -64,6 +64,21 @@ public class ShipCollection
 		}
 	}
 
+	public bool IsFullyDestroyed()
+	{
+		List<Ship> ships = GetShips();
+
+		foreach (Ship ship in ships)
+		{
+			if (!ship.isWreck)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public virtual void AddShip(Ship newShip)
 	{
 		//Do nothing by default
@@ -72,6 +87,7 @@ public class ShipCollection
 	public virtual bool TakeDamage(float damage)
 	{
 		List<Ship> ships = GetShips();
+		damage /= ships.Count;
 
 		bool allShipsDestroyed = true;
 		foreach (Ship ship in ships)

@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using EntityAndDataDescriptor;
 using UnityEngine;
 
@@ -80,38 +82,51 @@ public class RandomEventTickRoutine : RoutineBase
 			}
 		}
 
-		if (currentTickRandomValue % SimulationManagement.MonthToTickNumberCount(1) == 0)
+		//
+		//The above is not handle using that data module as I wanted it to work apart from specific data modules
+		//(a.k.a it would be annoying to make it generalized and wouldn't give us much in return in my opnion)
+		//(for example, one of the major things is wanting to spawn new nations regardless of a parent nation, with data being tied to entities the answer would be to tie it to the game world I guess?)
+		//(but then we would have to specify for the gw to not copy political and emblem data) (we would also have to specify for nations that that's the data we want to copy) 
+		//
+
+		//Process entity spawn datas
+		List<DataModule> entitySpawners = SimulationManagement.GetDataViaTag(DataTags.EntitySpawner);
+
+		foreach (EntitySpawnData spawner in entitySpawners.Cast<EntitySpawnData>())
 		{
-			//Every month
-			List<SimulationEntity> nations = SimulationManagement.GetEntitiesViaTag(EntityTypeTags.Nation);
-
-			//For every nation we have some chance to spawn offshoots
-			foreach (SimulationEntity nation in nations)
+			foreach (EntitySpawnData.EntityToSpawn entity in spawner.targets)
 			{
-				//Could make this based on nation's internal political state
-				if (SimulationManagement.random.Next(0, 101) < 1)
+				//Is on the month interval
+				if (currentTickRandomValue % SimulationManagement.MonthToTickNumberCount(entity.monthFrequency) == 0)
 				{
-					//Spawn some pirates
-					PirateCrew pirateCrew = new PirateCrew();
-					pirateCrew.Simulate();
-
-					//Get the new pirate crews strategy and make them target their original nation
-					TargetEntityTypeStrategy targetEntityTypeStrategy = pirateCrew.GetDataDirect<TargetEntityTypeStrategy>(DataTags.Strategy);
-					targetEntityTypeStrategy.targetEntityID = nation.id;
-					targetEntityTypeStrategy.entityTypeTarget = EntityTypeTags.Nation;
-				}
-			}
-
-			const int maxMineralCount = 75;
-			if (SimulationManagement.GetEntityCount(EntityTypeTags.MineralDeposit) < maxMineralCount)
-			{
-				int mineralDepositCountPerMonth = 5;
-				for (int i = 0; i < mineralDepositCountPerMonth; i++)
-				{
-					if (SimulationManagement.random.Next(0, 101) < 30)
+					for (int i = 0; i < entity.countPer; i++)
 					{
-						//Spawn a new mineral deposit
-						new MineralDeposit().Simulate();
+						//No max or space left
+						if (entity.totalMax < 0 || SimulationManagement.GetEntityCount(entity.entityTag) < entity.totalMax)
+						{
+							float modifier = 0;
+							if (entity.totalMax > 0)
+							{
+								//Amount of entites left to spawn to reach cap
+								modifier = entity.totalMax - SimulationManagement.GetEntityCount(entity.entityTag);
+								modifier *= entity.tendencyTowardsCap;
+								modifier = Mathf.Max(modifier, 0);
+							}
+
+							if (SimulationManagement.random.Next(0, 101) < entity.chance + modifier)
+							{
+								//Spawn entity
+								SimulationEntity newEntity = Activator.CreateInstance(entity.entityClassType) as SimulationEntity;
+								//Begin simulating entity
+								newEntity.Simulate();
+
+								if (newEntity.GetData(DataTags.SpawnSource, out SpawnSourceData spawnSourceData))
+								{
+									//Tell a spawn source data module that it has been spawned
+									spawnSourceData.OnSpawn(spawner.parent.Get().id);
+								}
+							}
+						}
 					}
 				}
 			}

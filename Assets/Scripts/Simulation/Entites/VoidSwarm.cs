@@ -20,6 +20,22 @@ using UnityEngine;
 //We can model ship control off ContactPolicy if we want
 public class VoidSwarm : Faction
 {
+	public readonly EntitySpawnData antiVoidKnightSpawnData = new EntitySpawnData()
+	{
+		targets = new List<EntitySpawnData.EntityToSpawn>()
+		{
+			new EntitySpawnData.EntityToSpawn()
+			{
+				entityClassType = typeof(AntiVoidKnights),
+				entityTag = EntityTypeTags.AntiVoidKnights,
+				chance = 30,
+				tendencyTowardsCap = 1.0f,
+				totalMax = 5
+			}
+		}
+	};
+
+
 	public override void InitTags()
 	{
 		base.InitTags();
@@ -59,7 +75,6 @@ public class VoidSwarm : Faction
 
 		//Create pre coloured emblem data
 		EmblemData emblem = new EmblemData();
-		emblem.hasCreatedEmblem = true;
 		emblem.mainColour = Color.magenta;
 		emblem.SetColoursBasedOnMainColour();
 
@@ -74,12 +89,17 @@ public class VoidSwarm : Faction
 		AddData(DataTags.Strategy, new GenocidalStrategyData());
 		//
 
-		AddData(DataTags.Refinery, new RefineryData());
+		RefineryData refinery = new RefineryData();
+		refinery.productionSpeed = 100.0f; //Very fast refinery
+		refinery.autoFillFleets = true;
+		AddData(DataTags.Refinery, refinery);
 
 		ContactPolicyData contactPolicyData = new ContactPolicyData();
 		contactPolicyData.openlyHostile = true;
 
 		AddData(DataTags.ContactPolicy, contactPolicyData);
+
+		AddData(DataTags.EntitySpawner, antiVoidKnightSpawnData);
 	}
 
 	//Testing functions

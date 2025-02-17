@@ -190,6 +190,8 @@ public class BattleResolutionRoutine : RoutineBase
 
 							float amountToAddToWinProgress = Mathf.Max(totalShips / (10f * battleLengthMultiplier), 0.001f);
 							//Apply win progress
+							//Because this is only done when the battle is considered over, damage was applied (at least) last tick
+							//This means other routines can check their current battles to find destroyed fleets to transfer out
 							battle.AddToWinProgress(involvedEntities.IndexOf(id), amountToAddToWinProgress);
 						}
 						else
@@ -238,6 +240,9 @@ public class BattleResolutionRoutine : RoutineBase
 						}
 					}
 
+					//Only ever change the health state of ships in the battle if not over/no win progress being added/battle can't end this tick
+					//This is to allow other routines to check their current battles for troops to transfer out before the battle is removed from 
+					//their data
 					if (!battleOver)
 					{
 						//Apply damage to all involved entities

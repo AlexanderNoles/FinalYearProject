@@ -9,11 +9,14 @@ public class PirateCrew : Faction
 	{
 		base.InitTags();
 		AddTag(EntityStateTags.Insignificant);
+		AddTag(EntityTypeTags.PirateCrew);
 	}
 
 	public override void InitData()
 	{
 		base.InitData();
+
+		AddData(DataTags.SpawnSource, new ImmediateTargetSourceSpawnSourceData());
 
 		//Give pirate crew population so they can have a military (i.e., have people to put into the military)
 		PopulationData populationData = new PopulationData();
@@ -26,6 +29,7 @@ public class PirateCrew : Faction
 		AddData(DataTags.Military, new MilitaryData());
 		TargetEntityTypeStrategy strats = new TargetEntityTypeStrategy();
 		strats.removeTerritory = false; //Pirate crews don't take territory
+		strats.attackPositionUncertainty = 0.5f;
 		AddData(DataTags.Strategy, strats);
 		AddData(DataTags.Refinery, new RefineryData());
 		TargetableLocationData targetableLocationData = new PirateCrewBaseLocation();
@@ -43,7 +47,6 @@ public class PirateCrew : Faction
 
 		//Set predetermined emblem colour
 		EmblemData emblem = new EmblemData();
-		emblem.hasCreatedEmblem = true;
 		emblem.mainColour = Color.red * 0.9f;
 		emblem.SetColoursBasedOnMainColour();
 
@@ -65,7 +68,7 @@ public class PirateCrew : Faction
 
 	public class PirateCrewBaseLocation : CentralBaseData
 	{
-		private List<StandardSimWeaponProfile> weapons = new List<StandardSimWeaponProfile>()
+		private readonly List<StandardSimWeaponProfile> weapons = new List<StandardSimWeaponProfile>()
 		{
 			new PirateCrewBaseWeapon()
 		};

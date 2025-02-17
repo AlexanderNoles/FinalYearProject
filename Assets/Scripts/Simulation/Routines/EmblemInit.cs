@@ -26,10 +26,13 @@ public class EmblemInit : InitRoutineBase
 
             emblemData.hasCreatedEmblem = true;
 
-			//Get the next colour from the colour rotation
-			//Apply some small variation to it, so two nations colours are very rarely the same
-			emblemData.mainColour = VisualDatabase.GetNextFactionColour();
-			emblemData.SetColoursBasedOnMainColour();
+			if (!emblemData.hasSetColours)
+			{
+				//Get the next colour from the colour rotation
+				//Apply some small variation to it, so two nations colours are very rarely the same
+				emblemData.mainColour = VisualDatabase.GetNextFactionColour();
+				emblemData.SetColoursBasedOnMainColour();
+			}
 
             //Get icons
             (Sprite, Sprite) icons = VisualDatabase.GetFactionIcons();

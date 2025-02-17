@@ -165,7 +165,9 @@ public class GlobalBattleData : DataModule
 				{
 					if (lostEntity.GetData(DataTags.Territory, out TerritoryData lossData))
 					{
-						if (wonEntity.GetData(DataTags.Strategy, out StrategyData wonStratData) && wonStratData.removeTerritory)
+						bool territoryRemoved = wonEntity.GetData(DataTags.Strategy, out StrategyData wonStratData) && wonStratData.removeTerritory;
+
+						if (territoryRemoved)
 						{
 							lossData.RemoveTerritory(cellCenterOfPos);
 						}
@@ -225,7 +227,7 @@ public class GlobalBattleData : DataModule
 						lossData.territoryClaimUpperLimit -= 2f * modifier;
 
 						//Transfer previously owned faction to history data
-						if (historyData != null)
+						if (historyData != null && territoryRemoved)
 						{
 							if (!historyData.previouslyOwnedTerritories.ContainsKey(cellCenterOfPos))
 							{

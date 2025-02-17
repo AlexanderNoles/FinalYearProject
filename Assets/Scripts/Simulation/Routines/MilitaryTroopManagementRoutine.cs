@@ -10,10 +10,6 @@ public class MilitaryTroopManagementRoutine : RoutineBase
 {
 	public override void Run()
 	{
-		//Get gameworld and universal battle data
-		GameWorld gameworld = GameWorld.main;
-		gameworld.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattleData);
-
 		//Get all military data
 		//This needs to be accessed by id by other militaries so get in dictionary form
 		Dictionary<int, MilitaryData> idToMilitary = SimulationManagement.GetEntityIDToData<MilitaryData>(DataTags.Military);
