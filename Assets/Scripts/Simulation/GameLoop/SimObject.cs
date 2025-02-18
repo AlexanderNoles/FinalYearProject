@@ -80,6 +80,11 @@ public class SimObject : DataModule, IDisplay
 		return 0.0f;
 	}
 
+	public virtual float GetPerDamageGoldReward()
+	{
+		return 0.0f;
+	}
+
 	// Interaction System Helpers //
 	public bool HasShop()
 	{

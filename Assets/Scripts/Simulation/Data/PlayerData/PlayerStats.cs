@@ -114,12 +114,20 @@ public class PlayerStats : DataModule
 	}
 
 	[MonitorBreak.Bebug.ConsoleCMD("GODMODE")]
-	public static void GodModeStats()
+	public static void GodModeHealthStats()
 	{
 		PlayerStats target = PlayerManagement.GetStats();
 
 		target.AddContributorToStat(Stats.maxHealth.ToString(), new StatContributor(10000, Stats.maxHealth.ToString()));
 		target.AddContributorToStat(Stats.healthRegen.ToString(), new StatContributor(10000, Stats.healthRegen.ToString()));
+	}
+
+	[MonitorBreak.Bebug.ConsoleCMD("GODRAYS")]
+	public static void GodModeAttackStats()
+	{
+		PlayerStats target = PlayerManagement.GetStats();
+
+		target.AddContributorToStat(Stats.attackPower.ToString(), new StatContributor(15, Stats.maxHealth.ToString()));
 	}
 }
 

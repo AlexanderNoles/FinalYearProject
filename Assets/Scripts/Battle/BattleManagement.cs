@@ -15,6 +15,8 @@ public class BattleManagement : MonoBehaviour
 	{
 		public List<Vector3> positionsOfBBsThatFoundTargets = new List<Vector3>();
 		public Dictionary<int, int> idToCount = new Dictionary<int, int>();
+
+		public bool battleEndPrevention = false;
 	}
 
 	public static PostGlobalRefreshStats refreshStats;
@@ -275,6 +277,12 @@ public class BattleManagement : MonoBehaviour
 
 					//Increment count
 					refreshStats.idToCount[entityID]++;
+
+					//Set prevent battle end if battle end is prevented
+					if (simObjectBehaviour.preventBattleEnd)
+					{
+						refreshStats.battleEndPrevention = true;
+					}
 
 					//Process
 					if (bb.autoFindTargets)

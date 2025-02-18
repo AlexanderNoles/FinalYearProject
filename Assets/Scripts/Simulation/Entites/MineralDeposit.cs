@@ -58,6 +58,11 @@ public class MineralDepositLocation : TargetableLocationData
 {
 	public float maxHealth;
 
+	public override float GetPerDamageGoldReward()
+	{
+		return BalanceManagement.mineralDepositWorthRatio;
+	}
+
 	public override string GetTitle()
 	{
 		return "Ore Deposit";

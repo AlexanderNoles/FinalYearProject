@@ -32,6 +32,7 @@ public class AntiVoidKnights : Faction
 		AddData(DataTags.Strategy, new TargetEntityTypeStrategy());
 		AddData(DataTags.Refinery, new RefineryData());
 
+		AddData(DataTags.Territory, new TerritoryData());
 		AddData(DataTags.TargetableLocation, new AntiVoidKnightBase());
 
 		ContactPolicyData contactPolicyData = new ContactPolicyData();

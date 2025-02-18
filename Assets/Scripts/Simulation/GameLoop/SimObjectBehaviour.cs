@@ -92,6 +92,9 @@ public class SimObjectBehaviour : BoxDescribedBattleBehaviour
 	public bool canBeInteractedWith = true;
 	public Collider mouseTargetCollider;
 
+	[Header("System Overrides")]
+	public bool preventBattleEnd = false;
+
 	protected override void OnEnable()
 	{
 		base.OnEnable();
@@ -174,28 +177,41 @@ public class SimObjectBehaviour : BoxDescribedBattleBehaviour
 
 	protected override TakenDamageResult TakeDamage(float rawDamageNumber, BattleBehaviour origin)
 	{
-		if ((origin is SimObjectBehaviour && PlayerSimObjBehaviour.IsPlayerSimObjectBehaviour(origin as SimObjectBehaviour)))
+		TakenDamageResult result = base.TakeDamage(rawDamageNumber, origin);
+
+		if (PlayerManagement.PlayerEntityExists())
 		{
-			if (target != null)
+			//If this is a player owned sim object
+			int playerID = PlayerManagement.GetTarget().id;
+			if (origin is SimObjectBehaviour && (origin as SimObjectBehaviour).TryGetEntityID().Equals(playerID))
 			{
-				//Adjust player reputation
-				target.AdjustPlayerReputation(rawDamageNumber * -BalanceManagement.damageReputationRatio);
-
-				//If target is a visitable location, then we need to start a battle here
-				if (target is VisitableLocation && GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattleData))
+				if (target != null)
 				{
-					//Position
-					RealSpacePosition pos = (target as VisitableLocation).GetPosition();
+					//Adjust player reputation
+					target.AdjustPlayerReputation(rawDamageNumber * -BalanceManagement.damageReputationRatio);
 
-					if (!globalBattleData.BattleExists(pos))
+					//If target is a visitable location, then we need to start a battle here
+					if (target is VisitableLocation && GameWorld.main.GetData(DataTags.GlobalBattle, out GlobalBattleData globalBattleData))
 					{
-						globalBattleData.StartOrJoinBattle(WorldManagement.ClampPositionToGrid(pos), pos, PlayerManagement.GetTarget().id, target.GetEntityID(), false);
+						//Position
+						RealSpacePosition pos = (target as VisitableLocation).GetPosition();
+
+						//Battle doesn't exist or we aren't a part of it
+						if (!globalBattleData.BattleExists(pos, out GlobalBattleData.Battle battle) || !battle.GetInvolvedEntities().Contains(playerID))
+						{
+							globalBattleData.StartOrJoinBattle(WorldManagement.ClampPositionToGrid(pos), pos, PlayerManagement.GetTarget().id, target.GetEntityID(), false);
+						}
 					}
 				}
+
+				//Apply per damage gold reward
+				PlayerInventory playerInventory = PlayerManagement.GetInventory();
+
+				playerInventory.AdjustCurrency(MathHelper.ValueTanhFalloff(result.damageTaken * target.GetPerDamageGoldReward(), 5, -1));
 			}
 		}
 
-		return base.TakeDamage(rawDamageNumber, origin);
+		return result;
 	}
 
 	protected override void OnDeath(TakenDamageResult result)
@@ -204,8 +220,8 @@ public class SimObjectBehaviour : BoxDescribedBattleBehaviour
 		{
 			target.OnDeath();
 
-			//Give kill reward if killed by player
-			if (PlayerManagement.PlayerEntityExists() && (result.origin is SimObjectBehaviour && PlayerSimObjBehaviour.IsPlayerSimObjectBehaviour(result.origin as SimObjectBehaviour)))
+			//Give kill reward if killed by player owned sim object
+			if (PlayerManagement.PlayerEntityExists() && result.origin is SimObjectBehaviour && (result.origin as SimObjectBehaviour).TryGetEntityID().Equals(PlayerManagement.GetTarget().id))
 			{
 				PlayerManagement.GetInventory().AdjustCurrency(target.GetKillReward() * BalanceManagement.killWorthRatio);
 			}

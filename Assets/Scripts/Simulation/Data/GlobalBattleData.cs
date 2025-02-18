@@ -625,8 +625,10 @@ public class GlobalBattleData : DataModule
 		return true;
 	}
 
-	public bool BattleExists(RealSpacePosition pos)
+	public bool BattleExists(RealSpacePosition pos, out Battle foundBattle)
 	{
+		foundBattle = null;
+
 		//Generate lookup key
 		RealSpacePosition cellCenter = WorldManagement.ClampPositionToGrid(pos);
 
@@ -638,6 +640,7 @@ public class GlobalBattleData : DataModule
 			{
 				if (battle.postion.Equals(pos))
 				{
+					foundBattle = battle;
 					return true;
 				}
 			}

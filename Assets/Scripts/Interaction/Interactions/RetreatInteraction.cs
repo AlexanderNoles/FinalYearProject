@@ -15,7 +15,7 @@ public class RetreatInteraction : Interaction
 		{
 			GlobalBattleData.Battle battle = target.baseLocation as GlobalBattleData.Battle;
 
-			if (battle.GetInvolvedEntities().Contains(PlayerManagement.GetTarget().id))
+			if (PlayerInBattle(battle))
 			{
 				//Player is involved in this battle
 				return true;
@@ -41,7 +41,8 @@ public class RetreatInteraction : Interaction
 		RealSpacePosition position = battle.GetPosition();
 
 		//Remove player from battle
-		battle.RemoveInvolvedEntity(PlayerManagement.GetTarget().id);
+		//battle.RemoveInvolvedEntity(PlayerManagement.GetTarget().id);
+		//(REMOVED ABOVE: don't actually need to leave the battle just need to retreat all the ships)
 
 		//Shift all ships at position back to reserves
 		MilitaryData militaryData = PlayerManagement.GetMilitary();
@@ -71,12 +72,20 @@ public class RetreatInteraction : Interaction
 		}
 
 		//Is the player in this battle?
-		if ((interactable.target as GlobalBattleData.Battle).GetInvolvedEntities().Contains(PlayerManagement.GetTarget().id))
+		if (PlayerInBattle(interactable.target as GlobalBattleData.Battle))
 		{
 			return true;
 		}
 
 		return false;
+	}
+
+	private bool PlayerInBattle(GlobalBattleData.Battle battle)
+	{
+		MilitaryData military = PlayerManagement.GetMilitary();
+
+		//Do we have ships at this position?
+		return military.positionToFleets.ContainsKey(battle.postion);
 	}
 
 	public override void ProcessBehaviour(SimObjectBehaviour interactable)

@@ -29,6 +29,12 @@ public class BattleSimObjectBehaviour : SimObjectBehaviour
 
 	private void EvaluateBattle()
 	{
+		//Any objects prevent the end of the battle?
+		if (BattleManagement.refreshStats.battleEndPrevention)
+		{
+			return;
+		}
+
 		//Check if any bbs found targets within battle range
 		//If not then verify who is still here to pick the winner
 		foreach (Vector3 recordedPos in BattleManagement.refreshStats.positionsOfBBsThatFoundTargets)
