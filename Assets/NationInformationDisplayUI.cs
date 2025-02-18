@@ -106,8 +106,7 @@ public class NationInformationDisplayUI : MonoBehaviour
 
 		founded.text = $"// Founded {entity.createdYear}U //";
 
-		Nation nation = entity as Nation;
-		title.text = nation.GetDataDirect<NameData>(DataTags.Name).GetName();
+		title.text = entity.GetDataDirect<NameData>(DataTags.Name).GetName();
 
 		if (entity.GetData(DataTags.Political, out PoliticalData politicalData))
 		{

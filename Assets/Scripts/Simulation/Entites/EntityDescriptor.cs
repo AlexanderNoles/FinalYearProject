@@ -50,6 +50,7 @@ namespace EntityAndDataDescriptor
         Political,
         Economic,
         TargetableLocation,
+		Timer,
         Feelings,
         ContactPolicy,
         Historical

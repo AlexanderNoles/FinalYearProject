@@ -20,7 +20,7 @@ public static class BalanceManagement
 	//Void Swarm balancing, controls how much effect they have on the solar system
 	//If these values are overtuned all other factions could be wiped out too easily
 	//If they are too low the void swarm has zero impact
-	public const float voidSwarmStartTroopMultiplier = 10f;
+	public const float voidSwarmStartTroopMultiplier = 50f;
 	public const float voidSwarmDamageFalloff = 1;
 
 	//Used by entites to determine when they hate each other

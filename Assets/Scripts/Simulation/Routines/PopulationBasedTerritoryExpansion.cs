@@ -45,6 +45,7 @@ public class PopulationBasedTerritoryExpansion : RoutineBase
             territory.territoryClaimUpperLimit += territory.growthRate;
 
             territory.territoryClaimUpperLimit = MathHelper.ValueTanhFalloff(territory.territoryClaimUpperLimit, Mathf.Clamp(populationData.currentPopulationCount * 5.0f, 10, 900), -1);
+			territory.territoryClaimUpperLimit = Mathf.Min(territory.territoryClaimUpperLimit, territory.hardTerritoryCountLimit);
 
             if (territory.territoryCenters.Count < territory.territoryClaimUpperLimit)
             {

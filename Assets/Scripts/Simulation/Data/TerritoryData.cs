@@ -13,6 +13,7 @@ public class TerritoryData : DataModule
     public HashSet<RealSpacePosition> borders = new HashSet<RealSpacePosition>();
 	public float growthRate;
 	public float territoryClaimUpperLimit;
+	public float hardTerritoryCountLimit = float.MaxValue;
 
 	public override string Read()
 	{

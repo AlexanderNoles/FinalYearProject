@@ -29,6 +29,11 @@ public class NationSelectionInteraction : Interaction
 			rps = actualSet.actualSettlementPos.Clone();
 			rps.Add(Vector3.back * (actualSet.location.GetEntryOffset() * WorldManagement.invertedInEngineWorldScaleMultiplier));
 		}
+		else if (entity.GetData(DataTags.TargetableLocation, out TargetableLocationData targetableLocationData))
+		{
+			rps = targetableLocationData.actualPosition.Clone();
+			rps.Add(Vector3.back * (targetableLocationData.GetEntryOffset() * WorldManagement.invertedInEngineWorldScaleMultiplier));
+		}
 		else if (entity.GetData(DataTags.Territory, out TerritoryData terrData) && terrData.territoryCenters.Count > 0)
 		{
 			rps = terrData.territoryCenters.ElementAt(0).Clone();

@@ -54,7 +54,7 @@ public class DesirabilityAttractionRoutine : RoutineBase
 				}
 			}
 
-			if (target == null)
+			if (target == null && militaries.Count > 0)
 			{
 				//Not within territory
 				//Pick random military

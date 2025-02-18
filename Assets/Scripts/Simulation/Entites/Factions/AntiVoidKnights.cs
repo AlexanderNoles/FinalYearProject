@@ -32,12 +32,15 @@ public class AntiVoidKnights : Faction
 		AddData(DataTags.Strategy, new TargetEntityTypeStrategy());
 		AddData(DataTags.Refinery, new RefineryData());
 
-		AddData(DataTags.Territory, new TerritoryData());
+		TerritoryData territoryData = new TerritoryData();
+		territoryData.hardTerritoryCountLimit = 15;
+		AddData(DataTags.Territory, territoryData);
 		AddData(DataTags.TargetableLocation, new AntiVoidKnightBase());
 
 		ContactPolicyData contactPolicyData = new ContactPolicyData();
 		contactPolicyData.visibleToAll = false;
 		AddData(DataTags.ContactPolicy, contactPolicyData);
+		AddData(DataTags.Political, new PoliticalData());
 
 		//Set predetermined emblem color
 		EmblemData emblem = new EmblemData();
@@ -46,6 +49,7 @@ public class AntiVoidKnights : Faction
 		emblem.SetColoursBasedOnMainColour();
 
 		AddData(DataTags.Emblem, emblem);
+		AddData(DataTags.Name, new AntiVoidKnightNameData());
 	}
 }
 
@@ -59,6 +63,43 @@ public class AntiVoidKnightBaseWeapon : StandardSimWeaponProfile
 	public override float GetTimeBetweenAttacks()
 	{
 		return 0.25f;
+	}
+}
+
+public class AntiVoidKnightNameData : NameData
+{
+	string[] primaryNames = new string[]
+	{
+		"Moon",
+		"Feather",
+		"Fate",
+		"Eagle",
+		"Shield",
+		"Blade",
+		"Fate",
+		"Dawn",
+		"Star",
+		"Iron",
+		"Gold",
+		"Bronze",
+		"Diamond",
+		"Sunrise",
+		"Sunset",
+		"Noon",
+		"Lancer",
+		"Mother",
+		"Father",
+		"Hunter"
+	};
+
+	public override void Generate()
+	{
+		baseName = 
+			"The " + 
+			primaryNames[SimulationManagement.random.Next(0, primaryNames.Length)] + 
+			" " +
+			primaryNames[SimulationManagement.random.Next(0, primaryNames.Length)] +
+			" Order";
 	}
 }
 

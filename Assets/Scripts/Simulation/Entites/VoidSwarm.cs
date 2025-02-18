@@ -29,12 +29,11 @@ public class VoidSwarm : Faction
 				entityClassType = typeof(AntiVoidKnights),
 				entityTag = EntityTypeTags.AntiVoidKnights,
 				chance = 30,
-				tendencyTowardsCap = 1.0f,
-				totalMax = 5
+				tendencyTowardsCap = 0.0f,
+				totalMax = 2
 			}
 		}
 	};
-
 
 	public override void InitTags()
 	{
@@ -100,6 +99,7 @@ public class VoidSwarm : Faction
 		AddData(DataTags.ContactPolicy, contactPolicyData);
 
 		AddData(DataTags.EntitySpawner, antiVoidKnightSpawnData);
+		AddData(DataTags.Timer, new TimerData(SimulationManagement.YearsToTickNumberCount(1)));
 	}
 
 	//Testing functions
