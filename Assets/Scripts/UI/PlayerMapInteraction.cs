@@ -364,6 +364,7 @@ public class PlayerMapInteraction : PostTickUpdate
 		{
 			//Don't let them set a new position if we are jumping or if we are currently  moused over a ui object
 			targetIcon.gameObject.SetActive(false);
+			selectionIndicator.gameObject.SetActive(false);
 			return;
 		}
 
@@ -535,7 +536,7 @@ public class PlayerMapInteraction : PostTickUpdate
 
 			if (lastSVI != null)
 			{
-				mapCursorData = lastSVI.GetMapCursorData();
+				mapCursorData = lastSVI.GetMapCursorData(underMouseData);
 			}
 
 			//Square Highlight

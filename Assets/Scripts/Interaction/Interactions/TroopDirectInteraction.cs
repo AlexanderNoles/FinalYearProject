@@ -41,7 +41,7 @@ public class TroopDirectInteraction : Interaction
 		}
 	}
 
-	public override InteractionMapCursor GetMapCursorData()
+	public override InteractionMapCursor GetMapCursorData(PlayerMapInteraction.UnderMouseData target)
 	{
 		return basicSquareWithLine;
 	}

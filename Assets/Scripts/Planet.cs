@@ -53,7 +53,8 @@ public class Planet : CelestialBody
         float oceanIntensity = heatToOceanIntensity.Evaluate(heatMagnitudeT);
         targetMat.SetFloat("_LandMaskModifier", (oceanIntensity * 2.0f) - 1.0f);
 
-        if (random.Next(0, 101) / 100.0f < waterThreshold) 
+		const bool nonWaterEnabled = false;
+        if (nonWaterEnabled && random.Next(0, 101) / 100.0f < waterThreshold) 
         {
             Color baseOceanColour = nonWaterColours.Evaluate(random.Next(0, 10000) / 10000.0f);
             targetMat.SetColor("_OceanColor", baseOceanColour);

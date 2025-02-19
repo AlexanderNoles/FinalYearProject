@@ -4,6 +4,7 @@ Shader"Unlit/OuterEffectRaycast"
     {
 		_FractalOffset ("Fractal Offset", Vector) = (0, 0, 0)
 		_Speed ("Displacement Speed", float) = 0
+		_ColourAffect ("Colour Affect", float) = 1
 		_NearClamp ("Near Clamp", float) = 0
 		_FarClamp ("Far Clamp", float) = 0
     }
@@ -44,6 +45,7 @@ Shader"Unlit/OuterEffectRaycast"
 			float _Speed;
 			float _NearClamp;
 			float _FarClamp;
+			float _ColourAffect;
 
             v2f vert (appdata v)
             {
@@ -66,10 +68,11 @@ Shader"Unlit/OuterEffectRaycast"
 
 			float DistanceFractal(float3 p)
 			{
-	if (p.z < _NearClamp)
-	{
-		return max(abs(p.z - _NearClamp), 0.1);
-	}
+	
+		if (p.z < _NearClamp)
+		{
+			return max(abs(p.z - _NearClamp), 0.1);
+		}
 	
 	if (p.z > _FarClamp)
 	{
@@ -124,9 +127,9 @@ float3 GetNormal(float3 p)
 				{
 					float3 basePoint = rayOrigin + (distanceFromOrigin * rayDirection);
 					float3 currentRayPoint = basePoint;
-					currentRayPoint.xy = Rotate(currentRayPoint.xy, _Time);
+					currentRayPoint.xy = Rotate(currentRayPoint.xy, _Time * 15.0f);
 					float3 secondaryRayPoint = basePoint;
-					secondaryRayPoint.xy = Rotate(secondaryRayPoint.xy, -_Time);
+					secondaryRayPoint.xy = Rotate(secondaryRayPoint.xy, -_Time * 15.0f);
 					distanceFromSurface = max(DistanceFractal(secondaryRayPoint), DistanceFractal(currentRayPoint)) + (0.1 * max(1 - i, 0));
 			
 					distanceFromOrigin += distanceFromSurface;
@@ -162,10 +165,10 @@ float3 GetNormal(float3 p)
 				//float3 normal = GetNormal(p);
 				//float lighting = dot(normal, normalize(float3(0.56, 0.2, -1))) *;
 	
-				float lighting = pow(max(outputDist, 0.0), 15);
+				float lighting = clamp(pow(max(outputDist, 0.0), 15), 0, 1);
 	
-				return float4(lighting, lighting, lighting, 1);
-			}
+	return float4(lighting, lighting, lighting, 1);
+}
             ENDCG
         }
     }

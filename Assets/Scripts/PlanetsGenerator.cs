@@ -44,7 +44,7 @@ public class PlanetsGenerator : MonoBehaviour
             //Calculate current angle
             if (debug)
             {
-                currentAngle = 360 * (i / (float)planetNumber);
+				currentAngle = 0.0f;//360 * (i / (float)planetNumber);
             }
             else
             {
@@ -67,8 +67,8 @@ public class PlanetsGenerator : MonoBehaviour
 
             newPlanet.Init(worldPos);
             bool hasRing = random.Next(0, 101) > 75;
-            //If we have a ring can't have atmosphere as shader's conflict
-            bool hasAtmosphere = ((percentage > 0.2 && percentage < 0.4) || debug) && !hasRing;
+
+            bool hasAtmosphere = percentage > 0.2 && percentage < 0.4;
             newPlanet.UpdatePlanetShader(random, relativeSize, percentage, hasAtmosphere);
             newPlanet.ActivateRing(hasRing);
 

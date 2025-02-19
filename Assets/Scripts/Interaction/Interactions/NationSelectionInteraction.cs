@@ -49,7 +49,7 @@ public class NationSelectionInteraction : Interaction
 		MapManagement.ClosePostNationSelection();
 	}
 
-	public override InteractionMapCursor GetMapCursorData()
+	public override InteractionMapCursor GetMapCursorData(PlayerMapInteraction.UnderMouseData target)
 	{
 		return basicBorder;
 	}

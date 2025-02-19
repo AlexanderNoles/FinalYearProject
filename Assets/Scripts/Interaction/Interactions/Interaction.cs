@@ -55,7 +55,7 @@ public class Interaction : IDisplay
 
 	}
 
-	public virtual InteractionMapCursor GetMapCursorData()
+	public virtual InteractionMapCursor GetMapCursorData(PlayerMapInteraction.UnderMouseData target)
 	{
 		return basicBorder;
 	}

@@ -6,7 +6,7 @@ public class TravelInteraction : Interaction
 {
 	public override bool ValidateOnMap(PlayerMapInteraction.UnderMouseData target)
 	{
-		return target.baseLocation != null && PlayerManagement.PlayerEntityExists() && !PlayerCapitalShip.IsJumping();
+		return (target.baseLocation != null || target.simulationEntity != null) && PlayerManagement.PlayerEntityExists() && !PlayerCapitalShip.IsJumping();
 	}
 
 	public override int GetDrawPriority()
@@ -20,7 +20,18 @@ public class TravelInteraction : Interaction
 		PlayerInventory playerInventory = PlayerManagement.GetInventory();
 
 		//Start ship jump
-		PlayerCapitalShip.StartJump(target.baseLocation);
+		if (target.baseLocation != null)
+		{
+			PlayerCapitalShip.StartJump(target.baseLocation);
+		}
+		else
+		{
+			ArbitraryLocation newLocation = new ArbitraryLocation();
+			newLocation.SetLocation(target.cellCenter);
+
+			PlayerCapitalShip.StartJump(newLocation);
+		}
+
 
 		//Subtract fuel if fuel is enabled
 		if (PlayerManagement.fuelEnabled)
@@ -36,8 +47,13 @@ public class TravelInteraction : Interaction
 		return "travelInteraction";
 	}
 
-	public override InteractionMapCursor GetMapCursorData()
+	public override InteractionMapCursor GetMapCursorData(PlayerMapInteraction.UnderMouseData target)
 	{
+		if (target.baseLocation == null)
+		{
+			return basicSquareWithLine;
+		}
+
 		return noneWithLine;
 	}
 }

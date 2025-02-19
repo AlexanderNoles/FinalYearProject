@@ -7,7 +7,7 @@ public class ShopInteraction : Interaction
 {
 	public override bool ValidateOnMap(PlayerMapInteraction.UnderMouseData target)
 	{
-		return target.baseLocation == null && target.simulationEntity != null && target.simulationEntity.HasData(DataTags.Economic);
+		return target.baseLocation == null && target.simulationEntity != null && target.simulationEntity.HasData(DataTags.Economic) && !PlayerCapitalShip.IsJumping();
 	}
 
 	public override void ProcessOnMap(PlayerMapInteraction.UnderMouseData target)

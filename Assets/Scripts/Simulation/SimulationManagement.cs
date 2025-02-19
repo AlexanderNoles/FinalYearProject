@@ -386,7 +386,7 @@ public class SimulationManagement : MonoBehaviour
 
         random = new System.Random(simulationSeed);
 
-        planetsGenerator.GeneratePlanets(random);
+        planetsGenerator.GeneratePlanets(random, false);
 
         instance = this;
 

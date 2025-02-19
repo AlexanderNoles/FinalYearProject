@@ -142,6 +142,7 @@ MonoBehaviour:
   autoFindTargets: 1
   autoRetaliate: 1
   transform: {fileID: 0}
+  gameObject: {fileID: 0}
   currentTargets: []
   targetBox:
     m_Center: {x: 0, y: 0, z: 0}
@@ -165,6 +166,7 @@ MonoBehaviour:
   - {x: 22.838638, y: -0.5, z: -10.168412}
   canBeInteractedWith: 1
   mouseTargetCollider: {fileID: 5931483769712804950}
+  preventBattleEnd: 0
   firePointCount: 35
   firePointRadius: 25
   firePointsOffset: {x: 0, y: -0.5, z: 0}
@@ -450,7 +452,8 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 78f932ed7bc27074f89d8c206797f7c0, type: 2}
+      objectReference: {fileID: -876546973899608171, guid: 89902b80614292b48a9f487f59756c22,
+        type: 3}
     - target: {fileID: -2984534097085446280, guid: 7a2ee02093dd0a945935db20e509df34,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -461,7 +464,8 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 78f932ed7bc27074f89d8c206797f7c0, type: 2}
+      objectReference: {fileID: -876546973899608171, guid: 89902b80614292b48a9f487f59756c22,
+        type: 3}
     - target: {fileID: -1858088320818141857, guid: 7a2ee02093dd0a945935db20e509df34,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -560,7 +564,8 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 78f932ed7bc27074f89d8c206797f7c0, type: 2}
+      objectReference: {fileID: -876546973899608171, guid: 89902b80614292b48a9f487f59756c22,
+        type: 3}
     - target: {fileID: 6148596154634031546, guid: 7a2ee02093dd0a945935db20e509df34,
         type: 3}
       propertyPath: m_Materials.Array.data[0]

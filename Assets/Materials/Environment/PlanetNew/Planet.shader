@@ -93,7 +93,7 @@ Shader"Unlit/Planet"
 	            float n = 1;
 	            float iter = 2.0;
 
-                position *= scale;
+                position *= scale * 3;
                 position += _RealSpacePosition;
 				position += _Time * _AnimSpeed * normalize(_RealSpacePosition);
 	
