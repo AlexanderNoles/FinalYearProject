@@ -26,7 +26,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Clamp: -14
-    - _ColourAffect: 10000
+    - _ColourAffect: 0.005
     - _FarClamp: 15
     - _NearClamp: -15
     - _Speed: 250

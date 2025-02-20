@@ -134,7 +134,7 @@ Material:
     - _OceanColor: {r: 0.13389996, g: 0.4993341, b: 0.5566038, a: 1}
     - _OceanFloorColor: {r: 0.5283019, g: 0.4813433, b: 0.3264507, a: 1}
     - _RPS: {r: 6.44, g: 0, b: 0, a: 0}
-    - _RealSpacePosition: {r: 2, g: 0, b: 10, a: 0}
+    - _RealSpacePosition: {r: 5, g: 0, b: 0, a: 0}
     - _ScatteringCoefficents: {r: 2.44, g: 5.37, b: 6.09, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []

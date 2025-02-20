@@ -13,6 +13,7 @@ public class MainMenuManagement : MonoBehaviour
 	private float timeTillNextLetter;
 	private bool typingEffectDone;
 	public FadeOnEnable fadeIn;
+	public StartScreenState startScreen;
 
 	private void Awake()
 	{
@@ -62,6 +63,9 @@ public class MainMenuManagement : MonoBehaviour
 
 	public void LoadMainScene()
 	{
+		//Apply emblem data
+		Player.emblemOverride = startScreen.emblemData;
+
 		GameManagement.LoadScene(1);
 	}
 

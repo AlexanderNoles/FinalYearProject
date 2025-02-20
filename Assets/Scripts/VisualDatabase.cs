@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+[MonitorBreak.InitializeAtRuntime("VisualDatabase")]
 public class VisualDatabase : MonoBehaviour
 {
 	public static readonly string goodColourString = "#4bed32ff";
@@ -28,12 +29,27 @@ public class VisualDatabase : MonoBehaviour
         currentColourIndex = Random.Range(0, factionColours.Count);
     }
 
+	public static List<Color> GetAllColours()
+	{
+		return instance.factionColours;
+	}
+
     public static Color GetNextFactionColour()
     {
         currentColourIndex = (currentColourIndex + 1) % instance.factionColours.Count;
 
         return instance.factionColours[currentColourIndex];
     }
+
+	public static List<Sprite> GetAllFactionSprites()
+	{
+		return instance.factionIcons;
+	}
+
+	public static Sprite GetFactionIconNonDeterministic()
+	{
+		return instance.factionIcons[Random.Range(0, instance.factionIcons.Count)];
+	}
 
     public static (Sprite, Sprite) GetFactionIcons()
     {

@@ -6,6 +6,8 @@ using EntityAndDataDescriptor;
 //The player's corresponding simulation entity, stores a lot of data about the player
 public class Player : SimulationEntity
 {
+	public static EmblemData emblemOverride = null;
+
 	public override void InitTags()
 	{
 		base.InitTags();
@@ -22,7 +24,18 @@ public class Player : SimulationEntity
 		//Give player battle data so they can track their battles (mainly so they can auto retreat when they end)
 		AddData(DataTags.Battle, new BattleData());
 
-		AddData(DataTags.Emblem, new EmblemData());
+		EmblemData emblemData;
+
+		if (emblemOverride != null)
+		{
+			emblemData = emblemOverride;
+		}
+		else
+		{
+			emblemData = new EmblemData();
+		}
+
+		AddData(DataTags.Emblem, emblemData);
 
 		PlayerStats stats = new PlayerStats();
 		stats.Init();

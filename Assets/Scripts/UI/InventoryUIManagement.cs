@@ -77,7 +77,10 @@ public class InventoryUIManagement : UIState
     {
 		instance = this;
         base.Awake();
+    }
 
+	private void Start()
+	{
 		//Create all the neccesary stat readouts
 		statIdentifierToLabel.Clear();
 		foreach (string identifier in PlayerStats.statIdentifierToBaseLevels.Keys)
@@ -90,9 +93,9 @@ public class InventoryUIManagement : UIState
 		}
 
 		int count = PlayerStats.statIdentifierToBaseLevels.Count;
-    }
+	}
 
-    private void Update()
+	private void Update()
     {
 		//Get target data
 		//This is run every frame till we find the data we need

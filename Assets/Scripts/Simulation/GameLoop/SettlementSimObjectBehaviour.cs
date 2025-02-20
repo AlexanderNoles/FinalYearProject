@@ -30,10 +30,10 @@ public class SettlementSimObjectBehaviour : SimObjectBehaviour
 	}
 
 	[Header("City Scape Rendering")]
-	public Mesh mesh;
+	public List<Mesh> meshs;
 	public Material material;
-	private Matrix4x4[] cityBlockData;
-	private Matrix4x4[] updatedCityBlockData;
+	private List<InstancedRenderer> renderers = new List<InstancedRenderer>();
+
 	public Transform lowerCityBase;
 	public Transform atmosphere;
 	public MeshRenderer atmosphereRenderer;
@@ -48,34 +48,59 @@ public class SettlementSimObjectBehaviour : SimObjectBehaviour
 
 	private void RegenerateSurroundings()
 	{
+		renderers.Clear();
+		List<List<Matrix4x4>> generatedPositions = new List<List<Matrix4x4>>();
+
+		foreach (Mesh mesh in meshs)
+		{
+			renderers.Add(new InstancedRenderer()
+			{
+				mesh = mesh,
+				material = material
+			});
+
+			generatedPositions.Add(new List<Matrix4x4>());
+		}
+
 		//Set to a specific state so settlements are generated consistently
 		SettlementsData.Settlement.SettlementLocation set = (SettlementsData.Settlement.SettlementLocation)target;
 		Random.InitState(set.GetPosition().GetHashCode());
 		atmosphereRenderer.material.SetVector("_RealSpacePosition", set.GetPosition().AsTruncatedVector3(10000.0f));
 
 		//Generate scale
-		float size = Random.Range(175, 300);
+		float size = 300;// Random.Range(175, 300);
 		lowerCityBase.localScale = new Vector3(size, 250.0f, size);
 		atmosphere.localScale = new Vector3(size + 50, 65.0f, size + 50);
 
 		//Generate city scape positions
 		Vector3 constantOffset = Vector3.down * 60;
-		List<Matrix4x4> generatedPositions = new List<Matrix4x4>();
 
 		float min = 150;
-		float distancePer = 5;
+		float distancePer = 3;
 		float max = size - 20.0f;
 
 		int count = Mathf.FloorToInt((max - min) / distancePer);
 
-		for (int i = 0; i < count; i++)
+		for (int i = -1; i < count; i++)
 		{
+			float circleRadius;
+			int countPerIteration = 20;
+			float randomOffsetMinMax = (1.0f / countPerIteration) * 2.0f;
+
+			if (i == -1)
+			{
+				circleRadius = 75;
+				countPerIteration += 10;
+				randomOffsetMinMax /= 4;
+			}
+			else
+			{
+				circleRadius = min + (distancePer * i);
+			}
+
 			//Iterate around in a circle
 			//Adding positions
-			float circleRadius = min + (distancePer * i);
-			int countPerIteration = 20;
 
-			float randomOffsetMinMax = (1.0f / countPerIteration) * 2.0f;
 
 			for (int p = 0; p < countPerIteration; p++)
 			{
@@ -83,40 +108,61 @@ public class SettlementSimObjectBehaviour : SimObjectBehaviour
 
 				float highUpChance = Mathf.Pow(Random.Range(0.0f, 1.0f), 6.0f);
 
-				pos += Vector3.down * (Random.Range(0.0f, 5.0f) + Mathf.Lerp(1.0f, 25.0f, i / (float)count) + (highUpChance * -15.0f));
+				pos += Vector3.down * (Random.Range(0.0f, 5.0f) + Mathf.Lerp(1.0f, 25.0f, Mathf.Max(i, 0.0f) / (float)count) + (highUpChance * -15.0f));
 				pos += constantOffset;
 
 				Matrix4x4 newMatrix = Matrix4x4.Translate(pos);
 
-				generatedPositions.Add(newMatrix);
+				//Add to random building instanced renderer
+				int index = Random.Range(0, generatedPositions.Count);
 
-				//Disabled add banners because I don't like how they look
-				//if (highUpChance > 0.95f)
-				//{
-				//	//Add a decoration above this block
-				//	pos += Vector3.up * Random.Range(90.0f, 110.0f);
-				//	additionalDecorationsPool.UpdateNextObjectPosition(0, pos);
-				//}
+				generatedPositions[index].Add(newMatrix);
 			}
 		}
 
+		//Set cennter
+		const bool centerGeneration = false;
+
+		if (centerGeneration)
+		{
+			int centerBuildingCount = Random.Range(3, 8);
+
+			for (int i = 0; i < centerBuildingCount; i++)
+			{
+				float percentage = i / (float)centerBuildingCount;
+
+				Vector3 pos = GenerationUtility.GetCirclePositionBasedOnPercentage(percentage, 10);
+				pos += Vector3.up * 20.0f;
+
+
+				Matrix4x4 newMatrix = Matrix4x4.Translate(pos);
+
+				//Add to random building instanced renderer
+				int index = Random.Range(0, generatedPositions.Count);
+
+				generatedPositions[index].Add(newMatrix);
+			}
+		}
+
+		//Apply to renderers
+		for (int i = 0; i < generatedPositions.Count; i++)
+		{
+			renderers[i].SetInitalData(generatedPositions[i].ToArray());
+		}
+
+		//Reset decorations
 		additionalDecorationsPool.PruneObjectsNotUpdatedThisFrame(0, true);
-		cityBlockData = generatedPositions.ToArray();
-		updatedCityBlockData = new Matrix4x4[cityBlockData.Length];
 	}
 
 	private void LateUpdate()
 	{
 		//Instanced rendering for city scape
 		Matrix4x4 localToWorld = Matrix4x4.Translate(transform.parent.position);
-		RenderParams rp = new RenderParams(material);
-		rp.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
 
-		for (int i = 0; i < updatedCityBlockData.Length; i++)
+		foreach (InstancedRenderer renderer in renderers)
 		{
-			updatedCityBlockData[i] = cityBlockData[i] * localToWorld;
+			renderer.Update(localToWorld);
+			renderer.Render();
 		}
-
-		Graphics.RenderMeshInstanced(rp, mesh, 0, updatedCityBlockData);
 	}
 }

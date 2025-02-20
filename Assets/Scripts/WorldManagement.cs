@@ -201,6 +201,11 @@ public class WorldManagement : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+		if (worldCenterPosition == null)
+		{
+			return;
+		}
+
         Vector3 playerPos = worldCenterPosition.AsTruncatedVector3(debugMultiplier);
 
         Gizmos.color = Color.red;

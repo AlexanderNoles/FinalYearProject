@@ -34,6 +34,34 @@ public static class UIHelper
 		return results;
 	}
 
+	public static List<Vector3> CalculateRowedButtonsPositions(int count, Vector3 initialOffset, Vector3 offsetPer, int countPerRow = 4)
+	{
+		List<Vector3> toReturn = new List<Vector3>();
+
+		int currentCount = 0;
+		int currentRow = 0;
+
+		for (int i = 0; i < count; i++)
+		{
+			Vector3 calculatedPos = new Vector3();
+
+			calculatedPos.x = initialOffset.x + (offsetPer.x * currentCount);
+			calculatedPos.y = initialOffset.y + (offsetPer.y * currentRow);
+
+			toReturn.Add(calculatedPos);
+
+			currentCount++;
+
+			if (currentCount >= countPerRow)
+			{
+				currentCount = 0;
+				currentRow++;
+			}
+		}
+
+		return toReturn;
+	}
+
 	public static List<(float, Vector2)> CalculateSpreadPositions(int count, int bufferBetween, int flipThreshold = 6)
 	{
 		List<(float, Vector2)> toReturn = new List<(float, Vector2)>();
