@@ -11,9 +11,9 @@ public class PauseMenuManagement : UIState
 
 	public GameObject target;
 
-	protected override void OnSetActive(bool _bool)
+	protected override GameObject GetTargetObject()
 	{
-		target.SetActive(_bool);
+		return target;
 	}
 
 	public void ReturnToStartMenu()

@@ -8,6 +8,9 @@ public class UIState : MonoBehaviour
 	public bool useCutsomMouseState;
 	public MouseManagement.MouseState mouseState;
 
+	[Header("Effect Settings")]
+	public bool blurDuringState = false;
+
 	[Header("UI State Settings")]
 	public bool coenableNeutral = false;
     public bool autoSetup = true;
@@ -19,6 +22,7 @@ public class UIState : MonoBehaviour
 	protected int framesSinceAnimBegan;
     protected bool outroOneFrameBuffer = false;
     protected bool wantsActive = false;
+
 
     protected virtual void Awake()
     {
@@ -43,6 +47,11 @@ public class UIState : MonoBehaviour
     {
         GetTargetObject().SetActive(_bool);
         OnSetActive(_bool);
+
+		if (blurDuringState)
+		{
+			BlurEffect.SetEffectIntensity(_bool ? 1.0f : 0.0f);
+		}
     }
 
     protected virtual void OnSetActive(bool _bool)

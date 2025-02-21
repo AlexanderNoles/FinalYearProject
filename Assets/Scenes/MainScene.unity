@@ -10580,6 +10580,7 @@ MonoBehaviour:
     tagALongImage: {fileID: 0}
     tagALongScale: 0.0625
     hidden: 0
+  blurDuringState: 1
   coenableNeutral: 0
   autoSetup: 1
   lockout: 0
@@ -10824,6 +10825,68 @@ MonoBehaviour:
   statBaseObject: {fileID: 0}
   statArea: {fileID: 0}
   statSlots: []
+--- !u!1 &391119308
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 391119309}
+  - component: {fileID: 391119310}
+  - component: {fileID: 391119311}
+  m_Layer: 0
+  m_Name: BlurPostProcessingEmpty
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &391119309
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 391119308}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 506661757}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &391119310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 391119308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 0
+  sharedProfile: {fileID: 11400000, guid: bab25e9129560a445a3760c5158bac23, type: 2}
+--- !u!114 &391119311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 391119308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77d6051d604ca00429797af80a8991cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -11014,6 +11077,7 @@ MonoBehaviour:
     tagALongImage: {fileID: 0}
     tagALongScale: 0.0625
     hidden: 0
+  blurDuringState: 1
   coenableNeutral: 0
   autoSetup: 1
   lockout: 0
@@ -13673,6 +13737,7 @@ Transform:
   - {fileID: 1795218757}
   - {fileID: 330585546}
   - {fileID: 1028179339}
+  - {fileID: 391119309}
   m_Father: {fileID: 1087980076}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &511800686
@@ -23607,8 +23672,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: e0541b344c278364587404bd40c34d78, type: 2}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.92156863}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -24346,6 +24411,7 @@ MonoBehaviour:
     tagALongImage: {fileID: 0}
     tagALongScale: 0.0625
     hidden: 0
+  blurDuringState: 0
   coenableNeutral: 0
   autoSetup: 1
   lockout: 1
@@ -25714,8 +25780,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: e0541b344c278364587404bd40c34d78, type: 2}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.92156863}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -28992,6 +29058,7 @@ MonoBehaviour:
     tagALongImage: {fileID: 0}
     tagALongScale: 0.046875
     hidden: 0
+  blurDuringState: 0
   coenableNeutral: 1
   autoSetup: 1
   lockout: 0
@@ -32678,6 +32745,7 @@ MonoBehaviour:
     tagALongImage: {fileID: 21300000, guid: a3e0a73c0dd0b4bc0a7e981cc1d2f2c3, type: 3}
     tagALongScale: 0.046875
     hidden: 0
+  blurDuringState: 0
   coenableNeutral: 0
   autoSetup: 0
   lockout: 0
@@ -34327,8 +34395,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: e0541b344c278364587404bd40c34d78, type: 2}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.92156863}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -34709,6 +34777,7 @@ MonoBehaviour:
     tagALongImage: {fileID: 0}
     tagALongScale: 0.0625
     hidden: 0
+  blurDuringState: 1
   coenableNeutral: 0
   autoSetup: 1
   lockout: 0
