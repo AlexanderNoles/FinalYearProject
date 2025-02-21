@@ -54,7 +54,7 @@ public class SimulationManagement : MonoBehaviour
     }
 
     private static float currentDay;
-    private const float DAY_TO_MONTH = 30;
+    private const float DAY_TO_MONTH = 30; //30 instead of 31 as it fits nicely into 360
     private static float currentMonth;
     private const float MONTH_TO_YEAR = 13;
     private static float currentYear;

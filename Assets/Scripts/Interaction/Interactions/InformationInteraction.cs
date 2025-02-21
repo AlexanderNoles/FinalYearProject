@@ -7,7 +7,7 @@ public class InformationInteraction : Interaction
 {
 	public override bool ValidateOnMap(PlayerMapInteraction.UnderMouseData target)
 	{
-		return target.baseLocation == null && target.simulationEntity != null && target.simulationEntity.HasData(DataTags.Name);
+		return target.baseLocation == null && target.simulationEntity != null && target.simulationEntity.HasData(DataTags.Name) && !PlayerCapitalShip.IsJumping();
 	}
 
 	public override void ProcessOnMap(PlayerMapInteraction.UnderMouseData target)

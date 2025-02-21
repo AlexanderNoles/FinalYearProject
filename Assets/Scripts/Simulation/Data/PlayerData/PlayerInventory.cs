@@ -7,7 +7,7 @@ public class PlayerInventory : InventoryBase
 {
 	//Currently static, could allow inventory size increase as a more controlled form of player power
 	//(Allows for easier balancing!)
-	public int numberOfWarpDrivesCollected = 0;
+	public int numberOfWarpDrivesCollected = 3;
 	private List<ItemBase> itemBases = new List<ItemBase>();
 	private PlayerStats target = null;
 	public float mainCurrency = 5000;

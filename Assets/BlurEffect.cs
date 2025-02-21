@@ -14,6 +14,11 @@ public class BlurEffect : MonoBehaviour
 
 	public static void SetEffectIntensity(float newIntensity)
 	{
+		if (target == null)
+		{
+			return;
+		}
+
 		target.weight = newIntensity;
 		UberPassManagement.EnableOutlines(newIntensity < 0.5f);
 	}

@@ -67,10 +67,10 @@ public class InventoryUIManagement : UIState
     //This is the area covered by a inventory slot UI component, this includes padding
     //This can be calculated by simply getting the base slot object scale (150), dividing by 2 (75) and adding padding (+15) if need be
     private const int inventorySlotArea = 70; //typically 90
-	//60 / 2 = 30, 30 + 15 = 45
-	private const int miniInventorySlotArea = 45;
 	//
 	private const float dictionarySlotSize = 75;
+	//
+	private const int miniSlotSize = 80;
 	//
 
     protected override void Awake()
@@ -135,15 +135,23 @@ public class InventoryUIManagement : UIState
 			//Get inventory capacity
 			int inventoryCapacity = targetData.targetInventory.GetInventoryCapacity();
 
-			int slotScale = mini ? miniInventorySlotArea : inventorySlotArea;
-			int flipLimit = mini ? 0 : 24;
+			//Calculated Draw priority and position
+			List<Vector3> outputPositions;
 
-            List <(float, Vector2)> outputPositions = UIHelper.CalculateSpreadPositions(inventoryCapacity, slotScale, flipLimit);
+			if (mini)
+			{
+				outputPositions = UIHelper.CalculateRowedPositions(inventoryCapacity, new Vector3(miniSlotSize, miniSlotSize), new Vector3(miniSlotSize * 1.5f, miniSlotSize/2), new Vector3(0, miniSlotSize * 1.5f), 2);
+			}
+			else
+			{
+				//Basic layout for in inventory screen
+				outputPositions = UIHelper.CalculateSpreadPositions(inventoryCapacity, inventorySlotArea, 24);
+			}
 
 			//Actually create all inventory slots
 			for (int i = 0; i < outputPositions.Count; i++)
 			{
-				SlotUI newSlot = null;// Instantiate(slotBaseObject, mainSlotArea).GetComponent<SlotUI>();
+				SlotUI newSlot;
 
 				//Get from target object pool
 				//Retrieve component
@@ -157,7 +165,7 @@ public class InventoryUIManagement : UIState
                 }
 
 				//Set 3d position otherwise z component will be offset to world 0 (meaning the ui element would be inline with the render camera and not show up)
-				(newSlot.transform as RectTransform).anchoredPosition3D = outputPositions[i].Item2;
+				(newSlot.transform as RectTransform).anchoredPosition3D = outputPositions[i];
 
 				//Add slot to slot list for tracking later
 				inventorySlots.Add(newSlot);

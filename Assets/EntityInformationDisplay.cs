@@ -50,7 +50,7 @@ public class EntityInformationDisplay : StateOverride
 
 	public static void ToggleExternal(SimulationEntity target)
 	{
-		bool setActive = !instance.gameObject.activeSelf;
+		bool setActive = instance.currentTarget == null || !instance.currentTarget.Equals(target);
 
 		if (!setActive)
 		{

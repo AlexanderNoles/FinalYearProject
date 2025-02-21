@@ -13,7 +13,7 @@ public class IconPickerUIControl : MonoBehaviour
 	private void Start()
 	{
 		List<Sprite> possibleSprites = VisualDatabase.GetAllFactionSprites();
-		List<Vector3> positions = UIHelper.CalculateRowedButtonsPositions(possibleSprites.Count, new Vector3(15, -15), new Vector3(30, -30));
+		List<Vector3> positions = UIHelper.CalculateRowedPositions(possibleSprites.Count, new Vector3(15, -15), new Vector3(30, 0), new Vector3(0, -30));
 
 		for (int i = 0; i < positions.Count; i++)
 		{
