@@ -22,4 +22,11 @@ public class StateOverride : MonoBehaviour
 	{
 		onKeyPress.Invoke();
 	}
+
+	//Helpers
+
+	public void Close()
+	{
+		gameObject.SetActive(false);
+	}
 }

@@ -1442,7 +1442,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Pick An emblem
+  m_text: Create An Emblem
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e58587b66996ccc479fdb3a2968be244, type: 2}
   m_sharedMaterial: {fileID: -6840069863841003443, guid: e58587b66996ccc479fdb3a2968be244,

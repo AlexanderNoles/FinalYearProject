@@ -50,6 +50,7 @@ public class Player : SimulationEntity
 		//The order of interactions matters as the smart interaction will
 		//iterate through them in that order
 		interactions.playersInteractions.Add(new TravelInteraction().Init());
+		interactions.playersInteractions.Add(new InformationInteraction().Init());
 		interactions.playersInteractions.Add(new ShopInteraction().Init());
 		interactions.playersInteractions.Add(new AttackInteraction().Init());
 		interactions.playersInteractions.Add(new TroopDirectInteraction().Init());

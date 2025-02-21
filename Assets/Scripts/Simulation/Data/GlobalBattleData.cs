@@ -276,6 +276,9 @@ public class GlobalBattleData : DataModule
 
 		public override string GetDescription()
 		{
+			//Disabled as battle progress accumulates so fast now they just go from 0 to 100
+			return base.GetDescription();
+
 			string descString = "";
 
 			for (int i = 0; i < involvedEntities.Count; i++)

@@ -13,7 +13,7 @@ public class NationSelectionInteraction : Interaction
 
 	public override void ProcessOnMap(PlayerMapInteraction.UnderMouseData target)
 	{
-		NationInformationDisplayUI.SetActive(!NationInformationDisplayUI.IsTarget(target.simulationEntity), target.simulationEntity);
+		NationSelectionControl.SetActive(!NationSelectionControl.IsTarget(target.simulationEntity), target.simulationEntity);
 	}
 
 	public static void FinalizeNationSelect(SimulationEntity entity)

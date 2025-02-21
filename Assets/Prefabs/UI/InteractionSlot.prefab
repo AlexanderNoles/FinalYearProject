@@ -127,6 +127,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slotIcon: {fileID: 1507036406158267646}
   button: {fileID: 4754165647289129722}
+  buttonEnabled: 1
+  onHover: {fileID: 0}
 --- !u!1 &8450019475725061531
 GameObject:
   m_ObjectHideFlags: 0
