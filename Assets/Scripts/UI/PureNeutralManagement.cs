@@ -2,15 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BarButtonsManagement : MonoBehaviour
+public class PureNeutralManagement : MonoBehaviour
 {
-	public List<GameObject> targetBarButtons = new List<GameObject>();
+	public List<GameObject> toHideImpure = new List<GameObject>();
 
 	private void Update()
 	{
 		bool showBarButtons = UIManagement.InPureNeutral();
 
-		foreach (GameObject targetBarButton in targetBarButtons)
+		foreach (GameObject targetBarButton in toHideImpure)
 		{
 			targetBarButton.SetActive(showBarButtons);
 		}

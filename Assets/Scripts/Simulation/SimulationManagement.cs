@@ -54,10 +54,20 @@ public class SimulationManagement : MonoBehaviour
     }
 
     private static float currentDay;
-    private const float DAY_TO_MONTH = 30; //30 instead of 31 as it fits nicely into 360
+    private const float DAY_TO_MONTH = 36; //30 instead of 31 as it fits nicely into 360
     private static float currentMonth;
-    private const float MONTH_TO_YEAR = 13;
+    private const float MONTH_TO_YEAR = 12; //12 for the same reason as above
     private static float currentYear;
+
+	public static float GetCurrentDayPercentage()
+	{
+		return currentDay / DAY_TO_MONTH;
+	}
+
+	public static float GetCurrentMonthPercentage()
+	{
+		return currentMonth / MONTH_TO_YEAR;
+	}
 
 	public static float GetCurrentYear()
 	{

@@ -12,7 +12,7 @@ public class MainInfoUIControl : PostTickUpdate
 
     private const float sideBarMax = 0.4f;
 
-    public TextMeshProUGUI dateLabel;
+    public ClockEffectControl clockEffect;
 
     public Image engineBarImage;
     public GameObject engineArcaneFlame;
@@ -96,7 +96,7 @@ public class MainInfoUIControl : PostTickUpdate
 
     private void Draw()
     {
-        dateLabel.text = SimulationManagement.GetDateString();
+		clockEffect.UpdateClockPosition();
         DrawHealthAuto();
 
         if (PlayerManagement.PlayerEntityExists())
