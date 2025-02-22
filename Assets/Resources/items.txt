@@ -51,6 +51,17 @@
 }
 ### Rare ###
 { item
+	//Straight damage stacker
+	rarity: "1"
+	icon: "subliminalPiercer"
+	name: "Subliminal Piercer"
+	price: "0.7"
+	class: "0"
+	attackPower: "1"
+	description: "Increases <color=*statColour*>Attack Power</color> substantially."
+	extra: ""
+}
+{ item
 	//Buy one item from the warp shop
 	rarity: "1"
 	target: "WarpShopItemBase"
