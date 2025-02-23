@@ -51,12 +51,15 @@ public class Player : SimulationEntity
 		//iterate through them in that order
 		interactions.playersInteractions.Add(new TravelInteraction().Init());
 		interactions.playersInteractions.Add(new InformationInteraction().Init());
+		interactions.playersInteractions.Add(new QuestInteraction().Init());
 		interactions.playersInteractions.Add(new ShopInteraction().Init());
 		interactions.playersInteractions.Add(new AttackInteraction().Init());
 		interactions.playersInteractions.Add(new TroopDirectInteraction().Init());
 		interactions.playersInteractions.Add(new RetreatInteraction().Init());
 		//
 		AddData(DataTags.Interactions, interactions);
+
+		AddData(DataTags.Quests, new PlayerQuests());
 		
 		FeelingsData feelings = new FeelingsData();
 		feelings.baseFavourability = 0.0f;

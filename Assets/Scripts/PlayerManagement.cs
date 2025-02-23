@@ -11,6 +11,7 @@ public class PlayerManagement : MonoBehaviour
     private PlayerStats playerStatsTarget = null;
     private PlayerInventory playerInventoryTarget = null;
 	private PlayerInteractions playerInteractionsTarget = null;
+	private PlayerQuests playerQuestsTarget = null;
 	private PopulationData playerPopulationTarget = null;
 	private MilitaryData playerMilitaryTarget = null;
 
@@ -36,6 +37,7 @@ public class PlayerManagement : MonoBehaviour
 		instance.playerEntity.GetData(DataTags.Interactions, out instance.playerInteractionsTarget);
 		instance.playerEntity.GetData(DataTags.Population, out instance.playerPopulationTarget);
 		instance.playerEntity.GetData(DataTags.Military, out instance.playerMilitaryTarget);
+		instance.playerEntity.GetData(DataTags.Quests, out instance.playerQuestsTarget);
 	}
 
     public static bool PlayerEntityExists()
@@ -76,6 +78,11 @@ public class PlayerManagement : MonoBehaviour
 	public static MilitaryData GetMilitary()
 	{
 		return instance.playerMilitaryTarget;
+	}
+
+	public static PlayerQuests GetQuests()
+	{
+		return instance.playerQuestsTarget;
 	}
 
 	public static void KillPlayer()

@@ -2,6 +2,7 @@ using EntityAndDataDescriptor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.FilePathAttribute;
 
 public class SettlementsData : DataModule
 {
@@ -46,6 +47,7 @@ public class SettlementsData : DataModule
         public class SettlementLocation : VisitableLocation
         {
 			public Shop shop;
+			public QuestGiver questGiver;
 			public SettlementWeapon weapon;
             public Settlement actualSettlement;
 			private GeneratorManagement.StructureGeneration generation;
@@ -100,6 +102,11 @@ public class SettlementsData : DataModule
 				return shop;
 			}
 
+			public override QuestGiver GetQuestGiver()
+			{
+				return questGiver;
+			}
+
 			public override bool CanBuyFuel()
 			{
 				return true;
@@ -136,14 +143,18 @@ public class SettlementsData : DataModule
 			location.shop = new Shop();
 			//Limit settlement shops to only basic items, this is to stop players from just jumping around to different shops to try and find
 			//a specific rare item.
-			//That sort of gameplay sound really tedious and boring and I don't want to emp
+			//That sort of gameplay sound really tedious and boring and I don't want to incentivis that
 			location.shop.SetTargetRarity(ItemDatabase.ItemRarity.Basic);
-
 			location.shop.capacity = 4;
+
+			location.questGiver = new QuestGiver();
+			//Set quests origin to always be from this location
+			location.questGiver.questOrigin = location;
 
 			location.SetParent(parent);
 			//Set shop to use same parent
 			location.shop.parent = this.parent;
+			location.questGiver.parent = this.parent;
 
 			//Create weapon
 			location.weapon = new SettlementWeapon();

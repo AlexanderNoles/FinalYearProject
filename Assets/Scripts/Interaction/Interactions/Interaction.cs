@@ -120,7 +120,7 @@ public class Interaction : IDisplay
 		return "";
 	}
 
-	protected static class InteractionValidationHelper
+	public static class InteractionValidationHelper
 	{
 		public static bool AttackOnMapValidation(PlayerMapInteraction.UnderMouseData target)
 		{
@@ -138,7 +138,27 @@ public class Interaction : IDisplay
 			if (interactable.Linked())
 			{
 				//Need to have shop and player needs to have a accepetable rep (or if the shop is open so we can click to close it)
-				return interactable.target.HasShop() && (interactable.target.GetPlayerReputation() > BalanceManagement.purchaseAllowedThreshold || ShopUIControl.ShopUIOpen());
+				return interactable.target.HasShop() && (PlayerAboveProperInteractionThreshold(interactable) || ShopUIControl.ShopUIOpen());
+			}
+
+			return false;
+		}
+
+		public static bool QuestInteraction(SimObjectBehaviour interactable)
+		{
+			if (interactable.Linked())
+			{
+				return interactable.target.HasQuests() && (PlayerAboveProperInteractionThreshold(interactable) || QuestUIControl.QuestUIOpen());
+			}
+
+			return false;
+		}
+
+		public static bool PlayerAboveProperInteractionThreshold(SimObjectBehaviour interactable)
+		{
+			if (interactable.Linked())
+			{
+				return interactable.target.GetPlayerReputation() > BalanceManagement.properInteractionAllowedThreshold;
 			}
 
 			return false;

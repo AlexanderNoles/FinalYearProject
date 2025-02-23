@@ -96,6 +96,16 @@ public class SimObject : DataModule, IDisplay
 		return null;
 	}
 
+	public bool HasQuests()
+	{
+		return GetQuestGiver() != null;
+	}
+
+	public virtual QuestGiver GetQuestGiver()
+	{
+		return null;
+	}
+
 	public virtual bool CanBuyFuel()
 	{
 		return false;

@@ -39,6 +39,7 @@ namespace EntityAndDataDescriptor
 		EntitySpawner,
 		SpawnSource,
 		CentralShop,
+		Quests,
 		Calamity,
         Stats,
         Inventory,

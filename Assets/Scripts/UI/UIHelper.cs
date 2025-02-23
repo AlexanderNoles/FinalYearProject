@@ -176,4 +176,9 @@ public static class UIHelper
 
 		return toReturn;
 	}
+
+	public static bool CloseInteractionBasedUI(Transform targetsTransform)
+	{
+		return targetsTransform == null || Vector3.Distance(targetsTransform.position, CameraManagement.GetMainCameraPosition()) > Interaction.Ranges.standard || PlayerCapitalShip.InJumpTravelStage();
+	}
 }

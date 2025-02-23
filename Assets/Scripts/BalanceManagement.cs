@@ -25,7 +25,7 @@ public static class BalanceManagement
 
 	//Used by entites to determine when they hate each other
 	public const float oppositionThreshold = -0.7f;
-	public const float purchaseAllowedThreshold = -0.1f;
+	public const float properInteractionAllowedThreshold = -0.1f;
 
 	//Player population balancing
 	public const float playerPopulationChangePerTick = 2.243f; //Arbitrarly randomized number to unsync population count from exact ticks

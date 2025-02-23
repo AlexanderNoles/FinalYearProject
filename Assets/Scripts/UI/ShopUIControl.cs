@@ -90,13 +90,13 @@ public class ShopUIControl : MonoBehaviour
 	{
 		if (target != null)
 		{
-			if (targetsTransform != null && Vector3.Distance(targetsTransform.position, CameraManagement.GetMainCameraPosition()) > Interaction.Ranges.standard)
+			if (UIHelper.CloseInteractionBasedUI(targetsTransform))
 			{
 				CloseShopUI();
 			}
 			else
 			{
-				cantBuyBlocker.SetActive(target.GetPlayerReputation() <= BalanceManagement.purchaseAllowedThreshold);
+				cantBuyBlocker.SetActive(target.GetPlayerReputation() <= BalanceManagement.properInteractionAllowedThreshold);
 			}
 		}
 	}

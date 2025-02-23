@@ -40,7 +40,7 @@ public class InformationInteraction : Interaction
 
 	public override int GetDrawPriority()
 	{
-		return 75;
+		return 65;
 	}
 
 	public override InteractionMapCursor GetMapCursorData(PlayerMapInteraction.UnderMouseData target)
