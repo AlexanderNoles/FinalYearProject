@@ -160,6 +160,7 @@ public class PlayerMapInteraction : PostTickUpdate
 
 		mapPools.HideAllObjects(4);
 		mapPools.HideAllObjects(9);
+		mapPools.HideAllObjects(11);
 
 		PlayerCapitalShip.onJumpStart.AddListener(OnJumpStart);
 	}
@@ -177,6 +178,7 @@ public class PlayerMapInteraction : PostTickUpdate
 
 		mapPools.HideAllObjects(4);
 		mapPools.HideAllObjects(9);
+		mapPools.HideAllObjects(11);
 
 		indicatorLine.positionCount = 0;
 	}
@@ -197,6 +199,9 @@ public class PlayerMapInteraction : PostTickUpdate
 		mapPools.PruneObjectsNotUpdatedThisFrame(4);
 		//Flashing indicators
 		mapPools.PruneObjectsNotUpdatedThisFrame(9, true);
+		//Quest destination indicators
+		mapPools.PruneObjectsNotUpdatedThisFrame(11, true);
+
 		//Need to first collect all avaliable locations
 		//Then draw those locations on the map
 		//Store information about the found locations so we can see if the player is trying to go there and then send them there
@@ -216,6 +221,22 @@ public class PlayerMapInteraction : PostTickUpdate
 		if (PlayerManagement.PlayerEntityExists())
 		{
 			chunkRange = Mathf.FloorToInt(PlayerManagement.GetStats().GetStat(Stats.jumpRange.ToString()));
+
+			//Get player quest data
+			//And draw indicators
+			PlayerQuests quests = PlayerManagement.GetQuests();
+
+			foreach (Quest currentQuest in quests.currentQuests)
+			{
+				RealSpacePosition questTargetPos = currentQuest.GetTargetPosition();
+
+				if (questTargetPos != null)
+				{
+					Vector3 pos = -questTargetPos.AsTruncatedVector3(MapManagement.mapRelativeScaleModifier);
+
+					mapPools.UpdateNextObjectPosition(11, pos);
+				}
+			}
 		}
 
 		const float buffer = 1;

@@ -134,7 +134,7 @@ public class QuestUIControl : MonoBehaviour
 	{
 		if (targetData != null)
 		{
-			if (UIHelper.CloseInteractionBasedUI(targetDataTransform))
+			if (UIHelper.CloseInteractionBasedUI(targetDataTransform) || targetData.heldQuests.Count == 0)
 			{
 				CloseQuestUI();
 			}
@@ -148,6 +148,7 @@ public class QuestUIControl : MonoBehaviour
 	public void CloseQuestUI()
 	{
 		mainUI.SetActive(false);
+		//Null target data so toggle functions correctly
 		targetData = null;
 	}
 }

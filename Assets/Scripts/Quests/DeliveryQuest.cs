@@ -15,4 +15,14 @@ public class DeliveryQuest : Quest
 
 		return $"Delivery to {target.GetTitle()}";
 	}
+
+	public override RealSpacePosition GetTargetPosition()
+	{
+		if (target == null)
+		{
+			return base.GetTargetPosition();
+		}
+
+		return target.GetPosition();
+	}
 }

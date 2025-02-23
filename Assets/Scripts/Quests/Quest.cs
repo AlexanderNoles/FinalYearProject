@@ -6,6 +6,11 @@ public class Quest : IDisplay
 {
 	public VisitableLocation questOrigin;
 
+	public virtual RealSpacePosition GetTargetPosition()
+	{
+		return null;
+	}
+
 	//Display methods
 	public virtual string GetDescription()
 	{

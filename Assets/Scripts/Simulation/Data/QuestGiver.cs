@@ -82,7 +82,7 @@ public class QuestGiver : DataModule
 			return null;
 		}
 
-		return new DeliveryQuest();
+		return quest;
 	}
 
 	public virtual bool UpdateQuests()

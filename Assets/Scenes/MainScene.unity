@@ -20144,7 +20144,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &732551030
 RectTransform:
   m_ObjectHideFlags: 0
@@ -20170,7 +20170,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -502, y: 482}
+  m_AnchoredPosition: {x: -1664, y: 1593}
   m_SizeDelta: {x: 400, y: 655}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &732551031
@@ -30667,7 +30667,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1420031919
 RectTransform:
   m_ObjectHideFlags: 0
@@ -30692,7 +30692,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 788, y: 1381}
+  m_AnchoredPosition: {x: -1135, y: 1604}
   m_SizeDelta: {x: 400, y: 655}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1420031920
@@ -35117,6 +35117,14 @@ MonoBehaviour:
     baseObject: {fileID: 950817847748930352, guid: f5c70753fa3284c4295d2ca1f8b5ac3d,
       type: 3}
     baseNumberOfObjects: 50
+    generateAsNeeded: 1
+    currentUpdatedObjectPointer: 0
+    automaticallySetParent: 0
+  - name: QuestDestinationIndicator
+    mode: 1
+    baseObject: {fileID: 2580657484177531531, guid: 2ded319a203d17e4ca1f0bd6396aba5e,
+      type: 3}
+    baseNumberOfObjects: 10
     generateAsNeeded: 1
     currentUpdatedObjectPointer: 0
     automaticallySetParent: 0
