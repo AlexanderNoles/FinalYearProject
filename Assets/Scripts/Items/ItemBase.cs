@@ -43,13 +43,14 @@ public class ItemBase : IDisplay
 			return;
 		}
 
-		foreach (KeyValuePair<string, string> entry in cachedItemData.nonPredefinedKeyToValue)
+		foreach (KeyValuePair<string, (StatContributor.Type, float)> entry in cachedItemData.keyToStat)
 		{
+			//Target has this stat
 			if (target.statToExtraContributors.ContainsKey(entry.Key))
 			{
-				StatContributor contributor = new StatContributor(float.Parse(entry.Value), entry.Key);
+				StatContributor contributor = new StatContributor(entry.Value.Item2, entry.Key, entry.Value.Item1);
 
-				target.statToExtraContributors[entry.Key].Add(contributor);
+				target.AddContributorToStat(entry.Key, contributor);
 				statContributors.Add(contributor);
 			}
 		}

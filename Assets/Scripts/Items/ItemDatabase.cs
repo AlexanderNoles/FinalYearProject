@@ -44,21 +44,20 @@ public class ItemDatabase
 			//Generate item additional extra description
 			statContributorDescriptions = "\n\n";
 
-			foreach (KeyValuePair<string, string> entry in nonPredefinedKeyToValue)
+			foreach (KeyValuePair<string, (StatContributor.Type, float)> entry in keyToStat)
 			{
-				if (float.TryParse(entry.Value, out float modifier))
-				{
-					string modifierSign = modifier >= 0.0f ? "+" : "";
+				string modifierSign = "x";
 
-					statContributorDescriptions = $"{statContributorDescriptions}\n{modifierSign}{modifier} {GetKeyAsTitle(entry.Key)}";
+				if (entry.Value.Item1 == StatContributor.Type.Addition)
+				{
+					modifierSign = entry.Value.Item2 >= 0.0f ? "+" : "";
 				}
+
+				statContributorDescriptions = $"{statContributorDescriptions}\n{modifierSign}{entry.Value.Item2} {GetKeyAsTitle(entry.Key)}";
 			}
 		}
 
-		//Typically keys in the file are matched to actual variables but there should be a backup in the form of a dict in case
-		//there is not a corresponding variable.
-
-		public Dictionary<string, string> nonPredefinedKeyToValue = new Dictionary<string, string>();
+		public Dictionary<string, (StatContributor.Type, float)> keyToStat = new Dictionary<string, (StatContributor.Type, float)>();
 		
 
 		//DISPLAY METHODS
@@ -271,7 +270,20 @@ public class ItemDatabase
 						}
 						else
 						{
-							newItem.nonPredefinedKeyToValue.Add(key, textBody);
+							StatContributor.Type type = StatContributor.Type.Addition;
+
+							if (textBody.Contains("xx"))
+							{
+								type = StatContributor.Type.FinalMultiplier;
+							}
+							else if (textBody.Contains("x"))
+							{
+								type = StatContributor.Type.BaseMultiplier;
+							}
+
+							textBody = textBody.Replace("x", "");
+
+							newItem.keyToStat.Add(key, (type, float.Parse(textBody)));
 						}
 					}
 				}

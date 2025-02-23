@@ -60,7 +60,7 @@ Material:
     - _NormalThreshold: 0.5
     - _Normal_Threshold: 0.001
     - _OutlineIntensity: 0.5
-    - _OutlinesEnabled: 0
+    - _OutlinesEnabled: 1
     - _Overlay: 1
     - _Threshold: 0.01
     m_Colors:

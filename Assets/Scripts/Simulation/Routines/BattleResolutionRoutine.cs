@@ -11,7 +11,7 @@ public class BattleResolutionRoutine : RoutineBase
 {
 	public override void Run()
 	{
-		const float battleLengthMultiplier = 5.0f;
+		const float battleLengthMultiplier = 20.0f;
 		const float damagePerTickApproximater = 0.1f;
 
 		//Each tick the battle system runs over every created battle (stored in the global battle data)

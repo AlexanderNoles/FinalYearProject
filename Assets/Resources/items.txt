@@ -51,14 +51,15 @@
 }
 ### Rare ###
 { item
-	//Straight damage stacker
+	//Combo Item, meant to work well with on hit effects or non base ap increasers
 	rarity: "1"
 	icon: "subliminalPiercer"
 	name: "Subliminal Piercer"
 	price: "0.7"
 	class: "0"
-	attackPower: "1"
-	description: "Increases <color=*statColour*>Attack Power</color> substantially."
+	attackPower: "0.5 x" 
+	attackSpeed: "2 x"
+	description: "Decreases Base <color=*statColour*>Attack Power</color> but increases Base <color=*statColour*>Attack Speed</color>."
 	extra: ""
 }
 { item

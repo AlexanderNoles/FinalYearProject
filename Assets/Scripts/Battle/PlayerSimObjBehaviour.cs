@@ -168,4 +168,16 @@ public class PlayerWeaponProfile : WeaponProfile
 
 		return base.GetDamage();
 	}
+
+	public override float GetTimeBetweenAttacks()
+	{
+		float returnValue = 0.5f;
+
+		if (PlayerManagement.PlayerEntityExists())
+		{
+			returnValue /= PlayerManagement.GetStats().GetStat(Stats.attackSpeed.ToString());
+		}
+
+		return returnValue;
+	}
 }
