@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using MonitorBreak;
 
-public class ClockEffectControl : MonoBehaviour
+public class ClockControl : MonoBehaviour
 {
 	public RectTransform dayPivot;
 	public RectTransform monthPivot;
 	public TextMeshProUGUI dateLabel;
+
+	public GameObject pauseIcon;
 
 	[Header("Follow Through")]
 	public RectTransform followThroughEmpty;
@@ -17,6 +20,11 @@ public class ClockEffectControl : MonoBehaviour
 	private Quaternion endRot;
 
 	private float postChangeAnimT = 1.0f;
+
+	private void Awake()
+	{
+		pauseIcon.SetActive(false);
+	}
 
 	public void UpdateClockPosition()
 	{
@@ -38,6 +46,27 @@ public class ClockEffectControl : MonoBehaviour
 			postChangeAnimT += Time.deltaTime * SimulationManagement.GetSimulationSpeed();
 
 			followThroughEmpty.rotation = Quaternion.LerpUnclamped(startRot, endRot, followThroughAnimCurve.Evaluate(postChangeAnimT * followUpSpeed));
+		}
+
+		if (InputManagement.GetKeyDown(InputManagement.toggleTimePauseKey))
+		{
+			ToggleTimePause();
+		}
+	}
+
+	public void ToggleTimePause()
+	{
+		if (!TimeManagement.RemoveTimeScale(this))
+		{
+			//Time scale was not removed
+			pauseIcon.SetActive(true);
+
+			//Very low priority so it doesn't override pause 
+			TimeManagement.AddTimeScale(0.0f, 1, this);
+		}
+		else
+		{
+			pauseIcon.SetActive(false);
 		}
 	}
 }

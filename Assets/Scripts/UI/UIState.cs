@@ -99,9 +99,14 @@ public class UIState : MonoBehaviour
         introT = input;
     }
 
+	public virtual float GetIntroDeltaTime()
+	{
+		return Time.deltaTime;
+	}
+
     public virtual void RunIntro()
     {
-        introT = Mathf.Clamp01(introT - (Time.deltaTime * GetIntroSpeed()));
+        introT = Mathf.Clamp01(introT - (GetIntroDeltaTime() * GetIntroSpeed()));
 		framesSinceAnimBegan++;
 
 		if (introT <= 0.0f)

@@ -290,7 +290,7 @@ public class CameraManagement : MonoBehaviour
 
 			if (!(MapManagement.MapActive() && MapManagement.MapIntroRunning()))
 			{
-				targetCamera.localPosition = Vector3.Lerp(targetCamera.localPosition, Vector3.back * currentCameraZoomTarget, Time.deltaTime * 5.0f);
+				targetCamera.localPosition = Vector3.Lerp(targetCamera.localPosition, Vector3.back * currentCameraZoomTarget, Time.unscaledDeltaTime * 5.0f);
 			}
 		}
 

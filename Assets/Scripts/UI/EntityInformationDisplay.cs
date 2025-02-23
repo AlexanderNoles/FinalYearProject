@@ -139,7 +139,8 @@ public class EntityInformationDisplay : StateOverride
 	{
 		if (onDrawAnimT < 1.0f)
 		{
-			onDrawAnimT += Time.deltaTime;
+			//Unscaled so it works when clock is paused
+			onDrawAnimT += Time.unscaledDeltaTime;
 
 			politicsIndicator.anchoredPosition3D = Vector3.Lerp(startingIndicatorPos, endIndicatorPos, polIndicatorAnimationCurve.Evaluate(onDrawAnimT * politicalIndicatorAnimSpeed));
 		}

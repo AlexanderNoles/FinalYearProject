@@ -12,7 +12,7 @@ public class MainInfoUIControl : PostTickUpdate
 
     private const float sideBarMax = 0.4f;
 
-    public ClockEffectControl clockEffect;
+    public ClockControl clockEffect;
 
     public Image engineBarImage;
     public GameObject engineArcaneFlame;

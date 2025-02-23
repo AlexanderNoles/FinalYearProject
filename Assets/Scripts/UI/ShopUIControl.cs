@@ -84,6 +84,7 @@ public class ShopUIControl : MonoBehaviour
 	private void Awake()
 	{
 		instance = this;
+		mainUI.SetActive(false);
 	}
 
 	private void Update()

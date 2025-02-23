@@ -46,6 +46,7 @@ public class QuestUIControl : MonoBehaviour
 	private void Awake()
 	{
 		instance = this;
+		mainUI.SetActive(false);
 	}
 
 	public static void ToggleQuestUI(QuestGiver target, Transform targetsTransform)

@@ -89,7 +89,12 @@ public class MapManagement : UIState
         return 1.5f;
     }
 
-    public override KeyCode GetSetActiveKey()
+	public override float GetIntroDeltaTime()
+	{
+		return Time.unscaledDeltaTime;
+	}
+
+	public override KeyCode GetSetActiveKey()
     {
         return InputManagement.toggleMapKey;
     }
@@ -231,8 +236,6 @@ public class MapManagement : UIState
 			Vector3 playerPos = -PlayerCapitalShip.GetPCSPosition().AsTruncatedVector3(mapRelativeScaleModifier);
 			mapElementsPools.UpdateNextObjectPosition(shipIndicatorPool, playerPos);
 			mapElementsPools.PruneObjectsNotUpdatedThisFrame(shipIndicatorPool);
-
-
 
 			if (MapIntroRunning())
             {
