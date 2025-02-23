@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using EntityAndDataDescriptor;
 
-public class PlayerManagement : MonoBehaviour
+public class PlayerManagement : PostTickUpdate
 {
     public const bool fuelEnabled = false;
     private static PlayerManagement instance;
@@ -22,7 +22,50 @@ public class PlayerManagement : MonoBehaviour
         Cursor.lockState = CursorLockMode.Confined;
     }
 
-    public static Vector3 GetPosition()
+	protected override void PostTick()
+	{
+		if (PlayerEntityExists())
+		{
+			//Process current quests
+			for (int i = 0; i < playerQuestsTarget.currentQuests.Count;)
+			{
+				if (!playerQuestsTarget.currentQuests[i].PostTickValidate())
+				{
+					//Validation failed, quest is no longer completable
+					playerQuestsTarget.currentQuests.RemoveAt(i);
+				}
+				else
+				{
+					i++;
+				}
+			}
+		}
+	}
+
+	protected override void Update()
+	{
+		base.Update();
+
+		if (PlayerEntityExists())
+		{
+			//Process current quests
+			for (int i = 0; i < playerQuestsTarget.currentQuests.Count;)
+			{
+				if (playerQuestsTarget.currentQuests[i].CompletedCheck())
+				{
+					//Quest completed
+					playerQuestsTarget.currentQuests[i].ApplyReward();
+					playerQuestsTarget.currentQuests.RemoveAt(i);
+				}
+				else
+				{
+					i++;
+				}
+			}
+		}
+	}
+
+	public static Vector3 GetPosition()
     {
         return instance.transform.position;
     }
