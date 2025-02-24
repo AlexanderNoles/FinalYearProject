@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,5 +25,10 @@ public class DeliveryQuest : Quest
 		}
 
 		return target.GetPosition();
+	}
+
+	public override float CurrencyRewardAmount()
+	{
+		return Mathf.RoundToInt((float)Math.Round(questOrigin.GetPosition().Distance(target.GetPosition())) / 200.0f);
 	}
 }

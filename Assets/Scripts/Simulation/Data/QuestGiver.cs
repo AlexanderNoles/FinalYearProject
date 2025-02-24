@@ -1,6 +1,7 @@
 
 using EntityAndDataDescriptor;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class QuestGiver : DataModule
@@ -47,16 +48,22 @@ public class QuestGiver : DataModule
 		quest.questOrigin = questOrigin;
 
 		//Set the delivery target
-		if (parent != null && parent.Get().GetData(DataTags.Settlements, out SettlementsData setData))
+		List<SettlementsData> settlementsDatas = SimulationManagement.GetDataViaTag(DataTags.Settlements).Cast<SettlementsData>().ToList();
+
+		int indexOffset = Random.Range(0, settlementsDatas.Count);
+		for (int i = 0; i < settlementsDatas.Count; i++)
 		{
+			int currentIndex = (i + indexOffset) % settlementsDatas.Count;
+			SettlementsData current = settlementsDatas[currentIndex];
+
 			//Because we only want want to do one iteration through the list
 			//We need to be able to skip elements
 			float skipperChance = 1.0f;
-			int setCount = setData.settlements.Count;
+			int setCount = current.settlements.Count;
 
 			float chanceLowerPer = 1.0f / setCount;
 
-			foreach (SettlementsData.Settlement settlement in setData.settlements.Values)
+			foreach (SettlementsData.Settlement settlement in current.settlements.Values)
 			{
 				skipperChance -= chanceLowerPer;
 
@@ -72,6 +79,12 @@ public class QuestGiver : DataModule
 					quest.target = settlement.location;
 					break;
 				}
+			}
+
+			//Found valid location
+			if (quest.target != null)
+			{
+				break;
 			}
 		}
 
