@@ -41,7 +41,6 @@ public class SimObjectBehaviour : BoxDescribedBattleBehaviour
 
 		foreach (StandardSimWeaponProfile wp in wps)
 		{
-			wp.MarkLastAttackTime(Time.time);
 			weapons.Add(wp);
 		}
 	}
@@ -202,12 +201,12 @@ public class SimObjectBehaviour : BoxDescribedBattleBehaviour
 							globalBattleData.StartOrJoinBattle(WorldManagement.ClampPositionToGrid(pos), pos, PlayerManagement.GetTarget().id, target.GetEntityID(), false);
 						}
 					}
+
+					//Apply per damage gold reward
+					PlayerInventory playerInventory = PlayerManagement.GetInventory();
+
+					playerInventory.AdjustCurrency(MathHelper.ValueTanhFalloff(result.damageTaken * target.GetPerDamageGoldReward(), 5, -1));
 				}
-
-				//Apply per damage gold reward
-				PlayerInventory playerInventory = PlayerManagement.GetInventory();
-
-				playerInventory.AdjustCurrency(MathHelper.ValueTanhFalloff(result.damageTaken * target.GetPerDamageGoldReward(), 5, -1));
 			}
 		}
 
@@ -236,8 +235,10 @@ public class SimObjectBehaviour : BoxDescribedBattleBehaviour
 		Debug.Log(TryGetEntityID());
 	}
 
-	private void OnDrawGizmosSelected()
+	protected override void OnDrawGizmosSelected()
 	{
+		base.OnDrawGizmosSelected();
+
 		Gizmos.color = Color.red;
 
 		Transform transform = GetComponent<Transform>();

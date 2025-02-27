@@ -253,28 +253,12 @@ public class BattleBehaviour : MonoBehaviour
 	}
 	//
 
-	private class AttackProfile 
-	{
-		public WeaponProfile parentProfile;
-
-		public int totalNumberOfAttacks;
-		public int numberOfAttacksSoFar;
-
-		public AttackProfile(int total, WeaponProfile weapon)
-		{
-			totalNumberOfAttacks = total;
-			numberOfAttacksSoFar = 0;
-
-			parentProfile = weapon;
-		}
-	}
-
 	protected void ProcessTargets()
 	{
-		//Prune targets if their object is set inactive
+		//Prune targets if their object is set inactive OR target is dead
 		for (int i = 0; i < currentTargets.Count;)
 		{
-			if (currentTargets[i].bb.gameObject == null || !currentTargets[i].bb.gameObject.activeSelf)
+			if (currentTargets[i].bb.gameObject == null || !currentTargets[i].bb.gameObject.activeSelf || currentTargets[i].bb.Dead())
 			{
 				RemoveTarget(currentTargets[i]);
 			}
@@ -292,101 +276,65 @@ public class BattleBehaviour : MonoBehaviour
 			return;
 		}
 
-		//Process attack pool so we know how many attacks we have to divide up between targets
-		List<AttackProfile> attackProfiles = new List<AttackProfile>();
-
-		foreach (WeaponProfile weaponProfile in weapons)
+		//Process weapons
+		foreach (WeaponProfile profile in weapons)
 		{
-			int attackCount = weaponProfile.CaclculateNumberOfAttacks();
+			//Lower time till next attack
+			//It's important that we can lower the timer to zero and process the shot on the same frame
+			profile.CountDownTimer();
 
-			if (attackCount > 0)
+			if (profile.CanFire())
 			{
-				attackProfiles.Add(new AttackProfile(attackCount, weaponProfile));
-			}
-		}
+				//Try to attack a random target
+				int randomOffset = Random.Range(0, count);
 
-		ProcessTargetList(currentTargets, attackProfiles, count);
-	}
-
-	private void ProcessTargetList(List<Target> targets, List<AttackProfile> attackProfiles, int fullCount)
-	{
-		//Apply damage to targets
-		//Apply some random offset to the index so if too few attacks are applied on one frame
-		//They don't always keep going to the first index, a.k.a single target fire
-		int randomOffset = Random.Range(0, targets.Count);
-
-		for (int i = 0; i < targets.Count;)
-		{
-			//Use current count instead of the count cached at the start of these function incase element is removed
-			int index = (i + randomOffset) % targets.Count;
-			Target target = targets[index];
-
-			if (target.bb.Dead())
-			{
-				if (targets.Remove(target))
+				//We want to iterate through all the targets until we find one within range
+				//We use a randomized offset so there is no preference but we still find an in range target if one exists
+				for (int i = 0; i < count; i++)
 				{
-					OnRemoveTarget(target);
-				}
-				continue;
-			}
-			else
-			{
-				i++;
-			}
+					int index = (i + randomOffset) % count;
+					Target target = currentTargets[index];
 
-			if (!target.bb.CanBeAttacked())
-			{
-				//Not allowed to attack this target
-				continue;
-			}
+					Vector3 targetPosition = target.bb.GetPosition();
 
-			Vector3 targetPosition = target.bb.GetPosition();
-
-			bool targetKilled = false;
-			//Preprocess
-			PreTargetProcess(target);
-
-			//Apply attacks to target
-			//For each weapon we apply this targets share of the attacks rounded up
-			for (int a = 0; a < attackProfiles.Count && !targetKilled; a++)
-			{
-				AttackProfile attack = attackProfiles[a];
-
-				//Check if within range
-				//If so then mark this weapon as used this frame
-				if (Vector3.Distance(GetPosition(), targetPosition) <= attack.parentProfile.GetRange())
-				{
-					attack.parentProfile.MarkLastAttackTime(Time.time);
-
-					//Number of attacks from this weapon for this target
-					//Rounded up so we always use all our attacks, even if some targets don't get hit
-					int attackCap = Mathf.CeilToInt(attack.totalNumberOfAttacks / (float)fullCount);
-					while (attack.numberOfAttacksSoFar < attack.totalNumberOfAttacks && attackCap > 0)
+					//Within range!
+					if (Vector3.Distance(GetPosition(), targetPosition) <= profile.GetRange())
 					{
-						//Apply damage
-						TakenDamageResult result = target.bb.TakeDamage(attack.parentProfile.GetDamage() * BalanceManagement.overallBattlePace, this);
+						//Preprocess
+						PreTargetProcess(target);
 
-						Vector3 shotTargetPosition = target.bb.GetTargetablePosition();
-						//Draw Attack
-						DrawAttack(shotTargetPosition, GetFireFromPosition(shotTargetPosition), weapons[a]);
+						//Sometimes a large frame spike could occur on the can fire frame, so we allow for multiple attacks to happen
+						int numberOfAttacks = profile.CaclculateNumberOfAttacks();
 
-						//Reduce attack cap
-						attackCap--;
-						//Increment number of attacks so far
-						attack.numberOfAttacksSoFar++;
-
-						//Killed target
-						if (result.destroyed)
+						for (int a = 0; a < numberOfAttacks; a++)
 						{
-							targetKilled = true;
-							break;
+							//Apply damage
+							TakenDamageResult result = target.bb.TakeDamage(profile.GetDamage() * BalanceManagement.overallBattlePace, this);
+
+							Vector3 shotTargetPosition = target.bb.GetTargetablePosition();
+							//Draw Attack
+							DrawAttack(shotTargetPosition, GetFireFromPosition(shotTargetPosition), profile);
+
+							//Run on do damage
+							OnDoDamage(result);
 						}
+
+						//Tell weapon to reset
+						profile.ResetTimerValue();
+
+						//Post process
+						PostTargetProcess(target);
+
+						//Don't want to process anymore targets
+						break;
 					}
 				}
-			}
 
-			//Postprocess
-			PostTargetProcess(target);
+				//Post first iteration we want to clamp time till next to be above zero
+				//This is because we only want to do an extra attack because of a frame spike
+				//Not 30 seconds after a frame spike when the target finally comes into range
+				profile.ClampTimerValue();
+			}
 		}
 	}
 
@@ -396,6 +344,11 @@ public class BattleBehaviour : MonoBehaviour
 	}
 
 	protected virtual void PostTargetProcess(Target target)
+	{
+
+	}
+
+	protected virtual void OnDoDamage(TakenDamageResult targetResult)
 	{
 
 	}

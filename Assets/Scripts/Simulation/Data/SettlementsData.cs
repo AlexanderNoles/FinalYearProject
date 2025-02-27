@@ -2,7 +2,17 @@ using EntityAndDataDescriptor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.FilePathAttribute;
+
+//Copied from discord (27/02/2025):
+//Gameplay outline for attacking settlements:
+//Nation Settlements are meant to have a soft time limit
+//Eventually too many other ships will arrive and kill you
+//Your objective is to destroy the settlement and get out before you die
+//Several factors could impact this
+//Things within the settlement. For example, larger cannons that will kill you if you don't deal with them first, a large shield generator, etc.
+//Things outside the settlement. If the Nation is at war, or otherwise involved in a huge amount of battles then they can't commit as many ships to defence
+//Your own ships being able to cover for you and soak / deal damage before the forces become overwhelming
+//because of the tuning of nations they will typically always eventually overpower you but there is some wiggle room there
 
 public class SettlementsData : DataModule
 {

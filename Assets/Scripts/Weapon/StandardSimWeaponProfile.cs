@@ -38,9 +38,4 @@ public class StandardSimWeaponProfile : WeaponProfile
 	{
 		return true;
 	}
-
-	protected override bool SalvoEnabled()
-	{
-		return false;
-	}
 }

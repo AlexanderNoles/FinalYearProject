@@ -321,6 +321,8 @@ public class GlobalBattleData : DataModule
 			}
 
 			public Dictionary<int, Participant> idToParticipant = new Dictionary<int, Participant>();
+
+			public float battleMaxScale = 500.0f;
 		}
 
 		private DrawnData drawnData = null;
@@ -342,7 +344,7 @@ public class GlobalBattleData : DataModule
 			{
 				Participant participant = new Participant();
 				//Do inital draw
-				DrawShips(SimulationManagement.GetEntityByID(id), participant);
+				DrawInitialShips(SimulationManagement.GetEntityByID(id), participant, true);
 
 				//Add to data
 				drawnData.idToParticipant.Add(id, participant);
@@ -374,7 +376,7 @@ public class GlobalBattleData : DataModule
 
 					//For each ship the participant owns in this cell
 					//add a ship instance in the scene
-					DrawShips(SimulationManagement.GetEntityByID(id), participant);
+					DrawInitialShips(SimulationManagement.GetEntityByID(id), participant, false);
 					drawnThisTick.Add(id);
 				}
 			}
@@ -423,7 +425,8 @@ public class GlobalBattleData : DataModule
 					{
 						foreach (ShipCollection newTargetCollection in milData.toTransfer[postion])
 						{
-							DrawCollection(newTargetCollection, entry.Value, entity);
+							//Draw added ship, these ships are always transferring in
+							DrawCollection(newTargetCollection, entry.Value, true);
 						}
 					}
 
@@ -436,7 +439,7 @@ public class GlobalBattleData : DataModule
 			}
 		}
 
-		private void DrawShips(SimulationEntity entity, DrawnData.Participant participant)
+		private void DrawInitialShips(SimulationEntity entity, DrawnData.Participant participant, bool onArrival)
 		{
 			if (entity.GetData(DataTags.Military, out MilitaryData militaryData))
 			{
@@ -446,23 +449,55 @@ public class GlobalBattleData : DataModule
 
 					foreach (ShipCollection collection in shipCollections)
 					{
-						DrawCollection(collection, participant, entity);
+						DrawCollection(collection, participant, !onArrival);
 					}
 				}
 			}
 		}
 
-		private void DrawCollection(ShipCollection collection, DrawnData.Participant participant, SimulationEntity parentEntity)
+		private void DrawCollection(ShipCollection collection, DrawnData.Participant participant, bool transferIn)
 		{
 			//Add each collection as a new collection drawer instance
 			ShipCollectionDrawer shipCollectionDrawer = new ShipCollectionDrawer();
 			//Set parent
 			shipCollectionDrawer.parent = drawnData.parent;
 			//Link that collection to this drawer
-			shipCollectionDrawer.Link(collection, parentEntity);
+			shipCollectionDrawer.Link(collection);
 
 			//Do full inital draw
-			shipCollectionDrawer.DrawShips();
+			//Generate spawn info
+			ShipCollectionDrawer.SpawnInfo spawnInfo;
+
+			if (transferIn)
+			{
+				//Transfered in from outside the battle
+				//Ideally we would transfer specifically from the direction this collection came from
+				//but military data only stores that we transfered to this position or we left from a position
+				//done seperately for quicker lookups
+
+				//Would need to iterate through from positions to find this target collection which is rather unperformant
+				//We could take the hit but I don't think it matters
+				Vector3 pos = GenerationUtility.GetCirclePositionBasedOnPercentage(Random.Range(0.0f, 1.0f), drawnData.battleMaxScale);
+
+				spawnInfo = new ShipCollectionDrawer.SpawnInfo(pos);
+			}
+			else
+			{
+				//Spawned from somewhere in the battle, this should mean they where here already when the battle started but the system
+				//is open for flexibility reasons
+
+				//Should ask player location management about the current state of the environment
+				//For now we just pick a random position within the battle scale that's not too close to the center
+				Vector3 center = Random.onUnitSphere;
+				center.y = 0.0f;
+				center.Normalize();
+
+				center *= Random.Range(100.0f, drawnData.battleMaxScale);
+
+				spawnInfo = new ShipCollectionDrawer.SpawnInfo(center);
+			}
+
+			shipCollectionDrawer.DrawShips(spawnInfo);
 
 			//Start tracking collection
 			participant.drawnCollections.Add(shipCollectionDrawer);

@@ -6,6 +6,7 @@ using EntityAndDataDescriptor;
 public class PlayerManagement : PostTickUpdate
 {
     public const bool fuelEnabled = false;
+	public static bool playerDead = false;
     private static PlayerManagement instance;
 	private Player playerEntity = null;
     private PlayerStats playerStatsTarget = null;
@@ -18,6 +19,7 @@ public class PlayerManagement : PostTickUpdate
 	private void Awake()
     {
         instance = this;
+		playerDead = false;
 
         Cursor.lockState = CursorLockMode.Confined;
     }
@@ -130,6 +132,9 @@ public class PlayerManagement : PostTickUpdate
 
 	public static void KillPlayer()
     {
+		playerDead = true;
+
+		//Currently just close the application
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else

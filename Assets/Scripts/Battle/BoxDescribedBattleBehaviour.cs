@@ -25,7 +25,7 @@ public class BoxDescribedBattleBehaviour : BattleBehaviour
 		return PointWithinBounds();
 	}
 
-	private void OnDrawGizmosSelected()
+	protected virtual void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.red;
 

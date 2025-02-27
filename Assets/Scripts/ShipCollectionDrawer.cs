@@ -6,28 +6,56 @@ public class ShipCollectionDrawer
 {
 	public ShipCollection target = null;
 	public Transform parent;
-	private SimulationEntity entity;
 	private int targetLTUI = -1;
 	public List<ShipSimObjectBehaviour> drawnShips = new List<ShipSimObjectBehaviour>();
 
-	public void Link(ShipCollection newTarget, SimulationEntity entity)
+	//The position the collection spawns in
+	//For example in battles this can 
+
+	public struct SpawnInfo
+	{
+		public Vector3 center;
+		public float outerRange;
+		public float innerRange;
+
+		public SpawnInfo(Vector3 pos, float outerRange = 50.0f, float innerRange = 0)
+		{
+			center = pos;
+			this.outerRange = outerRange;
+			this.innerRange = innerRange;
+		}
+
+		public Vector3 GeneratePosition()
+		{
+			Vector3 newShipPosition = Random.onUnitSphere;
+			newShipPosition.y = 0.0f;
+			newShipPosition.Normalize();
+
+			return (newShipPosition * Random.Range(innerRange, outerRange)) + center;
+		}
+	}
+
+	public SpawnInfo spawnInfo;
+
+	public void Link(ShipCollection newTarget)
 	{
 		target = newTarget;
-		this.entity = entity;
 	}
 
 	public void UnLink()
 	{
-		Link(null, null);
+		Link(null);
 		UndrawAll();
 	}
 
-	public void DrawShips()
+	public void DrawShips(SpawnInfo spawnInfo)
 	{
 		if (target == null)
 		{
 			return;
 		}
+
+		this.spawnInfo = spawnInfo;
 
 		//Undraw all currently drawn ships
 		UndrawAll();

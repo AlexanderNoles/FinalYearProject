@@ -28,7 +28,8 @@ public class PlayerSimObjBehaviour : SimObjectBehaviour
 
 	public static float GetSalvoPercentage()
 	{
-		return Mathf.Clamp01(instance.weapons[0].CaclculateNumberOfAttacks() / (float)instance.weapons[0].InitialSalvoSize());
+		//Intentional error marking
+		return 1.0f;
 	}
 
 	public static float GetCurrentHealth()

@@ -44,14 +44,31 @@ public static class GenerationUtility
         new Vector3(0,0,-1)
     };
 
-    public static Vector3 GetCirclePositionBasedOnPercentage(float percentage, float radius)
+	public static readonly Vector3[] nineDirectionalOffsets = new Vector3[] {
+		new Vector3(1,0,1),
+		new Vector3(-1,0,1),
+		new Vector3(-1,0,-1),
+		new Vector3(1,0,-1),
+		Vector3.zero,
+		new Vector3(1,0,0),
+		new Vector3(0,0,1),
+		new Vector3(-1,0,0),
+		new Vector3(0,0,-1)
+	};
+
+	public static Vector3 GetCirclePositionBasedOnPercentage(float percentage, float radius)
     {
-        percentage = percentage * 2 * Mathf.PI;
-
-        Vector3 toReturn = new Vector3(Mathf.Sin(percentage) * radius, 0, Mathf.Cos(percentage) * radius);
-
-        return toReturn;
+		return GetCirclePositionBasedOnPercentage(percentage, radius, Vector3.zero);
     }
+
+	public static Vector3 GetCirclePositionBasedOnPercentage(float percentage, float radius, Vector3 center)
+	{
+		percentage = percentage * 2 * Mathf.PI;
+
+		Vector3 toReturn = new Vector3(Mathf.Sin(percentage) * radius, 0, Mathf.Cos(percentage) * radius) + center;
+
+		return toReturn;
+	}
 
     public static HashSet<RealSpacePosition> GenerateFalloffPositionSpread(RealSpacePosition origin, Vector2 minMaxFalloffPerStep, int maxSize, Func<RealSpacePosition, bool> validPositionEval, System.Random random)
     {

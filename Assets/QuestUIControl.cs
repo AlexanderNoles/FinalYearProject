@@ -19,6 +19,7 @@ public class QuestUIControl : MonoBehaviour
 	public int slotCount = 5;
 	public List<QuestSlotControl> questSlots = new List<QuestSlotControl>();
 
+#if UNITY_EDITOR
 	[ContextMenu("Generate Quest Slots")]
 	public void GenerateQuestSlots()
 	{
@@ -42,6 +43,7 @@ public class QuestUIControl : MonoBehaviour
 			questSlots.Add(newSlot);
 		}
 	}
+#endif
 
 	private void Awake()
 	{

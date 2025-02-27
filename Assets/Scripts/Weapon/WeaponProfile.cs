@@ -24,11 +24,6 @@ public class WeaponProfile
 		return 200.0f;
 	}
 
-	protected virtual bool SalvoEnabled()
-	{
-		return true;
-	}
-
 	protected virtual bool AttackTimeVariance()
 	{
 		return false;
@@ -37,18 +32,7 @@ public class WeaponProfile
 	public virtual void OnBattleStart()
 	{
 		//When weapons begin firing
-		if (!SalvoEnabled())
-		{
-			MarkLastAttackTime(Time.time);
-		}
-	}
-
-	//This is the amount of stored up attacks the weapon can store
-	//All of these will be shot at once on engage
-	//So players will need to think about who they attack first
-	public virtual int InitialSalvoSize()
-	{
-		return 10;
+		ResetTimerValue();
 	}
 
 	protected float lastAttackTime;
@@ -62,16 +46,46 @@ public class WeaponProfile
 		lastAttackTime = time;
 	}
 
+	protected float timeTillNextAttack;
+
 	public int CaclculateNumberOfAttacks()
 	{
-		int calculatedNumberOfAttacks = Mathf.FloorToInt(((Time.time - lastAttackTime) / GetTimeBetweenAttacks()) * Mathf.Max(ShotsPerAttack(), 1.0f));
+		return 1 + Mathf.FloorToInt(Mathf.Abs(timeTillNextAttack) / GetTimeBetweenAttacks());
+	}
 
-		int maxSalvoSize = InitialSalvoSize();
-		if (calculatedNumberOfAttacks > maxSalvoSize)
+	public void MarkWeaponFired()
+	{
+		timeTillNextAttack = GetTimeBetweenAttacks();
+	}
+
+	public bool CanFire()
+	{
+		return timeTillNextAttack <= 0.0f;
+	}
+
+	public void CountDownTimer()
+	{
+		//If currently can't fire
+		if (!CanFire())
 		{
-			calculatedNumberOfAttacks = maxSalvoSize;
+			timeTillNextAttack -= Time.deltaTime;
 		}
+	}
 
-		return calculatedNumberOfAttacks;
+	public void ClampTimerValue()
+	{
+		timeTillNextAttack = Mathf.Max(timeTillNextAttack, 0.0f);
+	}
+
+	public void ResetTimerValue()
+	{
+		timeTillNextAttack = GetTimeBetweenAttacks();
+
+		if (AttackTimeVariance())
+		{
+			float variance = timeTillNextAttack * 0.05f;
+
+			timeTillNextAttack += Random.Range(-variance, variance);
+		}
 	}
 }

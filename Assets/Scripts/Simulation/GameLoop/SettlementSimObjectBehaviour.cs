@@ -30,6 +30,8 @@ public class SettlementSimObjectBehaviour : SimObjectBehaviour
 	}
 
 	[Header("City Scape Rendering")]
+	public float roadIntensity = 0.5f; 
+	public float roadLinesFrequency = 5.0f;
 	public List<Mesh> meshs;
 	public Material material;
 	private List<InstancedRenderer> renderers = new List<InstancedRenderer>();
@@ -100,11 +102,18 @@ public class SettlementSimObjectBehaviour : SimObjectBehaviour
 
 			//Iterate around in a circle
 			//Adding positions
-
+			float inverseRLF = 1.0f / roadLinesFrequency;
 
 			for (int p = 0; p < countPerIteration; p++)
 			{
-				Vector3 pos = GenerationUtility.GetCirclePositionBasedOnPercentage((p / (float)countPerIteration) + Random.Range(-randomOffsetMinMax, randomOffsetMinMax), circleRadius);
+				float percentage = (p / (float)countPerIteration) + Random.Range(-randomOffsetMinMax, randomOffsetMinMax);
+				//Round percentage to the nearest arbitrary decimal
+				//Get the difference
+				//Add that to percentage multiplied by some constant
+				float rounded = Mathf.RoundToInt(percentage / inverseRLF) * inverseRLF;
+
+				float offsetPercentage = percentage + ((rounded - percentage) * roadIntensity);
+				Vector3 pos = GenerationUtility.GetCirclePositionBasedOnPercentage(offsetPercentage, circleRadius);
 
 				float highUpChance = Mathf.Pow(Random.Range(0.0f, 1.0f), 6.0f);
 
