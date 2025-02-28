@@ -549,7 +549,7 @@ public class PlayerMapInteraction : PostTickUpdate
 			}
 
 			//Decide on highlight mode based on interaction
-			Interaction lastSVI = PlayerInteractionManagement.lastSuccesfullyValidatedInteraction;
+			Interaction lastSVI = PlayerInteractionManagement.chosenInteraction;
 			Interaction.InteractionMapCursor mapCursorData = Interaction.basicBorder;
 
 			//Don't display highlight effect if over location or no interaction

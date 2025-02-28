@@ -6,7 +6,24 @@ public class UIState : MonoBehaviour
 {
 	[Header("Mouse state during UI state")]
 	public bool useCutsomMouseState;
-	public MouseManagement.MouseState mouseState;
+
+	[System.Serializable]
+	public class UIStateMouse : MouseManagement.MouseState
+	{
+		public override Color TagALongColour(Sprite current)
+		{
+			Interaction currentInteraction = PlayerInteractionManagement.chosenInteraction;
+
+			if (currentInteraction != null && current.Equals(currentInteraction.GetIcon()))
+			{
+				return base.TagALongColour(current);
+			}
+
+			return base.TagALongColour(current) * 0.5f;
+		}
+	}
+
+	public UIStateMouse mouseState;
 
 	[Header("Effect Settings")]
 	public bool blurDuringState = false;

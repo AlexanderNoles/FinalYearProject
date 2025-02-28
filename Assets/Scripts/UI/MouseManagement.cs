@@ -11,10 +11,15 @@ public class MouseManagement : MonoBehaviour
 	public class MouseState
 	{
 		public Sprite mouseImage;
-		public Sprite tagALongImage = null;
+		public List<Sprite> tagALongs = new List<Sprite>();
 		//Natural conversion from standard pixels per unit to ui's pixels per unit
 		public float tagALongScale = 16.0f / 256.0f;
 		public bool hidden = false;
+
+		public virtual Color TagALongColour(Sprite current)
+		{
+			return Color.white;
+		}
 	}
 
 	private MouseState currentMouseState = null;
@@ -26,9 +31,13 @@ public class MouseManagement : MonoBehaviour
 	public Image mouseImage;
 	private GameObject mouseGO;
 	private RectTransform mouseRect;
-	public Image tagAlongImage;
-	private GameObject tagGO;
-	private RectTransform tagRect;
+
+	[Header("Tag a longs")]
+	public GameObject tagALongEmpty;
+	public MultiObjectPool tagALongPool;
+	private const int talIndex = 0;
+	private Dictionary<RectTransform, Image> tagTransToImage = new Dictionary<RectTransform, Image>();
+
 	[Header("Mouse Click Effect")]
 	public RectTransform mouseClickEffectRect;
 	public Image mouseClickImage;
@@ -95,16 +104,38 @@ public class MouseManagement : MonoBehaviour
 		additionalMouseOffset = new Vector2(sizeDelta.x, -sizeDelta.y) / 2.0f;
 
 		//Setup tagalong image
-		tagGO.SetActive(currentMouseState.tagALongImage != null);
-		if (tagGO.activeSelf)
+		tagALongEmpty.SetActive(currentMouseState.tagALongs.Count > 0);
+		if (tagALongEmpty.activeSelf)
 		{
-			tagAlongImage.sprite = currentMouseState.tagALongImage;
-			tagAlongImage.SetNativeSize();
+			float offset = 0.0f;
 
-			tagRect.sizeDelta *= currentMouseState.tagALongScale;
+			foreach (Sprite sprite in currentMouseState.tagALongs)
+			{
+				if (sprite == null)
+				{
+					continue;
+				}
 
-			tagRect.anchoredPosition = new Vector2(tagRect.sizeDelta.x, -tagRect.sizeDelta.y) / 2.0f;
-			tagRect.anchoredPosition += new Vector2(-10, 0);
+				RectTransform tagRect = tagALongPool.UpdateNextObjectPosition(talIndex, Vector3.zero) as RectTransform;
+
+				if (!tagTransToImage.ContainsKey(tagRect))
+				{
+					tagTransToImage.Add(tagRect, tagRect.GetComponent<Image>());
+				}
+
+				tagTransToImage[tagRect].sprite = sprite;
+				tagTransToImage[tagRect].SetNativeSize();
+				tagTransToImage[tagRect].color = currentMouseState.TagALongColour(sprite);
+
+				tagRect.sizeDelta *= currentMouseState.tagALongScale;
+
+				tagRect.anchoredPosition3D = new Vector2(tagRect.sizeDelta.x, -tagRect.sizeDelta.y) / 2.0f;
+				tagRect.anchoredPosition3D += new Vector3(20 + offset, 0);
+
+				offset += tagRect.sizeDelta.x + 10.0f;
+			}
+
+			tagALongPool.PruneObjectsNotUpdatedThisFrame(talIndex);
 		}
 		//
 
@@ -121,9 +152,6 @@ public class MouseManagement : MonoBehaviour
 
 		mouseGO = mouseImage.gameObject;
 		mouseRect = mouseGO.transform as RectTransform;
-
-		tagGO = tagAlongImage.gameObject;
-		tagRect = tagAlongImage.transform as RectTransform;
 
 		//Setup backup mouse state
 		backupMouseState = new MouseState();

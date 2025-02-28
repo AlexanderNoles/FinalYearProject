@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static PlayerMapInteraction;
 
 public class PlayerInteractionManagement : MonoBehaviour
 {
@@ -23,7 +24,7 @@ public class PlayerInteractionManagement : MonoBehaviour
 		EnableSmartInteraction(false);
 	}
 
-	public static object GetCurrentInteraction()
+	public static Interaction GetCurrentInteraction()
 	{
 		return currentInteraction;
 	}
@@ -38,7 +39,7 @@ public class PlayerInteractionManagement : MonoBehaviour
 		}
 	}
 
-	public static Interaction lastSuccesfullyValidatedInteraction;
+	public static Interaction chosenInteraction;
 	private static Interaction currentInteraction;
 	private static bool smartInteractionEnabled = false;
 
@@ -67,29 +68,28 @@ public class PlayerInteractionManagement : MonoBehaviour
 			return;
 		}
 
-		PerformInteraction(out Sprite mouseTagAlongSprite);
+		List<Sprite> validatedInteractionSprites = PerformInteraction();
 
 		foreach (UIState targetState in uiStatesWithInteractions)
 		{
-			if (targetState.mouseState.tagALongImage != mouseTagAlongSprite)
-			{
-				targetState.mouseState.tagALongImage = mouseTagAlongSprite;
+			targetState.mouseState.tagALongs = validatedInteractionSprites;
 
-				if (UIManagement.IsCurrentState(targetState))
-				{
-					MouseManagement.ReloadMouseState();
-				}
+			if (UIManagement.IsCurrentState(targetState))
+			{
+				MouseManagement.ReloadMouseState();
 			}
 		}
-
-
 	}
 
-	private void PerformInteraction(out Sprite interactionIcon)
+	private List<Sprite> PerformInteraction()
 	{
-		interactionIcon = null;
-		lastSuccesfullyValidatedInteraction = null;
+		List<Sprite> toReturn = new List<Sprite>();
+		chosenInteraction = null;
+		SimObjectBehaviour target = null;
+		UnderMouseData underMouseData = GetUnderMouseData();
 
+		//Need to find all valid interactions and the current interaction
+		//So we can tell the player all the interactions they can have with this object
 		if (UIHelper.ElementsUnderMouse().Count <= 0)
 		{
 			List<Interaction> targetInteractions = new List<Interaction>();
@@ -158,56 +158,68 @@ public class PlayerInteractionManagement : MonoBehaviour
 					}
 				}
 
-				//If we have found a target
-				foreach (Interaction targetInteraction in targetInteractions)
+				//If we have found any targets
+				//Run until we have found a target that accepts an interaction
+				for (int i = 0; i < foundTargets.Count && chosenInteraction == null; i++)
 				{
-					//For each found target, closest first, test this interaction. If a valid one is found then execute on that, otherwise move to next interaction
-					for (int i = 0; i < foundTargets.Count; i++)
+					target = foundTargets[i];
+
+					foreach (Interaction targetInteraction in targetInteractions)
 					{
-						SimObjectBehaviour target = foundTargets[i];
 						//Validate normally and ensure target is within range (when using smart interaction we can't pre limit the range on the raycast check)
 						bool validationResult = targetInteraction.ValidateBehaviour(target) && (!careAboutRange || ranges[i] <= targetInteraction.GetRange());
 
 						if (validationResult)
 						{
-							lastSuccesfullyValidatedInteraction = targetInteraction;
-
-							//On mouse over
-							if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
+							if (chosenInteraction == null)
 							{
-								//On Interact button pressed
-								targetInteraction.ProcessBehaviour(target);
+								//First one validated
+								chosenInteraction = targetInteraction;
 							}
 
-							interactionIcon = targetInteraction.GetIcon();
-							return;
+							toReturn.Add(targetInteraction.GetIcon());
 						}
 					}
 				}
 			}
-			else if (MapManagement.MapActive())
+			else if (MapManagement.MapActive() && !MapManagement.MapIntroRunning())
 			{
 				//If in map ask player map interaction for a target
-				PlayerMapInteraction.UnderMouseData underMouseData = PlayerMapInteraction.GetUnderMouseData();
-
 				foreach (Interaction targetInteraction in targetInteractions)
 				{
 					bool validationResult = targetInteraction.ValidateOnMap(underMouseData);
 
 					if (validationResult)
 					{
-						lastSuccesfullyValidatedInteraction = targetInteraction;
-
-						if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
+						if (chosenInteraction == null)
 						{
-							targetInteraction.ProcessOnMap(underMouseData);
+							//First one validated
+							chosenInteraction = targetInteraction;
 						}
 
-						interactionIcon = targetInteraction.GetIcon();
-						return;
+						//Add to valid interactions
+						toReturn.Add(targetInteraction.GetIcon());
+					}
+				}
+			}
+
+			//Acutally process the interaction if one was found
+			if (chosenInteraction != null)
+			{
+				if (InputManagement.GetMouseButtonDown(InputManagement.MouseButton.Left))
+				{
+					if (MapManagement.MapActive())
+					{
+						chosenInteraction.ProcessOnMap(underMouseData);
+					}
+					else if (target != null)
+					{
+						chosenInteraction.ProcessBehaviour(target);
 					}
 				}
 			}
 		}
+
+		return toReturn;
 	}
 }
