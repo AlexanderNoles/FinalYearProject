@@ -180,7 +180,7 @@ public class SimObject : DataModule, IDisplay
 		}
 	}
 
-	public float GetPlayerReputation()
+	public float GetPlayerReputation(float repDefault = 1.0f)
 	{
 		if (ReputationEnabled())
 		{
@@ -198,7 +198,7 @@ public class SimObject : DataModule, IDisplay
 			}
 		}
 
-		return 1.0f;
+		return repDefault;
 	}
 
 	private FeelingsData GetFeelingsData()

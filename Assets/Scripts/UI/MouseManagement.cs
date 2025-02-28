@@ -106,6 +106,7 @@ public class MouseManagement : MonoBehaviour
 			tagRect.anchoredPosition = new Vector2(tagRect.sizeDelta.x, -tagRect.sizeDelta.y) / 2.0f;
 			tagRect.anchoredPosition += new Vector2(-10, 0);
 		}
+		//
 
 		Cursor.visible = false;
 		Cursor.lockState = CursorLockMode.Confined;

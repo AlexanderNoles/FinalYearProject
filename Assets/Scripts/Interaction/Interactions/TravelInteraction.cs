@@ -56,4 +56,9 @@ public class TravelInteraction : Interaction
 
 		return noneWithLine;
 	}
+
+	public override string GetTitle()
+	{
+		return "Travel";
+	}
 }

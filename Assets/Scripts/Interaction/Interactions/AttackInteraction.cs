@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class AttackInteraction : Interaction
 {
@@ -11,7 +12,23 @@ public class AttackInteraction : Interaction
 
 	public override void ProcessBehaviour(SimObjectBehaviour interactable)
 	{
-		PlayerSimObjBehaviour.ToggleTargetExternal(interactable);
+		UnityAction onAccept = () => { PlayerSimObjBehaviour.ToggleTargetExternal(interactable); };
+
+		if (interactable.Linked())
+		{
+			if (!PlayerSimObjBehaviour.CurrentlyTargeting(interactable) && 
+				interactable.target.GetPlayerReputation(BalanceManagement.properInteractionAllowedThreshold) > BalanceManagement.properInteractionAllowedThreshold)
+			{
+				//Has good rep with this target
+				//Show confirm popup
+				PopupUIControl.SetActive("Warning!", "You have a good reputation with this entity! Are you sure you want to attack?", onAccept);
+			}
+			else
+			{
+				//If bad or not rep just run on accept
+				onAccept.Invoke();
+			}
+		}
 	}
 
 	protected override string GetIconPath()
@@ -29,5 +46,10 @@ public class AttackInteraction : Interaction
 		//Infinite target get range
 		//This is so you can always target enemies
 		return Ranges.infinity;
+	}
+
+	public override string GetTitle()
+	{
+		return "Attack";
 	}
 }

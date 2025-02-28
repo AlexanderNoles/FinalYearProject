@@ -137,7 +137,7 @@ public class QuestUIControl : MonoBehaviour
 	{
 		if (targetData != null)
 		{
-			if (UIHelper.CloseInteractionBasedUI(targetDataTransform) || targetData.heldQuests.Count == 0)
+			if (UIHelper.CloseInteractionBasedUI(targetDataTransform, false) || targetData.heldQuests.Count == 0)
 			{
 				CloseQuestUI();
 			}

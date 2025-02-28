@@ -19,6 +19,11 @@ public class QuestInteraction : Interaction
 		return "questInteraction";
 	}
 
+	public override string GetTitle()
+	{
+		return "Find Work";
+	}
+
 	public override int GetDrawPriority()
 	{
 		return 75;

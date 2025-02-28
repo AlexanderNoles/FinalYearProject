@@ -91,7 +91,7 @@ public class ShopUIControl : MonoBehaviour
 	{
 		if (target != null)
 		{
-			if (UIHelper.CloseInteractionBasedUI(targetsTransform))
+			if (UIHelper.CloseInteractionBasedUI(targetsTransform, target is SimulationEntity))
 			{
 				CloseShopUI();
 			}
@@ -115,6 +115,8 @@ public class ShopUIControl : MonoBehaviour
 			instance.target = target;
 			instance.Draw(false);
 			instance.draggableWindowControl.InitialOffset();
+
+			Debug.Log("Shop Opened!");
 
 			instance.targetsTransform = targetsTransform;
 		}

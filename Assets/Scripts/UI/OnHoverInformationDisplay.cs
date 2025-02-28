@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class OnHoverInformationDisplay : MonoBehaviour
@@ -11,12 +12,17 @@ public class OnHoverInformationDisplay : MonoBehaviour
 
 	private RectTransform rootRectTransform;
 
+	[Header("Regular")]
 	public GameObject mainUI;
 	private RectTransform anchorRect;
 	private Vector2 cachedAnchoredPosition;
 	public TextMeshProUGUI titleLabel;
 	public TextMeshProUGUI descLabel;
 	public TextMeshProUGUI extraLabel;
+
+	[Header("Mini")]
+	public GameObject miniUI;
+	public TextMeshProUGUI miniLabel;
 
 	private void Awake()
 	{
@@ -36,7 +42,7 @@ public class OnHoverInformationDisplay : MonoBehaviour
 		}
 	}
 
-	public static void SetCurrentTarget(IDisplay newTarget, GameObject hoverSource)
+	public static void SetCurrentTarget(IDisplay newTarget, GameObject hoverSource, bool mini)
 	{
 		if (instance.currentTarget == newTarget)
 		{
@@ -45,7 +51,7 @@ public class OnHoverInformationDisplay : MonoBehaviour
 
 		instance.currentTarget = newTarget;
 		instance.hoverSource = hoverSource;
-		instance.Draw();
+		instance.Draw(mini);
 	}
 
 	public static void RemoveCurrentTarget(IDisplay oldTarget)
@@ -57,18 +63,26 @@ public class OnHoverInformationDisplay : MonoBehaviour
 		}
 	}
 
-	private void Draw()
+	private void Draw(bool mini)
 	{
-		mainUI.SetActive(true);
-
-		titleLabel.text = currentTarget.GetTitle();
-		descLabel.text = currentTarget.GetDescription();
-		extraLabel.text = currentTarget.GetExtraInformation();
+		if (mini)
+		{
+			miniUI.SetActive(true);
+			miniLabel.text = currentTarget.GetTitle();
+		}
+		else
+		{
+			mainUI.SetActive(true);
+			titleLabel.text = currentTarget.GetTitle();
+			descLabel.text = currentTarget.GetDescription();
+			extraLabel.text = currentTarget.GetExtraInformation();
+		}
 	}
 
 	private void Hide()
 	{
 		mainUI.SetActive(false);
+		miniUI.SetActive(false);
 
 		//Reset data
 		currentTarget = null;

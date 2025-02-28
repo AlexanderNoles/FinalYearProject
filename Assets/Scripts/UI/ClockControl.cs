@@ -6,6 +6,8 @@ using MonitorBreak;
 
 public class ClockControl : MonoBehaviour
 {
+	private static ClockControl instance;
+
 	public RectTransform dayPivot;
 	public RectTransform monthPivot;
 	public TextMeshProUGUI dateLabel;
@@ -23,6 +25,7 @@ public class ClockControl : MonoBehaviour
 
 	private void Awake()
 	{
+		instance = this;
 		pauseIcon.SetActive(false);
 	}
 
@@ -52,6 +55,26 @@ public class ClockControl : MonoBehaviour
 		{
 			ToggleTimePause();
 		}
+	}
+
+	public static void ExternalToggleTimePause()
+	{
+		if (instance == null)
+		{
+			return;
+		}
+
+		instance.ToggleTimePause();
+	}
+
+	public static bool Paused()
+	{
+		if (instance == null)
+		{
+			return false;
+		}
+
+		return instance.pauseIcon.activeSelf;
 	}
 
 	public void ToggleTimePause()

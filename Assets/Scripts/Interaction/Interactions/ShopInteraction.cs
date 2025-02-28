@@ -41,4 +41,9 @@ public class ShopInteraction : Interaction
 	{
 		return "shopInteraction";
 	}
+
+	public override string GetTitle()
+	{
+		return "Trade";
+	}
 }

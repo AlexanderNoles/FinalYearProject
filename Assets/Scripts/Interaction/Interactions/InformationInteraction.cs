@@ -47,4 +47,9 @@ public class InformationInteraction : Interaction
 	{
 		return basicBorder;
 	}
+
+	public override string GetTitle()
+	{
+		return "Info";
+	}
 }

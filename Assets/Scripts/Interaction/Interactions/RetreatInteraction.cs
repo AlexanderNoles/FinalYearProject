@@ -108,4 +108,9 @@ public class RetreatInteraction : Interaction
 	{
 		return "retreatInteraction";
 	}
+
+	public override string GetTitle()
+	{
+		return "Retreat";
+	}
 }

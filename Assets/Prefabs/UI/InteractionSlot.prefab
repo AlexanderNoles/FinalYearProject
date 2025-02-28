@@ -128,7 +128,7 @@ MonoBehaviour:
   slotIcon: {fileID: 1507036406158267646}
   button: {fileID: 4754165647289129722}
   buttonEnabled: 1
-  onHover: {fileID: 0}
+  onHover: {fileID: 923768288258517390}
 --- !u!1 &8450019475725061531
 GameObject:
   m_ObjectHideFlags: 0
@@ -141,6 +141,7 @@ GameObject:
   - component: {fileID: 1110318668484762615}
   - component: {fileID: 1507036406158267646}
   - component: {fileID: 4754165647289129722}
+  - component: {fileID: 923768288258517390}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -249,3 +250,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &923768288258517390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8450019475725061531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35ad36cffd01c99488efe97e00a5bcf7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mini: 1

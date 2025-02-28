@@ -85,4 +85,9 @@ public class TroopDirectInteraction : Interaction
 	{
 		return "troopDirection";
 	}
+
+	public override string GetTitle()
+	{
+		return "Command";
+	}
 }

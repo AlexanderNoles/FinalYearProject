@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 public class DisplayOnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
 	public IDisplay target;
+	public bool mini;
 
 	public void Setup(IDisplay target)
 	{
@@ -17,7 +18,7 @@ public class DisplayOnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 		//Tell display ui to active with our target
 		if (target != null)
 		{
-			OnHoverInformationDisplay.SetCurrentTarget(target, gameObject);
+			OnHoverInformationDisplay.SetCurrentTarget(target, gameObject, mini);
 		}
 	}
 

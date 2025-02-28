@@ -16,6 +16,11 @@ public class PlayerSimObjBehaviour : SimObjectBehaviour
 			(bb.target != null && bb.target.parent != null && bb.target.parent.Get().id.Equals(PlayerManagement.GetTarget().id));
 	}
 
+	public static bool CurrentlyTargeting(BattleBehaviour target)
+	{
+		return instance.Targeting(target, out int unused);
+	}
+
 	public static void ToggleTargetExternal(BattleBehaviour target)
 	{
 		instance.ToggleTarget(target);

@@ -34,7 +34,7 @@ public class BattleBehaviour : MonoBehaviour
 
 	public List<Target> currentTargets = new List<Target>();
 
-	private bool Targeting(BattleBehaviour bb, out int index)
+	public bool Targeting(BattleBehaviour bb, out int index)
 	{
 		index = -1;
 		foreach (Target target in currentTargets)
@@ -294,6 +294,11 @@ public class BattleBehaviour : MonoBehaviour
 				{
 					int index = (i + randomOffset) % count;
 					Target target = currentTargets[index];
+
+					if (!target.bb.CanBeAttacked())
+					{
+						continue;
+					}
 
 					Vector3 targetPosition = target.bb.GetPosition();
 
