@@ -422,6 +422,8 @@ public class SimulationManagement : MonoBehaviour
 		//It is important this is run in Start so OnEnable can run on objects before this goes off
 		int tickCount = YearsToTickNumberCount(historyLength);
 
+		Debug.Log(tickCount);
+
 		if (!batchHistory)
 		{
 			//Setup async history run

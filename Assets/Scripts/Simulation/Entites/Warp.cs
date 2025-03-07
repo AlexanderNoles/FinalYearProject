@@ -13,9 +13,9 @@ public class Warp : SimulationEntity
 		main = this;
 	}
 
-	public override void InitTags()
+	public override void InitEntityTags()
 	{
-		base.InitTags();
+		base.InitEntityTags();
 
 		AddTag(EntityStateTags.Unkillable);
 	}

@@ -19,12 +19,12 @@ public class PoliticalEffectOnFeelingsRoutine : RoutineBase
 
 		foreach (FeelingsData feelingsData in feelingsDatas.Cast<FeelingsData>())
 		{
-            WarStrategyData personalWarData = null;
-            bool canStartWars = feelingsData.TryGetLinkedData(DataTags.Strategy, out StrategyData strategyData) && strategyData is WarStrategyData;
+            WarStrategy personalWarData = null;
+            bool canStartWars = feelingsData.TryGetLinkedData(DataTags.Strategy, out StrategyData strategyData) && strategyData is WarStrategy;
 
 			if (canStartWars)
 			{
-				personalWarData = (WarStrategyData)strategyData;
+				personalWarData = (WarStrategy)strategyData;
 			}
 
 			if (feelingsData.TryGetLinkedData(DataTags.Political, out PoliticalData personalPoliticalData))

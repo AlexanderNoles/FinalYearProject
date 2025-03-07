@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class QuestGiver : DataModule
+public class QuestGiverData : DataModule
 {
 	//Stores all the active quests for this entity
 	//These are only generated when the player needs them

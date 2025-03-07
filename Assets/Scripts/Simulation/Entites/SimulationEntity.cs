@@ -33,7 +33,7 @@ public class SimulationEntity : SimObject
         //
         //Data is split into modules that can be accessed that describe the actual makeup of an entity
         //Tags are used to generally describe a entity, they are used by routines to correctly access the correct entities to act on
-        InitTags();
+        InitEntityTags();
         InitData();
     }
 
@@ -65,7 +65,7 @@ public class SimulationEntity : SimObject
         tags.Remove(tag);
     }
 
-    public virtual void InitTags()
+    public virtual void InitEntityTags()
     {
         tags = new HashSet<Enum>();
     }

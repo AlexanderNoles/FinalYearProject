@@ -180,9 +180,9 @@ public class GlobalBattleData : DataModule
 						if (lostEntity.GetData(DataTags.Strategy, out StrategyData strategyData))
 						{
 							//Apply war exhaustion
-							if (strategyData is WarStrategyData)
+							if (strategyData is WarStrategy)
 							{
-								WarStrategyData warData = (WarStrategyData)strategyData;
+								WarStrategy warData = (WarStrategy)strategyData;
 								bool applyWarExhaustion = false;
 
 								//If at war with winner
@@ -191,9 +191,9 @@ public class GlobalBattleData : DataModule
 									applyWarExhaustion = true;
 								}
 								//Or winner is at war with us
-								else if (wonEntity.GetData(DataTags.Strategy, out StrategyData wonStrategyData) && wonStrategyData is WarStrategyData)
+								else if (wonEntity.GetData(DataTags.Strategy, out StrategyData wonStrategyData) && wonStrategyData is WarStrategy)
 								{
-									WarStrategyData wonWarData = (WarStrategyData)wonStrategyData;
+									WarStrategy wonWarData = (WarStrategy)wonStrategyData;
 
 									if (wonWarData.atWarWith.Contains(defender))
 									{

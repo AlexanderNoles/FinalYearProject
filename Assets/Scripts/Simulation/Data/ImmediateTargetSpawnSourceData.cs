@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ImmediateTargetSourceSpawnSourceData : SpawnSourceData
+public class ImmediateTargetSpawnSourceData : SpawnSourceData
 {
 	public override void OnSpawn(int source)
 	{

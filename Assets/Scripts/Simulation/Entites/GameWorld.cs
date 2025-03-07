@@ -16,9 +16,9 @@ public class GameWorld : SimulationEntity
 		main = this;
     }
 
-    public override void InitTags()
+    public override void InitEntityTags()
 	{
-		base.InitTags();
+		base.InitEntityTags();
 		AddTag(EntityTypeTags.GameWorld);
 		AddTag(EntityStateTags.Unkillable);
 	}

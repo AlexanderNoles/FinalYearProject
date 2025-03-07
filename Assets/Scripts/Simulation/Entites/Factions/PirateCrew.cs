@@ -5,9 +5,9 @@ using EntityAndDataDescriptor;
 
 public class PirateCrew : Faction
 {
-	public override void InitTags()
+	public override void InitEntityTags()
 	{
-		base.InitTags();
+		base.InitEntityTags();
 		AddTag(EntityStateTags.Insignificant);
 		AddTag(EntityTypeTags.PirateCrew);
 	}
@@ -16,7 +16,7 @@ public class PirateCrew : Faction
 	{
 		base.InitData();
 
-		AddData(DataTags.SpawnSource, new ImmediateTargetSourceSpawnSourceData());
+		AddData(DataTags.SpawnSource, new ImmediateTargetSpawnSourceData());
 
 		//Give pirate crew population so they can have a military (i.e., have people to put into the military)
 		PopulationData populationData = new PopulationData();

@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class AntiVoidKnights : Faction
 {
-	public override void InitTags()
+	public override void InitEntityTags()
 	{
-		base.InitTags();
+		base.InitEntityTags();
 		AddTag(EntityStateTags.Insignificant);
 		AddTag(EntityTypeTags.AntiVoidKnights);
 	}
@@ -19,7 +19,7 @@ public class AntiVoidKnights : Faction
 		//These entity is very similar to pirate crews except they have different targets
 
 		//Spawned by void swarms and so they will immediately begin to fight them
-		AddData(DataTags.SpawnSource, new ImmediateTargetSourceSpawnSourceData());
+		AddData(DataTags.SpawnSource, new ImmediateTargetSpawnSourceData());
 
 		PopulationData populationData = new PopulationData();
 		populationData.variablePopulation = false;

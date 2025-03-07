@@ -5,9 +5,9 @@ using EntityAndDataDescriptor;
 
 public class Faction : SimulationEntity
 {
-    public override void InitTags()
+    public override void InitEntityTags()
     {
-        base.InitTags();
+        base.InitEntityTags();
         AddTag(EntityTypeTags.Faction);
     }
 

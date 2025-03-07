@@ -20,9 +20,9 @@ public class PoliticalChangeRoutine : RoutineBase
             //If this entity can fight wars
             //and has some war exhaustion
             //Increase chance for large political shift
-            if (politicalData.TryGetLinkedData(DataTags.Strategy, out StrategyData strategyData) && strategyData is WarStrategyData)
+            if (politicalData.TryGetLinkedData(DataTags.Strategy, out StrategyData strategyData) && strategyData is WarStrategy)
             {
-                politicalData.politicalInstability *= Mathf.Max(1, (strategyData as WarStrategyData).warExhaustion);
+                politicalData.politicalInstability *= Mathf.Max(1, (strategyData as WarStrategy).warExhaustion);
             }
 
             //Cache change multiplier for more readable code

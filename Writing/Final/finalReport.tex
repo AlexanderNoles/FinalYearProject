@@ -387,28 +387,9 @@ Want to have:
 per SimObject implementations could potentially create unexpected behaviour and degenerate gameplay patterns (such as unrepairable relationships)
 \end{comment}
 
-\section{SimulationManagement}
+\section{Routines}
 
-\textbf{SimulationManagement} is the fundamental backbone of the simulation. It has two primary roles, handling \textbf{DataModule} lookups and running \textbf{Routines} every tick.
-
-\subsection{Data Handling and Simulation Entites}
-
-Any proper participant in the Simulation inheirts from the class \textbf{SimulationEntity}, this includes the Player and the GameWorld. This class includes two primary systems that are used to define the makeup of an entity. These are \textbf{Tags} and \textbf{DataModules}.
-
-Tags are general descriptors of an Entity or it's state. They are solely an Enum entry and contain no additional data. Most types of Entity have a specific type tag to allow for filtering (for example in the NationDeadRoutine we want to filter for Nations)
-
-
-DataModules are the specific descriptors of 
-
-Importantly data modules can have multiple levels of inheritance
-
-
-SimulationManagement stores several lookup tables that contain references, using an Enum or ID as a key. There are three primary tables, "idToEntity", "tagToEntities" and "tagToData" and one additional table "tagToNewData" (which is cleared after every tick). When an Entity's \textbf{Simulate} method is ran it will first add an entry to "idToEntity" before running the two methods \textbf{InitTags} and \textbf{InitData}. For every new type of Entity those two methods are implemented to define what that Entity is like.
-
-\newpage
-\subsection{Routines}
-
-A \textbf{Routine} is simply code that is run by SimulationManagement during a Simulation tick. All Routines have a priority value that decides in what order the Routines run, however, certain types of routines will always run before or after other types. There are four types of Routines:
+A \textbf{Routine} is simply code that is run on a Simulation tick. All Routines have a priority value that decides in what order the Routines run, however, certain types of Routines will always run before or after other types. There are four types of Routines:
 
 \begin{enumerate}
         \item Constant Routines
@@ -417,7 +398,7 @@ Routines run every single tick, the default type of Routine.
 
         \item Init Routines
 
-Routines run when data was added last tick and needs to be initialized. Includes a validation check to see if they should act on the new data.
+Routines run when data was added last tick and needs to be initialized. Includes a validation check to see if they should act on the new data and always run before any other Eoutines.
 
         \item Absent Routines
 
@@ -425,7 +406,7 @@ Routines that are only run when specifically invoked. Used typically to test a R
 
         \item Debug Routine
 
-Primary testing Routines. Debug Routines won't be run outside of the Unity Editor or while the Simulation is running history. They are excluded from history ticks as they will typically output some data which will slow down the Simulation considerably.
+Primary testing Routines. Debug Routines won't be run outside of the Unity Editor or while the Simulation is running history. They are excluded from history ticks as they will typically output some data which will slow down the Simulation considerably. Always run after every other type of Routines.
 
 \end{enumerate}
 
@@ -463,14 +444,13 @@ MilitaryInit & EconomicPowerReductionRoutine & WarEvaluationRoutine\\
 \end{tabular}
 \end{table}
 
-\subsection{Tick Timing and Multithreading}
+Most Routines will act directly on \textbf{DataModules} (discussed in 6.3) which allows the Simulation to stay flexible, allowing new Entites with varying behaviours to be added very easily. For example, giving an Entity owned territory in the Game World is as simple as giving it a TerritoryData module and a PopulationData module (with some inital starting population value).
 
-Simulation ticks are run in two primary modes. First "history" mode, where a number of ticks are batched together onto a seperate thread. This is done on session start to fill the world with established Entities before the player arrives, typical history length is 250 years.  Second is "single tick" mode, where a tick is initiated at the end of our execution of a frame and runs until the start of our execution on the next frame. This means the tick runs while Unity does everything else (e.g., rendering). It is forcefully ended, meaning all execution will stop to let it end. In "single tick" mode, ticks are started automatically on an interval. Typically this is every three seconds but during travel the interval is shortened to every third of a second.
-Additionally ticks can always optionally be made to be instant, meaning they not be put on another thread (this feature is currently unused).
+Certain Routines will act directly on \textbf{SimulationEntities}, for example \textbf{NationDeadRoutine} and \textbf{VoidSwarmDeadRoutine}. These are always used as a way to add bespoke behaviour per Entity and in reality all Routines of this type could be refactored to instead act on DataModules. The inital iteration of the Simulation's design acted on Entities by type (at that time only Factions such as Nation and PirateCrew) instead of data. This lead to code patterns involving costly and rigid filtering in each Routine typically to create a list of DataModules to iterate over anyway. These Routines are leftovers from that refactor and have persisted through several other minor design iterations. Ultimately, it is hard to justify spending the time to remove them when the benefits could only be seen when a new Entity is added that would want to share that bespoke behaviour.
 
 \section{SimObject}
 
-Fundamentally all things in the Simulation are \textbf{SimObjects}, a generic parent class that contains a large amount of virtual methods, following the "Define as Needed" style outlined in Design. All SimObjects are additionally \textbf{DataModules}, allowing them to be stored by \textbf{SimulationEntities} and acted upon by \textbf{Routines} if needed. 
+Fundamentally all actors in the Simulation are \textbf{SimObjects}, a generic parent class that contains a large amount of virtual methods, following the "Define as Needed" style outlined in Design. All SimObjects are additionally \textbf{DataModules}, allowing them to be stored by \textbf{SimulationEntities} and acted upon by \textbf{Routines} if needed. 
 
 The majority of the code in SimObject is used to interface with non-simulation side systems in a reliable and consistent way, typically with minimal to no extra work per SimObject type. There are five groups of methods, outlined below.
 
@@ -503,7 +483,154 @@ While SimObject has many methods that define how it should interact with other s
 
 The only other time SimObjects are handled by neither the Simulation or a SimObjectBehaviour is on the map screen, where \textbf{PlayerMapInteraction} uses the displayed \textbf{TerritoryData} to access the SimObject directly.
 
+
+\section{SimulationEntity}
+
+Any major participant in the Simulation inheirts from the class \textbf{SimulationEntity} (a child of \textbf{SimObject}). There are currently eight Entites, listed below.
+
+\begin{enumerate}
+
+	\item Player
+
+The Player's Entity, stores any player centric data (e.g., inventory, current stats, current quests, etc.). Most player data was initially stored within an Entity so the current game state could be fully represented using Entites. A few exceptions were taken (e.g., current health, location in world, etc.) for simplicity's sake when it became clear the game state would not need to be saved and loaded in the current iteration.
+
+	\item Nation
+
+The primary Faction the Player interacts with, creates Settlements that give Quests and allow for Trade. Spawns Mineral Deposits and Pirate Crews.
+
+	\item Mineral Deposit
+
+Represents a location in the game's world that has a large resource node.
+
+	\item Pirate Crew
+
+Represents a Pirate Faction, which will raid locations within the game world.
+
+	\item Void Swarm
+
+An example of a Calamity, an Entity that has a large effect on the game world, increasing divergence in generation. Has a chance to spawn at random every ten years.
+
+	\item AntiVoid Knights
+
+An example of a purely reactive Faction. Spawned by Void Swarms a little after their creation and will only target them.
+
+	\item Game World
+
+An implementation of global storage, utilizted in performance critical code where constant data parity ensurance is neccesary but unwieldy to implement. 
+
+	\item Warp
+
+Meant to represent the space during travel. Used primarily to store a Shop that can be accessed by the Player upon buying a particular item.
+
+\end{enumerate}
+
+SimulationEntity includes two primary systems that are used to define the makeup of an entity. These are \textbf{Entity Tags} and \textbf{DataModules}.
+
+\textbf{Tags} are simply Enums, typically used as keys for lookup tables. Entity Tags are general descriptors of an Entity or it's state. They are solely an Enum entry and contain no additional data.  Most types of Entity have a specific type tag to allow for filtering (for example in the execution of the NationDeadRoutine we want to filter for Nations). An example of an Entity State Tag is the "Dead" Tag, which signals to \textbf{Routines} that this Entity needs to be removed or shouldn't be processed.
+
+DataModules are more specific descriptors of Entities, each DataModule is a class, so they can contain arbitrary amounts of data. They are always associated with a Tag (typically an entry in the DataTag Enum) so Routines can filter for them properly. Importantly, DataModules can have multiple layers of inheritance allowing for greater levels of complexity on a per Entity basis.
+
+DataModules vary in their modularity, certain DataModules can function in complete isolation (e.g., EmblemData, NameData, etc.) while others require additional modules to have an sort of functionality (e.g., BattleData, StrategyData, etc.). Consequently DataModule's most important method is \textbf{TryGetLinkedData}, which will attempt to retrieve data (tied to a passed Tag) from the same Entity the target DataModule is from. This allows Routines to functionally work on only DataModules (keeping the Simulation flexible and data-orientated) while having the larger context of the Entity the DataModule is describing.
+
+Certain systems require Entities to communicate but having DataModules tied to a given Entity can make this difficult. Two primary approaches have been taken, splitting data into one sided relationships (that require an Entity and DataModule lookup to get the full picture) and using a form of global storage (\textbf{GameWorld}).
+
+\subsection{Individual DataModules Descriptions}
+
+Below are lists of every DataModule (sorted based on system) and a brief explanation of its use. This should help demonstrate the current scale and complexity of the Simulation.
+
+\subsubsection{Battle System DataModules}
+
+\begin{enumerate}
+
+	\item GlobalBattleData - Global storage for all Battles, used exclusively by \textbf{GameWorld}. An essential part of the \textbf{BattleResolutionRoutine}. All Battles are also \textbf{SimObjects} so they can be drawn. 
+ 
+	\item BattleData - Contains references to the Entity's ongoing Battles. Used primarily to decide where to transfer troops to in the \textbf{MilitaryTroopManagementRoutine}.
+
+	\item MilitaryData - Stores the location of all troops, including ones that don't have a location and are considered in reserve. Additionally dictates what counts as \textbf{Fleet} for this Entity. Used by any Routine relating to \textbf{Battles} or \textbf{TroopManagement}.
+
+	\item RefineryData - Stores data on a \textbf{Ship} building refinery. Used in the \textbf{RefineryRoutine} to produce more troops.
+
+	\item DesirabilityData - Used by \textbf{DesirabilityAttractionRoutine} to pick randomly fights with other Entities at a Location based on a desirability value. Used by \textbf{MineralDeposits}, \textbf{PirateCrews} and \textbf{VoidSwarms} to have other Entities attack them.
+
+	\item StrategyData - Has several virtual functions that are overriden to model various types of strategy. By default \textbf{Ships} are added to \textbf{MilitaryData's} retreat buffer after a battle ends.
+
+	\item RetreatToRservesStrategy - A type of StrategyData that automatically moves all troops back to reserves after a Battle. Used primarily by the \textbf{Player}.
+
+	\item GenocidalStrategy - A type of StrategyData that targets all Entites with Territory. Used by \textbf{VoidSwarms}.
+
+	\item TargetEntityTypeStrategy - A type of StrategyData that targets a specific Entity Type. An entity of that type is chosen and this Entity will continue to attack it until it is destroyed. A new Entity will be then be chosen of the same type (if one exists).
+
+	\item WarStrategyData - A type of StrategyData that stores a list of Entites and then targets them with attacks every tick. This is used by \textbf{Nations} to model campaigns.
+
+	\item ImmediateTargetSpawnSourceData - Forces any \textbf{TargetEntityTypeStrategy} attached to this Entity to target the Entity that spawned it.
+
+\end{enumerate}
+
+\subsubsection{Relationship System DataModules}
+
+\begin{enumerate}
+ 
+	\item FeelingsData - Stores the feelings of one Entity about all other Entites it knows about. Used in many parts of the Simulation to guide action, including choosing to go to war.
+	\item ContactPolicyData - Decides whether other Entites inherently know about this Entity and whether this Entity is openly hostile to everyone (e.g., VoidSwarm).
+	\item Political Data - Stores the current political climate of an Entity as a value along an Economic and Autority Axis. Affects Entites \textbf{FeelingsData}, a difference in PoliticalData is the most common cause for war between Entities.
+
+\end{enumerate}
+
+\subsubsection{Player Specific DataModules}
+
+These DataModules are used to represent player data. Unlike most other DataModules they are intended to only be used for one Entity.
+ 
+\begin{enumerate}
+
+	\item PlayerInteractions - Stores all the \textbf{Interactions} the Player currently has access too.
+	\item PlayerInventory - Stores the currently owned \textbf{Items} and the current amount of currency.
+	\item PlayerQuests - Stores the current \textbf{Quests} the Player is on and the max allowed amount of Quests they are allowed to be on.
+	\item PlayerStats - Stores the Player's current base stats alongside any extra contributors to those stats (typically provided by Items).
+
+\end{enumerate}
+
+\subsubsection{Other DataModules}
+
+\begin{enumerate}
+
+	\item TerritoryData - Stores all the territories owned by this Entity alongside their border. The border is used in \textbf{PopulationBasedTerritoryExpansion} to add more Territories based on a calcualted upper claim limit. This data is also retrieved to display the map.
+	\item SpawnSourceData - Stores information on the Entity this Entity was spawned by. Used by the \textbf{RandomEventTickRoutine} when it spawns a new Entity.
+	\item HistoryData - Stores all areas of the world that used to be occupied alongisde information about all the time periods the world has gone through. This is used primarily when the Simulation runs history.
+	\item CalamityData - Stores the last tick a Calamity Entity was spawned and the average time between each Calamity. Used soley by the \textbf{CalamityInitiateRoutine}.
+	\item EconomyData - Includes a \textbf{Shop} and an estimate of purchasing power. This purchasing power is set based on \textbf{SettlementData} in the \textbf{SettlementManagementRoutine}.
+	\item EmblemData - Stores three colours, a main, highlight and shadow alongside a main icon and a backing icon. Used to represent the colours and flag of an Entity. The Player creates an Emblem before running history.
+	\item EntitySpawnData - Stores a list of Entity Spawners. Used in the \textbf{RandomEventTickRoutine} to make the world more responsive to particular types of Entities.
+	\item NameData - Stores a name for a given Entity. Typically implemented in a bespoke manner for any Entity that needs a name. Used by \textbf{Nations} and \textbf{AntiVoidKnights}.
+	\item PoliciesData - Stores all the Policies of a given Entity. This is an incomplete feature but is intended to allow the Player to make long term strategic decisions about their build that they cannot go back on.
+	\item PopulationData - Stores a current population count, population cap and natural birth and death rates. Used to help dictate the claim limit in \textbf{TerritoryData} and Settlement cap in \textbf{SettlementsData}.
+	\item QuestGiverData - Stores currently pending Quests for the Player to accept. The method used to generate a new quest can be overriden to provide different types based on location.
+	\item Settlement - Stores information about a Settlement, this includes storing \textbf{QuestGiverData} and \textbf{RefineryData}. The latter is manually processed in the \textbf{SettlementManagementRoutine} (alongside other Settlement processing) as data lookups only include DataModules that directly belong to \textbf{SimulationEntities}. Like \textbf{Battles}, Settlements are \textbf{SimObjects} so they can be drawn. 
+
+	\item SettlementsData - Stores many Settlements and the max Settlement capacity for this Entity.
+	\item TargetableLocationData - Represents a visitable location on the map. Used by many \textbf{Entities} to represent a significant location the Player could travel too.
+	\item TargetableLocationDesirabilityData - A child class of DesirabilityData that automatically works for any \textbf{TargetableLocationData}.
+	\item TimerData - Stores the tick that this Entity should be destroyed on. Used by \textbf{VoidSwarms} to ensure they don't stay too long and wipe out every Entity continuously.
+
+\end{enumerate}
+
+\section{SimulationManagement}
+
+\textbf{SimulationManagement} is the fundamental backbone of the simulation. It has two primary roles, handling \textbf{DataModule} lookups and running \textbf{Routines} every tick.
+
+SimulationManagement stores several lookup tables that contain references, using an Enum or ID as a key. There are three primary tables, "idToEntity", "tagToEntities" and "tagToData" and one additional table "tagToNewData" (which is cleared after every tick). When an Entity's \textbf{Simulate} method is ran it will first add an entry to "idToEntity" before running the two methods \textbf{InitEntityTags} and \textbf{InitData}. For every new type of Entity those two methods are implemented to define what that Entity is like.
+A \textbf{SimulationEntity}'s \textbf{AddData} and \textbf{AddTag} methods will automatically register entries in each lookup table (alongisde adding to a local lookup table in each entity) as needed.
+
+\subsection{Tick Timing and Multithreading}
+
+Simulation ticks are run in two primary modes. First "history" mode, where a number of ticks are batched together onto a seperate thread. This is done on session start to fill the world with established Entities before the player arrives, typical history length is 250 years (108,000 ticks). 
+Second is "single tick" mode, where a tick is initiated at the end of our execution of a frame and runs until the start of our execution on the next frame. This means the tick runs while Unity does everything else (e.g., rendering). It is forcefully ended, meaning all execution will stop to let it end if it hasn't already. In "single tick" mode, ticks are started automatically on an interval. Typically this is every three seconds but during travel the interval is shortened to every third of a second.
+Additionally ticks can always optionally be made to be instant, meaning they are not executed on another thread. This feature was primarily used for testing and has no use case in the final version of this project.
+
+Running history raises many performance concerns which would otherwise be non-issues, mainly related to the \textbf{BattleProcessRoutine}. Inherently, during time periods where several Nations go to war, many battles take place which results in a large amount of extra processing. Consequently, Battles have been weighted to finish faster. This has to be balanced against the players ability to be involved with Battles as time speeding up during travel can result in Battles ending before the player arrives. The speed up can also not be removed as it causes the rest of the Simulation (during actual gameplay) to slow down considerably, making the world feel static.
+
 \section{Displaying the Simulation Visually}
+
+\section{Player Gameplay And Interactions}
 
 \section{IDisplay and UI}
 

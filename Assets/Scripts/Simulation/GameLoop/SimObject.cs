@@ -106,7 +106,7 @@ public class SimObject : DataModule, IDisplay
 		return GetQuestGiver() != null;
 	}
 
-	public virtual QuestGiver GetQuestGiver()
+	public virtual QuestGiverData GetQuestGiver()
 	{
 		return null;
 	}

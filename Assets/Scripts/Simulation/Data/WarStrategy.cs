@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WarStrategyData : StrategyData
+public class WarStrategy : StrategyData
 {
 	//Increase based on the number of lost battles
 	//A higher number means war has a larger negative effect on the country

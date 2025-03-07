@@ -6,7 +6,7 @@ using UnityEngine;
 public class QuestUIControl : MonoBehaviour
 {
 	public static QuestUIControl instance;
-	private QuestGiver targetData;
+	private QuestGiverData targetData;
 	private Transform targetDataTransform;
 
 	public GameObject mainUI;
@@ -51,7 +51,7 @@ public class QuestUIControl : MonoBehaviour
 		mainUI.SetActive(false);
 	}
 
-	public static void ToggleQuestUI(QuestGiver target, Transform targetsTransform)
+	public static void ToggleQuestUI(QuestGiverData target, Transform targetsTransform)
 	{
 		if (target == null)
 		{

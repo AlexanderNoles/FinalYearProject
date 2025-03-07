@@ -30,9 +30,9 @@ public class Nation : Faction
 		}
 	};
 
-	public override void InitTags()
+	public override void InitEntityTags()
     {
-        base.InitTags();
+        base.InitEntityTags();
         AddTag(EntityTypeTags.Nation);
     }
 
@@ -46,7 +46,7 @@ public class Nation : Faction
         AddData(DataTags.Population, new PopulationData());
 		AddData(DataTags.Political, new PoliticalData());
 		AddData(DataTags.Military, new MilitaryData());
-		AddData(DataTags.Strategy, new WarStrategyData());
+		AddData(DataTags.Strategy, new WarStrategy());
 		AddData(DataTags.Economic, new EconomyData());
 		AddData(DataTags.ContactPolicy, new ContactPolicyData());
 		AddData(DataTags.EntitySpawner, nationEntitySpawnData);

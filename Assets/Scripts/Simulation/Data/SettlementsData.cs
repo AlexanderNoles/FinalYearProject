@@ -57,7 +57,7 @@ public class SettlementsData : DataModule
         public class SettlementLocation : VisitableLocation
         {
 			public Shop shop;
-			public QuestGiver questGiver;
+			public QuestGiverData questGiver;
 			public SettlementWeapon weapon;
             public Settlement actualSettlement;
 			private GeneratorManagement.StructureGeneration generation;
@@ -112,7 +112,7 @@ public class SettlementsData : DataModule
 				return shop;
 			}
 
-			public override QuestGiver GetQuestGiver()
+			public override QuestGiverData GetQuestGiver()
 			{
 				return questGiver;
 			}
@@ -157,7 +157,7 @@ public class SettlementsData : DataModule
 			location.shop.SetTargetRarity(ItemDatabase.ItemRarity.Basic);
 			location.shop.capacity = 4;
 
-			location.questGiver = new QuestGiver();
+			location.questGiver = new QuestGiverData();
 			//Set quests origin to always be from this location
 			location.questGiver.questOrigin = location;
 

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GenocidalStrategyData : StrategyData
+public class GenocidalStrategy : StrategyData
 {
 	public override List<int> GetTargets()
 	{

@@ -13,9 +13,9 @@ public class WarEffectRoutine : RoutineBase
 
 		foreach (MilitaryData militaryData in militaryDatas.Cast<MilitaryData>())
 		{
-			if (militaryData.TryGetLinkedData(DataTags.Strategy, out StrategyData stratData) && stratData is WarStrategyData)
+			if (militaryData.TryGetLinkedData(DataTags.Strategy, out StrategyData stratData) && stratData is WarStrategy)
 			{
-				WarStrategyData warData = (WarStrategyData)stratData;
+				WarStrategy warData = (WarStrategy)stratData;
 
 				if (warData.atWarWith.Count == 0 || (warData.TryGetLinkedData(DataTags.Strategy, out StrategyData strat) && strat.globalStrategy == StrategyData.GlobalStrategy.Defensive))
 				{

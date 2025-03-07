@@ -35,9 +35,9 @@ public class VoidSwarm : Faction
 		}
 	};
 
-	public override void InitTags()
+	public override void InitEntityTags()
 	{
-		base.InitTags();
+		base.InitEntityTags();
 
 		AddTag(EntityTypeTags.VoidSwarm);
 	}
@@ -85,7 +85,7 @@ public class VoidSwarm : Faction
 		milData.initalCount = Mathf.RoundToInt(SimulationManagement.random.Next(90, 100) * BalanceManagement.voidSwarmStartTroopMultiplier);
 		AddData(DataTags.Military, milData);
 
-		AddData(DataTags.Strategy, new GenocidalStrategyData());
+		AddData(DataTags.Strategy, new GenocidalStrategy());
 		//
 
 		RefineryData refinery = new RefineryData();

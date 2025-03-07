@@ -22,9 +22,9 @@ using UnityEngine;
 
 public class MineralDeposit : SimulationEntity
 {
-	public override void InitTags()
+	public override void InitEntityTags()
 	{
-		base.InitTags();
+		base.InitEntityTags();
 		AddTag(EntityStateTags.Insignificant);
 		AddTag(EntityTypeTags.MineralDeposit);
 	}

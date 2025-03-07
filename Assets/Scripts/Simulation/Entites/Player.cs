@@ -8,9 +8,9 @@ public class Player : SimulationEntity
 {
 	public static EmblemData emblemOverride = null;
 
-	public override void InitTags()
+	public override void InitEntityTags()
 	{
-		base.InitTags();
+		base.InitEntityTags();
 
 		AddTag(EntityTypeTags.Player);
 		AddTag(EntityStateTags.Insignificant);
