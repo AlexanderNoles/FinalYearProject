@@ -33,6 +33,11 @@ public class SimObject : DataModule, IDisplay
 			{
 				transToSOB[target] = targetScript;
 			}
+			else
+			{
+				//Quit out, no component
+				return;
+			}
 		}
 
 		transToSOB[target].Link(this);

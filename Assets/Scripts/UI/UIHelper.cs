@@ -179,6 +179,10 @@ public static class UIHelper
 
 	public static bool CloseInteractionBasedUI(Transform targetsTransform, bool overrideNullCheck)
 	{
-		return (targetsTransform == null && !overrideNullCheck) || (targetsTransform != null && Vector3.Distance(targetsTransform.position, CameraManagement.GetMainCameraPosition()) > Interaction.Ranges.standard) || PlayerCapitalShip.InJumpTravelStage();
+		return 
+			(targetsTransform == null && !overrideNullCheck) || 
+			(targetsTransform != null && Vector3.Distance(targetsTransform.position, CameraManagement.GetMainCameraPosition()) > Interaction.Ranges.standard) || 
+			(targetsTransform != null && !targetsTransform.gameObject.activeSelf) ||
+			(targetsTransform == null && PlayerCapitalShip.InJumpTravelStage());
 	}
 }

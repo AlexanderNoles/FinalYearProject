@@ -93,6 +93,8 @@ public class ShopUIControl : MonoBehaviour
 		{
 			if (UIHelper.CloseInteractionBasedUI(targetsTransform, target is SimulationEntity))
 			{
+				Debug.Log("Shop auto closed!");
+				Debug.Log(targetsTransform);
 				CloseShopUI();
 			}
 			else

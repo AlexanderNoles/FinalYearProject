@@ -11707,7 +11707,7 @@ MonoBehaviour:
   useCutsomMouseState: 0
   mouseState:
     mouseImage: {fileID: 0}
-    tagALongImage: {fileID: 0}
+    tagALongs: []
     tagALongScale: 0.0625
     hidden: 0
   blurDuringState: 1
@@ -12416,7 +12416,7 @@ MonoBehaviour:
   useCutsomMouseState: 0
   mouseState:
     mouseImage: {fileID: 0}
-    tagALongImage: {fileID: 0}
+    tagALongs: []
     tagALongScale: 0.0625
     hidden: 0
   blurDuringState: 1
@@ -23946,7 +23946,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 100, y: -70}
+  m_AnchoredPosition: {x: 90, y: -90}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &941912740
@@ -27725,7 +27725,7 @@ MonoBehaviour:
   useCutsomMouseState: 0
   mouseState:
     mouseImage: {fileID: 0}
-    tagALongImage: {fileID: 0}
+    tagALongs: []
     tagALongScale: 0.0625
     hidden: 0
   blurDuringState: 0
@@ -33749,7 +33749,7 @@ MonoBehaviour:
   useCutsomMouseState: 1
   mouseState:
     mouseImage: {fileID: 21300000, guid: 80d127572cee1df44adc7667ef7e9b77, type: 3}
-    tagALongImage: {fileID: 0}
+    tagALongs: []
     tagALongScale: 0.046875
     hidden: 0
   blurDuringState: 0
@@ -38000,7 +38000,7 @@ MonoBehaviour:
   useCutsomMouseState: 1
   mouseState:
     mouseImage: {fileID: 21300000, guid: 80d127572cee1df44adc7667ef7e9b77, type: 3}
-    tagALongImage: {fileID: 21300000, guid: a3e0a73c0dd0b4bc0a7e981cc1d2f2c3, type: 3}
+    tagALongs: []
     tagALongScale: 0.046875
     hidden: 0
   blurDuringState: 0
@@ -40429,7 +40429,7 @@ MonoBehaviour:
   useCutsomMouseState: 0
   mouseState:
     mouseImage: {fileID: 0}
-    tagALongImage: {fileID: 0}
+    tagALongs: []
     tagALongScale: 0.0625
     hidden: 0
   blurDuringState: 1
@@ -42196,7 +42196,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 8750, y: 5000, z: 5000}
+  m_LocalScale: {x: 9000, y: 5000, z: 5000}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 970680091}
@@ -43246,7 +43246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: f863574708ffacb4db9e28e4a40d7eca, type: 2}
+  m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}

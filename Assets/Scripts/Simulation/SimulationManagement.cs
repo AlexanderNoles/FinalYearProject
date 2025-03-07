@@ -240,7 +240,7 @@ public class SimulationManagement : MonoBehaviour
     #endregion
 
     private Dictionary<Enum, List<DataModule>> tagToData = new Dictionary<Enum, List<DataModule>>();
-    private Dictionary<Enum, List<DataModule>> newDataModulesByTag = new Dictionary<Enum, List<DataModule>>();
+    private Dictionary<Enum, List<DataModule>> tagToNewData = new Dictionary<Enum, List<DataModule>>();
 
     #region Data Tag Filtering
     public static void RegisterDataModule(Enum tag, DataModule module)
@@ -255,12 +255,12 @@ public class SimulationManagement : MonoBehaviour
             instance.tagToData[tag].Add(module);
 
             //Add to new data modules by tag so init routines can run on this new data
-            if (!instance.newDataModulesByTag.ContainsKey(tag))
+            if (!instance.tagToNewData.ContainsKey(tag))
             {
-                instance.newDataModulesByTag.Add(tag, new List<DataModule>());
+                instance.tagToNewData.Add(tag, new List<DataModule>());
             }
 
-            instance.newDataModulesByTag[tag].Add(module);
+            instance.tagToNewData[tag].Add(module);
         }
     }
 
@@ -273,9 +273,9 @@ public class SimulationManagement : MonoBehaviour
         }
 
 		//Remove from to init data
-		if (instance.newDataModulesByTag.ContainsKey(tag))
+		if (instance.tagToNewData.ContainsKey(tag))
 		{
-			instance.newDataModulesByTag[tag].Remove(module);
+			instance.tagToNewData[tag].Remove(module);
 		}
     }
 
@@ -306,9 +306,9 @@ public class SimulationManagement : MonoBehaviour
 
     public static List<DataModule> GetToInitData(Enum tag)
     {
-        if (instance != null && instance.newDataModulesByTag.ContainsKey(tag))
+        if (instance != null && instance.tagToNewData.ContainsKey(tag))
         {
-            return instance.newDataModulesByTag[tag];
+            return instance.tagToNewData[tag];
         }
 
         //Return empty list by default
@@ -647,9 +647,9 @@ public class SimulationManagement : MonoBehaviour
         //No good generic check exists that can tell if data has been initlized for a given tag or not (though non-generic ones do exist (e.g., a non-initlized Nation will always occupy no spaces))
         //This means routines that create new Entites should be always run after routines that would alter those entites data, or we will run into unexpected behaviour
         //(or more likely the changes that tick will be overwritten and execution time will be spent errouneously)
-        if (newDataModulesByTag.Count > 0)
+        if (tagToNewData.Count > 0)
         {
-            HashSet<Enum> updatedTags = newDataModulesByTag.Keys.ToHashSet();
+            HashSet<Enum> updatedTags = tagToNewData.Keys.ToHashSet();
 
             foreach (InitRoutineBase routine in initRoutines)
             {
@@ -659,23 +659,24 @@ public class SimulationManagement : MonoBehaviour
                 }
             }
 
-            newDataModulesByTag.Clear();
+            tagToNewData.Clear();
         }
 
-        //We run each rountine on each faction rather than each faction on every routine so later routines can react to other factions previous routines
         foreach (RoutineBase routine in constantRoutines)
         {
             routine.Run();
         }
 
-        if (!isInstant)
+#if UNITY_EDITOR
+		if (!RunningHistory())
         {
-            foreach (DebugRoutine routine in debugRoutines)
+            foreach (RoutineBase routine in debugRoutines)
             {
                 routine.Run();
             }
         }
-    }
+#endif
+	}
 
     //End of scripts
     private void LateUpdate()

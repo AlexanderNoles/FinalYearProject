@@ -153,6 +153,7 @@ public class SimulationEntity : SimObject
 		return dataModules.Values.ToList();
 	}
 
+	//Helper method
 	public override Shop GetShop()
 	{
 		if (!HasData(DataTags.Economic))

@@ -1,0 +1,617 @@
+\documentclass{report}
+
+\usepackage{pdfpages}
+\usepackage{titlesec}
+\usepackage{blindtext}
+\usepackage[most]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage[toc,page]{appendix}
+\usepackage{ulem}
+\usepackage{pgfgantt}
+\graphicspath{ {./Images/} }
+
+\usepackage[left=3cm, right=3cm]{geometry}
+
+\makeatletter
+\NewDocumentCommand{\mynote}{+O{}+m}{%
+  \begingroup
+  \tcbset{%
+    noteshift/.store in=\mynote@shift,
+    noteshift=1.5cm
+  }
+  \begin{tcolorbox}[nobeforeafter,
+    enhanced,
+    sharp corners,
+    toprule=1pt,
+    bottomrule=1pt,
+    leftrule=0pt,
+    rightrule=0pt,
+    colback=yellow!20,
+    #1,
+    left skip=\mynote@shift,
+    right skip=\mynote@shift,
+    overlay={\node[right] (mynotenode) at ([xshift=-\mynote@shift]frame.west) {\textbf{Note:}} ;},
+    ]
+    #2
+  \end{tcolorbox}
+  \endgroup
+  }
+\makeatother
+
+\newcommand{\req}[2]{\textbf{		#1:  }	\textit{#2}\newline\newline}
+
+\titleformat{\chapter}[block]
+  {\normalfont\huge\bfseries}{\thechapter.}{1em}{}
+\titlespacing*{\chapter}{0pt}{-19pt}{0pt}
+
+\begin{document}
+
+\title{
+Interim Report \\ 
+\textit{3D Video Game: Hope and Control} }
+\author{267533\\
+\large Word Count: 4650}
+
+\maketitle
+
+\tableofcontents
+
+\chapter{Introduction}
+While the written word can gain a form of dynamism through ambiguity, applying that to an interactive and visual medium becomes challenging to do concretely. Instead, gameplay elements, such as simulation and customisation, can be used to engender a narrative in the player, giving them the space to fill in the gaps in their own minds. When done well even non impactful decisions can be imbued with a sense of weight, this feeling that everything contributes. On the other end when done poorly, all decisions can become meaningless whether they are impactful or not. What matters is the player believing they're having an impact. 
+
+This form of narrative interaction is seen commonly in the large-scale real-time strategy genre (e.g. Stellaris \cite{stellaris}, Crusader Kings \cite{crusaderkings}, etc.) where interlocking systems tell the stories of large factions. The objective of this project is to first create a beta version of a game in this genre, then perform a round of user testing. Insights gained from that process will then be used to complete a vertical slice. Given the constraints inherently imposed by solo development across such a limited time scale, it is unlikely a fully finalized version of the game will be completed.
+
+To allow the player to make immediate, impactful decisions at the beginning of any given run, unlike most games in the genre, the player's power (i.e. their ability to affect the simulated environment) will be organized differently to the other factions. Instead of playing as a larger force the player will be a single powerful entity (i.e. a single ship, a single character, etc.) with a large amount of upfront ability to effect change. Alongside this, the player will be immediately presented with customization options for their faction typical to the genre (e.g. faction symbol, faction origin, etc.), leading them into a roleplaying headspace. 
+
+To ensure that the player's actions result in dynamic outcomes, the faction simulation will also need to be suitably complex. As such, this project takes a code-agnostic, data driven approach. This involves keeping faction data separate from any given simulation element, as opposed to a typical object-oriented approach, which would intertwine them. This allows simulation modules to be designed and implemented in a flexible manner, as well as allowing extra simulation elements to be added easily as an extension goal.
+\newline
+\newline
+This report consists of several sections, the first of which is "Professional Considerations", where the BCS Code of Conduct is broken down by section. An ethical review is also included, discussing this project's plan for user testing and acquiring consent for personal data collection in detail. Next is "Requirements Analysis", which outlines the objectives of the project in distinct steps alongside expanding on the explanation of the problem space and my solutions. This includes background research on games in the genre and proposed solutions to game design issues found within, alongside a brief section on "Art Design". That subsection details some techniques used to render the large solar system as an example of some of the work done on the visual side of the game.
+Next is the "Project Plan", consisting of a breakdown of the work required to complete the project into distinct phases, illustrated using a Gantt chart alongside written explanations. Then there is an "Interim Log" detailing the steps of the Project Plan completed as of the submission of this Interim Report and meetings with this project's supervisor. Finally, there are the refrences and appendices.
+
+\chapter{Professional Considerations}
+
+\section{BCS Code of Conduct}
+
+The BCS Code of Conduct \cite{bcs} is composed of four key principles, the relevant sections from each have been discussed below.
+\newline
+\newline
+\begin{raggedright}
+{\Large \underline{Principle 1: You make IT for everyone}}
+\newline
+\newline
+\textbf{1.1 Have due regard for public health, privacy, security and wellbeing of others and the environment}
+\newline
+\newline
+\textit{Given the sci-fi nature of the project, visuals are likely to be flashy and potentially dangerous for people with epilepsy. An appropriate warning should be displayed when the game is booted. If leaderboards are added, in line with Extension Requirement E2, some player data will be stored, this will simply include game statistics and no non-public personal information. The game's potential age rating (in line with industry standards used by parents to assess what games their children should play (e.g. PEGI)) is discussed in 2.4 below.}
+\newline
+\newline
+\textbf{1.2 Have due regard for the legitimate rights of third parties}
+\newline
+\newline
+\textit{This project uses some third party code, namely MonitorBreak's Additions library for Unity. This is licensed under a modified MIT license\cite{additionsLicense} and all obligations outlined have been met. It should also be noted that I wrote this code but it simply belongs to a seperate entity.
+If any additional third party libraries or assets are used in the future they will also be properly attributed.}
+\newline
+\newline
+\textbf{1.3 Conduct your professional activities without discrimination on the grounds of sex, sexual orientation, marital status, nationality, colour, race, ethnic origin, religion, age or disability, or of any other condition or requirement}
+\newline
+\newline
+\textit{Populations in the game are abstracted, represented as a series of numbers, user testing however, is relevant to this section. The project will not discriminate when deciding which users to use as a sample instead trying to get an accurate representation of the intended users.}
+\newline
+\newline
+\textbf{1.4 Promote equal access to the benefits of IT and seek to promote the inclusion of all sectors in society wherever opportunities arise}
+\newline
+\newline
+\textit{This game is intended to be released for free and the simulation design will be made fully open source some time after submission. These are both done to hopefully promote more games like this being created.}
+\newline
+\newline
+{\Large \underline{Principle 2: Show what you know, learn what you don't}}
+\newline
+\newline
+\textbf{2.4 Ensure that you have the knowledge and understanding of legislation and that you comply with such legislation, in carrying out your professional responsibilities}
+\newline
+\newline
+\textit{The most relevant pieces of legislation center around the game's suitability for given age brackets. This project does not intend for a physical release (even upon completion of all Extension Requirements) so upon the game's completion only the IARC (International Age Rating Coalition) questionnaire will need to be completed. The questionnaire will give an age rating inline with all participating rating boards. This rating is expected to be in the 7-12 range, given the lack of direct visible violence but the presence of war in an abstract format.}
+\newline
+\newline
+\textbf{2.5 Respect and value alternative viewpoints and seek, accept and offer honest criticisms of work}
+\newline
+\newline
+\textit{All feedback gained from user testing will be treated with equal respect and this project will seek to make no omission when presenting it in the final report. To gain more feedback, additional rounds of user testing are considered a high priority extension objective.}
+\newline
+\newline
+\textbf{2.6 Avoid injuring others, their property, reputation, or employment by false or malicious or negligent action or inaction}
+\newline
+\newline
+\textit{As mentioned in the response to 1.1, steps will be taken to prevent causing issues for people with epilepsy. Additionally care will also be taken during the creation of systems that save to disk (game save system, screenshot system, etc.). This is to prevent potential loss of personal data due to an erroneous disk write operation.}
+\newline
+\newline
+\textbf{2.7 Reject and will not make any offer of bribery or unethical inducement}
+\newline
+\newline
+\textit{During user testing feedback will be gathered anonymously, with no incentive for a better or worse response.}
+\newline
+\newline
+\underline{For this project, Principle 3 and Principle 4 contain no relevant sections.}
+\end{raggedright}
+
+\section{Ethical Review}
+
+This project requires user testing, the nature of the testing is discussed in detail in Requirements Analysis section 3.2.
+Due to the use of human participants, an ethical review utilizing Sussex's standard Ethical Compliance Form needs to be performed.
+
+A signed copy of this form is included as an appendix.
+\begin{raggedright}
+\newline
+\newline
+\textbf{1. Participants were not exposed to any risks greater than those
+encountered in their normal working life.}
+\newline
+\newline
+The game includes no visuals, audio or content that pose a significant risk to participants. Their involvement will include only playing the game and answering questions.
+\newline
+\newline
+\textbf{2. The study materials were paper-based, or comprised software
+running on standard hardware.}
+\newline
+\newline
+The game will run on a standard Windows machine, Google Forms will be used to receive anonymous answers and will be accessed using the same machine.
+\newline
+\newline
+\textbf{3. All participants explicitly stated that they agreed to take part,
+and that their data could be used in the project.}
+\newline
+\newline
+It will be made clear to all participants the nature of the project, all participants will be required to sign a standard consent form for data usage. It will be made clear that they can leave at any time should they no longer feel they want to take part.
+\newline
+\newline
+\textbf{4. No incentives were offered to the participants.}
+\newline
+\newline
+No participants will be offered any incentive for participating, they will all be volunteers attending the university. No incentive will be given to give a particular type (positive or negative) of feedback.
+\newline
+\newline
+\textbf{5. No information about the evaluation or materials was intentionally withheld
+from the participants}
+\newline
+\newline
+Participants will be told upfront the full scope and nature of the project.
+\newline
+\newline
+\textbf{6. No participant was under the age of 18}
+\newline
+\newline
+All participants will have their ages verified prior to their participation.
+\newline
+\newline
+\textbf{7. No participant had a disability or impairment that may limit their understanding
+or communication.}
+\newline
+\newline
+All participants will be able-bodied university students, that they are in an appropriate state of health will be verified prior to user testing.
+\newline
+\newline
+\textbf{8. Neither I nor my supervisor is in a position of authority or influence over any of
+the participants.}
+\newline
+\newline
+All participants will be my university peers and none will share my supervisor if they are also doing their final year project. Their feedback will also be kept separate from their identity to ensure they cannot be linked to particular criticism.
+\newline
+\newline
+\textbf{9. All participants were informed that they could withdraw at any time.}
+\newline
+\newline
+It will be made clear to all participants, both at the beginning and at various stages throughout the process, they are allowed to withdraw (for any reason) at any time.
+\newline
+\newline
+\textbf{10. All participants have been informed of my contact details, and the contact details
+of my supervisor.}
+\newline
+\newline
+This information will be provided on a separate piece of paper, alongside a basic written breakdown of the project.
+\newline
+\newline
+\textbf{11. The evaluation was discussed with all of the participants at the end of the
+session, and all participants had the opportunity to ask questions.}
+\newline
+\newline
+Participants will be allowed to ask questions at any point during the process. Appropriate time will be allocated at the end of the user testing session to allow for additional questions and a discussion on the evaluation.
+\newline
+\newline
+\textbf{12. All the data collected from the participants is stored securely, and in an
+anonymous form.}
+\newline
+\newline
+All responses will be secured behind access to my password and 2FA protected google account before being moved to my password protected PC. Any identifiable information will be redacted.
+\end{raggedright}
+
+\chapter{Requirements Analysis}
+
+This project aims to produce a player-story driven RTS (Real Time Strategy). in the form of a vertical slice (a version of a game that lacks some features but still showcases what the final product will look like). The game's world will need to be deeply simulated, comprising a large amount of the technical challenge of the project.
+
+\section{Framework Choice}
+This project uses Unity \cite{unity} instead of a custom engine, the primary reason for this choice is my familiarity with it's workflow. I've previously created a full game using Unity (including shipping it to Steam \cite{steam}) and I greatly enjoy its flexibility. Unity makes it easy to extend the editor through creating additional context menu items and entirely new editor tools. 
+The C\# (which is Unity's primary coding language) ecosystem is also very broad, with a colossal number of resources to pull from. 
+
+I additionally chose not to use this project as an opportunity to learn a new engine as no other contemporary engines seemed fit to purpose. Unreal \cite{unreal} includes many systems that are superfluous for this project (e.g. Blueprints, Nanite, etc.) and I'm also unfamiliar with C++ to an extent where large practical issues could arise (such as poor design planning, language specific pitfalls, etc.). Godot \cite{godot} was initially a contender for my engine of choice (I also have some minor previous experience with it), however, I quickly found tension between myself, and it's scripting language of choice GDScript. The primary issue that arose during testing is that I wanted engines to work similarly to Unity when they had clear differing approaches to design (e.g., Godot's node based workflow).
+
+\section{User Testing}
+To assist with the development process, at least one round of in-person user testing should occur. This would involve allowing a number of potential users (ideally 5+) to play the game for a period of time before asking them a sequence of questions.
+
+The sample of players should be made up of both people familiar with the RTS genre and those that are not, ideally spread evenly across that range. Ideally two primary testing rounds should occur, one once an inital beta version of the game is produced and one afterward, utilizing the vertical slice. The beta version can differ from the vertical slice dramatically in terms of completeness but should still be functional.
+The vertical slice testing (and any additional testing) is helpful but should be considered an extension objective given the time constraints.
+
+\pagebreak
+\section{Background Research, Design Problems and Solutions}
+
+\subsection{Game 1: Stellaris}
+
+Stellaris (2016) \cite{stellaris} is a large scale space-based strategy game, taking place across a substantially sized galaxy. It involves managing an interstellar faction, taking them from their first ships to combating a galaxy wide threat. 
+
+The game puts a heavy emphasis on role-play right from the beginning of a run. Immediately upon selecting "New Game" you are presented with the screen pictured in Figure 3.1.
+
+\begin{figure}[h]
+    \includegraphics[width=\textwidth]{stellaris_faction_creation.png}
+    \caption{Stellaris Faction Creation Screen}
+\end{figure}
+
+The left side of the screen showcases a list of premade factions (highlighted in yellow) that the player can pick from then customize, these can act as a  jumping off point for player ideas. There is additionally an option to create an entirely unique faction at the very top. 
+Positioned directly in the center of the screen is the information on the currently selected faction, including; their governmental practices (highlighted in red), their species traits (highlighted in green), their species origin (highlighted in blue) and their faction's flag (highlighted in orange). All these elements (alongside others) create a distinct feeling for this particular faction and, more importantly, they have gameplay ramifications. Within a minute of starting the game proper the faction shown in Figure 3.1. (an Imperial Divine Empire) was notified it had received a new heir, a special type of unit that acted (in this case) as a scientific advisor.
+
+This focus on role-play is reflected in the reviews for the game, many are simply retellings of their own faction's story. An example of this is pictured in Figure 3.2.
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{stellaris_positive_review.png}
+    \caption{A retelling of a Stellaris game, (full review is 650+ words long)}
+\end{figure}
+
+Other systems also assist this storytelling, in particular the Galactic Crises. These are large, late game events that typically have ramifications for the whole galaxy and act as a definitive final boss for a play through. Interestingly, there are also specific cases where a player or AI can become the crisis, another avenue for potential role-play. The player's relationship to other factions can be vitally important during these scenarios, meaning earlier (possible role-play based) decisions can have a major impact.
+
+Space combat is another important part of Stellaris but is more used as a tool to express role-play decisions than a system that encourages role-play itself. The functional act of combat instead enhances the grand strategy  side of the game, engagements are often won by decisions made before the battle starts. For example, the ships used by an endgame crisis, "Extradimensional Invaders", largely rely on shields as a defensive measure for their ships. This means that kinetic weapons are particular effective \cite{stellarisBattleDecision}, outfitting ships with these weapons is a decision made when they are created. When actually fighting, fleets of ships will "auto-battle" each other, with no input required by the player. While this project does focus more on a singular powerful entity, it will take a similar pre-planning approach to combat. This is in part due to the time constraints, as time spent making combat rewarding to execute takes time away from the simulation side (and main goal) of the project.
+\newline
+\newline
+While Stellaris succeeds in many areas and is arguably (with its balance of strategy and role-play) the closest real example of this project's goal, it has a few outstanding flaws. The game has a large amount of upfront complexity, the main Stellaris wiki's Beginner Guide \cite{stellarisBeginner} is roughly 17000 words long, split into 20+ sections and subsections. Figure 3. showcases the first screen players will see outside of the faction creation menu. It hosts a suite of information, shown to the player all at once. This includes (but is not limited too); eight types of basic resources, several more advanced resources (including fleet and starbase capacity), a list of all controlled entities (planets, fleets, construction and science ships and shipyards), the current date, many links to other UI windows (including Government Control, a larger galaxy map, Species Control, Technology and Research Management) and buttons for switching map mode (it should be made clear those buttons do nothing on this screen but are still present).
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{stellaris_main_screen.png}
+    \caption{Stellaris Solar System View Screen}
+\end{figure}
+
+However, this complexity is an important, and arguably defining, part of the genre \cite{rtsUncertainty}. The principal issue here is how it is introduced to the player. Given this project's intention to, in part, target a wider audience, this issue is quite important. The intended solution is to introduce player elements gradually, in the context of the larger narrative brace of the game this can be expressed as the player's controlled entity turning back on after many years inactive. To enhance replayability players could be allowed to start already in a fully active state rather than repeating the tutorial each time.
+
+Stellaris also suffers from performance issues, particularly in the late game \cite{stellarisPerformanceReview1} \cite{stellarisPerformanceReview2}. Given the relative scales of this project and Stellaris this is a less relevant issue, performance goals are discussed further in a later subsection "Performance and Stability".
+\newline
+\newline
+One major difference between this project's game and Stellaris is that unlike a typical RTS, there will be a larger focus on the world reacting directly to the player as a singular powerful entity and less on long term historical stratergy. While the game will be in part targeted at long time RTS players, this change in power balance (alongside a shift into more role-play focused elements) is designed to allow a wider audience to engage with a typically complex genre. 
+
+\subsection{Game 2: Disco Elysium}
+
+This project's role-play centric aims require it to take additional inspiration from outside the RTS genre. Disco Elysium (2019) \cite{discoelysium} is a detective RPG, famous for its engaging writing. It has many systems that incentivize  role-play such as its "Thought Cabinet" system, pictured below.
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{disco_elysium_thoughts_screen.png}
+    \caption{Disco Elysium Thoughts Screen}
+\end{figure}
+
+"Thoughts" are discovered naturally on your adventure throughout Elysium's world, after being found they can then be slotted into an open position in the cabinet before taking some time to be "internalized". This system mirrors Stellaris's governmental polices, providing an avenue for role-play but grounding it in a more understandable mechanical benefit/cost. In the case of Disco Elysium, you use a skill point (that could be used on the game's more traditional statistics based leveling system) to unlock more slots in your cabinet. This allows players to make the active choice to engage more with role-play, potentially trading off a traditional power increase.
+
+Disco Elysium's approach to role-play has some pain points, in particular the various bottleneck checks. The primary example is an "Authority" check during a pivotal conversation with Titus Hardie. This check (involving summing the result of two dice and your Authority value to try and meet a threshold) is necessary to move the story forward, with a low enough investment in Authority (a seemingly optional statistic up until this point), the chance to pass it can be as low as 3\%. In the context of a game trying to tell a specific story, with a character that values authority as much as Titus, this (despite the potential player frustration) works quite well, however, in this project, centered on player driven narrative, it would not. This project should seek to ensure these bottlenecks only appear in a foreseeable manner. For example, it makes sense that a faction's military will be tested if it goes to war, hence, a declaration of war should follow logically from previous choices so a player can prepare appropriately.
+
+\section{Art Design}
+
+Visuals are an important part of game development but they are not the focus of this report. This section will focus on the system used for large scale rendering (used for celestial bodies) as an example of some of the work done on that side of the game. 
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=.9\textwidth]{celestialbodiesSystemDiagram.jpg}
+    \caption{1D Diagram showcasing how the celestial bodies rendering system functions.}
+\end{figure}
+
+The principal issue is Unity's use of Floats to represent positions, an effort to increase performance for the vast majority of games at the cost of precision. Given the large scale of this project's world, extra precision is key for accurate representation. 
+
+This system takes advantage of the fact that something moving further away and something shrinking (with no point of reference) are indistinguishable. We calculate how large something should look from the player's perspective, utilizing the higher precision Double type to accurately represent the object's "real" position, before applying the reciprocal result to the object's in engine scale. This means that only the object's scale changes when the player moves and its in engine position stays close to the camera. This is showcased in the diagram above in one dimension. The principal problem is solved here because a general modifier can be applied to the final output scale, shrinking it into a range that floats can accurately represent.
+
+ To complete the illusion all celestial objects are rendered using a separate camera and applied between the skybox and the rest of the rendered objects. This means celestial objects always appear behind (and consequently larger) than everything else.
+
+\section{Performance and Stability}
+
+Crashes and bugs should be kept to an ideal minimum. While the time constraints imposed don't allow the thoroughness typical of a standard project, ample time can still be allocated to unit testing and the like. The aforementioned rounds of user testing can also assist with this issue.
+
+Alongside functioning as intended, the final version of the project should also run at a consistent and reasonable frame rate (60 frames per second) on low to medium range hardware. Given the relatively low intended visual complexity of the game, this objective is still important but easier to reach than others. Various different pieces of hardware are available for testing, with varying hardware capabilities in each.
+
+\chapter{Formalized Requirements}
+Below are the requirements discussed in the above sections formalized into a list;
+\newline
+\newline
+\req{R1}{Existing games in the genre should be researched, their gameplay focus points, style and design problems should be identified.}
+\req{R2}{User testing should be conducted with 5+ potential players, post-game interview questions should be shaped based on insights gained from completion of R1.}
+\req{R3}{At least two versions of the game should be created. An initial beta version for user testing and a final vertical slice.}
+\req{R4}{The game should run at at least 60 FPS on low to medium range hardware.}
+\req{R5}{The game world should be suitably simulated, recognizable as realistic relationships between factions.}
+\req{R6}{The player should be able to make early impactful roleplay decisions.}
+\req{R7}{The game should have sound effects that fit the theming.}
+\req{R8}{The player should be able to move about the game's world.}
+\req{R9}{The game should be functionally stable, crashes should occur very infrequently.}
+\req{R10}{The game should have UI that accurately describes statistics about the player's faction.}
+\req{R11}{The game should have UI that accurately describes known statistics about NPC factions.}
+\req{R12}{The player should be able to grow and modify their faction over time, this includes increasing military strength, increasing population and adding unique features to their faction.}
+\req{R13}{The player's faction's power should be concentrated to a singular entity (e.g, one building, one ship, etc.)}
+\req{R14}{The player should be able to engage in relationships, both diplomatic and hostile, with other factions.}
+\req{R15}{The player's actions should be able to have a long term effect on the state of the simulation (e.g, removal of other factions, removal of settelments, etc.).}
+\req{R16}{The player's singular entity should be able to engage in combat with other entites.}
+\req{R17}{The player should be able to win the game in some manner but the choice to take the win should be optional. The player should be able to keep playing if they wish.}
+
+\section{Extension Requirements}
+
+If time allows, there are some additional requirements that would ideally be met;
+\newline
+\newline
+\req{E1}{Additional simulation elements. For example, if the current version of the simulation models a planet's resources as a static value, a new simulation routine could decrease that value over time based on population and industrial activity.}
+\req{E2}{Online functionality. This would likely take the form of online leaderboards, showcasing statistics such as "Time Survived", "Enemies Killed", "Highest Bounty", etc.}
+\req{E3}{More advanced combat functionality, taking the form of additional actions on top of the existing auto battle system. }
+\req{E4}{Music. While many royalty-free options exist, unique music would help set the mood properly for players.}
+\req{E5}{Releasing the game on Steam. Generally speaking this is a capstone objective and would signal the end of the code side of the project. }
+
+\chapter{Project Plan}
+
+\section{Gantt Chart}
+
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+\begin{figure}[H]
+\centering
+\begin{minipage}{1em} \raggedleft
+	\textbf{\underline{Tasks}}\newline\newline\newline\newline\newline\newline\newline\newline\newline\newline\newline\newline\newline\newline\newline\newline
+\end{minipage}%
+\begin{minipage}{\textwidth}
+ \raggedright
+		\begin{ganttchart}[y unit title=0.4cm,
+    y unit chart=0.5cm,
+    vgrid,hgrid, 
+    title label anchor/.style={below=-1.6ex},
+    title height=1,
+    progress label text={},
+    title label font=\tiny,
+    bar height=0.7,
+    group right shift=0,
+    group top shift=.6,
+    group height=.3]{1}{26}
+%labels
+    \gantttitle{W1}{1} 
+    \gantttitle{W2}{1} 
+    \gantttitle{W3}{1} 
+    \gantttitle{W4}{1} 
+    \gantttitle{W5}{1} 
+    \gantttitle{W6}{1} 
+    \gantttitle{W7}{1} 
+    \gantttitle{W8}{1} 
+    \gantttitle{W9}{1} 
+    \gantttitle{W10}{1} 
+    \gantttitle{W11}{1} 
+    \gantttitle{W12}{1}  
+    \gantttitle{Break}{2} 
+    \gantttitle{W1}{1} 
+    \gantttitle{W2}{1} 
+    \gantttitle{W3}{1} 
+    \gantttitle{W4}{1} 
+    \gantttitle{W5}{1} 
+    \gantttitle{W6}{1} 
+    \gantttitle{W7}{1} 
+    \gantttitle{W8}{1} 
+    \gantttitle{W9}{1} 
+    \gantttitle{W10}{1} 
+    \gantttitle{W11}{1} 
+    \gantttitle{W12}{1}  
+\\
+%tasks
+    	\ganttbar{Beta Version}{1}{12} \\ 
+    	\ganttbar{Vertical Slice}{13}{22} \\ 
+	\ganttbar{Art Design}{3}{15} \\
+	\ganttbar{Sound Design}{14}{16} \\ \\
+    	\ganttbar{Proposal}{1}{2} \\
+    	\ganttbar{Research}{3}{6} \\
+    	\ganttbar{Interim Report}{3}{7} \\
+    	\ganttbar{Beta User Testing}{15}{18} \\
+    	\ganttbar{Draft Report}{17}{20} \\
+    	\ganttbar{Final Report}{21}{26} 
+    %relations 
+    \ganttlink{elem0}{elem1} 
+    \ganttlink{elem0}{elem7} 
+    \ganttlink{elem8}{elem9} 
+		\end{ganttchart}
+\end{minipage}
+
+\end{figure}
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+
+\section{Description of Tasks}
+
+\begin{itemize}
+  \item \textbf{Beta Version}: An initial, fairly rough version of the game that lacks polish but functions. This version will be used for additional user testing.
+  \item \textbf{Vertical Slice}: A version of the game that will act as the final version for this project (unless time allows for further additions). It will lack some features but will be fully playable.
+  \item \textbf{Art Design}: This task runs concurrently to the coding of the game. It does not take up as much project time as it's length on the Gantt Chart implies and is more of an assisting task to Task 1 and Task 2. It involves creation of 3D models, shaders and technical effects.
+  \item \textbf{Sound Design}: Similar to the task above, acts an assisting task to make other parts of the game work. Sound Design will be done in a shorter burst towards the end of the coding process, unlike Art Design. This task involves the creation of sound effects.
+  \item \textbf{Proposal}: Initial project proposal outlining the scope and goals of the project. Included as an appendix.
+  \item \textbf{Research}: This task runs concurrently to the writing of the interim report. It mainly involves looking at specific games with some relation to the project and pulling design lessons from them.
+  \item \textbf{Interim Report}: This document.
+  \item \textbf{Beta User Testing}: Initial round of user testing, performed with a playable version of the game outlined in Task 1. Questions asked to participants are shaped by insights gained from background research.
+  \item \textbf{Draft Report}: First Draft of my Final Report, sent to my supervisor well before the final due date.
+  \item \textbf{Final Report}: The final task of the project, involves detailing the full development process. Given the scope of the project I find it unlikely the Vertical Slice will be finished before the Final Report is started.
+\end{itemize}
+
+\chapter{Interim Log}
+
+\section{Project Plan Completion Log}
+
+As of the submission of this report several steps have already been completed, namely the Proposal, Research and Interim Report tasks. Work has also begun on the Beta Version and Art design tasks. For the former this includes camera movement, simulation management, a world map and various other load bearing systems. For the latter this mainly includes the large scale rendering system detailed in the Art Design section above, alongside various material shaders and an outline post-processing effect.
+
+\section{Meetings Log}
+
+\subsection{Meeting 1: 03/10/2024}
+
+This was an initial group meeting with all students being supervised by this project's supervisor. During the meeting we:
+\begin{itemize}
+  \item Discussed the general expectations from our supervisor. 
+  \item Discussed what was expected of us in our project proposals. 
+  \item Organized individual follow-up meetings. 
+\end{itemize}
+
+\subsection{Meeting 2: 08/10/2024}
+
+This was my first individual meeting, it took place after I had submitted a finalized project proposal (included as an appendix). This version only differed slightly from my initial version. During the meeting we:
+\begin{itemize}
+  \item Discussed the structure of the upcoming interim report. This took up the majority of the meeting.
+  \item Discussed how typically I would be advised to begin messing around with Unity at this stage. Due to my previous experience I should instead focus on writing the interim report. 
+  \item Agreed that I should send at least my introduction by our next meeting so it could be properly discussed.
+  \item Discussed how much the art design side of game development should be featured in the report.
+\end{itemize}
+
+\subsection{Meeting 3: 22/10/2024}
+
+This was my secondary individual meeting, during this meeting I was in the middle of writing my interim report. During the meeting we:
+\begin{itemize}
+  \item Discussed my introduction and the general structure of my report up to this point (e.g. folding the current Background Research section into Requirements Analysis).
+  \item Rediscussed the larger structure of the report still to be written. This including deeper discussion on the Professional Considerations and Requirements Analysis sections.
+  \item Discussed the difference between a Bibliography and References page. My Bibliography was then replaced with a references page.
+\end{itemize}
+
+\subsection{Meeting 4: 04/11/2024}
+
+This was my third individual meeting, this was on the Monday of Week 7. The interim report was due on the Thursday. During the meeting we:
+\begin{itemize}
+  \item Discussed the current version of my interim report (now in a close to finalized state). Modifications discussed included; splitting formal requirements specification into its own section, shrinking the margins and adding more detail to the formalized requirements.
+  \item Discussed adding additional references, including references to the BCS Code of Conduct and the games examined in Background Research.
+  \item Discussed adding more detail to requirements, in particular requirements related to gameplay.
+\end{itemize}
+
+\renewcommand\bibname{References}
+\begin{thebibliography}{9}
+\bibitem{stellarisBeginner}
+Stellaris Community, "Beginner's guide", "Stellaris WIki", 21 October 2024, \href{https://stellaris.paradoxwikis.com/Beginner\%27s_guide}{https://stellaris.paradoxwikis.com/Beginner\%27s\_guide}
+\bibitem{stellarisBattleDecision}
+Stellaris Community, "Crisis/Endgame crisis factions/Extradimensional Invaders/Successfully repelling the Extradimensional Invaders", "Stellaris Wiki", 18 October 2024, \href{https://stellaris.paradoxwikis.com/Crisis#Successfully_repelling_the_Extradimensional_Invaders, Crisis Solution Link}{https://stellaris.paradoxwikis.com/Crisis}
+\bibitem{rtsUncertainty}
+Jónsson, B. Pages 6 to 7, "REPRESENTING UNCERTAINTY IN RTS GAMES"
+\bibitem{stellarisPerformanceReview1}
+"Skullcrusher", "Stellaris Steam Review", "Steam", 11 September 2022, \href{https://steamcommunity.com/profiles/76561198026459371/recommended/281990, "Review Link"}{https://steamcommunity.com/profiles/76561198026459371/recommended/281990}
+\bibitem{stellarisPerformanceReview2}
+"A Random Fish", "Stellaris Steam Review", "Steam", 18 October 2019, \href{https://steamcommunity.com/id/ARandomFish/recommended/281990, "Review Link"}{https://steamcommunity.com/id/ARandomFish/recommended/281990}
+\bibitem{additionsLicense}
+"MonitorBreak", "License", "Github", 14 November 2022, \href{https://github.com/Monitor-Break/Additions/blob/main/LICENSE}{https://github.com/Monitor-Break/Additions/blob/main/LICENSE}
+\bibitem{unity}
+"Unity Technologies", "Home Page", "Unity Website", \href{https://unity.com/}{https://unity.com/}
+\bibitem{unreal}
+"Epic Games", "Home Page", "Unreal Engine Website", \href{https://www.unrealengine.com/en-US}{https://www.unrealengine.com/en-US}
+\bibitem{godot}
+"Godot Foundation", "Home Page", "Godot Website", \href{https://godotengine.org/}{https://godotengine.org/}
+\bibitem{bcs}
+"British Computer Society", "Code of Conduct", "BCS Website", \href{https://www.bcs.org/membership-and-registrations/become-a-member/bcs-code-of-conduct/}{https://www.bcs.org/membership-and-registrations/become-a-member/bcs-code-of-conduct/}
+\bibitem{stellaris}
+\textit{Stellaris} (2016), PC [Game], Paradox Interactive
+\bibitem{crusaderkings}
+\textit{Crusader Kings} (2004), PC [Game], Paradox Interactive
+\bibitem{discoelysium}
+\textit{Disco Elysium} (2019), PC [Game], ZA/UM
+\bibitem{steam}
+Valve, "Steam Homepage", "Steam", 04/11/2024, \href{https://store.steampowered.com/}{https://store.steampowered.com/}
+\end{thebibliography}
+
+\begin{appendices}
+\chapter{Project Proposal}
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+\begin{center}
+\textbf{Space Based Simulation and Tactics Game}
+\end{center}
+
+\textit{Candidate Number: 267533}
+
+\textit{Supervisor Name: Dr Paul Newbury}
+
+\textbf{Aims}
+\newline
+Many games try to create a branching narrative. When done well this can imbue even non impactful decisions with a sense of weight, this feeling that everything contributes. On the other end, when done poorly, all decisions can become meaningless, whether they are impactful or not. What matters is the player thinking they’re having an impact.
+
+In this project I intend to (with the constraints inherently imposed by solo indie development in mind) create a video game that creates an emergent narrative through gameplay rather than text, maximising the feeling of impact for the player. This form of narrative is seen commonly in the large-scale real-time strategy genre (e.g. Stellaris, Crusader Kings, etc.) where interlocking systems tell the stories of large factions. There will be some simplification to allow users that would normally be turned off by the upfront complexity of these games to also engage with the final product.
+
+\textbf{Objectives}
+
+\underline{\textit{Primary Objectives}}
+
+\begin{enumerate}
+	\item Research existing games in the genre, identifying their gameplay focus points \& style.
+	\item Examine what games in the genre do well and what they do poorly.
+	\item Conduct interviews with 5+ potential players, utilizing insights gained in Primary Objectives 1 and 2 to shape the questions asked
+	\item Examine what games in the genre do well and what they do poorly.
+	\item Use information from all Previous completed Objectives to design a game that tells player driven stories.
+	\item Create a beta version of the completed game that can be tested and critically evaluated, both by me and potential players.
+	\item Use insights gained from Primary Objective 5 to iterate and improve on the beta version.
+	\item Ultimately finish a vertical slice that would lack some features but showcase accurately what the final product could look like.
+\end{enumerate}
+
+\underline{\textit{Extension Objectives}}
+
+\begin{enumerate}
+	\item Perform Primary Objectives 5 and 6 continuously to further improve the final product.
+	\item Conduct critical evaluation using the vertical slice, in the same manner as Primary Objective 5.
+	\item Utilize the insights gained in Extension Objective 2 to further improve upon the vertical slice, expanding it into a fully completed game.
+	\item Implement additional simulated features into the game, refining the model.
+	\item Implement online leaderboard functionality for various statistics.
+	\item Release the fully completed game on platforms such as Steam and Itch.io.
+\end{enumerate}
+
+\textbf{Relevance}
+
+This project reflects my intended career path, as someone that has already been working with Unity and C\# for the last five years. During my gap year (2021 - 2022) I went through the full development process, releasing a 2D game on Steam in early July. Since then, I’ve been working on both my development and 3D skills and hope to release another game I’ve been working on a couple months post university.
+
+By doing this project I hope to further both my coding and artistic skills, combing them to create a hopefully great video game. This project tests both of those disciplines alongside my ability to gather effective feedback and implement proper HCI principles.
+
+\textbf{Resources Required}
+
+I will require use of study rooms/seminars to conduct in person user testing. Testing will also be conducted online but that should require minimal resources. No funding will be required as I expect to purchase games used for market research myself. I also expect to pay for the Steam direct fee if Extension Objective 6 is completed.
+
+Some use of lab computers is required (primarily on Mondays) though I intend to use my home PC on a day-to-day basis. This is due to several factors; my extensive backlog of previous projects I can pull reusable systems/assets from, the comfortability of the workspace and the ease of access, alongside various others.
+
+\textbf{Time Management}
+
+\begin{table}[htbp]
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+ & Monday & Tuesday & Wednesday & Thrusday & Friday & Saturday & Sunday \\
+\hline
+9:00 &&&&&&& \\
+\hline
+10:00 & Lecture & & Lecture &&&& \\
+\hline
+11:00 & \textbf{Project} &&&&&  \textbf{Project} &  \textbf{Project} \\
+\hline
+12:00 & \textbf{Project} & & \textbf{Project} & \textit{Seminar} & \textbf{Project} & \textbf{Project} & \textbf{Project} \\
+\hline
+13:00 & Lab & Lecture &  \textbf{Project} & &  \textbf{Project} &  \textbf{Project} &  \textbf{Project} \\
+\hline
+14:00 &&&&&&& \\
+\hline
+15:00 & Lecture & & & Lab & Lecture && \\
+\hline
+16:00 & Lecture & & & Lab & Lecture && \\
+\hline
+\end{tabular}
+\label{tab:schedule}
+\end{table}
+
+Project time per week is equal to 12 hours. This acts as a minimum goal and (due to my general passion for the subject matter) I will likely do more depending on the week. Any blank slots will be used for other modules, whether coursework or study. The minimum time spent each week will increase depending on unseen factors such as unintended scope creep or hidden complexity.
+
+I intend to have the initial early beta version of the finished shortly after the interim report (Week 8 to 9 of Term 1), utilizing feedback gained over the Christmas break. I then expect to finish the final vertical slice a couple weeks before the final report is due. Any additional time gained, by being ahead of schedule, will be used to complete extension objectives, primarily Extension Objectives 1 and 2.
+
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+
+\begin{center}
+\textbf{This proposal has been adapted from Word to \LaTeX{}, so exact formatting differs from the original proposal document. Structure and content remains the same.}
+\end{center}
+
+\chapter{Signed Ethical Compliance Form}
+
+\includepdf[pages=-]{AlexanderNolesEthicalComplianceForm.pdf}
+
+\end{appendices}
+\end{document}

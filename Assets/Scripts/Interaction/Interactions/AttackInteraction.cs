@@ -1,3 +1,4 @@
+using EntityAndDataDescriptor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,8 +17,11 @@ public class AttackInteraction : Interaction
 
 		if (interactable.Linked())
 		{
+			//Ask player if they are sure if they have a good rep with this target
+			//and the target isn't openly hostile
 			if (!PlayerSimObjBehaviour.CurrentlyTargeting(interactable) && 
-				interactable.target.GetPlayerReputation(BalanceManagement.properInteractionAllowedThreshold) > BalanceManagement.properInteractionAllowedThreshold)
+				interactable.target.GetPlayerReputation(BalanceManagement.properInteractionAllowedThreshold) > BalanceManagement.properInteractionAllowedThreshold &&
+				!(interactable.target.parent != null && interactable.target.parent.Get().GetData(DataTags.ContactPolicy, out ContactPolicyData data) && data.openlyHostile))
 			{
 				//Has good rep with this target
 				//Show confirm popup

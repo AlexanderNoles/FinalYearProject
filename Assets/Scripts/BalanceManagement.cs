@@ -6,7 +6,7 @@ using UnityEngine;
 public static class BalanceManagement
 {
 	public const float killWorthRatio = 1f;
-	public const float mineralDepositWorthRatio = 0.5f;
+	public const float mineralDepositWorthRatio = 2.765341f;
 
 	//This acts as a general modifier to attack damage and regen basically
 	//Might include other things in the future

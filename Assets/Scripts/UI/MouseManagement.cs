@@ -130,7 +130,7 @@ public class MouseManagement : MonoBehaviour
 				tagRect.sizeDelta *= currentMouseState.tagALongScale;
 
 				tagRect.anchoredPosition3D = new Vector2(tagRect.sizeDelta.x, -tagRect.sizeDelta.y) / 2.0f;
-				tagRect.anchoredPosition3D += new Vector3(20 + offset, 0);
+				tagRect.anchoredPosition3D += new Vector3(10 + offset, 0);
 
 				offset += tagRect.sizeDelta.x + 10.0f;
 			}
