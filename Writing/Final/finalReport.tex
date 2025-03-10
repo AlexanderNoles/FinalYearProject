@@ -406,7 +406,7 @@ Routines that are only run when specifically invoked. Used typically to test a R
 
         \item Debug Routine
 
-Primary testing Routines. Debug Routines won't be run outside of the Unity Editor or while the Simulation is running history. They are excluded from history ticks as they will typically output some data which will slow down the Simulation considerably. Always run after every other type of Routines.
+Primary testing Routines. Debug Routines won't be run outside of the Unity Editor or while the Simulation is running history. They are excluded from history ticks as they will typically output some data which will slow down the Simulation considerably. Always run after every other type of Routine.
 
 \end{enumerate}
 
@@ -479,7 +479,7 @@ A standard implementation of the IDisplay interface, used by UI elements to read
 
 \subsection{Accessing SimObjects}
 
-While SimObject has many methods that define how it should interact with other systems, those systems need to be able to have some way to access those methods. Primarily this is done through an instance of \textbf{SimObjectBehaviour}, a Unity MonoBehaviour that can interact with Unity's runtime. SimObjects will link themselves to a given behaviour script, typically during their inital draw. The Draw system thus inherently needs to outside of the scope of SimObjectBehaviour and is handled by \textbf{PlayerLocationManagement} instead.
+While SimObject has many methods that define how it should interact with other systems, those systems need to be able to have some way to access those methods. Primarily this is done through an instance of \textbf{SimObjectBehaviour}, a Unity MonoBehaviour that can interact with Unity's runtime. SimObjects will link themselves to a given behaviour script, typically during their inital draw. The Draw system thus inherently needs to be outside of the scope of SimObjectBehaviour and is handled by \textbf{PlayerLocationManagement} instead.
 
 The only other time SimObjects are handled by neither the Simulation or a SimObjectBehaviour is on the map screen, where \textbf{PlayerMapInteraction} uses the displayed \textbf{TerritoryData} to access the SimObject directly.
 
@@ -630,11 +630,33 @@ Running history raises many performance concerns which would otherwise be non-is
 
 \section{Displaying the Simulation Visually}
 
+\textbf{Locations} are a type of SimObject, they act as a wrapper for a \textbf{RealSpacePosition} (Mentioned briefly in the Art Design section above). An RPS works at a higher precision than standard Unity positions, using \textbf{doubles} instead of \textbf{floats}. This is used to combat floating point inaccuracy at the large scales the Simulation works at. \textbf{VisitableLocations} are a child class of Location and act as points of interest for the player.
+
+\subsection{PlayerLocationManagement}
+
+Every frame, \textbf{PlayerLocationManagement} retrieves certain types of DataModules (from SimulationManagement) and uses various lookup tables within them to search for nearby \textbf{VisitableLocations}. The world is divided up into cells with cell centers used as keys for any "spatial" lookup tables. This allows PLM to simply check cells within the players  draw distance rather than iterating over every stored VisitableLocations and doing a manual distance check. Any VisitableLocations found are added to a buffer, and additionally if they are in the buffer left over from the last frame they are removed from it. If they weren't in last frame's buffer than \textbf{InitDraw} is invoked as they have begun being drawn this frame.
+At the end of this process any VisitableLocations still in last frame's buffer should no longer be drawn. The \textbf{Cleanup} method is invoked on all these objects before last frame's buffer is cleared and replaced with the buffer created this frame. 
+
+All remaining VisitableLocations will have two update methods called on them \textbf{DrawUpdate} (every frame) and \textbf{DrawUpdatePostTick} (after every Simulation tick).
+
+A typical initial drawing process involves retrieving a model from an object pool (a form of runtime \textbf{GameObject} storage) and placing it in the scene relative to an anchor provided by PLM. The VisitableLocation will link itself to this model's attached SimObjectBehaviour where some additional drawing (based on the data and type of the SOB) might occur. For example, a \textbf{Settlement's} target SOB (of type \textbf{SettlementSimObjectBehaviour}) will generate some instancing buffers to draw all of the neccesary buildings.
+
+Some drawing processes are more complex and require multiple levels of nested drawers, the primary example is \textbf{Battles}. Battles draw process involves creating a sequence of \textbf{ShipCollectionDrawers} which then create \textbf{ShipDrawers}. Each ShipDrawer then gets a model and sets its own position, with some guidance from their parent ShipCollectionDrawer. ShipCollectionDrawers are then drawn or undrawn based on the Simulation state of the Battle rather than distance from the player.
+\newline
+\newline
+Currently the data retrieved by PLM has to be specifically outlined, however the generalized \textbf{TargetableLocationData} (Used by \textbf{MineralDeposits}, \textbf{PirateCrews}, etc.) allows for any flexibility needed. The method used to operate on this data, \textbf{PerformOperationOnNearbyLocations} is reused by \textbf{PlayerMapInteraction}.
+
+\subsection{PlayerMapInteraction}
+
+\textbf{PlayerMapInteraction} draws on top of the normal map UI, using PLM's functionality to find VisitableLocations within the Player's travel range. Each of these locations is given a marker that can be be interacted with by the player. Locations can specify the colour of their marker and whether to include a flashing visual effect via overriding SimObject methods. If any of the Player's Quests include a destination then that is also drawn on the map, in the form of a large beacon.
+
+PMI also handles the drawing of the Interaction Cursor on the map for map enabled \textbf{Interactions}. These include a border highlight mode, a cell selection mode and a line indicator. Interactions are an essential part of the general gameplay loop and are discussed below.
+
 \section{Player Gameplay And Interactions}
 
 \section{IDisplay and UI}
 
-\chapter{Evaluation}
+\chapter{Testing And User Evaluation}
 \chapter{Conclusion}
 
 \renewcommand\bibname{References}
