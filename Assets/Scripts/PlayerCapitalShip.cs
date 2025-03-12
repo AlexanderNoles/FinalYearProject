@@ -430,7 +430,7 @@ public class PlayerCapitalShip : MonoBehaviour
 		moveDifference *= WorldManagement.invertedInEngineWorldScaleMultiplier;
 		if (moveDifference.magnitude > 0.0f)
 		{
-			//If difference is non-existent 
+			//If difference is existent 
 			lastRecordedPos = transform.position;
 			WorldManagement.MoveWorldCenter(moveDifference);
 

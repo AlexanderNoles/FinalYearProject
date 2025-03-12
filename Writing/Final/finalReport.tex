@@ -650,9 +650,62 @@ Currently the data retrieved by PLM has to be specifically outlined, however the
 
 \textbf{PlayerMapInteraction} draws on top of the normal map UI, using PLM's functionality to find VisitableLocations within the Player's travel range. Each of these locations is given a marker that can be be interacted with by the player. Locations can specify the colour of their marker and whether to include a flashing visual effect via overriding SimObject methods. If any of the Player's Quests include a destination then that is also drawn on the map, in the form of a large beacon.
 
-PMI also handles the drawing of the Interaction Cursor on the map for map enabled \textbf{Interactions}. These include a border highlight mode, a cell selection mode and a line indicator. Interactions are an essential part of the general gameplay loop and are discussed below.
+PMI also handles the drawing of the Interaction Cursor on the map for map enabled \textbf{Interactions}. These include a border highlight mode, a cell selection mode and a line indicator.
 
-\section{Player Gameplay And Interactions}
+\subsection{VisualDatabase}
+
+\textbf{VisualDatabase} is a form of design management, exisiting as a script on a GameObject. It stores both \textbf{Colours} and Icons (Unity \textbf{Sprites}) that can be used by \textbf{SimulationEntites} (in their \textbf{EmblemData}). Some minor hue shift is applied to Colours during the \textbf{EmblemInit} Routine but they will maintain the Saturation and Value. This allows for the creation of a consistent and thought-out style for Entites, while maintaing the randomized nature of the project. A purely random approach could result in an ugly game, harming both immersion and the play experience.
+
+\section{Player Gameplay}
+
+\subsection{Player Movement}
+
+The player's movement is primarily controlled by the script \textbf{PlayerCapitalShip}, the name reflects the original design intention to have the player personally control multiple ships (more akin to Stellaris). Unity's Rigidbody Physics system is used for handiling collisions for the sake of simplicity, however, this system assumes the use of a Unity Transform component as a way to represent movement through the game world. This differs from the higher precision \textbf{RealSpacePosition} system used throughout the rest of the codebase and so the difference between Transform positions across any given frame (assuming the magnitude of the difference is non-zero) needs to be applied to the player's RealSpacePosition. This RPS is reffered to as the \textbf{WorldCenter} (as it is the center from which all RPS based rendering is done, discused above in Art Design), managed by \textbf{WorldManagement}.
+
+Unfortunately, the system as described results in floating point precision errors if the player moves too far away from Unity's world origin. To fix this issue, once the player passes beyond a threshold distance (currently 2000 units) they are seamlessly moved back to the origin. This shift is of course not applied to the WorldCenter RPS, and is typically reffered to as using a "floating origin".
+
+\subsection{Interactions}
+
+All Interactions inheirt from the base class \textbf{Interaction}, similar to \textbf{SimObject} it includes many virtual methods that can be defined as needed. There are two important sets of methods, one for working with \textbf{SimObjectBehaviours} (\textbf{ValidateBehaviour}, \textbf{ProcessBehaviour} and \textbf{GetRange}) and one for working with the map screen (\textbf{ValidateOnMap}, \textbf{ProcessOnMap} and \textbf{GetMapCursorData}), many Interactions will implement both.
+The rest of the methods are used for UI definition, including an implementation of IDisplay. Unlike SimObjects there are additional methods for defining draw priority and an icon path (used for automated Sprite Reference caching).
+
+Currently there are eight Interactions, listed below.
+
+\begin{enumerate}
+
+	\item Attack
+
+	\item Information
+
+	\item Quest
+
+	\item Troop Direct
+
+	\item Retreat
+
+	\item Shop
+
+	\item Travel
+
+	\item Nation Selection
+
+\end{enumerate}
+
+An important of an Interaction is defining what things it should be applied to, this is called "validating a target". The static class \textbf{InteractionValidationHelper} includes many helper functions for standard Interaction validations, most validation method implementation are simply calling these functions. 
+
+The player's avaliable Interactions are stored in a \textbf{DataModule} attached to the \textbf{Player} entity. As discussed above, DataModules are intended to fully describe the game state and the player's avaliable Interactions are set up to be malleable. Originally the intention was for certain \textbf{Items} to give the player additional Interactions, for example, a powerful weapon would require a special Interaction, used to direct its use. The item "Divine Battle Logic" is a practical example of this but in the produced vertical slice it has no functionality.
+\subsection{Items}
+
+\begin{comment}
+
+Need to talk about loading sprite images
+Loading in items (structure of the items file) and storing them
+ItemBase as a wrapper
+Applying stat changes
+Descriptions as an implementation of IDisplay
+Custom ItemBase wrappers
+
+\end{comment}
 
 \section{IDisplay and UI}
 
