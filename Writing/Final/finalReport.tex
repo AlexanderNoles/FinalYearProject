@@ -654,7 +654,7 @@ PMI also handles the drawing of the Interaction Cursor on the map for map enable
 
 \subsection{VisualDatabase}
 
-\textbf{VisualDatabase} is a form of design management, exisiting as a script on a GameObject. It stores both \textbf{Colours} and Icons (Unity \textbf{Sprites}) that can be used by \textbf{SimulationEntites} (in their \textbf{EmblemData}). Some minor hue shift is applied to Colours during the \textbf{EmblemInit} Routine but they will maintain the Saturation and Value. This allows for the creation of a consistent and thought-out style for Entites, while maintaing the randomized nature of the project. A purely random approach could result in an ugly game, harming both immersion and the play experience.
+\textbf{VisualDatabase} is a form of design management, exisiting as a script on a GameObject. It stores both \textbf{Colours} and Icons (Unity \textbf{Sprites}) that can be used by \textbf{SimulationEntites} (in their \textbf{EmblemData}). Some minor hue shift is applied to Colours during the \textbf{EmblemInit} Routine but they will maintain the Saturation and Value. This allows for the creation of a consistent and thought-out style for Entites, while maintaing the randomized nature of the project. A purely random approach would result in an ugly game, harming immersion.
 
 \section{Player Gameplay}
 
@@ -675,26 +675,47 @@ Currently there are eight Interactions, listed below.
 
 	\item Attack
 
+	Used to toggle targets for the main player ship.
+
 	\item Information
-
-	\item Quest
-
-	\item Troop Direct
-
-	\item Retreat
+	
+	Display's information (Name, Political Leaning) about a given Entity if an SimObject owned by it is targeted.
 
 	\item Shop
 
+	Opens the Shop UI, targeted at the Interaction's target. A Shop can be in Stat Increase mode or Item mode.
+
+	\item Quest
+
+	Opens the Quest accept UI,  targeted at the Interaction's target.
+
+	\item Troop Direct
+
+	Used to direct the Player's military to attack a given place. This place can be a location on the map or a targeted SimObjectBehaviour.
+
+	\item Retreat
+	
+	Used to retreat the Player's military from a battle they are in.
+
 	\item Travel
 
+	Used to select a Location displayed by \textbf{PlayerMapInteraction} for travel.
+
 	\item Nation Selection
+
+	A special interaction only used at the start of a run. Allows the player to select a starting territory by opening the selection UI. This UI shares functionlity with the Information UI through the use of Unity's prefab system.
 
 \end{enumerate}
 
 An important of an Interaction is defining what things it should be applied to, this is called "validating a target". The static class \textbf{InteractionValidationHelper} includes many helper functions for standard Interaction validations, most validation method implementation are simply calling these functions. 
 
-The player's avaliable Interactions are stored in a \textbf{DataModule} attached to the \textbf{Player} entity. As discussed above, DataModules are intended to fully describe the game state and the player's avaliable Interactions are set up to be malleable. Originally the intention was for certain \textbf{Items} to give the player additional Interactions, for example, a powerful weapon would require a special Interaction, used to direct its use. The item "Divine Battle Logic" is a practical example of this but in the produced vertical slice it has no functionality.
+The player's avaliable Interactions are stored in a \textbf{DataModule} attached to the \textbf{Player} entity. As discussed above, DataModules are intended to fully describe the game state and the player's avaliable Interactions are set up to be malleable. Originally the intention was for certain \textbf{Items} to give the player additional Interactions, for example, a powerful weapon would require a special Interaction, used to direct its use. The item "Divine Battle Logic" is a practical example of this but in the produced vertical slice it has no implemented functionality.
+
+\subsection{Player Stats}
+
 \subsection{Items}
+
+
 
 \begin{comment}
 

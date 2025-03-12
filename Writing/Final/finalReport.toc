@@ -32,7 +32,8 @@
 \contentsline {section}{\numberline {6.6}Player Gameplay}{26}{section.6.6}%
 \contentsline {subsection}{\numberline {6.6.1}Player Movement}{26}{subsection.6.6.1}%
 \contentsline {subsection}{\numberline {6.6.2}Interactions}{26}{subsection.6.6.2}%
-\contentsline {subsection}{\numberline {6.6.3}Items}{27}{subsection.6.6.3}%
+\contentsline {subsection}{\numberline {6.6.3}Player Stats}{27}{subsection.6.6.3}%
+\contentsline {subsection}{\numberline {6.6.4}Items}{27}{subsection.6.6.4}%
 \contentsline {section}{\numberline {6.7}IDisplay and UI}{27}{section.6.7}%
 \contentsline {chapter}{\numberline {7}Testing And User Evaluation}{28}{chapter.7}%
 \contentsline {chapter}{\numberline {8}Conclusion}{29}{chapter.8}%
