@@ -7,6 +7,7 @@
 \usepackage[most]{tcolorbox}
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{fancyvrb}
 \usepackage{hyperref}
 \usepackage[toc,page]{appendix}
 \usepackage{ulem}
@@ -713,9 +714,59 @@ The player's avaliable Interactions are stored in a \textbf{DataModule} attached
 
 \subsection{Player Stats}
 
+Any given Stat (Attack Power, Move Speed, Max Health, etc.) the player has is composed of two central parts. First, the \textbf{BaseStat} that contains a Stat type identifier and a level. The identifier is used to lookup a List in the "statIdentifierToBaseLevels" dictionary, and the level is used to index into that List, getting a float value that represents the Player's base power in that Stat. Second are the \textbf{StatContributors} which can be of one of three types, \textbf{BaseMultiplier}, \textbf{Addition} and \textbf{FinalMultiplier} (with the default being Addition). StatContributors always hold some value, in the form of a float, but this value is applied differently depending on type. When a Stat is needed the GetStat method is called on the Player's \textbf{PlayerStats DataModule}, within which the target Stat is then calculated before being returned. Stats are calculated using the following equation:
+
+\[((baseStat * productOfBaseMultipliers) + sumOfAdditions) * productOfFinalMultipliers \]
+
 \subsection{Items}
 
+\subsubsection{ItemDatabase}
 
+When the game runtime is initialized, \textbf{ItemDatabase} calls the \textbf{LoadItemsFromFile} method. This takes a file from Resources (a Unity editor to runtime Data Storage solution) called "items" and generates \textbf{Item} objects from it by using a custom interpreter to translate the data. The structure of the "items" data is bespoke but it has similarties to JSON data and it is intended to be edited and understood by humans directly. Below is an example entry for an item that allows the purchase of another item from a special shop alongside modifiying some stats. Text wrapping is not supported, it is used here for readability.
+
+\begin{Verbatim}[frame=single]
+### Rare ###
+{ item (debug)
+	//Buy one item from the special shop
+	rarity: "1"
+	icon: "specialIcon"
+	price: "0.9"
+	class: "0"
+	moveSpeed: "10"
+	attackPower: "0.5 x" 
+	attackSpeed: "2 xx"
+	name: "Special Shop Token"
+	description: "Allows the purchase of one item from the Special Shop, 
+will be consumed upon purchase of an item. *item* "
+	extra: "Unlike typical Shops, the Special Shop will not 
+refresh until it is empty."
+	target: "SpecialShopItemBase"
+}
+\end{Verbatim}
+
+The text between "\#\#\# Rare \#\#\#" starts a new type block. All items until the start of the next type block will use this type, in this case "Rare". The semi colons define a scope, in this case an "item" scope, however, an "alias" scope can be defined as well, allowing for certain words (surounded by the '*' char) to be replaced with predefined text. The text within brackets acts as a flag, allowing decisions to be made about the data before any interpretation begins. Items with the '(debug)' flag, will not be loaded outside of the Unity Editor or if a constant within the ItemDatabase file is set to false.
+
+Within the item scope itself, each line includes a key and a body, seperated by a semi-colon. The key is used to map to a variable inside the new Item object, with the body being interpreted differently based on the variable. Below are descriptors for several of the keys.
+
+\begin{enumerate}
+
+	\item Rarity - Used to define the Rarity level of an Item. Items are stored based on their Rarity so they can be filtered by it.
+
+	\item Icon - Defines an Icon path that a Sprite is loaded from. Relative to "Resources/icons/"
+
+	\item Price - A multiplier to the base item price, currently 1000.
+
+	\item Class - Defines the class of an item as an index into an enum. Class is used purely for flavour and has no gameplay impact.
+
+	\item Name, Description and Extra - Used in implementations of IDisplay functions so Items can be displayed on UI elements.
+
+\end{enumerate}
+
+If no direct mapping is found then the line is treated as a Stat line, where the key is assumed to correspond to a Stat identifier (if no corresponding Stat exists then that data is just stored and never used for anything). Within the body of the Stat line, the number of 'x' characters define it's type, 0 for \textbf{Addition}, 1 for \textbf{BaseMultiplier} and 2 for \textbf{FinalMultiplier}.
+
+\subsubsection{ItemBase}
+
+\textbf{ItemBase} is a wrapper class for an Item, it includes several important helper functions alongside tracking the \textbf{StatContributors} of a given Item so they can be easily removed. ItemBases are generated with the help of \textbf{ItemHelper's} \textbf{Wrap} method, taking in a target Item to wrap. Typically the returned object will simply be of type ItemBase, however, within an Item's source data a "target" can be specified. ItemHelper will use this to return an instance of a child type instead allowing for flexible Item implementations. In the above case, code will check if the Player's Inventory contains an item of type \textbf{SpecialShopItemBase} before allowing them to open the special shop.
 
 \begin{comment}
 

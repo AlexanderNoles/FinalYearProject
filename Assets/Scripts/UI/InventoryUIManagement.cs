@@ -218,7 +218,7 @@ public class InventoryUIManagement : UIState
 
         for (int i = 0; i < allItemsCount; i++)
 		{
-			ItemDatabase.ItemData item = ItemHelper.GetItemByTotalIndex(i);
+			ItemDatabase.Item item = ItemHelper.GetItemByTotalIndex(i);
             if (!item.itemTypeDeclaration.Equals(itemTypeString))
 			{
 				itemTypeString = item.itemTypeDeclaration;

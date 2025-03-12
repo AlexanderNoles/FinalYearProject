@@ -8,7 +8,7 @@ using static ItemDatabase;
 
 public static class ItemHelper
 {
-	public static ItemData GetItemByTotalIndex(int index)
+	public static Item GetItemByTotalIndex(int index)
 	{
 		//Iterate through rarity bands
 		foreach (ItemRarity rarity in Enum.GetValues(typeof(ItemRarity)))
@@ -30,7 +30,7 @@ public static class ItemHelper
 		return null;
 	}
 
-	public static ItemData GetRandomItemOfRarity(ItemRarity rarity)
+	public static Item GetRandomItemOfRarity(ItemRarity rarity)
 	{
 		if (itemRarityToCollections.ContainsKey(rarity))
 		{
@@ -41,7 +41,7 @@ public static class ItemHelper
 		return null;
 	}
 
-	public static ItemData GetItemForGeneralPurpose()
+	public static Item GetItemForGeneralPurpose()
 	{
 		float chance = UnityEngine.Random.Range(0.0f, 1.0f);
 
@@ -57,7 +57,7 @@ public static class ItemHelper
 
 	private static Dictionary<string, Type> stringToTargetTypes = new Dictionary<string, Type>();
 
-	public static ItemBase Wrap(ItemData targetData)
+	public static ItemBase Wrap(Item targetData)
 	{
 		if (targetData == null)
 		{

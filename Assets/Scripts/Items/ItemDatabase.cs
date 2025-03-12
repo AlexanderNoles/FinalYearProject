@@ -23,7 +23,7 @@ public class ItemDatabase
 	}
 
 	//Item data storage
-	public class ItemData : IDisplay
+	public class Item : IDisplay
 	{
 		//Representation of a item loaded from the items file
 		//Acts as a helper for getting data about items
@@ -84,14 +84,14 @@ public class ItemDatabase
 
 	public class ItemCollection
 	{
-		public List<ItemData> items = new List<ItemData>();
+		public List<Item> items = new List<Item>();
 
-		public void Add(ItemData item)
+		public void Add(Item item)
 		{
 			items.Add(item);
 		}
 
-		public ItemData GetRandomItem()
+		public Item GetRandomItem()
 		{
 			if (items.Count == 0)
 			{
@@ -149,7 +149,7 @@ public class ItemDatabase
 
 		bool inSection = false;
 		string sectionKey = "";
-		ItemData newItem = null;
+		Item newItem = null;
 
 		foreach (string line in lines)
 		{
@@ -227,7 +227,7 @@ public class ItemDatabase
 					{
 						if (newItem == null)
 						{
-							newItem = new ItemData();
+							newItem = new Item();
 						}
 
 						string key = PrepKeyString(parts[0], false);

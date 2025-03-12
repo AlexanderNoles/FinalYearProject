@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ItemBase : IDisplay
 {
-	private ItemDatabase.ItemData cachedItemData = null;
+	private ItemDatabase.Item cachedItemData = null;
 	private List<StatContributor> statContributors = new List<StatContributor>();
 
 	public float GetPrice(EntityLink parentFaction)
@@ -69,7 +69,7 @@ public class ItemBase : IDisplay
 		statContributors.Clear();
 	}
 
-	public ItemBase Setup(ItemDatabase.ItemData targetData)
+	public ItemBase Setup(ItemDatabase.Item targetData)
 	{
 		cachedItemData = targetData;
 		return this;
