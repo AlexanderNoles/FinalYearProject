@@ -391,6 +391,8 @@ The foundation of this project is the \textbf{Simulation}, it is essential that 
 However, a Simulation made up of fully independent data parts, could lead to a lack of interesting and divergent interaction. Consequently, this Simulation includes the ability for Simulation code to check if the owner of a data module contains another specific data module so code can then be executed with multiple data modules in mind. 
 
 It should be noted there are examples of simplistic rulesets creating highly complex beahviours (e.g., Conway's game of life, boids, etc.) but for a project that intends to simulate a more realistic scenario (Factions within a Solar System) the amount of compounding rules would quickly grow too numerous to manage. Ideally modules would still be designed in isolation so they could be applied as generally as possible, however in reality, some concessions have been made for the sake of simplicity (e.g., \textbf{TargetableLocationDesirabilityData}). This is a minor amount of \textbf{technical debt} which I believe is appropriate for a project of this scale and time frame.
+
+The original intention, which much of the codebase has been designed to accommodate, is that data modules could describe the entire game state and hence, game serialization would only involve saving data modules. In reality, there are a few things that naturally fall outside of the scope of data modules, primarily the player's position in the game world and Entity tags. Entity tags are a form of barebones data that is expanded upon in Implementation. Ultimately for the vertical slice, serialization of game state was dropped as it felt unnecesarry to complete the goals of this project.
 \newline
 \newline
 The execution of Simulation code happens on \textbf{ticks} (seperated by an arbitrary interval), independent from the rest of the runtime code. Using ticks allows Simulation code to bypass typical frame rate dependency issues, similar approaches are common in physics systems, including Unity's. More importantly, having simulation code only execute intermittently, rather than every frame, gives it a higher performance budget, allowing for more complexity.
@@ -407,8 +409,18 @@ Items can include additional Stat increases but they are primarily intended to e
 
 \section{Simulation Generated Gameplay Patterns}
 
+The most important aspect of this project is having the Simulation and the player's gameplay interact. The Simulation should ideally naturally create gameplay patterns that the player can recognize and engage with. Below are two cases studies meant to illustrate how this idea functions in the current version of the game.
+
 \subsection{Case 1: Attacking Settlements}
+
+Destroying a Settlement grants a large amount of currency and as such can be an important mid to late game activity. Whenever the player attacks a location (whether with their main ship or any recruited military) a Battle is created. This is another type of location that involved Entites can send their troops too, appearing at the Battle's edge before moving towards targets. The existence of any given Entity's (or more specifically any given \textbf{MilitaryData's}) transfer limit means the longer a player spends attacking a location, potentially the more troops that will respond. Enemy troops then act as an overwhelming time limit that slowly builds until the player is defeated or escapes, however, this time limit is not static. Various other elements of the Simulation impact how many troops an Entity has avaliable, for example a Nation at war would have many other Battles it would need to send troops to as well. There can also be large, game-world wide, events (such as a Calamity Faction, discussed briefly in Implementation) that draws focus away from smaller actors like the player. Additionally, the player can gain a military that can be directed, this can be used as a buffer against enemy ships or as extra firepower against the Settlement itself.
+
 \subsection{Case 2: Mineral Deposits}
+
+Mineral Deposits are locations in the game world that contain some resource. While the value of this resource varies slightly, it is relatively low, only viable in the very early game. However, other Entities are attracted to Mineral Deposits as well, sending ships to claim them. Destroying these ships rewards some amount of currency, typically much higher than the whole Mineral Deposit, turning these locations in natural ambush points. Additionally, attacking these ships lowers your reputation with their parent Entity, naturally creating certain types of stories the player might be looking to play through.
+\newline
+\newline
+Recognizing these gameplay patterns allow us to make additional changes that support them. For example, the material worth of Mineral Deposits was lowered to help player's realise that these locations aren't actually useful for the resources they contain. Additionally any Battles appear on the map with a obvious glowing effect, making it clear what areas are being fought over.
 
 \section{Define As Needed}
 
