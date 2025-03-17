@@ -430,6 +430,10 @@ The lack of multi-inheritance support in C\# does mean this style can occasional
 
 \chapter{Implementation}
 
+The following chapter starts with top down description of the Simulation. This begins with a description of code run by the Simulation (\textbf{Routines}), then it's participants (\textbf{SimObjects} and \textbf{SimEntites}) before finishing with a discussion of the Simulation's backbone (\textbf{SimulationManagement}). Next is a description of how the Simulation is visually displayed, discussing distance and object pooling based drawing techniques. Following that is a discussion of Player Gameplay, including, \textbf{Movement}, \textbf{Interactions}, \textbf{Stats} and \textbf{Items}. The chapter is then finished with a section on UI and the IDisplay interface. 
+
+Due to the complexity of the project (which currently contains 216 scripts), various efforts have been made to simplify the descriptions of the codebase. Focus has been placed on primary structural elements and underlying systems with the exception of the individual \textbf{DataModule} descriptions.
+
 \begin{comment}
 
 Desgin should follow from implementation, as it is a broad overview of the implementation (assuming you actually have some coherence to your code I guess)
@@ -837,7 +841,35 @@ Custom ItemBase wrappers
 
 \end{comment}
 
-\section{IDisplay and UI}
+\section{UI}
+
+All UI in the game is built on top of the \textbf{UIManagment} class, which controls the current \textbf{UIState}. Typically you can only transition to a new \textbf{UIState} (referred to as activating a state) from the Neutral state, this model helps segment the UI into specific parts. Additionally it allows the control of UI to be simplified, into Neutral and non-Neutral, which is useful for limiting certain actions when UI is active. In reality, certain UI States require Neutral UI to be active alongside them (for example, the Map), referred to as \textbf{co-enabling Neutral}, as such \textbf{pure Neutral} has it's own set of checks for other systems to use. Very rarely, one non-neutral UIState needs to transition directly to another non-neutral UIState, within the vertical slice this is done only when transitioning from History UI to Nation Selection UI. This behaviour has to be specifically enabled otherwise the method used to change UIState does nothing.
+
+\subsection{IDisplay}
+
+\textbf{IDisplay} is an interface that can be passed to many UI element classes. Those classes will then call IDisplay's methods to help draw their displays, for example \textbf{SlotUI}. IDisplay has four methods, listed below alongside a description.
+
+\begin{enumerate}
+
+	\item GetTitle
+
+Returns a String. Used to set the text of headers, typically returns the name of the interface implementer.
+
+	\item GetDescription
+
+Returns a String. Used as additional text that describes the interface implementer.
+
+	\item GetExtraInformation
+
+Returns a String. Typically used for information that is considered mostly unnecessary or only necessary once. For example, it is used to display the uses of Stats (e.g., Move Speed, Max Health, etc.) given by an \textbf{Item}.
+
+	\item GetIcon
+
+Returns a Sprite. Used by non-text based UI Elements, for example, the image used in \textbf{SlotUI}. Typically returns a cached Sprite loaded from \textbf{Resources}, alternatively returns \textbf{null}, which is interpreted as a white square by Unity (this is a simplification of how Unity's UI shaders work).
+
+\end{enumerate}
+
+Everything from \textbf{Items} to \textbf{Locations} implements IDisplay. Having an interface for UI element drawing allows UI elements to be easily generalized and reused, alongside having multiple different types of UI elements use the same single source data. For example, different slots can draw themselves using IDisplay and then also pass that data to \textbf{DisplayOnHover} (a class that handles almost all mouse over events). 
 
 \chapter{Testing And User Evaluation}
 \chapter{Conclusion}
