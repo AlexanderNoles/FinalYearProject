@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.5.17)  21 MAR 2025 20:42
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.5.17)  22 MAR 2025 14:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1074,7 +1074,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.45 ...{6.6.3}Player Stats}{33}{subsection.6.6.3}
+l.45 ...{6.6.3}Player Stats}{34}{subsection.6.6.3}
                                                   % [1
 
 ])
@@ -1546,91 +1546,103 @@ File: ./Images/outlineExample.png Graphic file (type png)
 <use ./Images/outlineExample.png>
 Package pdftex.def Info: ./Images/outlineExample.png  used on input line 465.
 (pdftex.def)             Requested size: 399.21791pt x 223.96135pt.
- [21 <./Images/environmentExample2.png> <./Images/outlineExample.png>] [22]
+ [21 <./Images/environmentExample2.png> <./Images/outlineExample.png>]
+<./Images/UIExample1.png, id=449, 1319.68031pt x 741.52031pt>
+File: ./Images/UIExample1.png Graphic file (type png)
+<use ./Images/UIExample1.png>
+Package pdftex.def Info: ./Images/UIExample1.png  used on input line 483.
+(pdftex.def)             Requested size: 399.21791pt x 224.31342pt.
+ [22]
+<./Images/UIExample2.png, id=454, 1038.12843pt x 660.96938pt>
+File: ./Images/UIExample2.png Graphic file (type png)
+<use ./Images/UIExample2.png>
+Package pdftex.def Info: ./Images/UIExample2.png  used on input line 489.
+(pdftex.def)             Requested size: 399.21791pt x 254.17647pt.
+ [23 <./Images/UIExample1.png> <./Images/UIExample2.png>]
 Chapter 6.
-[23
+[24
 
-] [24] [25] [26] [27] [28] [29]
-Underfull \hbox (badness 10000) in paragraph at lines 751--755
+] [25] [26] [27] [28] [29] [30]
+Underfull \hbox (badness 10000) in paragraph at lines 769--773
 
  []
 
-[30] [31] [32] [33] [34] [35]
+[31] [32] [33] [34] [35] [36]
 Chapter 7.
 
-Overfull \hbox (3.03337pt too wide) in paragraph at lines 924--925
+Overfull \hbox (3.03337pt too wide) in paragraph at lines 942--943
 []\OT1/cmr/m/n/10 Alongside spe-cific tools, typ-i-cal pro-gram-ming test-ing f
 ea-tures (such as Assser-tions) are used through-
  []
 
-[36
-
-]
-Chapter 8.
 [37
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 939--940
+Chapter 8.
+[38
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 957--958
 []\OT1/cmr/m/n/10 Stellaris Com-mu-nity, "Be-gin-ner's guide", "Stel-laris WIki
 ", 21 Oc-to-ber 2024,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 941--942
+Underfull \hbox (badness 10000) in paragraph at lines 959--960
 []\OT1/cmr/m/n/10 Stellaris Com-mu-nity, "Cri-sis/Endgame cri-sis fac-tion-s/Ex
 -tradi-men-sional In-vader-s/-Suc-
  []
 
 
-Underfull \hbox (badness 3635) in paragraph at lines 941--942
+Underfull \hbox (badness 3635) in paragraph at lines 959--960
 \OT1/cmr/m/n/10 cess-fully re-pelling the Ex-tradi-men-sional In-vaders", "Stel
 -laris Wiki", 18 Oc-to-ber 2024,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 945--946
+Underfull \hbox (badness 10000) in paragraph at lines 963--964
 []\OT1/cmr/m/n/10 "Skullcrusher", "Stel-laris Steam Re-view", "Steam", 11 Septe
 m-ber 2022,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 947--948
+Underfull \hbox (badness 10000) in paragraph at lines 965--966
 []\OT1/cmr/m/n/10 "A Ran-dom Fish", "Stel-laris Steam Re-view", "Steam", 18 Oc-
 to-ber 2019,
  []
 
 
-Underfull \hbox (badness 4531) in paragraph at lines 949--950
+Underfull \hbox (badness 4531) in paragraph at lines 967--968
 []\OT1/cmr/m/n/10 "MonitorBreak", "Li-cense", "Github", 14 Novem-ber 2022, []ht
 tps://github.com/Monitor-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 957--958
+Underfull \hbox (badness 10000) in paragraph at lines 975--976
 []\OT1/cmr/m/n/10 "British Com-puter So-ci-ety", "Code of Con-duct", "BCS Web-s
 ite",
  []
 
-[38
+[39
 
-] [39
+] [40
 
 
 ]
 Appendix A.
-[40
+[41
 
-] [41]
+] [42]
 Appendix B.
 
 
 pdfTeX warning: pdflatex.exe (file ./AlexanderNolesEthicalComplianceForm.pdf): 
 PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<AlexanderNolesEthicalComplianceForm.pdf, id=636, 614.295pt x 794.97pt>
+<AlexanderNolesEthicalComplianceForm.pdf, id=647, 614.295pt x 794.97pt>
 File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
 <use AlexanderNolesEthicalComplianceForm.pdf>
 Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf  used on input
- line 1062.
+ line 1080.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
 
 
@@ -1639,7 +1651,7 @@ PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
 File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
 <use AlexanderNolesEthicalComplianceForm.pdf>
 Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf  used on input
- line 1062.
+ line 1080.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
 
 
@@ -1649,81 +1661,58 @@ PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
 
 pdfTeX warning: pdflatex.exe (file ./AlexanderNolesEthicalComplianceForm.pdf): 
 PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<AlexanderNolesEthicalComplianceForm.pdf, id=639, page=1, 614.295pt x 794.97pt>
+<AlexanderNolesEthicalComplianceForm.pdf, id=650, page=1, 614.295pt x 794.97pt>
 
 File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
 <use AlexanderNolesEthicalComplianceForm.pdf, page 1>
 Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page1 used o
-n input line 1062.
+n input line 1080.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
 File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
 <use AlexanderNolesEthicalComplianceForm.pdf, page 1>
 Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page1 used o
-n input line 1062.
+n input line 1080.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
-[42
+[43
 
 ]
 File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
 <use AlexanderNolesEthicalComplianceForm.pdf, page 1>
 Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page1 used o
-n input line 1062.
+n input line 1080.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
 <use AlexanderNolesEthicalComplianceForm.pdf, page 1>
 Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page1 used o
-n input line 1062.
+n input line 1080.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
 <use AlexanderNolesEthicalComplianceForm.pdf, page 1>
 Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page1 used o
-n input line 1062.
+n input line 1080.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
- [43
+ [44
 
  <./AlexanderNolesEthicalComplianceForm.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./AlexanderNolesEthicalComplianceForm.pdf): 
 PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<AlexanderNolesEthicalComplianceForm.pdf, id=710, page=2, 614.295pt x 794.97pt>
+<AlexanderNolesEthicalComplianceForm.pdf, id=720, page=2, 614.295pt x 794.97pt>
 
 File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
 <use AlexanderNolesEthicalComplianceForm.pdf, page 2>
 Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page2 used o
-n input line 1062.
+n input line 1080.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
 <use AlexanderNolesEthicalComplianceForm.pdf, page 2>
 Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page2 used o
-n input line 1062.
+n input line 1080.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
 <use AlexanderNolesEthicalComplianceForm.pdf, page 2>
 Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page2 used o
-n input line 1062.
-(pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
-[44
-
- <./AlexanderNolesEthicalComplianceForm.pdf>]
-
-pdfTeX warning: pdflatex.exe (file ./AlexanderNolesEthicalComplianceForm.pdf): 
-PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<AlexanderNolesEthicalComplianceForm.pdf, id=724, page=3, 614.295pt x 794.97pt>
-
-File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
-<use AlexanderNolesEthicalComplianceForm.pdf, page 3>
-Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page3 used o
-n input line 1062.
-(pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
-File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
-<use AlexanderNolesEthicalComplianceForm.pdf, page 3>
-Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page3 used o
-n input line 1062.
-(pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
-File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
-<use AlexanderNolesEthicalComplianceForm.pdf, page 3>
-Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page3 used o
-n input line 1062.
+n input line 1080.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 [45
 
@@ -1731,22 +1720,22 @@ n input line 1062.
 
 pdfTeX warning: pdflatex.exe (file ./AlexanderNolesEthicalComplianceForm.pdf): 
 PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<AlexanderNolesEthicalComplianceForm.pdf, id=744, page=4, 614.295pt x 794.97pt>
+<AlexanderNolesEthicalComplianceForm.pdf, id=734, page=3, 614.295pt x 794.97pt>
 
 File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
-<use AlexanderNolesEthicalComplianceForm.pdf, page 4>
-Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page4 used o
-n input line 1062.
+<use AlexanderNolesEthicalComplianceForm.pdf, page 3>
+Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page3 used o
+n input line 1080.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
-<use AlexanderNolesEthicalComplianceForm.pdf, page 4>
-Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page4 used o
-n input line 1062.
+<use AlexanderNolesEthicalComplianceForm.pdf, page 3>
+Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page3 used o
+n input line 1080.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
-<use AlexanderNolesEthicalComplianceForm.pdf, page 4>
-Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page4 used o
-n input line 1062.
+<use AlexanderNolesEthicalComplianceForm.pdf, page 3>
+Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page3 used o
+n input line 1080.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 [46
 
@@ -1754,24 +1743,47 @@ n input line 1062.
 
 pdfTeX warning: pdflatex.exe (file ./AlexanderNolesEthicalComplianceForm.pdf): 
 PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<AlexanderNolesEthicalComplianceForm.pdf, id=777, page=5, 614.295pt x 794.97pt>
+<AlexanderNolesEthicalComplianceForm.pdf, id=754, page=4, 614.295pt x 794.97pt>
+
+File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
+<use AlexanderNolesEthicalComplianceForm.pdf, page 4>
+Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page4 used o
+n input line 1080.
+(pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
+File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
+<use AlexanderNolesEthicalComplianceForm.pdf, page 4>
+Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page4 used o
+n input line 1080.
+(pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
+File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
+<use AlexanderNolesEthicalComplianceForm.pdf, page 4>
+Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page4 used o
+n input line 1080.
+(pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
+[47
+
+ <./AlexanderNolesEthicalComplianceForm.pdf>]
+
+pdfTeX warning: pdflatex.exe (file ./AlexanderNolesEthicalComplianceForm.pdf): 
+PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+<AlexanderNolesEthicalComplianceForm.pdf, id=787, page=5, 614.295pt x 794.97pt>
 
 File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
 <use AlexanderNolesEthicalComplianceForm.pdf, page 5>
 Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page5 used o
-n input line 1062.
+n input line 1080.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
 <use AlexanderNolesEthicalComplianceForm.pdf, page 5>
 Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page5 used o
-n input line 1062.
+n input line 1080.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
 File: AlexanderNolesEthicalComplianceForm.pdf Graphic file (type pdf)
 <use AlexanderNolesEthicalComplianceForm.pdf, page 5>
 Package pdftex.def Info: AlexanderNolesEthicalComplianceForm.pdf , page5 used o
-n input line 1062.
+n input line 1080.
 (pdftex.def)             Requested size: 614.58406pt x 795.3441pt.
-[47
+[48
 
  <./AlexanderNolesEthicalComplianceForm.pdf>] (finalReport.aux)
  ***********
@@ -1782,10 +1794,10 @@ Package rerunfilecheck Info: File `finalReport.out' has not changed.
 (rerunfilecheck)             Checksum: DC3B576DF981497EE134C7FE6887516F;7520.
  ) 
 Here is how much of TeX's memory you used:
- 30991 strings out of 474486
- 639974 string characters out of 5743755
+ 31012 strings out of 474486
+ 640499 string characters out of 5743755
  1943542 words of memory out of 5000000
- 52554 multiletter control sequences out of 15000+600000
+ 52572 multiletter control sequences out of 15000+600000
  566780 words of font info for 67 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  93i,17n,99p,1629b,645s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1802,9 +1814,9 @@ pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users
 <C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cm
 ti12.pfb><C:/Users/alexn/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
 nts/cm/cmtt10.pfb>
-Output written on finalReport.pdf (48 pages, 9543044 bytes).
+Output written on finalReport.pdf (49 pages, 9708696 bytes).
 PDF statistics:
- 876 PDF objects out of 1000 (max. 8388607)
- 213 named destinations out of 1000 (max. 500000)
- 645 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 887 PDF objects out of 1000 (max. 8388607)
+ 216 named destinations out of 1000 (max. 500000)
+ 655 words of extra memory for PDF output out of 10000 (max. 10000000)
 

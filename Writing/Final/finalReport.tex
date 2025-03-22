@@ -472,6 +472,24 @@ In the background of the above Figure 5.3, you can see asteroids. These are used
 
 \subsection{UI}
 
+UI design has gone through more iterations than any other part of the design, UI is one of the primary ways that information is comunicated to the player and so it is vital to get it right. An emphasis has been placed on images over text, however, neccesary textual elements appear on mouse hover. This was done to limit the amount of information presented to the player, in an attempt to limit the upfront complexity of the game. In certain ways this ended up hurting usability and understandability as discussed in the \textbf{User Testing} section below. The UI is composed of singular flat colours, typically black and white, with variations in colour (both gradients and brighter colours) used to apply emphasis (e.g., Interaction Icons, Inventory Item Slots, etc.). It is organized generally into several UI states, with some minor overlap when functionality provided by one state needs to be maintained. 
+
+Several UI elements soley exist to assist players with roleplay, in the "Neutral" (or default) UI state, there are two primary examples of this. First, the player's emblem, customized at the beginning of the run, is displayed in the top left. This is a easy way for the project to showcase a choice made by the player in a constant way. Second, is the clock in the bottom left corner. It is important to the project for the world to feel like it is moving and changing as you play, having a visible clock adds to this by giving a sense of moving time. The clock is also the only animated part of the UI (outside of fade-in transition effects) which helps add additional emphasis to it.
+
+The project also includes a large amount of popups, used for a variety of use cases, including but not limited to, Shop UI, Troop Transfer UI and Action Confirmation UI. These are all set active as default in the Editor when the game is not running, used similarly to a design board. Being able to view all the popups at the same time helps to maintain language and style across the game's UI, including during the creation of new UI States or elements.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=.9\textwidth]{UIExample1.png}
+    \caption{The Neutral UI State.}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=.9\textwidth]{UIExample2.png}
+    \caption{Collection of popup windows displayed in Editor.}
+\end{figure}
+
 \chapter{Implementation}
 
 The following chapter starts with top down description of the Simulation. This begins with a description of code run by the Simulation (\textbf{Routines}), then it's participants (\textbf{SimObjects} and \textbf{SimEntites}) before finishing with a discussion of the Simulation's backbone (\textbf{SimulationManagement}). Next is a description of how the Simulation is visually displayed, discussing distance and object pooling based drawing techniques. Following that is a discussion of Player Gameplay, including, \textbf{Movement}, \textbf{Interactions}, \textbf{Stats} and \textbf{Items}. The chapter is then finished with a section on UI and the IDisplay interface. 
