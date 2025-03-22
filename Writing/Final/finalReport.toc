@@ -1,57 +1,57 @@
 \contentsline {chapter}{\numberline {1}Introduction}{3}{chapter.1}%
-\contentsline {chapter}{\numberline {2}Professional Considerations}{4}{chapter.2}%
-\contentsline {section}{\numberline {2.1}BCS Code of Conduct}{4}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Ethical Review}{5}{section.2.2}%
-\contentsline {chapter}{\numberline {3}Requirements Analysis}{8}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Framework Choice}{8}{section.3.1}%
-\contentsline {section}{\numberline {3.2}User Testing}{8}{section.3.2}%
-\contentsline {section}{\numberline {3.3}Background Research, Design Problems and Solutions}{9}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}Game 1: Stellaris}{9}{subsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.3.2}Game 2: Disco Elysium}{12}{subsection.3.3.2}%
-\contentsline {section}{\numberline {3.4}Art Design}{13}{section.3.4}%
-\contentsline {section}{\numberline {3.5}Performance and Stability}{14}{section.3.5}%
-\contentsline {chapter}{\numberline {4}Formalized Requirements}{15}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Extension Requirements}{16}{section.4.1}%
-\contentsline {chapter}{\numberline {5}Design}{17}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Simulation}{17}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Player Gameplay}{17}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}Progression}{18}{subsection.5.2.1}%
-\contentsline {section}{\numberline {5.3}Simulation Generated Gameplay Patterns}{18}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}Case 1: Attacking Settlements}{18}{subsection.5.3.1}%
-\contentsline {subsection}{\numberline {5.3.2}Case 2: Mineral Deposits}{19}{subsection.5.3.2}%
-\contentsline {section}{\numberline {5.4}Define As Needed}{19}{section.5.4}%
-\contentsline {section}{\numberline {5.5}Visual Design}{19}{section.5.5}%
-\contentsline {subsection}{\numberline {5.5.1}Environment}{19}{subsection.5.5.1}%
-\contentsline {subsection}{\numberline {5.5.2}UI}{22}{subsection.5.5.2}%
-\contentsline {chapter}{\numberline {6}Implementation}{24}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Routines}{24}{section.6.1}%
-\contentsline {section}{\numberline {6.2}SimObject}{25}{section.6.2}%
-\contentsline {subsection}{\numberline {6.2.1}Accessing SimObjects}{26}{subsection.6.2.1}%
-\contentsline {section}{\numberline {6.3}SimulationEntity}{26}{section.6.3}%
-\contentsline {subsection}{\numberline {6.3.1}Individual DataModules Descriptions}{28}{subsection.6.3.1}%
-\contentsline {subsubsection}{Battle System DataModules}{28}{subsubsection*.2}%
-\contentsline {subsubsection}{Relationship System DataModules}{28}{subsubsection*.3}%
-\contentsline {subsubsection}{Player Specific DataModules}{29}{subsubsection*.4}%
-\contentsline {subsubsection}{Other DataModules}{29}{subsubsection*.5}%
-\contentsline {section}{\numberline {6.4}SimulationManagement}{30}{section.6.4}%
-\contentsline {subsection}{\numberline {6.4.1}Tick Timing and Multithreading}{30}{subsection.6.4.1}%
-\contentsline {section}{\numberline {6.5}Displaying the Simulation Visually}{31}{section.6.5}%
-\contentsline {subsection}{\numberline {6.5.1}PlayerLocationManagement}{31}{subsection.6.5.1}%
-\contentsline {subsection}{\numberline {6.5.2}PlayerMapInteraction}{32}{subsection.6.5.2}%
-\contentsline {subsection}{\numberline {6.5.3}VisualDatabase}{32}{subsection.6.5.3}%
-\contentsline {section}{\numberline {6.6}Player Gameplay}{32}{section.6.6}%
-\contentsline {subsection}{\numberline {6.6.1}Player Movement}{32}{subsection.6.6.1}%
-\contentsline {subsection}{\numberline {6.6.2}Interactions}{32}{subsection.6.6.2}%
-\contentsline {subsection}{\numberline {6.6.3}Player Stats}{34}{subsection.6.6.3}%
-\contentsline {subsection}{\numberline {6.6.4}Items}{34}{subsection.6.6.4}%
-\contentsline {subsubsection}{ItemDatabase}{34}{subsubsection*.6}%
-\contentsline {subsubsection}{ItemBase}{35}{subsubsection*.7}%
-\contentsline {section}{\numberline {6.7}UI}{35}{section.6.7}%
-\contentsline {subsection}{\numberline {6.7.1}IDisplay}{36}{subsection.6.7.1}%
-\contentsline {chapter}{\numberline {7}Testing And User Evaluation}{37}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Debug Tools}{37}{section.7.1}%
-\contentsline {section}{\numberline {7.2}User Testing and Usability}{37}{section.7.2}%
-\contentsline {chapter}{\numberline {8}Conclusion}{38}{chapter.8}%
-\contentsline {chapter}{Appendices}{40}{section*.9}%
-\contentsline {chapter}{\numberline {A}Project Proposal}{41}{appendix.1.A}%
-\contentsline {chapter}{\numberline {B}Signed Ethical Compliance Form}{43}{appendix.1.B}%
+\contentsline {chapter}{\numberline {2}Professional Considerations}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}BCS Code of Conduct}{5}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Ethical Review}{6}{section.2.2}%
+\contentsline {chapter}{\numberline {3}Requirements Analysis}{9}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Framework Choice}{9}{section.3.1}%
+\contentsline {section}{\numberline {3.2}User Testing}{9}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Background Research, Design Problems and Solutions}{10}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Game 1: Stellaris}{10}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Game 2: Disco Elysium}{13}{subsection.3.3.2}%
+\contentsline {section}{\numberline {3.4}Art Design}{14}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Performance and Stability}{15}{section.3.5}%
+\contentsline {chapter}{\numberline {4}Formalized Requirements}{16}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Extension Requirements}{17}{section.4.1}%
+\contentsline {chapter}{\numberline {5}Design}{18}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Simulation}{18}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Player Gameplay}{18}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Progression}{19}{subsection.5.2.1}%
+\contentsline {section}{\numberline {5.3}Simulation Generated Gameplay Patterns}{19}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Case 1: Attacking Settlements}{19}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Case 2: Mineral Deposits}{20}{subsection.5.3.2}%
+\contentsline {section}{\numberline {5.4}Define As Needed}{20}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Visual Design}{20}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Environment}{20}{subsection.5.5.1}%
+\contentsline {subsection}{\numberline {5.5.2}UI}{23}{subsection.5.5.2}%
+\contentsline {chapter}{\numberline {6}Implementation}{25}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Routines}{25}{section.6.1}%
+\contentsline {section}{\numberline {6.2}SimObject}{26}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}Accessing SimObjects}{27}{subsection.6.2.1}%
+\contentsline {section}{\numberline {6.3}SimulationEntity}{27}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}Individual DataModules Descriptions}{29}{subsection.6.3.1}%
+\contentsline {subsubsection}{Battle System DataModules}{29}{subsubsection*.2}%
+\contentsline {subsubsection}{Relationship System DataModules}{29}{subsubsection*.3}%
+\contentsline {subsubsection}{Player Specific DataModules}{30}{subsubsection*.4}%
+\contentsline {subsubsection}{Other DataModules}{30}{subsubsection*.5}%
+\contentsline {section}{\numberline {6.4}SimulationManagement}{31}{section.6.4}%
+\contentsline {subsection}{\numberline {6.4.1}Tick Timing and Multithreading}{31}{subsection.6.4.1}%
+\contentsline {section}{\numberline {6.5}Displaying the Simulation Visually}{32}{section.6.5}%
+\contentsline {subsection}{\numberline {6.5.1}PlayerLocationManagement}{32}{subsection.6.5.1}%
+\contentsline {subsection}{\numberline {6.5.2}PlayerMapInteraction}{33}{subsection.6.5.2}%
+\contentsline {subsection}{\numberline {6.5.3}VisualDatabase}{33}{subsection.6.5.3}%
+\contentsline {section}{\numberline {6.6}Player Gameplay}{33}{section.6.6}%
+\contentsline {subsection}{\numberline {6.6.1}Player Movement}{33}{subsection.6.6.1}%
+\contentsline {subsection}{\numberline {6.6.2}Interactions}{33}{subsection.6.6.2}%
+\contentsline {subsection}{\numberline {6.6.3}Player Stats}{35}{subsection.6.6.3}%
+\contentsline {subsection}{\numberline {6.6.4}Items}{35}{subsection.6.6.4}%
+\contentsline {subsubsection}{ItemDatabase}{35}{subsubsection*.6}%
+\contentsline {subsubsection}{ItemBase}{36}{subsubsection*.7}%
+\contentsline {section}{\numberline {6.7}UI}{36}{section.6.7}%
+\contentsline {subsection}{\numberline {6.7.1}IDisplay}{37}{subsection.6.7.1}%
+\contentsline {chapter}{\numberline {7}Testing And User Evaluation}{38}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Debug Tools}{38}{section.7.1}%
+\contentsline {section}{\numberline {7.2}User Testing and Usability}{38}{section.7.2}%
+\contentsline {chapter}{\numberline {8}Conclusion}{39}{chapter.8}%
+\contentsline {chapter}{Appendices}{41}{section*.9}%
+\contentsline {chapter}{\numberline {A}Project Proposal}{42}{appendix.1.A}%
+\contentsline {chapter}{\numberline {B}Signed Ethical Compliance Form}{44}{appendix.1.B}%

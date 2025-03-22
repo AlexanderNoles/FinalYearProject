@@ -47,7 +47,7 @@ Material:
     - _DepthDistance: 100
     - _DepthMultiplier: 0.01
     - _DepthThreshold: 10
-    - _EffectLimit: 0.5
+    - _EffectLimit: 1
     - _FogBlend: 0.2
     - _FogDistance: 100
     - _FogEnabled: 0

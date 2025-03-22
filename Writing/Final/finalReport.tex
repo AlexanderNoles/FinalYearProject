@@ -54,7 +54,7 @@
 Final Report \\ 
 \textit{3D Video Game: Star And Salvation} }
 \author{267533\\
-\large Word Count: 10700}
+\large Word Count: 12100}
 
 \maketitle
 
@@ -67,13 +67,19 @@ This form of narrative interaction is seen commonly in the large-scale real-time
 
 To allow the player to make immediate, impactful decisions at the beginnign of any given run, unlike most games in the genre, the player's power (i.e. their ability to affect the simulated environment) will be orgainzed differently to other entities. The player will start as a single powerful unit (i.e. a single ship, a single character, etc.) that has a decent amount of upfront power. During the early game, they will still need to make tactical decisions in order to survive but importantly they should already be able to have an effect on the game's world with a large amount of upfront ability to effect change. Alongside this, the player will be immediately presented with customization options for their entity, allowing them to customize their faction's emblem, leading them into a roleplaying headspace.
 
-To ensure that the player's actions result in dynamic outcomes, the faction simulation will also need to be suitably complex. As such, this project takes a code-agnostic, data driven approach. This involves keeping faction data separate from any given simulation element, as opposed to a typical object-oriented approach, which would intertwine them. This allows simulation modules to be designed and implemented in a flexible manner, as well as allowing extra simulation elements to be added easily as an extension goal.
+Throughout a run the player will engage in various activities centered around distinct locations, for example, mineral deposits or settlements. Here they can perform actions such as mining or trade respectively. Locations also include places like battles between factions or pirate bases, the definition is intentionally expansive to include any place that can have some form of gameplay. These Locations will be produced by the Simulation and are the primary way it affects gameplay.
 
-Additionally the player will be able to grow in strength throughout a run, affecting more and more of the game's world as time goes on. This can be done through statistic increases but also more dynamic and interesting item purchases. Power upgrades should always be a reward for interacting with the game's world, incentivising investment in the Simulated environment.
+Additionally the player will be able to grow in strength, affecting more and more of the game's world as time goes on. This can be done through statistic increases but also more dynamic and interesting item purchases. Power upgrades should always be a reward for interacting with the game's world, incentivising investment in the Simulated environment.
+
+To ensure that the player's actions result in dynamic outcomes, the faction simulation will also need to be suitably complex. As such, this project takes a code-agnostic, data driven approach. This involves keeping faction data separate from any given simulation element, as opposed to a typical object-oriented approach, which would intertwine them. This allows simulation modules to be designed and implemented in a flexible manner, as well as allowing extra simulation elements to be added easily as an extension goal.
 \newline
 \newline
-This report consists of several sections, the first of which is "Professional Considerations", where the BCS Code of Conduct is broken down by section. An ethical review is also included, discussing this project's plan for user testing and acquiring consent for personal data collection in detail. Next is "Requirements Analysis", which outlines the objectives of the project in distinct steps alongside expanding on the explanation of the problem space and my solutions. This includes background research on games in the genre and proposed solutions to game design issues found within, alongside a brief section on "Art Design". That subsection details some techniques used to render the large solar system as an example of some of the work done on the visual side of the game.
-Next is the "Project Plan", consisting of a breakdown of the work required to complete the project into distinct phases, illustrated using a Gantt chart alongside written explanations. Then there is an "Interim Log" detailing the steps of the Project Plan completed as of the submission of this Interim Report and meetings with this project's supervisor. Finally, there are the refrences and appendices.
+This report consists of several sections, the first of which is "Professional Considerations", where the BCS Code of Conduct is broken down by section. An ethical review is also included, discussing this project's plan for user testing and acquiring consent for personal data collection in detail. Next is "Requirements Analysis", which outlines the objectives of the project in distinct steps alongside expanding on the explanation of the problem space and my solutions. This includes background research on games in the genre and proposed solutions to game design issues found within, alongside a brief section on "Art Design". That subsection details some techniques used to render the large solar system as an initial example of some of the work done on the visual side of the game.
+Next is the full "Design" section, breaking the major componenets of the vertical slice down and discussing why they are the way they are. This includes a discussion on the Simulation, Player Gameplay and the game's visuals (Environmental and UI). After that is the "Implementation" section, by far the longest section of the report, which goes into detail on the specific way the project design was implemented. This does not include a full code breakdown as the project is to complex to do that effectively, instead cornerstone systems are discussed to give an overall view of the project.
+Then there is the "Testing And User Evaluation" section, starting with a discussion of the tools used to assist development and testing. It then details User feedback, particularly in regards to usability and various features implemented to act on that feedback.
+The final proper section section of the report is the "Conclusions" section, which includes final thoughts on the project as a whole.
+
+ At the very end of this document there are the refrences and appendices.
 
 \chapter{Professional Considerations}
 
@@ -334,22 +340,22 @@ Below are the requirements discussed in the above sections formalized into a lis
 \req{R3}{At least two versions of the game should be created. An initial beta version for user testing and a final vertical slice.}
 \req{R4}{The game should run at at least 60 FPS on low to medium range hardware.}
 \req{R5}{The game world should be suitably simulated, recognizable as realistic relationships between factions.}
-\req{R6}{The player should be able to make early impactful roleplay decisions.}
-\req{R7}{The game should have sound effects that fit the theming.}
-\req{R8}{The player should be able to fly about their local environment.}
-\req{R9}{The player should be able to travel to locations around the game world.}
+\req{R6}{The player should be able to make early impactful roleplay decisions, including creating a distinct emblem and choosing what territory they come from.}
+\req{R7}{The game should have sound effects that fit the theming. This includes synthetic and tactile sounds as if using a real computer interface in a sci-fi futuristic setting.}
+\req{R8}{The player should be able to warp travel to distinct locations around the game world, including Settlements and mineral deposits.}
+\req{R9}{The player should be able to fly their ship around any locations they travel too.}
 \req{R11}{The player should be able to interact with their environment using defined interactions.}
-\req{R12}{The player should be able to purchase and utilize items.}
+\req{R12}{The player should be able to purchase and utilize items, for example, using an item to gain access to a unique shop.}
 \req{R13}{The player should be able to improve their statistics, examples include max health and attack power.}
 \req{R14}{The game should be functionally stable, crashes should occur very infrequently.}
 \req{R15}{The game should have UI that accurately describes statistics about the player's faction.}
 \req{R16}{The game should have UI that accurately describes known statistics about NPC factions.}
 \req{R17}{The player should be able to grow and modify their faction over time, this includes increasing military strength, increasing population and adding unique features to their faction.}
-\req{R18}{The player's faction's power should be concentrated to a singular entity (e.g, one building, one ship, etc.)}
+\req{R18}{The player's faction's power should mostly be concentrated to a singular entity (e.g, one building, one ship, etc.), however some power should be able to be leveraged through troops.}
 \req{R19}{The player should be able to engage in relationships, both diplomatic and hostile, with other factions.}
 \req{R20}{The player's actions should be able to have a long term effect on the state of the simulation (e.g, removal of other factions, removal of settelments, etc.).}
-\req{R21}{The player's singular entity should be able to engage in combat with other entites.}
-\req{R22}{The player should be able to win the game in some manner but the choice to take the win should be optional. The player should be able to keep playing if they wish.}
+\req{R21}{The player's singular entity should be able to engage in combat with other entites via the use of commanded troops or/and through their own ship.}
+\req{R22}{The player should not be able to win the game in some manner instead the focus should be placed on continous sandbox play.}
 
 \section{Extension Requirements}
 
