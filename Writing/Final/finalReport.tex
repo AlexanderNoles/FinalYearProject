@@ -54,7 +54,7 @@
 Final Report \\ 
 \textit{3D Video Game: Star And Salvation} }
 \author{267533\\
-\large Word Count: ???}
+\large Word Count: 10700}
 
 \maketitle
 
@@ -433,6 +433,44 @@ Recognizing these gameplay patterns allow us to make additional changes that sup
 \textbf{Define As Needed} is a general coding style that utilizes a large amount of virtual methods and inheritance. The core idea is to define default general implementations that work for the majority of cases and then define the methods as needed for more specific functionality. This approach is used heavily throught out the code base, in particular almost everything in the Simulation inheirts from the \textbf{SimObject} class that adopts this approach.
 
 The lack of multi-inheritance support in C\# does mean this style can occasionally create design issues. This typically takes the form of classes inheriting functionality that they do not need, requiring sections of code to have a toggelable execution flag. The primary example is the \textbf{BattleEnabled} flag for the \textbf{SimObjectBehaviour} class. Ultimately, these issues don't come close to outweighing the positives of having working immediate default implementations but they should still be kept in mind.
+
+\section{Visual Design}
+
+Visuals are an important part of this project, immersion is vital to selling the core idea as for the player's actions to feel impactful the world needs to feel real. It was also important to find ways to limit the amount of necessary work, so producing the vertical slice (to a level of desired complexity) was viable. Parts of the game's visuals also needed to be malleable, for example, each seed should produce different planets and different Settlements should have different layouts of buildings.
+
+\subsection{Environment}
+
+Early in development the decision was made to set the game in space, this was done to lower the expected amount of environmental detail. For a project produced by a single person, this was realistically the decision that made the entire game viable. As a result individual elements of the environment have taken on a much larger importance due to their sparseness. In particular celestial bodies are typically always visible and so have a large impact on the look and feel of the game. Their apperance has gone through two major iterations, the first used flat textured imposter spheres and the second uses raymarching. Raymarching involves moving (marching) a given point (ray) forward from the camera by it's distance from some defined shape (e.g., a sphere, a cube, a sphere with some additional noise, etc.) for a number of iterations (steps) until it gets within some minimum distance of that shape or reaches some max distance from the camera. This technique has a large amount of use cases, for the celestial bodies it is useful for getting a high amount of dynamic detail, which would otherwise require large meshes that would need to be deformed at runtime. A variation of raymarching is also used for the atomspheres of planets to calculate an estimate of the additive density (and hence the amount of light that would reach that point) along each given ray projected from the camera. Additively blending along a ray is also incredibly useful for creating clouds, however, the timeline of the project necessitated a more simplistic solution using flat noise based shaders instead.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=.9\textwidth]{environmentExample1.png}
+    \caption{An in-game screenshot of the Sun and a Planet.}
+\end{figure}
+
+The Sun shader reuses the planet shader but works with colours pushed into HDR (high dynamic range). A bloom post processing effect is giving the sun it's glow, it utilizes a threshold above typical colour ranges allowing it to singularly affect these types of shaders.
+
+The final place where raymarching is used is in the warp travel effect. Here raymarching's ability to have it's defined shape change over time is used paired with it's ability to define shapes as mathematical equations (in our case a fractal) to create a shifting, otherworldly environment. The blurryness and simplistic colour choice was originally an attempt to limit the performance impact of this particular raymarching shader, however the style worked well for a background element and was maintained through other performance improvements.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=.9\textwidth]{environmentExample2.png}
+    \caption{An in-game screenshot of the warp travel effect.}
+\end{figure}
+
+The standard 3D models rely heavily on an outline postprocessing effect to accentuate their details, utilizing a simplistic version of hard surface modelling.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=.9\textwidth]{outlineExample.png}
+    \caption{An in-game screenshot of a Settlement comparing the game both with and without the outline effect.}
+\end{figure}
+
+The blockly models are quick to produce, allowing quick iteration. Above the Settlement is made through several component parts, the buildings, a standard base and the atmosphere shader (borrowed from the planets). To facilitate different layouts, each Settlement generates their buildings when they are first instantiated (based on their underlying data), utilizing the process of instancing to performantly draw many instances of the same meshes.
+
+In the background of the above Figure 5.3, you can see asteroids. These are used as a form of stagnated depth between the environement close to the player and the distant celestial bodies. They act as reference points to help observers undestand the scale of the solar system, without them, faraway elements can seem much closer than they are, which can dramatically hurt the feel of the game.
+
+\subsection{UI}
 
 \chapter{Implementation}
 
@@ -878,6 +916,21 @@ Returns a Sprite. Used by non-text based UI Elements, for example, the image use
 Everything from \textbf{Items} to \textbf{Locations} implements IDisplay. Having an interface for UI element drawing allows UI elements to be easily generalized and reused, alongside having multiple different types of UI elements use the same single source data. For example, different slots can draw themselves using IDisplay and then also pass that data to \textbf{DisplayOnHover} (a class that handles almost all mouse over events). 
 
 \chapter{Testing And User Evaluation}
+
+\section{Debug Tools}
+
+During the course of this project, various debug tools have been used to assist with development. First is MonitorBreak's console, in particular the \textbf{ConsoleCMD} attribute which is used to execute arbitrary code at runtime. This allows for the spawning of specific Entities, easy acquisition of specific Items, printing readouts of Entity data to console and removal of animations (for the sake of testing speed) alongside many other use cases. Second are the Debug and Absent Routines (discussed in Implementation above), unlike other forms of testing these are typically temporary (used to test a single Simulation system) and are not included in the final version of the game. Unity's Debug class was also used generously, typically to draw debug lines or as a form of quick and dirty logging.
+
+Alongside specific tools, typical programming testing features (such as Asssertions) are used throughout the code base. For example, in the \textbf{ItemHelper} class's \textbf{Wrap} method, it is asserted that the \textbf{Item} being wrapped is not \textbf{null} as there is no way for the code to attempt to wrap a null object if the \textbf{ItemDatabase} is functioning as expected.
+
+
+
+\section{User Testing and Usability}
+
+The primary goal of testing in this project was to gauage the game's usability, this is for two reasons. First, the vertical slice of the game accurately demonstrates what the game could look like but falls short of being a fully playable experience, this makes gameplay testing much less useful. Second, even in an unfinished state, the gameplay loop has a large amount of upfront complexity, it is important that players are able to get started with the game in the first place.
+
+Several features have been implemented in response to player feedback, particularly in respect to Interactions. When mousing over a target all possible interactions are now shown, with the currently selected interaction being highlighted. All Interaction selection buttons now also use \textbf{DisplayOnHover} to show their names to the player on mouse over, this was in response to specific feedback that the icons were unclear. Additionally when using certain Interactions (e.g., Attack), a prompt is now displayed asking if you are sure about what you are doing. This is included to prevent players from misclicking and attacking one of their allies, typically resulting in being attacked by that ally and lowering the player's reputation with them.
+
 \chapter{Conclusion}
 
 \renewcommand\bibname{References}

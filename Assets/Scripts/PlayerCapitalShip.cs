@@ -84,7 +84,7 @@ public class PlayerCapitalShip : MonoBehaviour
 	private static float jumpBuildupBuffer;
 	private const float jumpBuildupMax = 10.0f;
 
-	public const float jumpBaseLineSpeed = 2500.0f;
+	public const float jumpBaseLineSpeed = 250.0f;//2500.0f;
 
 	[MonitorBreak.Bebug.ConsoleCMD("SHIPJUMPSPEED")]
 	public static void SetShipSpeedCMD(string newSpeed)
@@ -263,6 +263,8 @@ public class PlayerCapitalShip : MonoBehaviour
 		//Get difference between positions jumpBaseLineSpeed
 		RealSpacePosition difference = new RealSpacePosition(jumpEnd).Subtract(jumpStart);
 		thisJumpSpeed = (float)(jumpBaseLineSpeed / difference.Magnitude());
+
+		Debug.Log(thisJumpSpeed);
 
 		Vector3 vectorDifference = difference.AsTruncatedVector3(20000);
 
