@@ -949,15 +949,50 @@ During the course of this project, various debug tools have been used to assist 
 
 Alongside specific tools, typical programming testing features (such as Asssertions) are used throughout the code base. For example, in the \textbf{ItemHelper} class's \textbf{Wrap} method, it is asserted that the \textbf{Item} being wrapped is not \textbf{null} as there is no way for the code to attempt to wrap a null object if the \textbf{ItemDatabase} is functioning as expected.
 
-
-
 \section{User Testing and Usability}
 
 The primary goal of testing in this project was to gauage the game's usability, this is for two reasons. First, the vertical slice of the game accurately demonstrates what the game could look like but falls short of being a fully playable experience, this makes gameplay testing much less useful. Second, even in an unfinished state, the gameplay loop has a large amount of upfront complexity, it is important that players are able to get started with the game in the first place.
 
+TALK ABOUT HOW TESTING WAS DONE HERE
+
 Several features have been implemented in response to player feedback, particularly in respect to Interactions. When mousing over a target all possible interactions are now shown, with the currently selected interaction being highlighted. All Interaction selection buttons now also use \textbf{DisplayOnHover} to show their names to the player on mouse over, this was in response to specific feedback that the icons were unclear. Additionally when using certain Interactions (e.g., Attack), a prompt is now displayed asking if you are sure about what you are doing. This is included to prevent players from misclicking and attacking one of their allies, typically resulting in being attacked by that ally and lowering the player's reputation with them.
 
 \chapter{Conclusion}
+
+\section{Future features}
+
+Given another six months, the project would include a variety of additional features. The game currently lacks any music or sound effects, the latter of which would be a high priority. Realisitically bespoke sound effects would not be made for this project, instead a online library of free sound effects would be used. A more advanced combat framework was added as the final major feature before the end of the project, however, it could still do with more iterations. It is a fundamental backbone of the game, in a similar way to the Simulation, and helps to define progression concretely. Consequently, making combat as fun as possible would be the highest priority task for any future development.
+
+Additionally there is always an oppurtunity to add more simulation elements, a few potential examples are listed below;
+
+\begin{enumerate}
+
+	\item	Religion
+
+Each Religion could be modelded as it's own Entity, reusing exisiting Territory and Population systems. Contributing to political and relationship of the entities they affect would likely new systems.
+ 
+	\item Weather
+
+Large scale weather events could be stored by the GameWorld Entity and could have effects on Ships and Settlements. These could be solar flares or something more fantasy based.
+
+	\item More Reactive Entities
+
+Currently theres is only one direct reactive entity (an entity that is spawned by another entity based around interacting with their parent), the AntiVoidKnights. With more reactive entities you could create entity spawning loop structures and more generation variance cascading (where a prevelance of a enitity creates more of a certain type of entity on loop, dramatically changing the landscape of the world).
+
+\end{enumerate}
+
+Finally, a rework of travel would be hugely beneficial. Currently it is a fairly substantial part of the game that amounts to the equivalent of a loading screen (in regards to game pacing rather than actually loading things). Including more complicated navigation elements (possibly linking back to weather) or integrating it more into the world (Entites could bar players with bad reputation from travel or Entites could have large "bus" ships that you would need to utilize) could go a long way to making it more engaging
+
+
+\section{Final Thoughts}
+
+The major objective of this project was to produce a roleplaying game that dynamically reacted to player choice. While the Simulation is suitably complex and does react to the player's choices (mostly through changing Entity's FeelingsData and TerritoryData), the expected level of dynamism outlined in the proposal is arguably not achieved. Realisitically this could be a limitation imposed by the creation of a vertical slice over a full game or an inherent limitation of the medium. To evaluate whether the data driven approach to Simulation design is truly able to make a fully dynamic world would require the completion of the game. There could additionaly be more work done to evaluate whether a fully dynamic world is on average subjectively more enjoyable to the target users than a curated experience. 
+
+Regardless, the process of development was well executed with previous game development experience being vital. Even so, many new skills were gained throughout the process including three major areas. First, shaders and specifically raymarching. Prior to this project the majority of previous shader experience was centered around Unity's Shader Graph, however this tool comes with major limitations (being centered around a visual graphing workflow) that would've made more advanced shader techniques difficult to implement. Second, data driven system design. As discussed in Implementation, originally the Simulation focused on Entities over individual DataModules, if the project had continued to use this approach the implementation would quickly have to account for a variety of different Entities reusing the same routines. This would have hurt scalability quite harshly and was an important lesson to learn. Finally, the UI and its design, which was iterated on continuously. Inspiration was pulled from many places including RTS games (Stellaris, Civilisation VI, etc.), RPG games (Disco Elysium) and some less traditional sources (League of Legends, Minecraft, etc.).
+
+Overall the experience has been very enjoyable, it has solidified that I want to pursue game development as a career in some capacity. In particular, creating dynamic experiences that allow you to go on interesting adventures will likely always be a goal of mine throughout my life. I find it likely that this will continue to be true even if I decide a slightly more curated experience would be best. Sticking to a single project has always been a difficulty of mine, and while its influence on my degree has definetly been a factor, I've found this project has really helped with my ability to maintain motivation for so long. I've gotten a lot better at doing a bare minimum each day (one minor task, five minutes of writing, etc.), which typically converts into an hour or two of work.
+In conclusion, this has been a hugely positive experience that I will hope to carry forward into other projects.
+
 
 \renewcommand\bibname{References}
 \begin{thebibliography}{9}
