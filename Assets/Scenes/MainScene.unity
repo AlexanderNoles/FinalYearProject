@@ -44128,12 +44128,12 @@ PrefabInstance:
     - target: {fileID: 3148726407636896608, guid: 51507ed1019c8ea4e8aea6833e4aaedf,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4350900865586067662, guid: 51507ed1019c8ea4e8aea6833e4aaedf,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5912290416445238350, guid: 51507ed1019c8ea4e8aea6833e4aaedf,
         type: 3}
@@ -44500,7 +44500,7 @@ PrefabInstance:
     - target: {fileID: 7690133927240779724, guid: 91946d29b07685e4eaeb3be267df75d1,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -250
+      value: -249.99997
       objectReference: {fileID: 0}
     - target: {fileID: 7690133927240779724, guid: 91946d29b07685e4eaeb3be267df75d1,
         type: 3}

@@ -746,6 +746,12 @@ These DataModules are used to represent player data. Unlike most other DataModul
 
 \end{enumerate}
 
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=.9\textwidth]{entityExample.png}
+    \caption{TerritoryData as displayed on the map.}
+\end{figure}
+
 \section{SimulationManagement}
 
 \textbf{SimulationManagement} is the fundamental backbone of the simulation. It has two primary roles, handling \textbf{DataModule} lookups and running \textbf{Routines} every tick.
@@ -779,6 +785,12 @@ Some drawing processes are more complex and require multiple levels of nested dr
 \newline
 Currently the data retrieved by PLM has to be specifically outlined, however the generalized \textbf{TargetableLocationData} (Used by \textbf{MineralDeposits}, \textbf{PirateCrews}, etc.) allows for any flexibility needed. The method used to operate on this data, \textbf{PerformOperationOnNearbyLocations} is reused by \textbf{PlayerMapInteraction}.
 
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=.8\textwidth]{locationExample.png}
+    \caption{An Ore Deposit location.}
+\end{figure}
+
 \subsection{PlayerMapInteraction}
 
 \textbf{PlayerMapInteraction} draws on top of the normal map UI, using PLM's functionality to find VisitableLocations within the Player's travel range. Each of these locations is given a marker that can be be interacted with by the player. Locations can specify the colour of their marker and whether to include a flashing visual effect via overriding SimObject methods. If any of the Player's Quests include a destination then that is also drawn on the map, in the form of a large beacon.
@@ -789,6 +801,12 @@ PMI also handles the drawing of the Interaction Cursor on the map for map enable
 
 \textbf{VisualDatabase} is a form of design management, exisiting as a script on a GameObject. It stores both \textbf{Colours} and Icons (Unity \textbf{Sprites}) that can be used by \textbf{SimulationEntites} (in their \textbf{EmblemData}). Some minor hue shift is applied to Colours during the \textbf{EmblemInit} Routine but they will maintain the Saturation and Value. This allows for the creation of a consistent and thought-out style for Entites, while maintaing the randomized nature of the project. A purely random approach would result in an ugly game, harming immersion.
 
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=.9\textwidth]{visualDatabase.png}
+    \caption{The Emblem creation screen, showcasing all the options stored by VisualDatabase.}
+\end{figure}
+
 \section{Player Gameplay}
 
 \subsection{Player Movement}
@@ -796,6 +814,12 @@ PMI also handles the drawing of the Interaction Cursor on the map for map enable
 The player's movement is primarily controlled by the script \textbf{PlayerCapitalShip}, the name reflects the original design intention to have the player personally control multiple ships (more akin to Stellaris). Unity's Rigidbody Physics system is used for handiling collisions for the sake of simplicity, however, this system assumes the use of a Unity Transform component as a way to represent movement through the game world. This differs from the higher precision \textbf{RealSpacePosition} system used throughout the rest of the codebase and so the difference between Transform positions across any given frame (assuming the magnitude of the difference is non-zero) needs to be applied to the player's RealSpacePosition. This RPS is reffered to as the \textbf{WorldCenter} (as it is the center from which all RPS based rendering is done, discused above in Art Design), managed by \textbf{WorldManagement}.
 
 Unfortunately, the system as described results in floating point precision errors if the player moves too far away from Unity's world origin. To fix this issue, once the player passes beyond a threshold distance (currently 2000 units) they are seamlessly moved back to the origin. This shift is of course not applied to the WorldCenter RPS, and is typically reffered to as using a "floating origin".
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=.9\textwidth]{playerGameplayExample.png}
+    \caption{The Player's ship fighting a Settlement and some Ships.}
+\end{figure}
 
 \subsection{Interactions}
 
@@ -843,6 +867,12 @@ Currently there are eight Interactions, listed below.
 An important of an Interaction is defining what things it should be applied to, this is called "validating a target". The static class \textbf{InteractionValidationHelper} includes many helper functions for standard Interaction validations, most validation method implementation are simply calling these functions. 
 
 The player's avaliable Interactions are stored in a \textbf{DataModule} attached to the \textbf{Player} entity. As discussed above, DataModules are intended to fully describe the game state and the player's avaliable Interactions are set up to be malleable. Originally the intention was for certain \textbf{Items} to give the player additional Interactions, for example, a powerful weapon would require a special Interaction, used to direct its use. The item "Divine Battle Logic" is a practical example of this but in the produced vertical slice it has no implemented functionality.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=.9\textwidth]{interactionExample.png}
+    \caption{A Settlement the Player is interacting with.}
+\end{figure}
 
 \subsection{Player Stats}
 
@@ -900,6 +930,12 @@ If no direct mapping is found then the line is treated as a Stat line, where the
 
 \textbf{ItemBase} is a wrapper class for an Item, it includes several important helper functions alongside tracking the \textbf{StatContributors} of a given Item so they can be easily removed. ItemBases are generated with the help of \textbf{ItemHelper's} \textbf{Wrap} method, taking in a target Item to wrap. Typically the returned object will simply be of type ItemBase, however, within an Item's source data a "target" can be specified. ItemHelper will use this to return an instance of a child type instead allowing for flexible Item implementations. In the above case, code will check if the Player's Inventory contains an item of type \textbf{SpecialShopItemBase} before allowing them to open the special shop.
 
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=.9\textwidth]{inventoryScreen.png}
+    \caption{The Inventory screen with the Player's Stats shown on the left.}
+\end{figure}
+
 \begin{comment}
 
 Need to talk about loading sprite images
@@ -940,6 +976,12 @@ Returns a Sprite. Used by non-text based UI Elements, for example, the image use
 \end{enumerate}
 
 Everything from \textbf{Items} to \textbf{Locations} implements IDisplay. Having an interface for UI element drawing allows UI elements to be easily generalized and reused, alongside having multiple different types of UI elements use the same single source data. For example, different slots can draw themselves using IDisplay and then also pass that data to \textbf{DisplayOnHover} (a class that handles almost all mouse over events). 
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=.8\textwidth]{fullUIExample.png}
+    \caption{Map UI, showcasing various UI elements. This includes DisplayOnHover and the Inventory Item slots.}
+\end{figure}
 
 \chapter{Testing And User Evaluation}
 

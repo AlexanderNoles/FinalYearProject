@@ -33,27 +33,27 @@
 \contentsline {subsubsection}{Relationship System DataModules}{29}{subsubsection*.3}%
 \contentsline {subsubsection}{Player Specific DataModules}{30}{subsubsection*.4}%
 \contentsline {subsubsection}{Other DataModules}{30}{subsubsection*.5}%
-\contentsline {section}{\numberline {6.4}SimulationManagement}{31}{section.6.4}%
-\contentsline {subsection}{\numberline {6.4.1}Tick Timing and Multithreading}{31}{subsection.6.4.1}%
+\contentsline {section}{\numberline {6.4}SimulationManagement}{32}{section.6.4}%
+\contentsline {subsection}{\numberline {6.4.1}Tick Timing and Multithreading}{32}{subsection.6.4.1}%
 \contentsline {section}{\numberline {6.5}Displaying the Simulation Visually}{32}{section.6.5}%
 \contentsline {subsection}{\numberline {6.5.1}PlayerLocationManagement}{32}{subsection.6.5.1}%
-\contentsline {subsection}{\numberline {6.5.2}PlayerMapInteraction}{33}{subsection.6.5.2}%
-\contentsline {subsection}{\numberline {6.5.3}VisualDatabase}{33}{subsection.6.5.3}%
-\contentsline {section}{\numberline {6.6}Player Gameplay}{33}{section.6.6}%
-\contentsline {subsection}{\numberline {6.6.1}Player Movement}{33}{subsection.6.6.1}%
-\contentsline {subsection}{\numberline {6.6.2}Interactions}{33}{subsection.6.6.2}%
-\contentsline {subsection}{\numberline {6.6.3}Player Stats}{35}{subsection.6.6.3}%
-\contentsline {subsection}{\numberline {6.6.4}Items}{35}{subsection.6.6.4}%
-\contentsline {subsubsection}{ItemDatabase}{35}{subsubsection*.6}%
-\contentsline {subsubsection}{ItemBase}{36}{subsubsection*.7}%
-\contentsline {section}{\numberline {6.7}UI}{36}{section.6.7}%
-\contentsline {subsection}{\numberline {6.7.1}IDisplay}{37}{subsection.6.7.1}%
-\contentsline {chapter}{\numberline {7}Testing And User Evaluation}{38}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Debug Tools}{38}{section.7.1}%
-\contentsline {section}{\numberline {7.2}User Testing and Usability}{38}{section.7.2}%
-\contentsline {chapter}{\numberline {8}Conclusion}{39}{chapter.8}%
-\contentsline {section}{\numberline {8.1}Future features}{39}{section.8.1}%
-\contentsline {section}{\numberline {8.2}Final Thoughts}{39}{section.8.2}%
-\contentsline {chapter}{Appendices}{42}{section*.9}%
-\contentsline {chapter}{\numberline {A}Project Proposal}{43}{appendix.1.A}%
-\contentsline {chapter}{\numberline {B}Signed Ethical Compliance Form}{45}{appendix.1.B}%
+\contentsline {subsection}{\numberline {6.5.2}PlayerMapInteraction}{34}{subsection.6.5.2}%
+\contentsline {subsection}{\numberline {6.5.3}VisualDatabase}{34}{subsection.6.5.3}%
+\contentsline {section}{\numberline {6.6}Player Gameplay}{34}{section.6.6}%
+\contentsline {subsection}{\numberline {6.6.1}Player Movement}{34}{subsection.6.6.1}%
+\contentsline {subsection}{\numberline {6.6.2}Interactions}{35}{subsection.6.6.2}%
+\contentsline {subsection}{\numberline {6.6.3}Player Stats}{37}{subsection.6.6.3}%
+\contentsline {subsection}{\numberline {6.6.4}Items}{37}{subsection.6.6.4}%
+\contentsline {subsubsection}{ItemDatabase}{37}{subsubsection*.6}%
+\contentsline {subsubsection}{ItemBase}{39}{subsubsection*.7}%
+\contentsline {section}{\numberline {6.7}UI}{39}{section.6.7}%
+\contentsline {subsection}{\numberline {6.7.1}IDisplay}{40}{subsection.6.7.1}%
+\contentsline {chapter}{\numberline {7}Testing And User Evaluation}{41}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Debug Tools}{41}{section.7.1}%
+\contentsline {section}{\numberline {7.2}User Testing and Usability}{41}{section.7.2}%
+\contentsline {chapter}{\numberline {8}Conclusion}{42}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Future features}{42}{section.8.1}%
+\contentsline {section}{\numberline {8.2}Final Thoughts}{42}{section.8.2}%
+\contentsline {chapter}{Appendices}{45}{section*.9}%
+\contentsline {chapter}{\numberline {A}Project Proposal}{46}{appendix.1.A}%
+\contentsline {chapter}{\numberline {B}Signed Ethical Compliance Form}{48}{appendix.1.B}%
