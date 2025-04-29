@@ -215,6 +215,11 @@ public class PlayerCapitalShip : MonoBehaviour
 
 	public static Vector3 GetForward()
 	{
+		if (instance == null)
+		{
+			return Vector3.forward;
+		}
+
 		return instance.transform.forward;
 	}
 
