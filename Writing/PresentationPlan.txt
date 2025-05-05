@@ -1,0 +1,15 @@
+Title Page,
+Specification of Problem and goal
+	Need to specify enough to talk concretely about what I have produced in the next slide(s)
+Specification of final result (treating presentation as having knowledge of the whole process)
+Design and Implementation
+	- General Coding patterns (define as needed, modularity, separation of Simulation and the rest, UI)
+	- Separation of Simulation behaviour and data, focus on data modules over entities
+	- Tick based framework of the Simulation, running history (demo?)
+	- Displaying the Simulation Visually (Description of basic culling and drawing systems)
+	- How the Simulation informs gameplay
+		- Simulation Generated gameplay patterns (Attacking Settlements, Mineral Deposits)
+		- Pacing of player gameplay into sections through locations (Comparison to loading screens, problems with this)
+	- Player gameplay that is more separated from the Simulation (Progression, items, etc.)
+Additional Points (catch all)
+Conclusion
